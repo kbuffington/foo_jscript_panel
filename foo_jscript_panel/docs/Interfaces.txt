@@ -1762,10 +1762,7 @@ interface IFbMetadbHandleList {
 		image_path: path to an existing image
 		art_id: default 0. See flags.txt > AlbumArtId
 
-		Note you cannot perform embedded art operations on the currently playing track - it will silently fail.
-		This is a limitation of the foobar2000 SDK. You may consider detecting if your handle list
-		contains the playing track and stopping playback, performing this action and then restarting
-		playback.
+		Note you cannot perform attached image operations on the currently playing track - it will silently fail.
 
 		Any other errors such as invalid path, corrupt image, target file type not supporting
 		embedded art, etc should all silently fail. A progress dialog will be shown for larger file
@@ -1932,7 +1929,7 @@ interface IFbMetadbHandleList {
 		/*
 		art_id: default 0. See flags.txt > AlbumArtId
 
-		See AttachImage() for more info as there are some limitaions.
+		Note you cannot perform attached image operations on the currently playing track - it will silently fail.
 		*/
 
 		RemoveById(idx); (void)
