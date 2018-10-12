@@ -815,6 +815,16 @@ STDMETHODIMP FbMetadbHandleList::RemoveAttachedImage(UINT art_id)
 	return S_OK;
 }
 
+STDMETHODIMP FbMetadbHandleList::RemoveAttachedImages()
+{
+	t_size count = m_handles.get_count();
+	if (count == 0) return E_POINTER;
+
+	threaded_process_callback::ptr cb = new service_impl_t<helpers::embed_thread>(2, album_art_data_ptr(), m_handles, pfc::guid_null);
+	threaded_process::get()->run_modeless(cb, threaded_process::flag_show_progress | threaded_process::flag_show_delayed | threaded_process::flag_show_item, core_api::get_main_window(), "Removing images...");
+	return S_OK;
+}
+
 STDMETHODIMP FbMetadbHandleList::RemoveById(UINT index)
 {
 	if (index < m_handles.get_count())

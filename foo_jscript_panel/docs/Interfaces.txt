@@ -1762,8 +1762,6 @@ interface IFbMetadbHandleList {
 		image_path: path to an existing image
 		art_id: default 0. See flags.txt > AlbumArtId
 
-		Note you cannot perform attached image operations on the currently playing track - it will silently fail.
-
 		Any other errors such as invalid path, corrupt image, target file type not supporting
 		embedded art, etc should all silently fail. A progress dialog will be shown for larger file
 		selections. Any existing artwork of the specified type will be overwritten - there is no need to
@@ -1926,11 +1924,10 @@ interface IFbMetadbHandleList {
 		RemoveAll(); (void)
 
 		RemoveAttachedImage([art_id]); (void)
-		/*
-		art_id: default 0. See flags.txt > AlbumArtId
+		// art_id: default 0. See flags.txt > AlbumArtId
 
-		Note you cannot perform attached image operations on the currently playing track - it will silently fail.
-		*/
+		RemoveAttachedImages(); (void)
+		// Removes all attached images.
 
 		RemoveById(idx); (void)
 		/*

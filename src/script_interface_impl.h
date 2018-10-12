@@ -129,6 +129,7 @@ public:
 	STDMETHODIMP Remove(IFbMetadbHandle* handle);
 	STDMETHODIMP RemoveAll();
 	STDMETHODIMP RemoveAttachedImage(UINT art_id);
+	STDMETHODIMP RemoveAttachedImages();
 	STDMETHODIMP RemoveById(UINT index);
 	STDMETHODIMP RemoveRange(UINT from, UINT count);
 	STDMETHODIMP Sort();

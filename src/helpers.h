@@ -103,7 +103,6 @@ namespace helpers
 	{
 	public:
 		embed_thread(t_size action, album_art_data_ptr data, metadb_handle_list_cref handles, GUID what) : m_action(action), m_data(data), m_handles(handles), m_what(what) {}
-		void on_init(HWND p_wnd) {}
 		void run(threaded_process_status& p_status, abort_callback& p_abort)
 		{
 			t_size count = m_handles.get_count();
@@ -116,7 +115,6 @@ namespace helpers
 				if (album_art_editor::g_get_interface(ptr, path))
 				{
 					album_art_editor_instance_ptr aaep;
-
 					try
 					{
 						aaep = ptr->open(NULL, path, p_abort);
@@ -128,20 +126,36 @@ namespace helpers
 						{
 							aaep->remove(m_what);
 						}
+						else if (m_action == 2)
+						{
+							album_art_editor_instance_v2::ptr v2;
+							if (aaep->cast(v2))
+							{
+								// not all file formats support this
+								v2->remove_all();
+							}
+							else
+							{
+								// m4a is one example that needs this fallback
+								aaep->remove(album_art_ids::artist);
+								aaep->remove(album_art_ids::cover_back);
+								aaep->remove(album_art_ids::cover_front);
+								aaep->remove(album_art_ids::disc);
+								aaep->remove(album_art_ids::icon);
+							}
+						}
 						aaep->commit(p_abort);
 					}
-					catch (...)
-					{
-					}
+					catch (...) {}
 				}
 			}
 		}
 
 	private:
-		t_size m_action; // 0 embed, 1 remove
+		GUID m_what;
 		album_art_data_ptr m_data;
 		metadb_handle_list m_handles;
-		GUID m_what;
+		t_size m_action; // 0 embed, 1 remove, 2 remove all
 	};
 
 	class album_art_async : public simple_thread_task

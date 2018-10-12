@@ -252,6 +252,7 @@ __interface IFbMetadbHandleList : IDisposable
 	STDMETHOD(Remove)(IFbMetadbHandle* handle);
 	STDMETHOD(RemoveAll)();
 	STDMETHOD(RemoveAttachedImage)([defaultvalue(0)] UINT art_id);
+	STDMETHOD(RemoveAttachedImages)();
 	STDMETHOD(RemoveById)(UINT index);
 	STDMETHOD(RemoveRange)(UINT from, UINT count);
 	STDMETHOD(Sort)();
