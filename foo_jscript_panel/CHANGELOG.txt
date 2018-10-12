@@ -1,3 +1,9 @@
+v2.1.8
+- NEW: Add FbMetadbHandleList RemoveAttachImages method.
+- FIX: There are no longer any limitations managing attached images.
+       Working with the playing file is now supported. Thanks to Peter
+       for the new SDK release and the help I needed!
+
 v2.1.7.2
 - FIX: Fix various sample bugs.
 - CHG: Compile component with latest foobar2000 and Windows SDKs.

@@ -105,6 +105,7 @@ namespace helpers
 		embed_thread(t_size action, album_art_data_ptr data, metadb_handle_list_cref handles, GUID what) : m_action(action), m_data(data), m_handles(handles), m_what(what) {}
 		void run(threaded_process_status& p_status, abort_callback& p_abort)
 		{
+			auto api = file_lock_manager::get();
 			t_size count = m_handles.get_count();
 			for (t_size i = 0; i < count; ++i)
 			{
@@ -114,6 +115,7 @@ namespace helpers
 				album_art_editor::ptr ptr;
 				if (album_art_editor::g_get_interface(ptr, path))
 				{
+					file_lock_ptr lock = api->acquire_write(path, p_abort);
 					album_art_editor_instance_ptr aaep;
 					try
 					{
@@ -147,6 +149,7 @@ namespace helpers
 						aaep->commit(p_abort);
 					}
 					catch (...) {}
+					lock.release();
 				}
 			}
 		}
