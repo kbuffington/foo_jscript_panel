@@ -11,7 +11,8 @@ namespace
 		JSP_NAME,
 		JSP_VERSION,
 		JSP_NAME_VERSION " by marc2003\n"
-		"Based on WSH Panel Mod by T.P. Wang\n\n"
+		"Based on WSH Panel Mod by T.P. Wang\n"
+		"Thanks for the contributions by TheQwertiest and kbuffington\n\n"
 		"Build: " __TIME__ ", " __DATE__ "\n"
 		"Columns UI SDK Version: " UI_EXTENSION_VERSION
 	);

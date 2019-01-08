@@ -1,4 +1,4 @@
-v2.2.0
+v2.2.0 Beta 1
 - NEW: Add FbMetadbHandle GetAlbumArt method which returns the image and path
        without the need for using utils.GetAlbumArtAsync and
        on_get_album_art_done(). See docs\interfaces.txt.
@@ -16,7 +16,11 @@ v2.2.0
        will need removing from scripts. If you want to support this and older components
        with the same script, do something like:
 
-       if ('DlgCode' in window) window.DlgCode = 4;
+       if ('DlgCode' in window) { window.DlgCode = 4; }
+- CHG: Lots of internal code refactoring and external dependency updates.
+- CHG: If you browse the component folder and notice the missing "jscript.api" and
+       "interface.api" files, it's intentional. The contents are now included inside
+       the compoent.
 
 v2.1.8
 - NEW: Add FbMetadbHandleList RemoveAttachImages method.
