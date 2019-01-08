@@ -588,34 +588,31 @@ namespace helpers
 		return *guids[0];
 	}
 
-	int get_encoder_clsid(const WCHAR* format, CLSID* pClsid)
+	int get_encoder_clsid(const wchar_t* format, CLSID* pClsid)
 	{
 		int ret = -1;
-
 		t_size num = 0;
 		t_size size = 0;
-
-		Gdiplus::ImageCodecInfo* pImageCodecInfo = NULL;
 
 		Gdiplus::GetImageEncodersSize(&num, &size);
 		if (size == 0) return ret;
 
-		pImageCodecInfo = (Gdiplus::ImageCodecInfo*)(malloc((size_t)size));
+		Gdiplus::ImageCodecInfo* pImageCodecInfo = new Gdiplus::ImageCodecInfo[size];
 		if (pImageCodecInfo == NULL) return ret;
 
 		Gdiplus::GetImageEncoders(num, size, pImageCodecInfo);
 
-		for (UINT j = 0; j < num; ++j)
+		for (t_size i = 0; i < num; ++i)
 		{
-			if (wcscmp(pImageCodecInfo[j].MimeType, format) == 0)
+			if (wcscmp(pImageCodecInfo[i].MimeType, format) == 0)
 			{
-				*pClsid = pImageCodecInfo[j].Clsid;
-				ret = j;
+				*pClsid = pImageCodecInfo[i].Clsid;
+				ret = i;
 				break;
 			}
 		}
 
-		free(pImageCodecInfo);
+		delete[] pImageCodecInfo;
 		return ret;
 	}
 
@@ -626,10 +623,9 @@ namespace helpers
 		return size.cy;
 	}
 
-	int get_text_width(HDC hdc, LPCTSTR text, int len)
+	int get_text_width(HDC hdc, const wchar_t* text, int len)
 	{
 		SIZE size;
-
 		GetTextExtentPoint32(hdc, text, len, &size);
 		return size.cx;
 	}
@@ -656,42 +652,35 @@ namespace helpers
 		return currentAlphaNum == 0 || iswalnum(next) == 0;
 	}
 
-	pfc::string8 iterator_to_string8(json::iterator j)
-	{
-		std::string value = j.value().type() == json::value_t::string ? j.value().get<std::string>() : j.value().dump();
-		return value.c_str();
-	}
-
 	pfc::string8_fast get_fb2k_component_path()
 	{
 		pfc::string8_fast path;
-
 		uGetModuleFileName(core_api::get_my_instance(), path);
 		path = pfc::string_directory(path);
 		path.add_char('\\');
-
 		return path;
 	}
 
 	pfc::string8_fast get_fb2k_path()
 	{
 		pfc::string8_fast path;
-
 		uGetModuleFileName(NULL, path);
 		path = pfc::string_directory(path);
 		path.add_char('\\');
-
 		return path;
 	}
 
 	pfc::string8_fast get_profile_path()
 	{
-		pfc::string8_fast path;
-
-		path = file_path_display(core_api::get_profile_path());
+		pfc::string8_fast path = file_path_display(core_api::get_profile_path());
 		path.fix_dir_separator('\\');
-
 		return path;
+	}
+
+	pfc::string8_fast iterator_to_string(json::iterator j)
+	{
+		std::string value = j.value().type() == json::value_t::string ? j.value().get<std::string>() : j.value().dump();
+		return value.c_str();
 	}
 
 	t_size detect_charset(const char* fileName)

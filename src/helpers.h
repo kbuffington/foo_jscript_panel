@@ -37,14 +37,14 @@ namespace helpers
 	bool supports_chakra();
 	bool write_file(const char* path, const pfc::string_base& content, bool write_bom = true);
 	const GUID convert_artid_to_guid(t_size art_id);
-	int get_encoder_clsid(const WCHAR* format, CLSID* pClsid);
+	int get_encoder_clsid(const wchar_t* format, CLSID* pClsid);
 	int get_text_height(HDC hdc, const wchar_t* text, int len);
-	int get_text_width(HDC hdc, LPCTSTR text, int len);
+	int get_text_width(HDC hdc, const wchar_t* text, int len);
 	int is_wrap_char(wchar_t current, wchar_t next);
-	pfc::string8 iterator_to_string8(json::iterator j);
 	pfc::string8_fast get_fb2k_component_path();
 	pfc::string8_fast get_fb2k_path();
 	pfc::string8_fast get_profile_path();
+	pfc::string8_fast iterator_to_string(json::iterator j);
 	t_size detect_charset(const char* fileName);
 	t_size get_colour_from_variant(VARIANT v);
 	void estimate_line_wrap(HDC hdc, const wchar_t* text, int len, int width, pfc::list_t<wrapped_item>& out);
@@ -68,9 +68,10 @@ namespace helpers
 	class embed_thread : public threaded_process_callback
 	{
 	public:
-		embed_thread(t_size action, album_art_data_ptr data, metadb_handle_list_cref handles, GUID what) : m_action(action), m_data(data), m_handles(handles), m_what(what) {}
+		embed_thread(t_size action, album_art_data_ptr data, metadb_handle_list_cref handles, t_size art_id) : m_action(action), m_data(data), m_handles(handles), m_art_id(art_id) {}
 		void run(threaded_process_status& p_status, abort_callback& p_abort)
 		{
+			GUID what = convert_artid_to_guid(m_art_id);
 			auto api = file_lock_manager::get();
 			t_size count = m_handles.get_count();
 			for (t_size i = 0; i < count; ++i)
@@ -86,15 +87,15 @@ namespace helpers
 					try
 					{
 						aaep = ptr->open(NULL, path, p_abort);
-						if (m_action == 0)
+						switch (m_action)
 						{
-							aaep->set(m_what, m_data, p_abort);
-						}
-						else if (m_action == 1)
-						{
-							aaep->remove(m_what);
-						}
-						else if (m_action == 2)
+						case attach:
+							aaep->set(what, m_data, p_abort);
+							break;
+						case remove:
+							aaep->remove(what);
+							break;
+						case remove_all:
 						{
 							album_art_editor_instance_v2::ptr v2;
 							if (aaep->cast(v2))
@@ -112,6 +113,8 @@ namespace helpers
 								aaep->remove(album_art_ids::icon);
 							}
 						}
+						break;
+						}
 						aaep->commit(p_abort);
 					}
 					catch (...) {}
@@ -120,11 +123,18 @@ namespace helpers
 			}
 		}
 
+		enum
+		{
+			attach,
+			remove,
+			remove_all
+		};
+
 	private:
-		GUID m_what;
 		album_art_data_ptr m_data;
 		metadb_handle_list m_handles;
-		t_size m_action; // 0 embed, 1 remove, 2 remove all
+		t_size m_action;
+		t_size m_art_id;
 	};
 
 	class album_art_async : public simple_thread_task

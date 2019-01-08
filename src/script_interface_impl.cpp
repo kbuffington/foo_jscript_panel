@@ -484,40 +484,32 @@ STDMETHODIMP FbMetadbHandleList::AddRange(IFbMetadbHandleList* handles)
 
 STDMETHODIMP FbMetadbHandleList::AttachImage(BSTR image_path, UINT art_id)
 {
-	t_size count = m_handles.get_count();
-	if (count == 0) return E_POINTER;
+	if (m_handles.get_count() == 0) return E_POINTER;
 
-	GUID what = helpers::convert_artid_to_guid(art_id);
-	abort_callback_dummy abort;
 	album_art_data_ptr data;
-	bool ok = false;
 
 	try
 	{
-		file::ptr file;
-		pfc::stringcvt::string_utf8_from_wide realPath(image_path);
-		pfc::string8 canPath;
-		filesystem::g_get_canonical_path(realPath, canPath);
-		if (!filesystem::g_is_remote_or_unrecognized(canPath))
+		pfc::stringcvt::string_utf8_from_wide path(image_path);
+		if (!filesystem::g_is_remote_or_unrecognized(path))
 		{
-			filesystem::g_open(file, canPath, filesystem::open_mode_read, abort);
-		}
-		if (file.is_valid())
-		{
-			service_ptr_t<album_art_data_impl> tmp = new service_impl_t<album_art_data_impl>;
-			tmp->from_stream(file.get_ptr(), t_size(file->get_size_ex(abort)), abort);
-			ok = true;
-			data = tmp;
+			file::ptr file;
+			abort_callback_dummy abort;
+			filesystem::g_open(file, path, filesystem::open_mode_read, abort);
+			if (file.is_valid())
+			{
+				auto tmp = fb2k::service_new<album_art_data_impl>();
+				tmp->from_stream(file.get_ptr(), t_size(file->get_size_ex(abort)), abort);
+				data = tmp;
+			}
 		}
 	}
-	catch (...)
-	{
-	}
+	catch (...) {}
 
-	if (ok)
+	if (data.is_valid())
 	{
-		threaded_process_callback::ptr cb = new service_impl_t<helpers::embed_thread>(0, data, m_handles, what);
-		threaded_process::get()->run_modeless(cb, threaded_process::flag_show_progress | threaded_process::flag_show_delayed | threaded_process::flag_show_item, core_api::get_main_window(), "Embedding images...");
+		auto cb = fb2k::service_new<helpers::embed_thread>(helpers::embed_thread::attach, data, m_handles, art_id);
+		threaded_process::get()->run_modeless(cb, threaded_process::flag_show_progress | threaded_process::flag_show_delayed | threaded_process::flag_show_item, core_api::get_main_window(), "Embedding image...");
 	}
 	return S_OK;
 }
@@ -805,22 +797,18 @@ STDMETHODIMP FbMetadbHandleList::RemoveAll()
 
 STDMETHODIMP FbMetadbHandleList::RemoveAttachedImage(UINT art_id)
 {
-	t_size count = m_handles.get_count();
-	if (count == 0) return E_POINTER;
+	if (m_handles.get_count() == 0) return E_POINTER;
 
-	GUID what = helpers::convert_artid_to_guid(art_id);
-
-	threaded_process_callback::ptr cb = new service_impl_t<helpers::embed_thread>(1, album_art_data_ptr(), m_handles, what);
+	auto cb = fb2k::service_new<helpers::embed_thread>(helpers::embed_thread::remove, album_art_data_ptr(), m_handles, art_id);
 	threaded_process::get()->run_modeless(cb, threaded_process::flag_show_progress | threaded_process::flag_show_delayed | threaded_process::flag_show_item, core_api::get_main_window(), "Removing images...");
 	return S_OK;
 }
 
 STDMETHODIMP FbMetadbHandleList::RemoveAttachedImages()
 {
-	t_size count = m_handles.get_count();
-	if (count == 0) return E_POINTER;
+	if (m_handles.get_count() == 0) return E_POINTER;
 
-	threaded_process_callback::ptr cb = new service_impl_t<helpers::embed_thread>(2, album_art_data_ptr(), m_handles, pfc::guid_null);
+	auto cb = fb2k::service_new<helpers::embed_thread>(helpers::embed_thread::remove_all, album_art_data_ptr(), m_handles, 0);
 	threaded_process::get()->run_modeless(cb, threaded_process::flag_show_progress | threaded_process::flag_show_delayed | threaded_process::flag_show_item, core_api::get_main_window(), "Removing images...");
 	return S_OK;
 }
@@ -900,14 +888,14 @@ STDMETHODIMP FbMetadbHandleList::UpdateFileInfoFromJSON(BSTR str)
 			{
 				for (json::iterator ita = it.value().begin(); ita != it.value().end(); ++ita)
 				{
-					pfc::string8 value = helpers::iterator_to_string8(ita);
+					pfc::string8 value = helpers::iterator_to_string(ita);
 					if (!value.is_empty())
 						info[i].meta_add(key, value);
 				}
 			}
 			else
 			{
-				pfc::string8 value = helpers::iterator_to_string8(it);
+				pfc::string8 value = helpers::iterator_to_string(it);
 				if (!value.is_empty())
 					info[i].meta_set(key, value);
 			}
