@@ -16,7 +16,7 @@ bool script_preprocessor::process_script_info(t_script_info& info)
 	{
 		t_directive_value& v = m_directive_value_list[i];
 		expand_var(v.value);
-		pfc::string8_fast value = pfc::stringcvt::string_utf8_from_wide(v.value.get_ptr());
+		pfc::string8_fast value = string_utf8_from_wide(v.value.get_ptr());
 
 		if (wcscmp(v.directive.get_ptr(), L"name") == 0)
 		{
@@ -237,7 +237,7 @@ bool script_preprocessor::expand_var(pfc::array_t<wchar_t>& out)
 
 						if (wcsncmp(pready + 1, expand_table[i].which, max(count, expand_which_size)) == 0)
 						{
-							pfc::stringcvt::string_wide_from_utf8_fast expanded(expand_table[i].func());
+							string_wide_from_utf8_fast expanded(expand_table[i].func());
 							t_size expanded_count = expanded.length();
 
 							buffer.append_fromptr(expanded.get_ptr(), expanded_count);

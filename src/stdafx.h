@@ -41,3 +41,5 @@
 #endif
 
 #include "component_defines.h"
+
+using namespace pfc::stringcvt;

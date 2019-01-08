@@ -261,7 +261,7 @@ HRESULT ScriptHost::Initialize()
 	m_has_error = false;
 
 	IActiveScriptParsePtr parser;
-	pfc::stringcvt::string_wide_from_utf8_fast wcode(m_host->get_script_code());
+	string_wide_from_utf8_fast wcode(m_host->get_script_code());
 	script_preprocessor preprocessor(wcode.get_ptr());
 	preprocessor.process_script_info(m_host->ScriptInfo());
 
@@ -329,7 +329,7 @@ HRESULT ScriptHost::ProcessImportedScripts(IActiveScriptParsePtr& parser)
 		{
 			DWORD source_context;
 			GenerateSourceContext(path, source_context);
-			HRESULT hr = parser->ParseScriptText(pfc::stringcvt::string_wide_from_utf8_fast(code), NULL, NULL, NULL, source_context, 0, SCRIPTTEXT_HOSTMANAGESSOURCE | SCRIPTTEXT_ISVISIBLE, NULL, NULL);
+			HRESULT hr = parser->ParseScriptText(string_wide_from_utf8_fast(code), NULL, NULL, NULL, source_context, 0, SCRIPTTEXT_HOSTMANAGESSOURCE | SCRIPTTEXT_ISVISIBLE, NULL, NULL);
 			if (FAILED(hr)) return hr;
 		}
 		else
@@ -556,8 +556,8 @@ void ScriptHost::ReportError(IActiveScriptError* err)
 
 	if (excep.bstrSource && excep.bstrDescription)
 	{
-		formatter << pfc::stringcvt::string_utf8_from_wide(excep.bstrSource) << ":\n";
-		formatter << pfc::stringcvt::string_utf8_from_wide(excep.bstrDescription) << "\n";
+		formatter << string_utf8_from_wide(excep.bstrSource) << ":\n";
+		formatter << string_utf8_from_wide(excep.bstrDescription) << "\n";
 	}
 	else
 	{
@@ -575,7 +575,7 @@ void ScriptHost::ReportError(IActiveScriptError* err)
 	}
 
 	formatter << "Line: " << (t_uint32)(line + 1) << ", Col: " << (t_uint32)(charpos + 1) << "\n";
-	formatter << pfc::stringcvt::string_utf8_from_wide(sourceline);
+	formatter << string_utf8_from_wide(sourceline);
 	if (name.length() > 0) formatter << "\nAt: " << name;
 
 	if (excep.bstrSource) SysFreeString(excep.bstrSource);
@@ -761,7 +761,7 @@ STDMETHODIMP FbWindow::GetProperty(BSTR name, VARIANT defaultval, VARIANT* p)
 
 	HRESULT hr;
 	_variant_t var;
-	pfc::stringcvt::string_utf8_from_wide uname(name);
+	string_utf8_from_wide uname(name);
 
 	if (m_host->get_config_prop().get_config_item(uname, var))
 	{
@@ -833,7 +833,7 @@ STDMETHODIMP FbWindow::SetInterval(IDispatch* func, int delay, UINT* outInterval
 
 STDMETHODIMP FbWindow::SetProperty(BSTR name, VARIANT val)
 {
-	m_host->get_config_prop().set_config_item(pfc::stringcvt::string_utf8_from_wide(name), val);
+	m_host->get_config_prop().set_config_item(string_utf8_from_wide(name), val);
 	return S_OK;
 }
 
@@ -947,7 +947,7 @@ STDMETHODIMP FbWindow::get_Name(BSTR* p)
 		name = pfc::print_guid(m_host->get_config_guid());
 	}
 
-	*p = SysAllocString(pfc::stringcvt::string_wide_from_utf8_fast(name));
+	*p = SysAllocString(string_wide_from_utf8_fast(name));
 	return S_OK;
 }
 

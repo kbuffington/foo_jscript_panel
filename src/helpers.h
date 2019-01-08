@@ -144,7 +144,7 @@ namespace helpers
 			IFbMetadbHandle* handle;
 			t_size art_id;
 			IGdiBitmap* bitmap;
-			pfc::stringcvt::string_wide_from_utf8 image_path;
+			string_wide_from_utf8_fast image_path;
 
 			t_param(IFbMetadbHandle* p_handle, t_size p_art_id, IGdiBitmap* p_bitmap, const char* p_image_path) : handle(p_handle), art_id(p_art_id), bitmap(p_bitmap), image_path(p_image_path)
 			{
@@ -163,7 +163,7 @@ namespace helpers
 		album_art_async(HWND notify_hwnd, metadb_handle* handle, t_size art_id, bool need_stub, bool only_embed, bool no_load) : m_notify_hwnd(notify_hwnd), m_handle(handle), m_art_id(art_id), m_need_stub(need_stub), m_only_embed(only_embed), m_no_load(no_load)
 		{
 			if (m_handle.is_valid())
-				m_rawpath = pfc::stringcvt::string_wide_from_utf8(m_handle->get_path());
+				m_rawpath = string_wide_from_utf8_fast(m_handle->get_path());
 		}
 
 	private:

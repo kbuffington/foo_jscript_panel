@@ -115,7 +115,7 @@ void prop_kv_config::g_load(t_map& data, stream_reader* reader, abort_callback& 
 				pfc::string8_fast str;
 
 				reader->read_string(str, abort);
-				val.bstrVal = SysAllocString(pfc::stringcvt::string_wide_from_utf8_fast(str));
+				val.bstrVal = SysAllocString(string_wide_from_utf8_fast(str));
 			}
 
 			data[key] = val;
@@ -181,7 +181,7 @@ void prop_kv_config::g_save(const t_map& data, stream_writer* writer, abort_call
 			}
 			else if (iter->m_value.vt == VT_BSTR)
 			{
-				pfc::stringcvt::string_utf8_from_wide conv = iter->m_value.bstrVal;
+				string_utf8_from_wide conv = iter->m_value.bstrVal;
 				writer->write_string(conv, abort);
 			}
 		}

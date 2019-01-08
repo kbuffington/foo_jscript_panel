@@ -458,7 +458,7 @@ void js_panel_window::execute_context_menu_command(int id, int id_base)
 		break;
 	case 2:
 	{
-		pfc::stringcvt::string_os_from_utf8 folder(helpers::get_fb2k_component_path());
+		string_wide_from_utf8_fast folder(helpers::get_fb2k_component_path());
 		ShellExecute(nullptr, _T("open"), folder, nullptr, nullptr, SW_SHOW);
 	}
 	break;

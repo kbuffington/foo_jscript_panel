@@ -62,7 +62,7 @@ LRESULT CDialogPref::OnPropNMDblClk(LPNMHDR pnmh)
 			}
 
 			// Update list
-			m_props.SetItemText(pniv->iItem, 1, pfc::stringcvt::string_wide_from_utf8_fast(val));
+			m_props.SetItemText(pniv->iItem, 1, string_wide_from_utf8_fast(val));
 			DoDataExchange();
 		}
 	}
@@ -82,7 +82,7 @@ void CDialogPref::LoadProps(bool reset)
 	if (reset)
 		g_sci_prop_sets.reset();
 
-	pfc::stringcvt::string_os_from_utf8_fast conv;
+	string_wide_from_utf8_fast conv;
 	t_sci_prop_set_list& prop_sets = g_sci_prop_sets.val();
 
 	m_props.DeleteAllItems();
@@ -136,7 +136,7 @@ void CDialogPref::uGetItemText(int nItem, int nSubItem, pfc::string_base& out)
 	TCHAR buffer[BUFFER_LEN];
 
 	m_props.GetItemText(nItem, nSubItem, buffer, BUFFER_LEN);
-	out.set_string(pfc::stringcvt::string_utf8_from_os(buffer));
+	out.set_string(string_utf8_from_wide(buffer));
 }
 
 void CDialogPref::apply()

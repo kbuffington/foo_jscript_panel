@@ -97,7 +97,7 @@ namespace helpers
 
 	IGdiBitmap* get_album_art_embedded(BSTR rawpath, t_size art_id)
 	{
-		pfc::stringcvt::string_utf8_from_wide urawpath(rawpath);
+		string_utf8_from_wide urawpath(rawpath);
 		IGdiBitmap* ret = NULL;
 
 		album_art_extractor::ptr ptr;
@@ -389,9 +389,9 @@ namespace helpers
 			const char* pSource = (const char *)(pAddr + 3);
 			t_size pSourceSize = dwFileSize - 3;
 
-			const t_size size = pfc::stringcvt::estimate_utf8_to_wide_quick(pSource, pSourceSize);
+			const t_size size = estimate_utf8_to_wide_quick(pSource, pSourceSize);
 			content.set_size(size);
-			pfc::stringcvt::convert_utf8_to_wide(content.get_ptr(), size, pSource, pSourceSize);
+			convert_utf8_to_wide(content.get_ptr(), size, pSource, pSourceSize);
 			status = true;
 		}
 
@@ -400,18 +400,18 @@ namespace helpers
 			const char* pSource = (const char *)(pAddr);
 			t_size pSourceSize = dwFileSize;
 
-			t_size tmp = detect_charset(pfc::stringcvt::string_utf8_from_wide(path));
+			t_size tmp = detect_charset(string_utf8_from_wide(path));
 			if (tmp == CP_UTF8)
 			{
-				const t_size size = pfc::stringcvt::estimate_utf8_to_wide_quick(pSource, pSourceSize);
+				const t_size size = estimate_utf8_to_wide_quick(pSource, pSourceSize);
 				content.set_size(size);
-				pfc::stringcvt::convert_utf8_to_wide(content.get_ptr(), size, pSource, pSourceSize);
+				convert_utf8_to_wide(content.get_ptr(), size, pSource, pSourceSize);
 			}
 			else
 			{
-				const t_size size = pfc::stringcvt::estimate_codepage_to_wide(codepage, pSource, pSourceSize);
+				const t_size size = estimate_codepage_to_wide(codepage, pSource, pSourceSize);
 				content.set_size(size);
-				pfc::stringcvt::convert_codepage_to_wide(codepage, content.get_ptr(), size, pSource, pSourceSize);
+				convert_codepage_to_wide(codepage, content.get_ptr(), size, pSource, pSourceSize);
 			}
 			status = true;
 		}
@@ -797,9 +797,9 @@ namespace helpers
 
 	wchar_t* make_sort_string(const char* in)
 	{
-		wchar_t* out = new wchar_t[pfc::stringcvt::estimate_utf8_to_wide(in) + 1];
+		wchar_t* out = new wchar_t[estimate_utf8_to_wide(in) + 1];
 		out[0] = ' ';//StrCmpLogicalW bug workaround.
-		pfc::stringcvt::convert_utf8_to_wide_unchecked(out + 1, in);
+		convert_utf8_to_wide_unchecked(out + 1, in);
 		return out;
 	}
 
