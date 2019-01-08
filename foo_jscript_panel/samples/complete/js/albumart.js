@@ -28,25 +28,20 @@ _.mixin({
 			this.img = null;
 			this.tooltip = this.path = '';
 			if (panel.metadb) {
-				this.img = utils.GetAlbumArtV2(panel.metadb, this.properties.id.value);
-				if (this.img && panel.metadb.RawPath.indexOf('file') == 0) {
-					utils.GetAlbumArtAsync(window.ID, panel.metadb, this.properties.id.value, true, false, true);
-				}
-			}
-			window.Repaint();
-		}
-		
-		this.get_album_art_done = function (p) {
-			this.path = p;
-			if (this.img) {
-				this.tooltip = 'Original dimensions: ' + this.img.Width + 'x' + this.img.Height + 'px';
-				if (_.isFile(this.path)) {
-					this.tooltip += '\nPath: ' + this.path;
-					if (panel.metadb.Path != this.path) {
-						this.tooltip += '\nSize: ' + utils.FormatFileSize(fso.GetFile(this.path).Size);
+				var tmp = panel.metadb.GetAlbumArt(this.properties.id.value).toArray();
+				this.img = tmp[0];
+				if (this.img) {
+					this.tooltip = 'Original dimensions: ' + this.img.Width + 'x' + this.img.Height + 'px';
+					this.path = tmp[1];
+					if (_.isFile(this.path)) {
+						this.tooltip += '\nPath: ' + this.path;
+						if (panel.metadb.Path != this.path) {
+							this.tooltip += '\nSize: ' + utils.FormatFileSize(fso.GetFile(this.path).Size);
+						}
 					}
 				}
 			}
+			window.Repaint();
 		}
 		
 		this.trace = function (x, y) {

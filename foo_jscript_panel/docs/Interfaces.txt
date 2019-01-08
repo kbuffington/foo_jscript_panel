@@ -1022,7 +1022,14 @@ interface IJSUtils {
 		utils.GetAlbumArtAsync(window_id, handle[, art_id, need_stub, only_embed, no_load]); (uint)
 		/*
 		window_id: window.ID
-		art_id: default 0. See flags.txt > AlbumArtId
+		art_id: default 0.
+
+		0: front
+		1: back
+		2: disc
+		3: icon
+		4: artist
+
 		need_stub: boolean, default true.
 		only_embed: boolean, default false.
 		no_load: boolean, default false. If true, "image" parameter will be null in on_get_album_art_done callback.
@@ -1031,7 +1038,13 @@ interface IJSUtils {
 
 		utils.GetAlbumArtEmbedded(rawpath[, art_id]); (IGdiBitmap)
 		/*
-		art_id: default 0. See flags.txt > AlbumArtId
+		art_id: default 0.
+
+		0: front
+		1: back
+		2: disc
+		3: icon
+		4: artist
 
 		Example:
 		var img = utils.GetAlbumArtEmbedded(fb.GetNowPlaying().RawPath, 0);
@@ -1039,7 +1052,14 @@ interface IJSUtils {
 
 		utils.GetAlbumArtV2(handle[, art_id, need_stub]); (IGdiBitmap)
 		/*
-		art_id: default 0. See flags.txt > AlbumArtId
+		art_id: default 0.
+
+		0: front
+		1: back
+		2: disc
+		3: icon
+		4: artist
+
 		need stub: boolean, default true.
 		See samples\basic\GetAlbumArtV2.txt
 		*/
@@ -1666,6 +1686,30 @@ interface IFbMetadbHandle {
 		handle.Dispose();
 		*/
 
+		GetAlbumArt([art_id]); (VBArray)
+		/*
+		art_id: default 0.
+
+		0: front
+		1: back
+		2: disc
+		3: icon
+		4: artist
+
+		Returns a VBArray so you need to use .toArray() on the result.
+
+		The length of the array is always 2 and the first element is an IGdiBitmap object or
+		null if no image was found. The 2nd element is the image path or an empty string
+
+		Example:
+		var arr = handle.GetAlbumArt().toArray();
+		var img = arr[0];
+		if (img != null) {
+			// it's a valid image
+			var image_path = arr[1];
+		}
+		*/
+
 		GetFileInfo(); (IFbFileInfo)
 
 			interface IFbFileInfo {
@@ -1760,7 +1804,13 @@ interface IFbMetadbHandleList {
 		AttachImage(image_path[, art_id]) (void)
 		/*
 		image_path: path to an existing image
-		art_id: default 0. See flags.txt > AlbumArtId
+		art_id: default 0.
+
+		0: front
+		1: back
+		2: disc
+		3: icon
+		4: artist
 
 		Any other errors such as invalid path, corrupt image, target file type not supporting
 		embedded art, etc should all silently fail. A progress dialog will be shown for larger file
@@ -1924,7 +1974,15 @@ interface IFbMetadbHandleList {
 		RemoveAll(); (void)
 
 		RemoveAttachedImage([art_id]); (void)
-		// art_id: default 0. See flags.txt > AlbumArtId
+		/*
+		art_id: default 0.
+
+		0: front
+		1: back
+		2: disc
+		3: icon
+		4: artist
+		*/
 
 		RemoveAttachedImages(); (void)
 		// Removes all attached images.
