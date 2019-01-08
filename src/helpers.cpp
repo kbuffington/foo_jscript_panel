@@ -372,30 +372,27 @@ namespace helpers
 
 		bool status = false;
 
-		if (dwFileSize > 3)
+		// UTF16 LE?
+		if (dwFileSize >=2 && pAddr[0] == 0xFF && pAddr[1] == 0xFE)
 		{
-			// UTF16 LE?
-			if (pAddr[0] == 0xFF && pAddr[1] == 0xFE)
-			{
-				const wchar_t* pSource = (const wchar_t *)(pAddr + 2);
-				t_size len = (dwFileSize - 2) >> 1;
+			const wchar_t* pSource = (const wchar_t *)(pAddr + 2);
+			t_size len = (dwFileSize - 2) >> 1;
 
-				content.set_size(len + 1);
-				pfc::__unsafe__memcpy_t(content.get_ptr(), pSource, len);
-				content[len] = 0;
-				status = true;
-			}
-			// UTF8-BOM?
-			else if (pAddr[0] == 0xEF && pAddr[1] == 0xBB && pAddr[2] == 0xBF)
-			{
-				const char* pSource = (const char *)(pAddr + 3);
-				t_size pSourceSize = dwFileSize - 3;
+			content.set_size(len + 1);
+			pfc::__unsafe__memcpy_t(content.get_ptr(), pSource, len);
+			content[len] = 0;
+			status = true;
+		}
+		// UTF8-BOM?
+		else if (dwFileSize >= 3 && pAddr[0] == 0xEF && pAddr[1] == 0xBB && pAddr[2] == 0xBF)
+		{
+			const char* pSource = (const char *)(pAddr + 3);
+			t_size pSourceSize = dwFileSize - 3;
 
-				const t_size size = pfc::stringcvt::estimate_utf8_to_wide_quick(pSource, pSourceSize);
-				content.set_size(size);
-				pfc::stringcvt::convert_utf8_to_wide(content.get_ptr(), size, pSource, pSourceSize);
-				status = true;
-			}
+			const t_size size = pfc::stringcvt::estimate_utf8_to_wide_quick(pSource, pSourceSize);
+			content.set_size(size);
+			pfc::stringcvt::convert_utf8_to_wide(content.get_ptr(), size, pSource, pSourceSize);
+			status = true;
 		}
 
 		if (!status)
