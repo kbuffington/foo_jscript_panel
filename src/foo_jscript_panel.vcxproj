@@ -229,8 +229,8 @@ copy /Y "$(TargetDir)$(TargetName).pdb" "%component_path%\"</Command>
       <Project>{e8091321-d79d-4575-86ef-064ea1a4a20d}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
-    <ProjectReference Include="..\scintilla\win32\scintilla.vcxproj">
-      <Project>{641a7d58-c47d-4110-b800-e18e8a5d818f}</Project>
+    <ProjectReference Include="..\scintilla\win32\SciLexer.vcxproj">
+      <Project>{fbe04237-9c7b-4973-9c60-505975998b39}</Project>
       <Private>true</Private>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
       <CopyLocalSatelliteAssemblies>false</CopyLocalSatelliteAssemblies>

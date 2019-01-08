@@ -26,9 +26,7 @@
 #include <atlcrack.h>
 #include <atltheme.h>
 
-// Other controls
-#define STATIC_BUILD 1
-#define SCI_LEXER 1
+// Scintilla
 #include <Scintilla.h>
 #include <SciLexer.h>
 

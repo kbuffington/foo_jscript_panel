@@ -734,14 +734,12 @@ void CScriptEditorCtrl::AutomaticIndentation(char ch)
 bool CScriptEditorCtrl::FindBraceMatchPos(int &braceAtCaret, int &braceOpposite)
 {
 	bool isInside = false;
-	int mask = (1 << GetStyleBits()) - 1;
 	int caretPos = GetCurrentPos();
 
 	braceAtCaret = -1;
 	braceOpposite = -1;
 
 	char charBefore = 0;
-	char styleBefore = 0;
 	int lengthDoc = GetLength();
 
 	if ((lengthDoc > 0) && (caretPos > 0))
@@ -752,7 +750,6 @@ bool CScriptEditorCtrl::FindBraceMatchPos(int &braceAtCaret, int &braceOpposite)
 		if (posBefore == (caretPos - 1))
 		{
 			charBefore = GetCharAt(posBefore);
-			styleBefore = GetStyleAt(posBefore) & mask;
 		}
 	}
 
@@ -770,7 +767,6 @@ bool CScriptEditorCtrl::FindBraceMatchPos(int &braceAtCaret, int &braceOpposite)
 		// No brace found so check other side
 		// Check to ensure not matching brace that is part of a multibyte character
 		char charAfter = GetCharAt(caretPos);
-		char styleAfter = GetStyleAt(caretPos) & mask;
 
 		if (charAfter && IsBraceChar(charAfter))
 		{
