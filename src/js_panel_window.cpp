@@ -408,6 +408,10 @@ LRESULT js_panel_window::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 			Repaint();
 		return 0;
 
+	case UWM_SIZE_LIMIT_CHANGED:
+		notify_size_limit_changed(lp);
+		return 0;
+
 	case UWM_TIMER:
 		HostTimerDispatcher::Get().onInvokeMessage(wp);
 		return 0;
