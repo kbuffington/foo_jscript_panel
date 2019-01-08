@@ -28,11 +28,6 @@ HostComm::~HostComm()
 {
 }
 
-GUID HostComm::GetGUID()
-{
-	return get_config_guid();
-}
-
 HDC HostComm::GetHDC()
 {
 	return m_hdc;
@@ -229,42 +224,12 @@ ScriptHost::~ScriptHost()
 {
 }
 
-bool ScriptHost::HasError()
-{
-	return m_has_error;
-}
-
-bool ScriptHost::Ready()
-{
-	return m_engine_inited && m_script_engine;
-}
-
-HRESULT ScriptHost::GenerateSourceContext(const wchar_t* path, const wchar_t* code, DWORD& source_context)
-{
-	pfc::stringcvt::string_wide_from_utf8_fast name, guidString;
-	HRESULT hr = S_OK;
-	t_size len = wcslen(code);
-
-	if (!path)
-	{
-		if (m_host->ScriptInfo().name.is_empty())
-			name.convert(pfc::print_guid(m_host->GetGUID()));
-		else
-			name.convert(m_host->ScriptInfo().name);
-
-		guidString.convert(pfc::print_guid(m_host->GetGUID()));
-	}
-
-	source_context = m_lastSourceContext++;
-	return hr;
-}
-
-HRESULT ScriptHost::InitScriptEngineByName(const wchar_t* engineName)
+HRESULT ScriptHost::InitScriptEngineByName(const char* engineName)
 {
 	HRESULT hr = E_FAIL;
 	const DWORD classContext = CLSCTX_INPROC_SERVER | CLSCTX_INPROC_HANDLER;
 
-	if (helpers::supports_chakra() && wcscmp(engineName, L"Chakra") == 0)
+	if (helpers::supports_chakra() && _stricmp(engineName, "Chakra") == 0)
 	{
 		static const CLSID jscript9clsid = { 0x16d51579, 0xa30b, 0x4c8b,{ 0xa2, 0x76, 0x0f, 0xf4, 0xdc, 0x41, 0xe7, 0x55 } };
 		hr = m_script_engine.CreateInstance(jscript9clsid, NULL, classContext);
@@ -295,19 +260,15 @@ HRESULT ScriptHost::Initialize()
 
 	m_has_error = false;
 
-	HRESULT hr = S_OK;
 	IActiveScriptParsePtr parser;
-	pfc::stringcvt::string_wide_from_utf8_fast wname(m_host->get_script_engine());
 	pfc::stringcvt::string_wide_from_utf8_fast wcode(m_host->get_script_code());
 	script_preprocessor preprocessor(wcode.get_ptr());
 	preprocessor.process_script_info(m_host->ScriptInfo());
 
-	hr = InitScriptEngineByName(wname);
-
+	HRESULT hr = InitScriptEngineByName(m_host->get_script_engine());
 	if (SUCCEEDED(hr)) hr = m_script_engine->SetScriptSite(this);
 	if (SUCCEEDED(hr)) hr = m_script_engine->QueryInterface(&parser);
 	if (SUCCEEDED(hr)) hr = parser->InitNew();
-
 	if (SUCCEEDED(hr)) hr = m_script_engine->AddNamedItem(L"window", SCRIPTITEM_ISVISIBLE);
 	if (SUCCEEDED(hr)) hr = m_script_engine->AddNamedItem(L"gdi", SCRIPTITEM_ISVISIBLE);
 	if (SUCCEEDED(hr)) hr = m_script_engine->AddNamedItem(L"fb", SCRIPTITEM_ISVISIBLE);
@@ -316,13 +277,13 @@ HRESULT ScriptHost::Initialize()
 	if (SUCCEEDED(hr)) hr = m_script_engine->AddNamedItem(L"console", SCRIPTITEM_ISVISIBLE);
 	if (SUCCEEDED(hr)) hr = m_script_engine->SetScriptState(SCRIPTSTATE_CONNECTED);
 	if (SUCCEEDED(hr)) hr = m_script_engine->GetScriptDispatch(NULL, &m_script_root);
-	if (SUCCEEDED(hr)) hr = ProcessImportedScripts(preprocessor, parser);
-
-	DWORD source_context = 0;
-	if (SUCCEEDED(hr)) hr = GenerateSourceContext(NULL, wcode, source_context);
-	m_contextToPathMap[source_context] = "<main>";
-
-	if (SUCCEEDED(hr)) hr = parser->ParseScriptText(wcode.get_ptr(), NULL, NULL, NULL, source_context, 0, SCRIPTTEXT_HOSTMANAGESSOURCE | SCRIPTTEXT_ISVISIBLE, NULL, NULL);
+	if (SUCCEEDED(hr)) hr = ProcessImportedScripts(parser);
+	if (SUCCEEDED(hr))
+	{
+		DWORD source_context = 0;
+		GenerateSourceContext("<main>", source_context);
+		hr = parser->ParseScriptText(wcode.get_ptr(), NULL, NULL, NULL, source_context, 0, SCRIPTTEXT_HOSTMANAGESSOURCE | SCRIPTTEXT_ISVISIBLE, NULL, NULL);
+	}
 
 	if (SUCCEEDED(hr))
 	{
@@ -349,43 +310,39 @@ HRESULT ScriptHost::InvokeCallback(int callbackId, VARIANTARG* argv, UINT argc, 
 	{
 		hr = m_callback_invoker.invoke(callbackId, argv, argc, ret);
 	}
-	catch (std::exception& e)
-	{
-		pfc::print_guid guid(m_host->get_config_guid());
-		console::printf(JSP_NAME " (%s): Unhandled C++ Exception: \"%s\", will crash now...", m_host->ScriptInfo().build_info_string().get_ptr(), e.what());
-	}
-	catch (_com_error& e)
-	{
-		pfc::print_guid guid(m_host->get_config_guid());
-		console::printf(JSP_NAME " (%s): Unhandled COM Error: \"%s\", will crash now...", m_host->ScriptInfo().build_info_string().get_ptr(), pfc::stringcvt::string_utf8_from_wide(e.ErrorMessage()).get_ptr());
-	}
-	catch (...)
-	{
-		pfc::print_guid guid(m_host->get_config_guid());
-		console::printf(JSP_NAME " (%s): Unhandled Unknown Exception, will crash now...", m_host->ScriptInfo().build_info_string().get_ptr());
-	}
+	catch (...) {}
 
 	return hr;
 }
 
-HRESULT ScriptHost::ProcessImportedScripts(script_preprocessor& preprocessor, IActiveScriptParsePtr& parser)
+HRESULT ScriptHost::ProcessImportedScripts(IActiveScriptParsePtr& parser)
 {
-	// processing "@import"
-	script_preprocessor::t_script_list scripts;
-	HRESULT hr = preprocessor.process_import(m_host->ScriptInfo(), scripts);
+	pfc::string_formatter error_text;
 
-	for (t_size i = 0; i < scripts.get_count(); ++i)
+	t_size count = m_host->ScriptInfo().imports.get_count();
+	for (t_size i = 0; i < count; ++i)
 	{
-		DWORD source_context;
-
-		if (SUCCEEDED(hr)) hr = GenerateSourceContext(scripts[i].path.get_ptr(), scripts[i].code.get_ptr(), source_context);
-		if (FAILED(hr)) break;
-
-		m_contextToPathMap[source_context] = pfc::stringcvt::string_utf8_from_wide(scripts[i].path.get_ptr());
-		hr = parser->ParseScriptText(scripts[i].code.get_ptr(), NULL, NULL, NULL, source_context, 0, SCRIPTTEXT_HOSTMANAGESSOURCE | SCRIPTTEXT_ISVISIBLE, NULL, NULL);
+		pfc::string8_fast path = m_host->ScriptInfo().imports[i];
+		pfc::string8_fast code;
+		helpers::read_file(path, code);
+		if (code.get_length())
+		{
+			DWORD source_context;
+			GenerateSourceContext(path, source_context);
+			HRESULT hr = parser->ParseScriptText(pfc::stringcvt::string_wide_from_utf8_fast(code), NULL, NULL, NULL, source_context, 0, SCRIPTTEXT_HOSTMANAGESSOURCE | SCRIPTTEXT_ISVISIBLE, NULL, NULL);
+			if (FAILED(hr)) return hr;
+		}
+		else
+		{
+			error_text << "\nError: Failed to load " << path;
+		}
 	}
 
-	return hr;
+	if (error_text.get_length())
+	{
+		FB2K_console_formatter() << m_host->ScriptInfo().build_info_string() << error_text;
+	}
+	return S_OK;
 }
 
 STDMETHODIMP ScriptHost::EnableModeless(BOOL fEnable)
@@ -509,6 +466,16 @@ STDMETHODIMP_(ULONG) ScriptHost::Release()
 	return n;
 }
 
+bool ScriptHost::HasError()
+{
+	return m_has_error;
+}
+
+bool ScriptHost::Ready()
+{
+	return m_engine_inited && m_script_engine;
+}
+
 void ScriptHost::Finalize()
 {
 	InvokeCallback(CallbackIds::on_script_unload);
@@ -542,6 +509,12 @@ void ScriptHost::Finalize()
 	{
 		m_script_root.Release();
 	}
+}
+
+void ScriptHost::GenerateSourceContext(const pfc::string8_fast& path, DWORD& source_context)
+{
+	source_context = m_lastSourceContext++;
+	m_contextToPathMap[source_context] = path;
 }
 
 void ScriptHost::ReportError(IActiveScriptError* err)
@@ -579,7 +552,7 @@ void ScriptHost::ReportError(IActiveScriptError* err)
 	}
 
 	pfc::string_formatter formatter;
-	formatter << "Error: " JSP_NAME_VERSION " (" << m_host->ScriptInfo().build_info_string().get_ptr() << ")\n";
+	formatter << m_host->ScriptInfo().build_info_string() << "\n";
 
 	if (excep.bstrSource && excep.bstrDescription)
 	{
@@ -971,7 +944,7 @@ STDMETHODIMP FbWindow::get_Name(BSTR* p)
 	pfc::string8_fast name = m_host->ScriptInfo().name;
 	if (name.is_empty())
 	{
-		name = pfc::print_guid(m_host->GetGUID());
+		name = pfc::print_guid(m_host->get_config_guid());
 	}
 
 	*p = SysAllocString(pfc::stringcvt::string_wide_from_utf8_fast(name));

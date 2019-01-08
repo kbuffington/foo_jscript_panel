@@ -2,52 +2,6 @@
 #include "script_preprocessor.h"
 #include "helpers.h"
 
-HRESULT script_preprocessor::process_import(const t_script_info& info, t_script_list& scripts)
-{
-	HRESULT hr = S_OK;
-
-	if (!m_is_ok)
-	{
-		return hr;
-	}
-
-	pfc::string_formatter pre, error_text;
-	pre << "Error: " JSP_NAME_VERSION " (" << info.build_info_string() << ")";
-
-	for (t_size i = 0; i < m_directive_value_list.get_count(); ++i)
-	{
-		t_directive_value& val = m_directive_value_list[i];
-
-		if (wcscmp(val.directive.get_ptr(), L"import") == 0)
-		{
-			expand_var(val.value);
-
-			pfc::array_t<wchar_t> code;
-			bool success = helpers::read_file_wide(CP_ACP, val.value.get_ptr(), code);
-
-			if (success)
-			{
-				t_script_code script;
-				script.path = val.value;
-				script.code = code;
-
-				scripts.add_item(script);
-			}
-			else
-			{
-				error_text << "\nFailed to load: " << pfc::stringcvt::string_utf8_from_wide(val.value.get_ptr());
-			}
-		}
-	}
-
-	if (!error_text.is_empty())
-	{
-		FB2K_console_formatter() << pre << error_text;
-	}
-
-	return hr;
-}
-
 bool script_preprocessor::process_script_info(t_script_info& info)
 {
 	bool ret = false;
@@ -62,7 +16,7 @@ bool script_preprocessor::process_script_info(t_script_info& info)
 	{
 		t_directive_value& v = m_directive_value_list[i];
 		expand_var(v.value);
-		pfc::string_simple value = pfc::stringcvt::string_utf8_from_wide(v.value.get_ptr());
+		pfc::string8_fast value = pfc::stringcvt::string_utf8_from_wide(v.value.get_ptr());
 
 		if (wcscmp(v.directive.get_ptr(), L"name") == 0)
 		{
@@ -85,6 +39,10 @@ bool script_preprocessor::process_script_info(t_script_info& info)
 			{
 				info.feature_mask |= t_script_info::kFeatureDragDrop;
 			}
+		}
+		else if (wcscmp(v.directive.get_ptr(), L"import") == 0)
+		{
+			info.imports.add_item(value);
 		}
 	}
 

@@ -10,9 +10,6 @@
 
 // Smart pointers for Active Scripting
 _COM_SMARTPTR_TYPEDEF(IActiveScriptParse, IID_IActiveScriptParse);
-_COM_SMARTPTR_TYPEDEF(IProcessDebugManager, IID_IProcessDebugManager);
-_COM_SMARTPTR_TYPEDEF(IDebugDocumentHelper, IID_IDebugDocumentHelper);
-_COM_SMARTPTR_TYPEDEF(IDebugApplication, IID_IDebugApplication);
 
 class HostComm : public js_panel_vars
 {
@@ -44,7 +41,6 @@ public:
 		KInstanceTypeDUI,
 	};
 
-	GUID GetGUID();
 	HDC GetHDC();
 	HWND GetHWND();
 	POINT& MaxSize();
@@ -74,15 +70,10 @@ public:
 	ScriptHost(HostComm* host);
 	virtual ~ScriptHost();
 
-	bool HasError();
-	bool Ready();
-
-	HRESULT GenerateSourceContext(const wchar_t* path, const wchar_t* code, DWORD& source_context);
-	HRESULT InitScriptEngineByName(const wchar_t* engineName);
+	HRESULT InitScriptEngineByName(const char* engineName);
 	HRESULT Initialize();
 	HRESULT InvokeCallback(int callbackId, VARIANTARG* argv = NULL, UINT argc = 0, VARIANT* ret = NULL);
-	HRESULT ProcessImportedScripts(script_preprocessor& preprocessor, IActiveScriptParsePtr& parser);
-
+	HRESULT ProcessImportedScripts(IActiveScriptParsePtr& parser);
 	STDMETHODIMP EnableModeless(BOOL fEnable);
 	STDMETHODIMP GetDocVersionString(BSTR* pstr);
 	STDMETHODIMP GetItemInfo(LPCOLESTR name, DWORD mask, IUnknown** ppunk, ITypeInfo** ppti);
@@ -95,8 +86,10 @@ public:
 	STDMETHODIMP OnStateChange(SCRIPTSTATE state);
 	STDMETHOD_(ULONG, AddRef)();
 	STDMETHOD_(ULONG, Release)();
-
+	bool HasError();
+	bool Ready();
 	void Finalize();
+	void GenerateSourceContext(const pfc::string8_fast& path, DWORD& source_context);
 	void ReportError(IActiveScriptError* err);
 	void Stop();
 

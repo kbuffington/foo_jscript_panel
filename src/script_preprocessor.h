@@ -9,15 +9,8 @@ struct t_directive_value
 	t_array directive;
 	t_array value;
 
-	t_directive_value()
-	{
-	}
-
-	t_directive_value(const t_array& p_directive, const t_array& p_value) :
-		directive(p_directive),
-		value(p_value)
-	{
-	}
+	t_directive_value()	{}
+	t_directive_value(const t_array& p_directive, const t_array& p_value) : directive(p_directive), value(p_value) {}
 };
 
 struct t_script_info
@@ -27,9 +20,10 @@ struct t_script_info
 		kFeatureDragDrop = 1 << 1
 	};
 
-	pfc::string_simple name;
-	pfc::string_simple version;
-	pfc::string_simple author;
+	pfc::string_list_impl imports;
+	pfc::string8_fast name;
+	pfc::string8_fast version;
+	pfc::string8_fast author;
 	t_uint32 feature_mask;
 
 	t_script_info(GUID& guid_ref) : m_guid_ref(guid_ref)
@@ -38,17 +32,18 @@ struct t_script_info
 
 	void clear()
 	{
+		imports.remove_all();
 		name = "";
 		version = "";
 		author = "";
 		feature_mask = 0;
 	}
 
-	pfc::string8 build_info_string() const
+	pfc::string8_fast build_info_string() const
 	{
-		pfc::string8 ret;
-
-		if (!name.is_empty())
+		pfc::string8_fast ret;
+		ret << JSP_NAME_VERSION " (";
+		if (name.get_length())
 		{
 			ret << name;
 		}
@@ -57,15 +52,15 @@ struct t_script_info
 			ret << "{" << pfc::print_guid(m_guid_ref) << "}";
 		}
 
-		if (!version.is_empty())
+		if (version.get_length())
 		{
 			ret << " v" << version;
 		}
-		if (!author.is_empty())
+		if (author.get_length())
 		{
 			ret << " by " << author;
 		}
-
+		ret << ")";
 		return ret;
 	}
 
@@ -76,21 +71,12 @@ private:
 class script_preprocessor
 {
 public:
-	struct t_script_code
-	{
-		pfc::array_t<wchar_t> path;
-		pfc::array_t<wchar_t> code;
-	};
-
-	typedef pfc::list_t<t_script_code> t_script_list;
-
 	script_preprocessor(const wchar_t* script)
 	{
 		PFC_ASSERT(script != NULL);
 		m_is_ok = preprocess(script);
 	}
 
-	HRESULT process_import(const t_script_info& info, t_script_list& scripts);
 	bool process_script_info(t_script_info& info);
 
 private:
