@@ -52,10 +52,51 @@ namespace helpers
 		return hBitmap;
 	}
 
-	HRESULT get_album_art_embedded(BSTR rawpath, IGdiBitmap** pp, t_size art_id)
+	IGdiBitmap* get_album_art(const metadb_handle_ptr& handle, t_size art_id, bool need_stub, pfc::string_base& image_path, bool no_load)
 	{
-		if (!pp) return E_POINTER;
+		GUID what = convert_artid_to_guid(art_id);
+		abort_callback_dummy abort;
+		auto api = album_art_manager_v2::get();
+		album_art_extractor_instance_v2::ptr ptr;
+		album_art_data_ptr data;
+		Gdiplus::Bitmap* bitmap = NULL;
+		IGdiBitmap* ret = NULL;
 
+		try
+		{
+			ptr = api->open(pfc::list_single_ref_t<metadb_handle_ptr>(handle), pfc::list_single_ref_t<GUID>(what), abort);
+			data = ptr->query(what, abort);
+		}
+		catch (...)
+		{
+			if (need_stub)
+			{
+				try
+				{
+					ptr = api->open_stub(abort);
+					data = ptr->query(what, abort);
+				}
+				catch (...) {}
+			}
+		}
+
+		if (data.is_valid())
+		{
+			if (!no_load && read_album_art_into_bitmap(data, &bitmap))
+			{
+				ret = new com_object_impl_t<GdiBitmap>(bitmap);
+			}
+			album_art_path_list::ptr pathlist = ptr->query_paths(what, abort);
+			if (pathlist->get_count() > 0)
+			{
+				image_path.set_string(file_path_display(pathlist->get_path(0)));
+			}
+		}
+		return ret;
+	}
+
+	IGdiBitmap* get_album_art_embedded(BSTR rawpath, t_size art_id)
+	{
 		pfc::stringcvt::string_utf8_from_wide urawpath(rawpath);
 		IGdiBitmap* ret = NULL;
 
@@ -82,45 +123,7 @@ namespace helpers
 			{
 			}
 		}
-		*pp = ret;
-		return S_OK;
-	}
-
-	HRESULT get_album_art_v2(const metadb_handle_ptr& handle, IGdiBitmap** pp, t_size art_id, bool need_stub, bool no_load, pfc::string_base* image_path_ptr)
-	{
-		if (handle.is_empty() || !pp) return E_POINTER;
-
-		GUID what = convert_artid_to_guid(art_id);
-		abort_callback_dummy abort;
-		auto aamv2 = album_art_manager_v2::get();
-		album_art_extractor_instance_v2::ptr aaeiv2;
-		IGdiBitmap* ret = NULL;
-
-		try
-		{
-			aaeiv2 = aamv2->open(pfc::list_single_ref_t<metadb_handle_ptr>(handle), pfc::list_single_ref_t<GUID>(what), abort);
-
-			ret = query_album_art(aaeiv2, what, no_load, image_path_ptr);
-		}
-		catch (...)
-		{
-			if (need_stub)
-			{
-				album_art_extractor_instance_v2::ptr aaeiv2_stub = aamv2->open_stub(abort);
-
-				try
-				{
-					album_art_data_ptr data = aaeiv2_stub->query(what, abort);
-					ret = query_album_art(aaeiv2_stub, what, no_load, image_path_ptr);
-				}
-				catch (...)
-				{
-				}
-			}
-		}
-
-		*pp = ret;
-		return S_OK;
+		return ret;
 	}
 
 	IGdiBitmap* load_image(BSTR path)
@@ -139,27 +142,6 @@ namespace helpers
 			{
 				if (img) delete img;
 				img = NULL;
-			}
-		}
-		return ret;
-	}
-
-	IGdiBitmap* query_album_art(album_art_extractor_instance_v2::ptr extractor, GUID& what, bool no_load, pfc::string_base* image_path_ptr)
-	{
-		abort_callback_dummy abort;
-		album_art_data_ptr data = extractor->query(what, abort);
-		Gdiplus::Bitmap* bitmap = NULL;
-		IGdiBitmap* ret = NULL;
-		if (!no_load && read_album_art_into_bitmap(data, &bitmap))
-		{
-			ret = new com_object_impl_t<GdiBitmap>(bitmap);
-		}
-		if (image_path_ptr && (no_load || ret))
-		{
-			album_art_path_list::ptr pathlist = extractor->query_paths(what, abort);
-			if (pathlist->get_count() > 0)
-			{
-				image_path_ptr->set_string(pathlist->get_path(0));
 			}
 		}
 		return ret;
@@ -834,19 +816,21 @@ namespace helpers
 		{
 			if (m_only_embed)
 			{
-				get_album_art_embedded(m_rawpath, &bitmap, m_art_id);
+				bitmap = get_album_art_embedded(m_rawpath, m_art_id);
 				if (bitmap)
-					image_path = m_handle->get_path();
+				{
+					image_path = file_path_display(m_handle->get_path());
+				}
 			}
 			else
 			{
-				get_album_art_v2(m_handle, &bitmap, m_art_id, m_need_stub, m_no_load, &image_path);
+				bitmap = get_album_art(m_handle, m_art_id, m_need_stub, image_path, m_no_load);
 			}
 
 			handle = new com_object_impl_t<FbMetadbHandle>(m_handle);
 		}
 
-		t_param param(handle, m_art_id, bitmap, image_path.is_empty() ? "" : file_path_display(image_path));
+		t_param param(handle, m_art_id, bitmap, image_path);
 		SendMessage(m_notify_hwnd, CALLBACK_UWM_ON_GET_ALBUM_ART_DONE, 0, (LPARAM)&param);
 	}
 

@@ -206,6 +206,7 @@ __interface IFbMetadbHandle : IDisposable
 {
 	STDMETHOD(ClearStats)();
 	STDMETHOD(Compare)(IFbMetadbHandle* handle, [out, retval] VARIANT_BOOL* p);
+	STDMETHOD(GetAlbumArt)([defaultvalue(0)] UINT art_id, [defaultvalue(-1)] VARIANT_BOOL need_stub, [out, retval] VARIANT* p);
 	STDMETHOD(GetFileInfo)([out, retval] IFbFileInfo** pp);
 	STDMETHOD(RefreshStats)();
 	STDMETHOD(SetFirstPlayed)(BSTR first_played);

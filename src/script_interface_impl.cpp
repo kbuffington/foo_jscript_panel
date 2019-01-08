@@ -296,6 +296,29 @@ STDMETHODIMP FbMetadbHandle::Compare(IFbMetadbHandle* handle, VARIANT_BOOL* p)
 	return S_OK;
 }
 
+STDMETHODIMP FbMetadbHandle::GetAlbumArt(UINT art_id, VARIANT_BOOL need_stub, VARIANT* p)
+{
+	if (m_handle.is_empty() || !p) return E_POINTER;
+
+	pfc::string8_fast image_path;
+	IGdiBitmap* bitmap = helpers::get_album_art(m_handle, art_id, need_stub != VARIANT_FALSE, image_path);
+
+	_variant_t var1, var2;
+	var1.vt = VT_DISPATCH;
+	var1.pdispVal = bitmap;
+	var2.vt = VT_BSTR;
+	var2.bstrVal = SysAllocString(pfc::stringcvt::string_wide_from_utf8_fast(image_path));
+
+	helpers::com_array helper;
+	if (!helper.create(2)) return E_OUTOFMEMORY;
+	if (!helper.put_item(0, var1)) return E_OUTOFMEMORY;
+	if (!helper.put_item(1, var2)) return E_OUTOFMEMORY;
+
+	p->vt = VT_ARRAY | VT_VARIANT;
+	p->parray = helper.get_ptr();
+	return S_OK;
+}
+
 STDMETHODIMP FbMetadbHandle::GetFileInfo(IFbFileInfo** pp)
 {
 	if (m_handle.is_empty() || !pp) return E_POINTER;
@@ -4009,7 +4032,8 @@ STDMETHODIMP JSUtils::GetAlbumArtEmbedded(BSTR rawpath, UINT art_id, IGdiBitmap*
 {
 	if (!pp) return E_POINTER;
 
-	return helpers::get_album_art_embedded(rawpath, pp, art_id);
+	*pp = helpers::get_album_art_embedded(rawpath, art_id);
+	return S_OK;
 }
 
 STDMETHODIMP JSUtils::GetAlbumArtV2(IFbMetadbHandle* handle, UINT art_id, VARIANT_BOOL need_stub, IGdiBitmap** pp)
@@ -4018,24 +4042,20 @@ STDMETHODIMP JSUtils::GetAlbumArtV2(IFbMetadbHandle* handle, UINT art_id, VARIAN
 
 	metadb_handle* ptr = NULL;
 	handle->get__ptr((void**)&ptr);
-	return helpers::get_album_art_v2(ptr, pp, art_id, need_stub != VARIANT_FALSE);
+	pfc::string8_fast dummy;
+	*pp = helpers::get_album_art(ptr, art_id, need_stub != VARIANT_FALSE, dummy);
+	return S_OK;
 }
 
 STDMETHODIMP JSUtils::GetSysColour(UINT index, int* p)
 {
 	if (!p) return E_POINTER;
 
-	if (::GetSysColorBrush(index) == NULL)
+	*p = 0;
+	if (::GetSysColorBrush(index) != NULL)
 	{
-		// invalid index
-		*p = 0;
+		*p = helpers::convert_colorref_to_argb(::GetSysColor(index));
 	}
-	else
-	{
-		int col = ::GetSysColor(index);
-		*p = helpers::convert_colorref_to_argb(col);
-	}
-
 	return S_OK;
 }
 

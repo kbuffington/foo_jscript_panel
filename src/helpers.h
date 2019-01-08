@@ -23,10 +23,9 @@ namespace helpers
 	COLORREF convert_argb_to_colorref(DWORD argb);
 	DWORD convert_colorref_to_argb(COLORREF color);
 	HBITMAP create_hbitmap_from_gdiplus_bitmap(Gdiplus::Bitmap* bitmap_ptr);
-	HRESULT get_album_art_embedded(BSTR rawpath, IGdiBitmap** pp, t_size art_id);
-	HRESULT get_album_art_v2(const metadb_handle_ptr& handle, IGdiBitmap** pp, t_size art_id, bool need_stub, bool no_load = false, pfc::string_base* image_path_ptr = NULL);
+	IGdiBitmap* get_album_art(const metadb_handle_ptr& handle, t_size art_id, bool need_stub, pfc::string_base& image_path, bool no_load = false);
+	IGdiBitmap* get_album_art_embedded(BSTR rawpath, t_size art_id);
 	IGdiBitmap* load_image(BSTR path);
-	IGdiBitmap* query_album_art(album_art_extractor_instance_v2::ptr extractor, GUID& what, bool no_load = false, pfc::string_base* image_path_ptr = NULL);
 	bool execute_context_command_by_name(const char* p_command, metadb_handle_list_cref p_handles, t_size flags);
 	bool execute_context_command_recur(const char* p_command, pfc::string_base& p_path, contextmenu_node* p_parent);
 	bool execute_mainmenu_command_by_name(const char* p_command);
