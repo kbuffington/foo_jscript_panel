@@ -272,9 +272,9 @@ protected:
 	virtual void FinalRelease();
 
 public:
-	STDMETHODIMP Eval(VARIANT_BOOL force, BSTR* pp);
-	STDMETHODIMP EvalWithMetadb(IFbMetadbHandle* handle, BSTR* pp);
-	STDMETHODIMP EvalWithMetadbs(IFbMetadbHandleList* handles, VARIANT* pp);
+	STDMETHODIMP Eval(VARIANT_BOOL force, BSTR* p);
+	STDMETHODIMP EvalWithMetadb(IFbMetadbHandle* handle, BSTR* p);
+	STDMETHODIMP EvalWithMetadbs(IFbMetadbHandleList* handles, VARIANT* p);
 	STDMETHODIMP get__ptr(void** pp);
 };
 

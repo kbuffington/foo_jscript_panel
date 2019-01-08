@@ -552,23 +552,17 @@ STDMETHODIMP FbMetadbHandleList::Convert(VARIANT* p)
 {
 	if (!p) return E_POINTER;
 
-	t_size count = m_handles.get_count();
-	helpers::com_array_writer helper;
+	LONG count = m_handles.get_count();
+	helpers::com_array helper;
 	if (!helper.create(count)) return E_OUTOFMEMORY;
 
-	for (t_size i = 0; i < count; ++i)
+	for (LONG i = 0; i < count; ++i)
 	{
 		_variant_t var;
 		var.vt = VT_DISPATCH;
 		var.pdispVal = new com_object_impl_t<FbMetadbHandle>(m_handles[i]);
-
-		if (FAILED(helper.put(i, var)))
-		{
-			helper.reset();
-			return E_OUTOFMEMORY;
-		}
+		if (!helper.put_item(i, var)) return E_OUTOFMEMORY;
 	}
-
 	p->vt = VT_ARRAY | VT_VARIANT;
 	p->parray = helper.get_ptr();
 	return S_OK;
@@ -588,33 +582,24 @@ STDMETHODIMP FbMetadbHandleList::GetLibraryRelativePaths(VARIANT* p)
 {
 	if (!p) return E_POINTER;
 
-	auto api = library_manager::get();
-	t_size i, count = m_handles.get_count();
-
-	helpers::com_array_writer helper;
+	LONG count = m_handles.get_count();
+	helpers::com_array helper;
 	if (!helper.create(count)) return E_OUTOFMEMORY;
 
 	pfc::string8_fastalloc temp;
 	temp.prealloc(512);
 
-	for (i = 0; i < count; ++i)
-	{
-		metadb_handle_ptr item;
-		m_handles.get_item_ex(item, i);
-		if (!api->get_relative_path(item, temp)) temp = "";
+	auto api = library_manager::get();
 
+	for (LONG i = 0; i < count; ++i)
+	{
+		metadb_handle_ptr item = m_handles[i];
+		if (!api->get_relative_path(item, temp)) temp = "";
 		_variant_t var;
 		var.vt = VT_BSTR;
-		var.bstrVal = SysAllocString(pfc::stringcvt::string_wide_from_utf8_fast(temp.get_ptr()));
-
-		if (FAILED(helper.put(i, var)))
-		{
-			// deep destroy
-			helper.reset();
-			return E_OUTOFMEMORY;
-		}
+		var.bstrVal = SysAllocString(pfc::stringcvt::string_wide_from_utf8_fast(temp));
+		if (!helper.put_item(i, var)) return E_OUTOFMEMORY;
 	}
-
 	p->vt = VT_ARRAY | VT_VARIANT;
 	p->parray = helper.get_ptr();
 	return S_OK;
@@ -1053,30 +1038,31 @@ STDMETHODIMP FbPlaylistManager::AddItemToPlaybackQueue(IFbMetadbHandle* handle)
 
 STDMETHODIMP FbPlaylistManager::AddLocations(UINT playlistIndex, VARIANT locations, VARIANT_BOOL select)
 {
-	t_size base = playlist_manager::get()->playlist_get_item_count(playlistIndex);
-
-	helpers::com_array_reader helper;
-	if (!helper.convert(&locations)) return E_INVALIDARG;
-
-	pfc::string_list_impl locations2;
-
-	for (LONG i = 0; i < helper.get_count(); ++i)
+	auto api = playlist_manager::get();
+	if (playlistIndex < api->get_playlist_count() && !api->playlist_lock_is_present(playlistIndex))
 	{
-		_variant_t varUrl;
-		helper.get_item(i, varUrl);
-		if (FAILED(VariantChangeType(&varUrl, &varUrl, 0, VT_BSTR))) return E_INVALIDARG;
-		locations2.add_item(pfc::string8(pfc::stringcvt::string_utf8_from_wide(varUrl.bstrVal)));
+		helpers::com_array helper;
+		if (!helper.convert(&locations)) return E_INVALIDARG;
+		LONG count = helper.get_count();
+		pfc::string_list_impl list;
+		for (LONG i = 0; i < count; ++i)
+		{
+			_variant_t var;
+			if (!helper.get_item(i, var, VT_BSTR)) return E_INVALIDARG;
+			list.add_item(pfc::stringcvt::string_utf8_from_wide(var.bstrVal));
+		}
+
+		playlist_incoming_item_filter_v2::get()->process_locations_async(
+			list,
+			playlist_incoming_item_filter_v2::op_flag_no_filter | playlist_incoming_item_filter_v2::op_flag_delay_ui,
+			NULL,
+			NULL,
+			NULL,
+			fb2k::service_new<helpers::js_process_locations>(select != VARIANT_FALSE, api->playlist_get_item_count(playlistIndex), playlistIndex));
+
+		return S_OK;
 	}
-
-	playlist_incoming_item_filter_v2::get()->process_locations_async(
-		locations2,
-		playlist_incoming_item_filter_v2::op_flag_no_filter | playlist_incoming_item_filter_v2::op_flag_delay_ui,
-		NULL,
-		NULL,
-		NULL,
-		new service_impl_t<helpers::js_process_locations>(select != VARIANT_FALSE, base, playlistIndex));
-
-	return S_OK;
+	return E_INVALIDARG;
 }
 
 STDMETHODIMP FbPlaylistManager::AddPlaylistItemToPlaybackQueue(UINT playlistIndex, UINT playlistItemIndex)
@@ -1235,21 +1221,17 @@ STDMETHODIMP FbPlaylistManager::GetPlaybackQueueContents(VARIANT* outContents)
 
 	pfc::list_t<t_playback_queue_item> contents;
 	playlist_manager::get()->queue_get_contents(contents);
-	t_size count = contents.get_count();
-	helpers::com_array_writer helper;
+	LONG count = contents.get_count();
+	helpers::com_array helper;
 	if (!helper.create(count)) return E_OUTOFMEMORY;
 
-	for (t_size i = 0; i < count; ++i)
+	for (LONG i = 0; i < count; ++i)
 	{
 		_variant_t var;
 		var.vt = VT_DISPATCH;
 		var.pdispVal = new com_object_impl_t<FbPlaybackQueueItem>(contents[i]);
 
-		if (FAILED(helper.put(i, var)))
-		{
-			helper.reset();
-			return E_OUTOFMEMORY;
-		}
+		if (!helper.put_item(i, var)) return E_OUTOFMEMORY;
 	}
 
 	outContents->vt = VT_ARRAY | VT_VARIANT;
@@ -1425,9 +1407,10 @@ STDMETHODIMP FbPlaylistManager::RemoveItemsFromPlaybackQueue(VARIANT affectedIte
 {
 	auto api = playlist_manager::get();
 	pfc::bit_array_bittable affected(api->queue_get_count());
-	bool ok;
-	if (!helpers::com_array_to_bitarray::convert(affectedItems, affected, ok)) return E_INVALIDARG;
-	if (ok)
+	helpers::com_array helper;
+
+	if (!helper.convert_to_bit_array(affectedItems, affected)) return E_INVALIDARG;
+	if (helper.get_count() > 0)
 	{
 		api->queue_remove_mask(affected);
 	}
@@ -1489,9 +1472,9 @@ STDMETHODIMP FbPlaylistManager::SetPlaylistSelection(UINT playlistIndex, VARIANT
 {
 	auto api = playlist_manager::get();
 	pfc::bit_array_bittable affected(api->playlist_get_item_count(playlistIndex));
-	bool ok;
-	if (!helpers::com_array_to_bitarray::convert(affectedItems, affected, ok)) return E_INVALIDARG;
-	if (ok)
+	helpers::com_array helper;
+	if (!helper.convert_to_bit_array(affectedItems, affected)) return E_INVALIDARG;
+	if (helper.get_count() > 0)
 	{
 		pfc::bit_array_val status(state != VARIANT_FALSE);
 		api->playlist_set_selection(playlistIndex, affected, status);
@@ -1681,9 +1664,9 @@ STDMETHODIMP FbPlaylistRecyclerManager::Purge(VARIANT affectedItems)
 {
 	auto api = playlist_manager_v3::get();
 	pfc::bit_array_bittable affected(api->recycler_get_count());
-	bool ok;
-	if (!helpers::com_array_to_bitarray::convert(affectedItems, affected, ok)) return E_INVALIDARG;
-	if (ok)
+	helpers::com_array helper;
+	if (!helper.convert_to_bit_array(affectedItems, affected)) return E_INVALIDARG;
+	if (helper.get_count() > 0)
 	{
 		api->recycler_purge(affected);
 	}
@@ -1786,9 +1769,9 @@ void FbTitleFormat::FinalRelease()
 	m_obj.release();
 }
 
-STDMETHODIMP FbTitleFormat::Eval(VARIANT_BOOL force, BSTR* pp)
+STDMETHODIMP FbTitleFormat::Eval(VARIANT_BOOL force, BSTR* p)
 {
-	if (m_obj.is_empty() || !pp) return E_POINTER;
+	if (m_obj.is_empty() || !p) return E_POINTER;
 
 	pfc::string8_fast text;
 
@@ -1799,13 +1782,13 @@ STDMETHODIMP FbTitleFormat::Eval(VARIANT_BOOL force, BSTR* pp)
 		handle->format_title(NULL, text, m_obj, NULL);
 	}
 
-	*pp = SysAllocString(pfc::stringcvt::string_wide_from_utf8_fast(text));
+	*p = SysAllocString(pfc::stringcvt::string_wide_from_utf8_fast(text));
 	return S_OK;
 }
 
-STDMETHODIMP FbTitleFormat::EvalWithMetadb(IFbMetadbHandle* handle, BSTR* pp)
+STDMETHODIMP FbTitleFormat::EvalWithMetadb(IFbMetadbHandle* handle, BSTR* p)
 {
-	if (m_obj.is_empty() || !pp) return E_POINTER;
+	if (m_obj.is_empty() || !p) return E_POINTER;
 
 	metadb_handle* ptr = NULL;
 	handle->get__ptr((void**)&ptr);
@@ -1813,42 +1796,33 @@ STDMETHODIMP FbTitleFormat::EvalWithMetadb(IFbMetadbHandle* handle, BSTR* pp)
 	pfc::string8_fast text;
 	ptr->format_title(NULL, text, m_obj, NULL);
 
-	*pp = SysAllocString(pfc::stringcvt::string_wide_from_utf8_fast(text));
+	*p = SysAllocString(pfc::stringcvt::string_wide_from_utf8_fast(text));
 	return S_OK;
 }
 
-STDMETHODIMP FbTitleFormat::EvalWithMetadbs(IFbMetadbHandleList* handles, VARIANT* pp)
+STDMETHODIMP FbTitleFormat::EvalWithMetadbs(IFbMetadbHandleList* handles, VARIANT* p)
 {
-	if (m_obj.is_empty() || !pp) return E_POINTER;
+	if (m_obj.is_empty() || !p) return E_POINTER;
 
 	metadb_handle_list* handles_ptr = NULL;
 	handles->get__ptr((void**)&handles_ptr);
 
 	metadb_handle_list_ref handles_ref = *handles_ptr;
-	t_size count = handles_ref.get_count();
-
-	helpers::com_array_writer helper;
+	LONG count = handles_ref.get_count();
+	helpers::com_array helper;
 	if (!helper.create(count)) return E_OUTOFMEMORY;
 
-	for (t_size i = 0; i < count; ++i)
+	for (LONG i = 0; i < count; ++i)
 	{
 		pfc::string8_fast text;
 		handles_ref[i]->format_title(NULL, text, m_obj, NULL);
-
 		_variant_t var;
 		var.vt = VT_BSTR;
-		var.bstrVal = SysAllocString(pfc::stringcvt::string_wide_from_utf8_fast(text.get_ptr()));
-
-		if (FAILED(helper.put(i, var)))
-		{
-			// deep destroy
-			helper.reset();
-			return E_OUTOFMEMORY;
-		}
+		var.bstrVal = SysAllocString(pfc::stringcvt::string_wide_from_utf8_fast(text));
+		if (!helper.put_item(i, var)) return E_OUTOFMEMORY;
 	}
-
-	pp->vt = VT_ARRAY | VT_VARIANT;
-	pp->parray = helper.get_ptr();
+	p->vt = VT_ARRAY | VT_VARIANT;
+	p->parray = helper.get_ptr();
 	return S_OK;
 }
 
@@ -2924,7 +2898,7 @@ STDMETHODIMP GdiBitmap::GetColourScheme(UINT count, VARIANT* outArray)
 		return a.second > b.second;
 	});
 
-	helpers::com_array_writer helper;
+	helpers::com_array helper;
 	if (!helper.create(count)) return E_OUTOFMEMORY;
 
 	for (LONG i = 0; i < helper.get_count(); ++i)
@@ -2933,13 +2907,8 @@ STDMETHODIMP GdiBitmap::GetColourScheme(UINT count, VARIANT* outArray)
 		var.vt = VT_UI4;
 		var.ulVal = sort_vec[i].first;
 
-		if (FAILED(helper.put(i, var)))
-		{
-			helper.reset();
-			return E_OUTOFMEMORY;
-		}
+		if (!helper.put_item(i, var)) return E_OUTOFMEMORY;
 	}
-
 	outArray->vt = VT_ARRAY | VT_VARIANT;
 	outArray->parray = helper.get_ptr();
 	return S_OK;
@@ -3310,25 +3279,22 @@ STDMETHODIMP GdiGraphics::DrawPolygon(VARIANT colour, float line_width, VARIANT 
 {
 	if (!m_ptr) return E_POINTER;
 
-	helpers::com_array_reader helper;
+	helpers::com_array helper;
 	if (!helper.convert(&points)) return E_INVALIDARG;
-	if ((helper.get_count() % 2) != 0) return E_INVALIDARG;
+	LONG count = helper.get_count();
+	if (count % 2 != 0) return E_INVALIDARG;
 
 	pfc::array_t<Gdiplus::PointF> point_array;
-	point_array.set_count(helper.get_count() >> 1);
+	point_array.set_size(count / 2);
 
-	for (LONG i = 0; i < static_cast<LONG>(point_array.get_count()); ++i)
+	for (LONG i = 0; i < count / 2; ++i)
 	{
 		_variant_t varX, varY;
 
-		helper.get_item(i * 2, varX);
-		helper.get_item(i * 2 + 1, varY);
+		if (!helper.get_item(i * 2, varX, VT_R4)) return E_INVALIDARG;
+		if (!helper.get_item((i * 2) + 1, varY, VT_R4)) return E_INVALIDARG;
 
-		if (FAILED(VariantChangeType(&varX, &varX, 0, VT_R4))) return E_INVALIDARG;
-		if (FAILED(VariantChangeType(&varY, &varY, 0, VT_R4))) return E_INVALIDARG;
-
-		point_array[i].X = varX.fltVal;
-		point_array[i].Y = varY.fltVal;
+		point_array[i] = { varX.fltVal, varY.fltVal };
 	}
 
 	Gdiplus::Pen pen(helpers::get_colour_from_variant(colour), line_width);
@@ -3387,35 +3353,28 @@ STDMETHODIMP GdiGraphics::EstimateLineWrap(BSTR str, IGdiFont* font, int max_wid
 	if (!m_ptr || !p) return E_POINTER;
 
 	HFONT hFont = NULL;
-	font->get_HFont((UINT *)&hFont);
-	HFONT oldfont;
+	font->get_HFont((UINT*)&hFont);
 	HDC dc = m_ptr->GetHDC();
+	HFONT oldfont = SelectFont(dc, hFont);
+
 	pfc::list_t<helpers::wrapped_item> result;
-	oldfont = SelectFont(dc, hFont);
 	estimate_line_wrap(dc, str, SysStringLen(str), max_width, result);
 	SelectFont(dc, oldfont);
 	m_ptr->ReleaseHDC(dc);
 
-	helpers::com_array_writer helper;
-
-	if (!helper.create(result.get_count() * 2))
-	{
-		return E_OUTOFMEMORY;
-	}
-
-	for (LONG i = 0; i < helper.get_count() / 2; ++i)
+	LONG count = result.get_count() * 2;
+	helpers::com_array helper;
+	if (!helper.create(count)) return E_OUTOFMEMORY;
+	for (LONG i = 0; i < count / 2; ++i)
 	{
 		_variant_t var1, var2;
-
 		var1.vt = VT_BSTR;
 		var1.bstrVal = result[i].text;
 		var2.vt = VT_I4;
 		var2.lVal = result[i].width;
-
-		helper.put(i * 2, var1);
-		helper.put(i * 2 + 1, var2);
+		if (!helper.put_item(i * 2, var1)) return E_OUTOFMEMORY;
+		if (!helper.put_item((i * 2) + 1, var2)) return E_OUTOFMEMORY;
 	}
-
 	p->vt = VT_ARRAY | VT_VARIANT;
 	p->parray = helper.get_ptr();
 	return S_OK;
@@ -3445,25 +3404,22 @@ STDMETHODIMP GdiGraphics::FillPolygon(VARIANT colour, int fillmode, VARIANT poin
 {
 	if (!m_ptr) return E_POINTER;
 
-	helpers::com_array_reader helper;
+	helpers::com_array helper;
 	if (!helper.convert(&points)) return E_INVALIDARG;
-	if ((helper.get_count() % 2) != 0) return E_INVALIDARG;
+	LONG count = helper.get_count();
+	if (count % 2 != 0) return E_INVALIDARG;
 
 	pfc::array_t<Gdiplus::PointF> point_array;
-	point_array.set_count(helper.get_count() >> 1);
+	point_array.set_size(count / 2);
 
-	for (LONG i = 0; i < static_cast<LONG>(point_array.get_count()); ++i)
+	for (LONG i = 0; i < count / 2; ++i)
 	{
 		_variant_t varX, varY;
 
-		helper.get_item(i * 2, varX);
-		helper.get_item(i * 2 + 1, varY);
+		if (!helper.get_item(i * 2, varX, VT_R4)) return E_INVALIDARG;
+		if (!helper.get_item((i * 2) + 1, varY, VT_R4)) return E_INVALIDARG;
 
-		if (FAILED(VariantChangeType(&varX, &varX, 0, VT_R4))) return E_INVALIDARG;
-		if (FAILED(VariantChangeType(&varY, &varY, 0, VT_R4))) return E_INVALIDARG;
-
-		point_array[i].X = varX.fltVal;
-		point_array[i].Y = varY.fltVal;
+		point_array[i] = { varX.fltVal, varY.fltVal };
 	}
 
 	Gdiplus::SolidBrush br(helpers::get_colour_from_variant(colour));
@@ -3947,7 +3903,7 @@ STDMETHODIMP JSUtils::FileTest(BSTR path, BSTR mode, VARIANT* p)
 		const wchar_t* fn = PathFindFileName(path);
 		const wchar_t* ext = PathFindExtension(fn);
 		wchar_t dir[MAX_PATH] = { 0 };
-		helpers::com_array_writer helper;
+		helpers::com_array helper;
 		_variant_t vars[3];
 
 		if (!helper.create(_countof(vars))) return E_OUTOFMEMORY;
@@ -3978,11 +3934,7 @@ STDMETHODIMP JSUtils::FileTest(BSTR path, BSTR mode, VARIANT* p)
 
 		for (LONG i = 0; i < helper.get_count(); ++i)
 		{
-			if (FAILED(helper.put(i, vars[i])))
-			{
-				helper.reset();
-				return E_OUTOFMEMORY;
-			}
+			if (!helper.put_item(i, vars[i])) return E_OUTOFMEMORY;
 		}
 
 		p->vt = VT_VARIANT | VT_ARRAY;
@@ -4124,7 +4076,7 @@ STDMETHODIMP JSUtils::Glob(BSTR pattern, UINT exc_mask, UINT inc_mask, VARIANT* 
 	delete ff;
 	ff = NULL;
 
-	helpers::com_array_writer helper;
+	helpers::com_array helper;
 
 	if (!helper.create(files.get_count())) return E_OUTOFMEMORY;
 
@@ -4134,12 +4086,7 @@ STDMETHODIMP JSUtils::Glob(BSTR pattern, UINT exc_mask, UINT inc_mask, VARIANT* 
 		var.vt = VT_BSTR;
 		var.bstrVal = SysAllocString(pfc::stringcvt::string_wide_from_utf8_fast(files[i]).get_ptr());
 
-		if (FAILED(helper.put(i, var)))
-		{
-			// deep destroy
-			helper.reset();
-			return E_OUTOFMEMORY;
-		}
+		if (!helper.put_item(i, var)) return E_OUTOFMEMORY;
 	}
 
 	p->vt = VT_ARRAY | VT_VARIANT;

@@ -241,171 +241,17 @@ namespace helpers
 		t_size m_playlist;
 	};
 
-	class com_array_reader
+	class com_array
 	{
 	public:
-		com_array_reader() : m_psa(NULL)
+		com_array() : m_psa(NULL), m_reader(true), m_count(0) {}
+
+		~com_array()
 		{
-			reset();
-		}
-
-		~com_array_reader()
-		{
-			reset();
-		}
-
-		SAFEARRAY* get_ptr()
-		{
-			return m_psa;
-		}
-
-		LONG get_lbound()
-		{
-			return m_lbound;
-		}
-
-		LONG get_ubound()
-		{
-			return m_ubound;
-		}
-
-		int get_count()
-		{
-			return get_ubound() - get_lbound() + 1;
-		}
-
-		bool get_item(LONG idx, VARIANT& dest)
-		{
-			if (!m_psa || idx < m_lbound || idx > m_ubound) return false;
-
-			return SUCCEEDED(SafeArrayGetElement(m_psa, &idx, &dest));
-		}
-
-		VARIANT operator[](LONG idx)
-		{
-			_variant_t var;
-
-			if (!get_item(idx, var))
+			if (m_reader)
 			{
-				throw std::out_of_range("Out of range");
+				reset();
 			}
-
-			return var;
-		}
-
-		bool convert(VARIANT* pVarSrc)
-		{
-			reset();
-
-			if (!pVarSrc) return false;
-
-			if ((pVarSrc->vt & VT_ARRAY) && pVarSrc->parray)
-			{
-				return (SUCCEEDED(SafeArrayCopy(pVarSrc->parray, &m_psa)));
-			}
-			else if ((pVarSrc->vt & VT_TYPEMASK) == VT_DISPATCH)
-			{
-				IDispatch* pdisp = pVarSrc->pdispVal;
-
-				if (pVarSrc->vt & VT_BYREF)
-				{
-					pdisp = *(pVarSrc->ppdispVal);
-				}
-
-				if (pdisp)
-				{
-					return convert_jsarray(pdisp);
-				}
-			}
-
-			return false;
-		}
-
-		void reset()
-		{
-			m_ubound = -1;
-			m_lbound = 0;
-
-			if (m_psa)
-			{
-				SafeArrayDestroy(m_psa);
-				m_psa = NULL;
-			}
-		}
-
-	private:
-		bool convert_jsarray(IDispatch* pdisp)
-		{
-			if (!pdisp) return false;
-
-			DISPPARAMS params = { 0 };
-			_variant_t ret;
-
-			DISPID id_length;
-			LPOLESTR slength = L"length";
-
-			if (FAILED(pdisp->GetIDsOfNames(IID_NULL, &slength, 1, LOCALE_USER_DEFAULT, &id_length)))
-				return false;
-
-			if (FAILED(pdisp->Invoke(id_length, IID_NULL, LOCALE_USER_DEFAULT, DISPATCH_PROPERTYGET, &params, &ret, NULL, NULL)))
-				return false;
-
-			if (FAILED(VariantChangeType(&ret, &ret, 0, VT_I4)))
-				return false;
-
-			m_lbound = 0;
-			m_ubound = ret.lVal - 1;
-
-			SAFEARRAY* psa = SafeArrayCreateVector(VT_VARIANT, 0, get_count());
-
-			if (!psa) goto cleanup_and_return;
-
-			for (LONG i = m_lbound; i <= m_ubound; ++i)
-			{
-				DISPID dispid = 0;
-				params = { 0 };
-				wchar_t buf[33];
-				LPOLESTR name = buf;
-				_variant_t element;
-				HRESULT hr = S_OK;
-
-				_itow_s(i, buf, 10);
-
-				if (SUCCEEDED(hr)) hr = pdisp->GetIDsOfNames(IID_NULL, &name, 1, LOCALE_USER_DEFAULT, &dispid);
-				if (SUCCEEDED(hr)) hr = pdisp->Invoke(dispid, IID_NULL, LOCALE_USER_DEFAULT, DISPATCH_PROPERTYGET, &params, &element, NULL, NULL);
-
-				if (FAILED(hr)) goto cleanup_and_return;
-				if (FAILED(SafeArrayPutElement(psa, &i, &element))) goto cleanup_and_return;
-			}
-
-			m_psa = psa;
-			return true;
-
-		cleanup_and_return:
-			reset();
-			SafeArrayDestroy(psa);
-			return false;
-		}
-
-		SAFEARRAY* m_psa;
-		LONG m_lbound, m_ubound;
-	};
-
-	class com_array_writer
-	{
-	public:
-		com_array_writer() : m_psa(NULL)
-		{
-			reset();
-		}
-
-		~com_array_writer()
-		{
-		}
-
-		SAFEARRAY* get_ptr()
-		{
-			return m_psa;
 		}
 
 		LONG get_count()
@@ -413,28 +259,101 @@ namespace helpers
 			return m_count;
 		}
 
-		bool create(LONG count)
+		SAFEARRAY* get_ptr()
 		{
-			reset();
-
-			m_psa = SafeArrayCreateVector(VT_VARIANT, 0, count);
-			m_count = count;
-			return (m_psa != NULL);
+			return m_psa;
 		}
 
-		HRESULT put(LONG idx, VARIANT& pVar)
+		bool convert(VARIANT* v)
 		{
-			if (idx >= m_count) return E_INVALIDARG;
-			if (!m_psa) return E_POINTER;
+			if (v->vt != VT_DISPATCH || !v->pdispVal) return false;
 
-			HRESULT hr = SafeArrayPutElement(m_psa, &idx, &pVar);
-			return hr;
+			IDispatch* pdisp = v->pdispVal;
+			DISPID id_length;
+			LPOLESTR slength = _T("length");
+			DISPPARAMS params = { 0 };
+			_variant_t ret;
+
+			HRESULT hr = pdisp->GetIDsOfNames(IID_NULL, &slength, 1, LOCALE_USER_DEFAULT, &id_length);
+			if (SUCCEEDED(hr)) hr = pdisp->Invoke(id_length, IID_NULL, LOCALE_USER_DEFAULT, DISPATCH_PROPERTYGET, &params, &ret, NULL, NULL);
+			if (SUCCEEDED(hr)) hr = VariantChangeType(&ret, &ret, 0, VT_I4);
+			if (FAILED(hr))
+			{
+				return false;
+			}
+
+			m_count = ret.lVal;
+			SAFEARRAY* psa = SafeArrayCreateVector(VT_VARIANT, 0, m_count);
+
+			for (LONG i = 0; i < m_count; ++i)
+			{
+				DISPID dispid = 0;
+				params = { 0 };
+				wchar_t buf[33];
+				LPOLESTR name = buf;
+				_variant_t element;
+				_itow_s(i, buf, 10);
+
+				hr = pdisp->GetIDsOfNames(IID_NULL, &name, 1, LOCALE_USER_DEFAULT, &dispid);
+				if (SUCCEEDED(hr)) hr = pdisp->Invoke(dispid, IID_NULL, LOCALE_USER_DEFAULT, DISPATCH_PROPERTYGET, &params, &element, NULL, NULL);
+				if (SUCCEEDED(hr)) hr = SafeArrayPutElement(psa, &i, &element);
+				if (FAILED(hr))
+				{
+					SafeArrayDestroy(psa);
+					return false;
+				}
+			}
+			m_psa = psa;
+			return true;
+		}
+
+		bool convert_to_bit_array(VARIANT v, pfc::bit_array_bittable& out)
+		{
+			if (!convert(&v)) return false;
+			if (m_count == 0)
+			{
+				out.resize(0);
+				return true;
+			}
+			for (LONG i = 0; i < m_count; ++i)
+			{
+				_variant_t var;
+				if (!get_item(i, var, VT_I4)) return false;
+				out.set(var.lVal, true);
+			}
+			return true;
+		}
+
+		bool create(LONG count)
+		{
+			m_count = count;
+			m_psa = SafeArrayCreateVector(VT_VARIANT, 0, count);
+			m_reader = false;
+			return m_psa != NULL;
+		}
+
+		bool get_item(LONG idx, VARIANT& var, VARTYPE vt)
+		{
+			if (SUCCEEDED(SafeArrayGetElement(m_psa, &idx, &var)))
+			{
+				return SUCCEEDED(VariantChangeType(&var, &var, 0, vt));
+			}
+			return false;
+		}
+
+		bool put_item(LONG idx, VARIANT& var)
+		{
+			if (SUCCEEDED(SafeArrayPutElement(m_psa, &idx, &var)))
+			{
+				return true;
+			}
+			reset();
+			return false;
 		}
 
 		void reset()
 		{
 			m_count = 0;
-
 			if (m_psa)
 			{
 				SafeArrayDestroy(m_psa);
@@ -443,35 +362,8 @@ namespace helpers
 		}
 
 	private:
-		SAFEARRAY* m_psa;
 		LONG m_count;
-	};
-
-	class com_array_to_bitarray
-	{
-	public:
-		static bool convert(VARIANT items, pfc::bit_array_bittable& out, bool& ok)
-		{
-			com_array_reader helper;
-			ok = true;
-
-			if (!helper.convert(&items)) return false;
-			if (helper.get_count() == 0)
-			{
-				ok = false;
-				out.resize(0);
-				return true;
-			}
-
-			for (int i = helper.get_lbound(); i < helper.get_count(); ++i)
-			{
-				_variant_t index;
-				helper.get_item(i, index);
-				if (FAILED(VariantChangeType(&index, &index, 0, VT_I4))) return false;
-				out.set(index.lVal, true);
-			}
-
-			return true;
-		}
+		SAFEARRAY* m_psa;
+		bool m_reader;
 	};
 }

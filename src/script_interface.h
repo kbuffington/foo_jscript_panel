@@ -272,9 +272,9 @@ __interface IFbMetadbHandleList : IDisposable
 ]
 __interface IFbTitleFormat : IDisposable
 {
-	STDMETHOD(Eval)([defaultvalue(0)] VARIANT_BOOL force, [out, retval] BSTR* pp);
-	STDMETHOD(EvalWithMetadb)(IFbMetadbHandle* handle, [out, retval] BSTR* pp);
-	STDMETHOD(EvalWithMetadbs)(IFbMetadbHandleList* handles, [out, retval] VARIANT* pp);
+	STDMETHOD(Eval)([defaultvalue(0)] VARIANT_BOOL force, [out, retval] BSTR* p);
+	STDMETHOD(EvalWithMetadb)(IFbMetadbHandle* handle, [out, retval] BSTR* p);
+	STDMETHOD(EvalWithMetadbs)(IFbMetadbHandleList* handles, [out, retval] VARIANT* p);
 	[propget] STDMETHOD(_ptr)([out, retval] void** pp);
 };
 
