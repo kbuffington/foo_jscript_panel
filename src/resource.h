@@ -7,7 +7,8 @@
 #endif
 
 #define IDR_SCRIPT                      100
-#define IDAPPLY                         101
+#define IDR_API                         101
+#define IDAPPLY                         102
 
 //ui_conf
 #define IDD_DIALOG_CONF                 110

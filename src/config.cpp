@@ -261,10 +261,8 @@ prop_kv_config& js_panel_vars::get_config_prop()
 void js_panel_vars::get_default_script_code(pfc::string_base& out)
 {
 	out.reset();
-	puResource pures = uLoadResource(core_api::get_my_instance(), uMAKEINTRESOURCE(IDR_SCRIPT), "SCRIPT");
-
-	if (pures)
-		out.set_string(reinterpret_cast<const char *>(pures->GetPointer()), pures->GetSize());
+	puResource pures = uLoadResource(core_api::get_my_instance(), uMAKEINTRESOURCE(IDR_SCRIPT), "TEXT");
+	out.set_string(reinterpret_cast<const char *>(pures->GetPointer()), pures->GetSize());
 }
 
 t_edge_style& js_panel_vars::get_edge_style()

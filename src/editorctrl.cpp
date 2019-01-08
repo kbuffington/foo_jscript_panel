@@ -1,7 +1,8 @@
 #include "stdafx.h"
 #include "editorctrl.h"
-#include "scintilla_prop_sets.h"
 #include "helpers.h"
+#include "resource.h"
+#include "scintilla_prop_sets.h"
 
 const t_style_to_key_table js_style_table[] =
 {
@@ -968,11 +969,6 @@ void CScriptEditorCtrl::Init()
 	// Auto complete
 	AutoCSetIgnoreCase(true);
 
-	// Set embeded properties
-	SetProperty("dir.base", helpers::get_fb2k_path());
-	SetProperty("dir.component", helpers::get_fb2k_component_path());
-	SetProperty("dir.profile", helpers::get_profile_path());
-
 	// Load properties
 	LoadProperties(g_sci_prop_sets.val());
 }
@@ -1234,49 +1230,18 @@ void CScriptEditorCtrl::SetIndentation(int line, int indent)
 void CScriptEditorCtrl::ReadAPI()
 {
 	m_apis.remove_all();
+	puResource pures = uLoadResource(core_api::get_my_instance(), uMAKEINTRESOURCE(IDR_API), "TEXT");
+	pfc::string8_fast content(static_cast<const char*>(pures->GetPointer()), pures->GetSize());
+	pfc::string_list_impl temp;
+	pfc::splitStringByLines(temp, content);
 
-	pfc::string8 propname = "api.jscript";
-	pfc::array_t<char> propval;
-
-	int len = GetPropertyExpanded(propname, 0);
-	if (!len) return;
-	propval.set_size(len + 1);
-	GetPropertyExpanded(propname, propval.get_ptr());
-	propval[len] = 0;
-
-	// Replace ';' to 'zero'
-	for (int i = 0; i < len; ++i)
+	for (t_size i = 0; i < temp.get_count(); ++i)
 	{
-		if (propval[i] == ';')
-			propval[i] = 0;
-	}
-
-	const char * api_filename = propval.get_ptr();
-	const char * api_endfilename = api_filename + len;
-	pfc::string8_fast content;
-
-	while (api_filename < api_endfilename)
-	{
-		if (helpers::read_file(api_filename, content))
+		if (IsIdentifierChar(*temp[i]))
 		{
-			pfc::string_list_impl temp;
-			pfc::splitStringByLines(temp, content);
-
-			for (t_size i = 0; i < temp.get_count(); ++i)
-			{
-				if (IsIdentifierChar(*temp[i]))
-					m_apis.add_item(temp[i]);
-			}
+			m_apis.add_item(temp[i]);
 		}
-		else
-		{
-			FB2K_console_formatter() << "Warning: " JSP_NAME_VERSION ": Could not load file " << api_filename;
-		}
-
-		api_filename += strlen(api_filename) + 1;
 	}
-
-	// Sort now
 	m_apis.sort_remove_duplicates_t(StringCompareSpecial());
 }
 
