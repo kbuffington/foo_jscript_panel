@@ -32,7 +32,6 @@ namespace helpers
 	bool execute_mainmenu_command_by_name(const char* p_command);
 	bool execute_mainmenu_command_recur(const char* p_command, pfc::string8_fast path, mainmenu_node::ptr node);
 	bool read_album_art_into_bitmap(const album_art_data_ptr& data, Gdiplus::Bitmap** bitmap);
-	bool read_file(const char* path, pfc::string_base& content);
 	bool read_file_wide(unsigned codepage, const wchar_t* path, pfc::array_t<wchar_t>& content);
 	bool supports_chakra();
 	bool write_file(const char* path, const pfc::string_base& content, bool write_bom = true);
@@ -49,6 +48,7 @@ namespace helpers
 	t_size get_colour_from_variant(VARIANT v);
 	void estimate_line_wrap(HDC hdc, const wchar_t* text, int len, int width, pfc::list_t<wrapped_item>& out);
 	void estimate_line_wrap_recur(HDC hdc, const wchar_t* text, int len, int width, pfc::list_t<wrapped_item>& out);
+	void read_file(const char* path, pfc::string_base& content);
 	wchar_t* make_sort_string(const char* in);
 
 	template <class T>

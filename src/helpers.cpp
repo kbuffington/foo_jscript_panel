@@ -353,88 +353,6 @@ namespace helpers
 		return ret;
 	}
 
-	bool read_file(const char* path, pfc::string_base& content)
-	{
-		HANDLE hFile = uCreateFile(path, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
-
-		if (hFile == INVALID_HANDLE_VALUE)
-		{
-			return false;
-		}
-
-		HANDLE hFileMapping = uCreateFileMapping(hFile, NULL, PAGE_READONLY, 0, 0, NULL);
-
-		if (hFileMapping == NULL)
-		{
-			CloseHandle(hFile);
-			return false;
-		}
-
-		DWORD dwFileSize = GetFileSize(hFile, NULL);
-		LPCBYTE pAddr = (LPCBYTE)MapViewOfFile(hFileMapping, FILE_MAP_READ, 0, 0, 0);
-
-		if (pAddr == NULL)
-		{
-			CloseHandle(hFileMapping);
-			CloseHandle(hFile);
-			return false;
-		}
-
-		if (dwFileSize == INVALID_FILE_SIZE)
-		{
-			UnmapViewOfFile(pAddr);
-			CloseHandle(hFileMapping);
-			CloseHandle(hFile);
-			return false;
-		}
-
-		bool status = false;
-
-		if (dwFileSize > 3)
-		{
-			// UTF16 LE?
-			if (pAddr[0] == 0xFF && pAddr[1] == 0xFE)
-			{
-				const wchar_t* pSource = (const wchar_t *)(pAddr + 2);
-				t_size len = (dwFileSize >> 1) - 1;
-
-				content = pfc::stringcvt::string_utf8_from_wide(pSource, len);
-				status = true;
-			}
-			// UTF8?
-			else if (pAddr[0] == 0xEF && pAddr[1] == 0xBB && pAddr[2] == 0xBF)
-			{
-				const char* pSource = (const char *)(pAddr + 3);
-				t_size len = dwFileSize - 3;
-
-				content.set_string(pSource, len);
-				status = true;
-			}
-		}
-
-		if (!status)
-		{
-			const char* pSource = (const char *)(pAddr);
-			t_size pSourceSize = dwFileSize;
-
-			t_size tmp = detect_charset(path);
-			if (tmp == CP_UTF8)
-			{
-				content.set_string(pSource, pSourceSize);
-			}
-			else
-			{
-				content = pfc::stringcvt::string_utf8_from_ansi(pSource, pSourceSize);
-			}
-			status = true;
-		}
-
-		UnmapViewOfFile(pAddr);
-		CloseHandle(hFileMapping);
-		CloseHandle(hFile);
-		return status;
-	}
-
 	bool read_file_wide(unsigned codepage, const wchar_t* path, pfc::array_t<wchar_t>& content)
 	{
 		HANDLE hFile = CreateFile(path, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
@@ -852,6 +770,50 @@ namespace helpers
 				estimate_line_wrap_recur(hdc, text + textLength, len - textLength, width, out);
 			}
 		}
+	}
+
+	void read_file(const char* path, pfc::string_base& content)
+	{
+		HANDLE hFile = uCreateFile(path, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+
+		if (hFile == INVALID_HANDLE_VALUE)
+		{
+			return;
+		}
+
+		HANDLE hFileMapping = uCreateFileMapping(hFile, NULL, PAGE_READONLY, 0, 0, NULL);
+
+		if (hFileMapping == NULL)
+		{
+			CloseHandle(hFile);
+			return;
+		}
+
+		DWORD dwFileSize = GetFileSize(hFile, NULL);
+		LPCBYTE pAddr = (LPCBYTE)MapViewOfFile(hFileMapping, FILE_MAP_READ, 0, 0, 0);
+
+		if (pAddr == NULL)
+		{
+			CloseHandle(hFileMapping);
+			CloseHandle(hFile);
+			return;
+		}
+
+		if (dwFileSize == INVALID_FILE_SIZE)
+		{
+			UnmapViewOfFile(pAddr);
+			CloseHandle(hFileMapping);
+			CloseHandle(hFile);
+			return;
+		}
+
+		t_size offset = dwFileSize >= 3 && pAddr[0] == 0xEF && pAddr[1] == 0xBB && pAddr[2] == 0xBF ? 3 : 0;
+		const char* pSource = (const char*)(pAddr + offset);
+		content.set_string(pSource);
+
+		UnmapViewOfFile(pAddr);
+		CloseHandle(hFileMapping);
+		CloseHandle(hFile);
 	}
 
 	wchar_t* make_sort_string(const char* in)
