@@ -4,7 +4,6 @@
 #include "host_timer_dispatcher.h"
 #include "kmeans.h"
 #include "panel_manager.h"
-#include "popup_msg.h"
 #include "script_interface_impl.h"
 #include "stackblur.h"
 #include "stats.h"
@@ -2470,7 +2469,7 @@ STDMETHODIMP FbUtils::ShowLibrarySearchUI(BSTR query)
 
 STDMETHODIMP FbUtils::ShowPopupMessage(BSTR msg, BSTR title)
 {
-	popup_msg::g_show(string_utf8_from_wide(msg), string_utf8_from_wide(title));
+	main_thread_callback_add(fb2k::service_new<helpers::popup_msg>(string_utf8_from_wide(msg).get_ptr(), string_utf8_from_wide(title).get_ptr()));
 	return S_OK;
 }
 

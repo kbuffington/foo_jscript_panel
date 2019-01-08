@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "panel_manager.h"
-#include "user_message.h"
 
 namespace
 {

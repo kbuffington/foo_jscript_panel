@@ -1,5 +1,4 @@
 #include "stdafx.h"
-#include "user_message.h"
 #include "panel_manager.h"
 
 static mainmenu_group_popup_factory g_mainmenu_group(g_guid_jsp_mainmenu_group_id, mainmenu_groups::file, mainmenu_commands::sort_priority_dontcare, JSP_NAME);

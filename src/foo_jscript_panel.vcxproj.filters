@@ -185,9 +185,6 @@
     <ClInclude Include="helpers.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="popup_msg.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="stackblur.h">
       <Filter>Header Files</Filter>
     </ClInclude>

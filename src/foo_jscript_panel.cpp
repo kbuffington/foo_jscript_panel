@@ -1,8 +1,6 @@
 #include "stdafx.h"
-#include "thread_pool.h"
-#include "popup_msg.h"
+#include "helpers.h"
 #include "panel_manager.h"
-#include "user_message.h"
 
 // Script TypeLib
 ITypeLibPtr g_typelib;
@@ -39,7 +37,6 @@ namespace
 		{
 			// HACK: popup_message services will not be initialized soon after start.
 			check_error();
-			delay_loader::g_set_ready();
 		}
 
 		void on_quit()
@@ -76,9 +73,9 @@ namespace
 				}
 			}
 
-			if (!err_msg.is_empty())
+			if (err_msg.get_length())
 			{
-				popup_msg::g_show(err_msg, JSP_NAME);
+				main_thread_callback_add(fb2k::service_new<helpers::popup_msg>(err_msg, JSP_NAME));
 			}
 		}
 	};

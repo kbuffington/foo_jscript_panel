@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "host.h"
-#include "popup_msg.h"
 
 HostComm::HostComm()
 	: m_hwnd(NULL)
@@ -560,7 +559,7 @@ void ScriptHost::ReportError(IActiveScriptError* err)
 	if (excep.bstrHelpFile) SysFreeString(excep.bstrHelpFile);
 
 	FB2K_console_formatter() << formatter;
-	popup_msg::g_show(formatter, JSP_NAME);
+	main_thread_callback_add(fb2k::service_new<helpers::popup_msg>(formatter, JSP_NAME_VERSION));
 	MessageBeep(MB_ICONASTERISK);
 	SendMessage(m_host->GetHWND(), UWM_SCRIPT_ERROR, 0, 0);
 }

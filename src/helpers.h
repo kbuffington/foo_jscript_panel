@@ -207,6 +207,20 @@ namespace helpers
 		_bstr_t m_path;
 	};
 
+	class popup_msg : public main_thread_callback
+	{
+	public:
+		popup_msg(pfc::string8_fast msg, pfc::string8_fast title) : m_msg(msg), m_title(title) {}
+
+	private:
+		virtual void callback_run()
+		{
+			popup_message::g_show(m_msg, m_title);
+		}
+
+		pfc::string8_fast m_msg, m_title;
+	};
+
 	class js_process_locations : public process_locations_notify
 	{
 	public:
