@@ -1,19 +1,22 @@
 v2.2.0
-- NEW: Add FbMetadbHandle GetAlbumArt method which returns the image + path in
-       one call without the need for using utils.GetAlbumArtAsync and
+- NEW: Add FbMetadbHandle GetAlbumArt method which returns the image and path
+       without the need for using utils.GetAlbumArtAsync and
        on_get_album_art_done(). See docs\interfaces.txt.
 - CHG: fb.RunMainMenuCommand, fb.RunContextCommand, fb.RunContextCommandWithMetadb
-       must all be supplied with the full path to their commands. Case is not important.
-       You should use forward slashes with no spaces.
+       have all been rewritten and must be supplied with the full path to their commands.
+       Case is not important. You should use forward slashes with no spaces. eg:
        fb.RunMainMenuCommand("Library/Search");
-- CHG: All files imported from the Configuration Window, Preferences>Tools or
+- CHG: All files imported to the Configuration Window, Preferences>Tools or
        included in a script via the "import" preprocessor directive must be
        UTF8 encoded (with or without BOM). If you have lots of panels with lots of
        imports, startup times should be improved! utils.ReadTextFile is unaffected.
 - CHG: Remove window.DlgCode. The docs were wrong, behaviour was inconsistent between
        Default UI and Columns UI and it's just not needed. Support for all keys will be
        enabled if you check "Grab focus" in the Configuration Window. All instances
-       will need removing from scripts.
+       will need removing from scripts. If you want to support this and older components
+       with the same script, do something like:
+
+       if ('DlgCode' in window) window.DlgCode = 4;
 
 v2.1.8
 - NEW: Add FbMetadbHandleList RemoveAttachImages method.
