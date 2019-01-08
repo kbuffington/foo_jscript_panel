@@ -18,12 +18,12 @@ v2.2.0 Beta 1
 
        if ('DlgCode' in window) { window.DlgCode = 4; }
 - CHG: Lots of internal code refactoring and external dependency updates.
-- CHG: If you browse the component folder and notice the missing "jscript.api" and
-       "interface.api" files, it's intentional. The contents are now included inside
-       the compoent.
+- CHG: If you browse the component folder and notice the "jscript.api" and
+       "interface.api" files are missing, it's intentional. The contents are now included
+       inside the compoent.
 
 v2.1.8
-- NEW: Add FbMetadbHandleList RemoveAttachImages method.
+- NEW: Add FbMetadbHandleList RemoveAttachedImages method.
 - FIX: There are no longer any limitations managing attached images.
        Working with the playing file is now supported. Thanks to Peter
        for the new SDK release and the help I needed!
