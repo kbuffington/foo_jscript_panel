@@ -1,6 +1,8 @@
 #include "stdafx.h"
-#include "ui_find.h"
 #include "ui_conf.h"
+#include "ui_find.h"
+
+CDialogFind::CDialogFind(HWND p_hedit) : m_hedit(p_hedit), m_flags(0) {}
 
 LRESULT CDialogFind::OnCancel(WORD wNotifyCode, WORD wID, HWND hWndCtl)
 {
@@ -16,19 +18,19 @@ LRESULT CDialogFind::OnEditFindWhatEnChange(WORD wNotifyCode, WORD wID, HWND hWn
 
 LRESULT CDialogFind::OnFindDown(WORD wNotifyCode, WORD wID, HWND hWndCtl)
 {
-	if (m_text.is_empty())
-		return 0;
-
-	CDialogConf::FindNext(m_hWnd, m_hedit, m_flags, m_text.get_ptr());
+	if (m_text.get_length())
+	{
+		CDialogConf::FindNext(m_hWnd, m_hedit, m_flags, m_text.get_ptr());
+	}
 	return 0;
 }
 
 LRESULT CDialogFind::OnFindUp(WORD wNotifyCode, WORD wID, HWND hWndCtl)
 {
-	if (m_text.is_empty())
-		return 0;
-
-	CDialogConf::FindPrevious(m_hWnd, m_hedit, m_flags, m_text.get_ptr());
+	if (m_text.get_length())
+	{
+		CDialogConf::FindPrevious(m_hWnd, m_hedit, m_flags, m_text.get_ptr());
+	}
 	return 0;
 }
 
@@ -76,4 +78,44 @@ void CDialogFind::OnFinalMessage(HWND hWnd)
 {
 	modeless_dialog_manager::g_remove(m_hWnd);
 	delete this;
+}
+
+BOOL CDialogFind::CEditWithReturn::SubclassWindow(HWND hWnd, HWND hParent)
+{
+	m_parent = hParent;
+	return parent::SubclassWindow(hWnd);
+}
+
+LRESULT CDialogFind::CEditWithReturn::OnChar(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+{
+	switch (wParam)
+	{
+	case '\n':
+	case '\r':
+	case '\t':
+	case '\x1b':
+		return 0;
+	}
+
+	return DefWindowProc(uMsg, wParam, lParam);
+}
+
+LRESULT CDialogFind::CEditWithReturn::OnKeyDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+{
+	switch (wParam)
+	{
+	case VK_RETURN:
+		::PostMessage(m_parent, WM_COMMAND, MAKEWPARAM(IDC_FINDDOWN, BN_CLICKED), (LPARAM)m_hWnd);
+		return FALSE;
+
+	case VK_ESCAPE:
+		::PostMessage(m_parent, WM_COMMAND, MAKEWPARAM(IDCANCEL, BN_CLICKED), (LPARAM)m_hWnd);
+		return FALSE;
+
+	case VK_TAB:
+		::PostMessage(m_parent, WM_NEXTDLGCTL, 0, 0);
+		return FALSE;
+	}
+
+	return DefWindowProc(uMsg, wParam, lParam);
 }

@@ -1,5 +1,4 @@
 #pragma once
-
 #include "editorctrl.h"
 #include "resource.h"
 
@@ -11,14 +10,8 @@ class CDialogReplace;
 class CDialogConf : public CDialogImpl<CDialogConf>, public CDialogResize<CDialogConf>
 {
 public:
-	CDialogConf(js_panel_window* p_parent) : m_parent(p_parent), m_dlgfind(NULL), m_dlgreplace(NULL), m_lastSearchText(""), m_lastFlags(0)
-	{
-	}
-
-	virtual ~CDialogConf()
-	{
-		m_hWnd = NULL;
-	}
+	CDialogConf(js_panel_window* p_parent);
+	virtual ~CDialogConf();
 
 	BEGIN_DLGRESIZE_MAP(CDialogConf)
 		DLGRESIZE_CONTROL(IDC_STATIC_GUID, DLSZ_SIZE_X)
@@ -76,5 +69,5 @@ private:
 	js_panel_window* m_parent;
 	pfc::string8 m_caption;
 	pfc::string8 m_lastSearchText;
-	unsigned int m_lastFlags;
+	t_size m_lastFlags;
 };

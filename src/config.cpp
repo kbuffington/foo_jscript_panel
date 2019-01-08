@@ -203,13 +203,13 @@ void prop_kv_config::save(stream_writer* writer, abort_callback& abort) const th
 
 void prop_kv_config::set_config_item(const char* p_key, const VARIANT& p_val)
 {
-	if (!g_is_allowed_type(p_val.vt))
+	if (g_is_allowed_type(p_val.vt))
 	{
-		m_map.remove(p_key);
+		m_map[p_key] = p_val;
 	}
 	else
 	{
-		m_map[p_key] = p_val;
+		m_map.remove(p_key);
 	}
 }
 

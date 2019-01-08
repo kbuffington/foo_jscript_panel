@@ -825,7 +825,6 @@ public:
 
 		IProperty* prop = reinterpret_cast<IProperty*>(lpDIS->itemData);
 		ATLASSERT(prop);
-		BYTE kind = prop->GetKind();
 
 		// Customize item
 		PROPERTYDRAWINFO di = m_di;

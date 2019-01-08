@@ -28,54 +28,32 @@
 class name_to_id_cache
 {
 public:
-	typedef ULONG hash_type;
-
-	bool lookup(hash_type hash, DISPID* p_dispid) const;
-	void add(hash_type hash, DISPID dispid);
-	static hash_type g_hash(const wchar_t* name);
+	bool lookup(ULONG hash, DISPID* p_dispid) const;
+	void add(ULONG hash, DISPID dispid);
 
 protected:
-	typedef pfc::map_t<hash_type, DISPID> name_to_id_map;
+	using name_to_id_map = pfc::map_t<ULONG, DISPID>;
+
 	name_to_id_map m_map;
 };
 
 class type_info_cache_holder
 {
 public:
-	type_info_cache_holder() : m_type_info(NULL)
-	{
-	}
+	type_info_cache_holder();
 
-	void set_type_info(ITypeInfo* type_info)
-	{
-		m_type_info = type_info;
-	}
-
-	bool valid() throw()
-	{
-		return m_type_info != NULL;
-	}
-
-	bool empty() throw()
-	{
-		return m_type_info == NULL;
-	}
-
-	ITypeInfo* get_ptr() throw()
-	{
-		return m_type_info;
-	}
-
-	void init_from_typelib(ITypeLib* p_typeLib, const GUID& guid);
-
-	// "Expose" some ITypeInfo related methods here
-	HRESULT GetTypeInfo(UINT iTInfo, LCID lcid, ITypeInfo** ppTInfo);
 	HRESULT GetIDsOfNames(LPOLESTR* rgszNames, UINT cNames, MEMBERID* pMemId);
+	HRESULT GetTypeInfo(UINT iTInfo, LCID lcid, ITypeInfo** ppTInfo);
 	HRESULT Invoke(PVOID pvInstance, MEMBERID memid, WORD wFlags, DISPPARAMS* pDispParams, VARIANT* pVarResult, EXCEPINFO* pExcepInfo, UINT* puArgErr);
+	ITypeInfo* get_ptr() throw();
+	bool empty() throw();
+	bool valid() throw();
+	void init_from_typelib(ITypeLib* p_typeLib, const GUID& guid);
+	void set_type_info(ITypeInfo* type_info);
 
 protected:
-	name_to_id_cache m_cache;
 	ITypeInfoPtr m_type_info;
+	name_to_id_cache m_cache;
 };
 
 //-- IDispatch --
@@ -83,8 +61,6 @@ template <class T>
 class MyIDispatchImpl : public T
 {
 protected:
-	static type_info_cache_holder g_type_info_cache_holder;
-
 	MyIDispatchImpl<T>()
 	{
 		if (g_type_info_cache_holder.empty() && g_typelib)
@@ -93,34 +69,31 @@ protected:
 		}
 	}
 
-	virtual ~MyIDispatchImpl<T>()
-	{
-	}
+	virtual ~MyIDispatchImpl<T>() {}
+	virtual void FinalRelease() {}
 
-	virtual void FinalRelease()
-	{
-	}
+	static type_info_cache_holder g_type_info_cache_holder;
 
 public:
-	STDMETHOD(GetTypeInfoCount)(unsigned int* n)
+	STDMETHOD(GetIDsOfNames)(REFIID riid, OLECHAR** names, UINT cnames, LCID lcid, DISPID* dispids)
+	{
+		if (g_type_info_cache_holder.empty()) return E_UNEXPECTED;
+		return g_type_info_cache_holder.GetIDsOfNames(names, cnames, dispids);
+	}
+
+	STDMETHOD(GetTypeInfo)(UINT i, LCID lcid, ITypeInfo** pp)
+	{
+		return g_type_info_cache_holder.GetTypeInfo(i, lcid, pp);
+	}
+
+	STDMETHOD(GetTypeInfoCount)(UINT* n)
 	{
 		if (!n) return E_INVALIDARG;
 		*n = 1;
 		return S_OK;
 	}
 
-	STDMETHOD(GetTypeInfo)(unsigned int i, LCID lcid, ITypeInfo** pp)
-	{
-		return g_type_info_cache_holder.GetTypeInfo(i, lcid, pp);
-	}
-
-	STDMETHOD(GetIDsOfNames)(REFIID riid, OLECHAR** names, unsigned int cnames, LCID lcid, DISPID* dispids)
-	{
-		if (g_type_info_cache_holder.empty()) return E_UNEXPECTED;
-		return g_type_info_cache_holder.GetIDsOfNames(names, cnames, dispids);
-	}
-
-	STDMETHOD(Invoke)(DISPID dispid, REFIID riid, LCID lcid, WORD flag, DISPPARAMS* params, VARIANT* result, EXCEPINFO* excep, unsigned int* err)
+	STDMETHOD(Invoke)(DISPID dispid, REFIID riid, LCID lcid, WORD flag, DISPPARAMS* params, VARIANT* result, EXCEPINFO* excep, UINT* err)
 	{
 		if (g_type_info_cache_holder.empty()) return E_UNEXPECTED;
 		return g_type_info_cache_holder.Invoke(this, dispid, flag, params, result, excep, err);
@@ -140,13 +113,8 @@ class IDispatchImpl3 : public MyIDispatchImpl<T>
 	END_COM_QI_IMPL()
 
 protected:
-	IDispatchImpl3<T>()
-	{
-	}
-
-	virtual ~IDispatchImpl3<T>()
-	{
-	}
+	IDispatchImpl3<T>() {}
+	virtual ~IDispatchImpl3<T>() {}
 };
 
 //-- IDisposable impl -- [T] [IDisposable] [IDispatch] [IUnknown]
@@ -161,13 +129,8 @@ class IDisposableImpl4 : public MyIDispatchImpl<T>
 	END_COM_QI_IMPL()
 
 protected:
-	IDisposableImpl4<T>()
-	{
-	}
-
-	virtual ~IDisposableImpl4()
-	{
-	}
+	IDisposableImpl4<T>() {}
+	virtual ~IDisposableImpl4() {}
 
 public:
 	STDMETHODIMP Dispose()
@@ -189,15 +152,9 @@ class GdiObj : public MyIDispatchImpl<T>
 	END_COM_QI_IMPL()
 
 protected:
-	T2* m_ptr;
+	GdiObj<T, T2>(T2* p) : m_ptr(p) {}
 
-	GdiObj<T, T2>(T2* p) : m_ptr(p)
-	{
-	}
-
-	virtual ~GdiObj<T, T2>()
-	{
-	}
+	virtual ~GdiObj<T, T2>() {}
 
 	virtual void FinalRelease()
 	{
@@ -207,6 +164,8 @@ protected:
 			m_ptr = NULL;
 		}
 	}
+
+	T2* m_ptr;
 
 public:
 	// Default Dispose
@@ -246,7 +205,7 @@ public:
 	TEMPLATE_CONSTRUCTOR_FORWARD_FLOOD_WITH_INITIALIZER(com_object_impl_t, _Base, { Construct_(); })
 
 private:
-	volatile LONG m_dwRef;
+	virtual ~com_object_impl_t() {}
 
 	ULONG AddRef_()
 	{
@@ -265,9 +224,7 @@ private:
 			AddRef_();
 	}
 
-	virtual ~com_object_impl_t()
-	{
-	}
+	volatile LONG m_dwRef;
 };
 
 template <class T>

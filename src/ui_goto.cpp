@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "ui_goto.h"
 
+CDialogGoto::CDialogGoto(HWND p_hedit) : m_hedit(p_hedit) {}
+
 LRESULT CDialogGoto::OnInitDialog(HWND hwndFocus, LPARAM lParam)
 {
 	int cur_pos = SendMessage(m_hedit, SCI_GETCURRENTPOS, 0, 0);
@@ -15,9 +17,9 @@ LRESULT CDialogGoto::OnCloseCmd(WORD wNotifyCode, WORD wID, HWND hWndCtl)
 {
 	if (wID == IDOK)
 	{
-		pfc::string8 text;
+		pfc::string8_fast text;
 		uGetWindowText(GetDlgItem(IDC_EDIT_LINENUMBER), text);
-		unsigned i = pfc::atoui_ex(text.get_ptr(), text.length()) - 1;
+		t_size i = pfc::atoui_ex(text.get_ptr(), text.length()) - 1;
 		SendMessage(m_hedit, SCI_GOTOLINE, i, 0);
 	}
 

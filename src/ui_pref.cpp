@@ -1,13 +1,15 @@
 #include "stdafx.h"
+#include "ui_name_value_edit.h"
 #include "ui_pref.h"
 #include "scintilla_prop_sets.h"
-#include "ui_name_value_edit.h"
+
+CDialogPref::CDialogPref(preferences_page_callback::ptr callback) : m_callback(callback) {}
 
 BOOL CDialogPref::OnInitDialog(HWND hwndFocus, LPARAM lParam)
 {
 	DoDataExchange();
 
-	SetWindowTheme(m_props.m_hWnd, L"explorer", NULL);
+	SetWindowTheme(m_props.m_hWnd, _T("explorer"), NULL);
 
 	m_props.SetExtendedListViewStyle(LVS_EX_FULLROWSELECT | LVS_EX_DOUBLEBUFFER);
 	m_props.AddColumn(_T("Name"), 0);
@@ -32,58 +34,54 @@ LRESULT CDialogPref::OnPropNMDblClk(LPNMHDR pnmh)
 
 	if (pniv->iItem >= 0)
 	{
-		t_sci_prop_set_list& prop_sets = g_sci_prop_sets.val();
-		pfc::string8 key, val;
+		t_sci_prop_set_list& prop_sets = g_sci_prop_sets.m_data;
+		pfc::string8_fast key, val;
 
 		uGetItemText(pniv->iItem, 0, key);
 		uGetItemText(pniv->iItem, 1, val);
 
 		modal_dialog_scope scope;
-		if (!scope.can_create())
+		if (scope.can_create())
 		{
-			return false;
-		}
-		scope.initialize(m_hWnd);
+			scope.initialize(m_hWnd);
+			CNameValueEdit dlg(key, val);
 
-		CNameValueEdit dlg(key, val);
-
-		if (IDOK == dlg.DoModal(m_hWnd))
-		{
-			dlg.GetValue(val);
-
-			// Save
-			for (t_size i = 0; i < prop_sets.get_count(); ++i)
+			if (dlg.DoModal(m_hWnd) == IDOK)
 			{
-				if (strcmp(prop_sets[i].key, key) == 0)
-				{
-					prop_sets[i].val = val;
-					break;
-				}
-			}
+				dlg.GetValue(val);
 
-			// Update list
-			m_props.SetItemText(pniv->iItem, 1, string_wide_from_utf8_fast(val));
-			DoDataExchange();
+				for (t_size i = 0; i < prop_sets.get_count(); ++i)
+				{
+					if (strcmp(prop_sets[i].key, key) == 0)
+					{
+						prop_sets[i].val = val;
+						break;
+					}
+				}
+
+				m_props.SetItemText(pniv->iItem, 1, string_wide_from_utf8_fast(val));
+				DoDataExchange();
+			}
 		}
 	}
 
 	return 0;
 }
 
-t_uint32 CDialogPref::get_state()
+t_size CDialogPref::get_state()
 {
-	t_uint32 state = preferences_state::resettable;
-
-	return state;
+	return preferences_state::resettable;
 }
 
 void CDialogPref::LoadProps(bool reset)
 {
 	if (reset)
+	{
 		g_sci_prop_sets.reset();
+	}
 
 	string_wide_from_utf8_fast conv;
-	t_sci_prop_set_list& prop_sets = g_sci_prop_sets.val();
+	t_sci_prop_set_list& prop_sets = g_sci_prop_sets.m_data;
 
 	m_props.DeleteAllItems();
 
@@ -102,17 +100,19 @@ void CDialogPref::LoadProps(bool reset)
 void CDialogPref::OnButtonExportBnClicked(WORD wNotifyCode, WORD wID, HWND hWndCtl)
 {
 	pfc::string8_fast filename;
-
 	if (uGetOpenFileName(m_hWnd, "Configuration files|*.cfg", 0, "cfg", "Save as", NULL, filename, TRUE))
+	{
 		g_sci_prop_sets.export_to_file(filename);
+	}
 }
 
 void CDialogPref::OnButtonImportBnClicked(WORD wNotifyCode, WORD wID, HWND hWndCtl)
 {
 	pfc::string8_fast filename;
-
 	if (uGetOpenFileName(m_hWnd, "Configuration files|*.cfg|All files|*.*", 0, "cfg", "Import from", NULL, filename, FALSE))
+	{
 		g_sci_prop_sets.import_from_file(filename);
+	}
 
 	LoadProps();
 }
@@ -129,13 +129,8 @@ void CDialogPref::OnEditChange(WORD, WORD, HWND)
 
 void CDialogPref::uGetItemText(int nItem, int nSubItem, pfc::string_base& out)
 {
-	enum
-	{
-		BUFFER_LEN = 1024
-	};
-	TCHAR buffer[BUFFER_LEN];
-
-	m_props.GetItemText(nItem, nSubItem, buffer, BUFFER_LEN);
+	wchar_t buffer[1024];
+	m_props.GetItemText(nItem, nSubItem, buffer, 1024);
 	out.set_string(string_utf8_from_wide(buffer));
 }
 
@@ -147,6 +142,34 @@ void CDialogPref::apply()
 void CDialogPref::reset()
 {
 	LoadProps(true);
+}
+
+GUID js_preferences_page_impl::get_guid()
+{
+	return g_guid_jsp_ui_pref;
+}
+
+GUID js_preferences_page_impl::get_parent_guid()
+{
+	return preferences_page::guid_tools;
+}
+
+bool js_preferences_page_impl::get_help_url(pfc::string_base& p_out)
+{
+	p_out = "https://github.com/marc2k3/foo_jscript_panel/wiki";
+	return true;
+}
+
+const char* js_preferences_page_impl::get_name()
+{
+	return JSP_NAME;
+}
+
+preferences_page_instance::ptr js_preferences_page_impl::instantiate(HWND parent, preferences_page_callback::ptr callback)
+{
+	auto p = fb2k::service_new<CDialogPref>(callback);
+	p->Create(parent);
+	return p;
 }
 
 namespace

@@ -35,11 +35,7 @@ public:
 	typedef pfc::string_simple t_key;
 	typedef _variant_t t_val;
 	typedef pfc::map_t<t_key, t_val, pfc::comparator_stricmp_ascii> t_map;
-
-	t_map& get_val()
-	{
-		return m_map;
-	}
+	t_map m_map;
 
 	bool get_config_item(const char* p_key, VARIANT& p_out);
 	static bool g_is_allowed_type(VARTYPE p_vt);
@@ -48,9 +44,6 @@ public:
 	void load(stream_reader* reader, abort_callback& abort) throw();
 	void save(stream_writer* writer, abort_callback& abort) const throw();
 	void set_config_item(const char* p_key, const VARIANT& p_val);
-
-private:
-	t_map m_map;
 };
 
 class js_panel_vars

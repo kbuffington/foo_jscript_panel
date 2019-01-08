@@ -2,10 +2,10 @@
 // Copyright 1998-2005 by Neil Hodgson <neilh@scintilla.org>
 // The License.txt file describes the conditions under which this software may be distributed.
 #pragma once
-
-#include "wtlscintilla.h"
-#include "SString.h"
 #include "user_message.h"
+
+#include <SString.h>
+#include <wtlscintilla.h>
 
 enum IndentationStatus
 {
@@ -29,52 +29,14 @@ struct t_sci_prop_set;
 struct t_style_to_key_table
 {
 	int style_num;
-	const char * key;
+	const char* key;
 };
 
 class CScriptEditorCtrl : public CScintillaCtrl
 {
 public:
-	CScriptEditorCtrl()
-	{
-		m_nBraceCount = 0;
-		m_nCurrentCallTip = 0;
-		m_nStartCalltipWord = 0;
-		m_nLastPosCallTip = 0;
-		m_nStatementLookback = 10;
-	}
+	CScriptEditorCtrl();
 
-	// Operations and Implementation
-	Sci_CharacterRange GetSelection();
-	int GetCaretInLine();
-	pfc::string8 GetCurrentLine();
-	IndentationStatus GetIndentState(int line);
-	unsigned int GetLinePartsInStyle(int line, int style1, int style2, SString sv[], int len);
-	bool RangeIsAllWhitespace(int start, int end);
-	DWORD GetPropertyColor(const char * key, bool * key_exist = NULL);
-	void Init();
-	void LoadProperties(const pfc::list_t<t_sci_prop_set> & data);
-	void SetContent(const char * text, bool clear_undo_buffer = false);
-	void RestoreDefaultStyle();
-	void SetJScript();
-	void TrackWidth();
-	void SetAllStylesFromTable(const t_style_to_key_table table[]);
-	void AutoMarginWidth();
-	void ReadAPI();
-	BOOL SubclassWindow(HWND hWnd);
-
-	bool StartCallTip();
-	void ContinueCallTip();
-	void FillFunctionDefinition(int pos = -1);
-	bool StartAutoComplete();
-	int IndentOfBlock(int line);
-	void AutomaticIndentation(char ch);
-	bool FindBraceMatchPos(int &braceAtCaret, int &braceOpposite);
-	const char * GetNearestWord(const char *wordStart, int searchLen, SString wordCharacters = NULL, int wordIndex = -1);
-	bool GetNearestWords(pfc::string_base & out, const char * wordStart, int searchLen, const char *separators);
-	void SetIndentation(int line, int indent);
-
-	// Message map and handlers
 	BEGIN_MSG_MAP(CScriptEditorCtrl)
 		MESSAGE_HANDLER(WM_KEYDOWN, OnKeyDown)
 		REFLECTED_NOTIFY_CODE_HANDLER_EX(SCN_UPDATEUI, OnUpdateUI)
@@ -83,26 +45,50 @@ public:
 		REFLECTED_COMMAND_CODE_HANDLER_EX(SCEN_CHANGE, OnChange)
 	END_MSG_MAP()
 
+	BOOL SubclassWindow(HWND hWnd);
+	DWORD GetPropertyColor(const char* key, bool* key_exist = NULL);
+	IndentationStatus GetIndentState(int line);
+	LRESULT OnChange(UINT uNotifyCode, int nID, HWND wndCtl);
+	LRESULT OnCharAdded(LPNMHDR pnmh);
 	LRESULT OnKeyDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 	LRESULT OnUpdateUI(LPNMHDR pnmn);
-	LRESULT OnCharAdded(LPNMHDR pnmh);
 	LRESULT OnZoom(LPNMHDR pnmn);
-	LRESULT OnChange(UINT uNotifyCode, int nID, HWND wndCtl);
+	Sci_CharacterRange GetSelection();
+	bool FindBraceMatchPos(int& braceAtCaret, int& braceOpposite);
+	bool GetNearestWords(pfc::string_base& out, const char* wordStart, int searchLen, const char* separators);
+	bool RangeIsAllWhitespace(int start, int end);
+	bool StartAutoComplete();
+	bool StartCallTip();
+	const char* GetNearestWord(const char* wordStart, int searchLen, SString wordCharacters = NULL, int wordIndex = -1);
+	int GetCaretInLine();
+	int IndentOfBlock(int line);
+	pfc::string8_fast GetCurrentLine();
+	t_size GetLinePartsInStyle(int line, int style1, int style2, SString sv[], int len);
+	void AutoMarginWidth();
+	void AutomaticIndentation(char ch);
+	void ContinueCallTip();
+	void FillFunctionDefinition(int pos = -1);
+	void Init();
+	void LoadProperties(const pfc::list_t<t_sci_prop_set>& data);
+	void ReadAPI();
+	void RestoreDefaultStyle();
+	void SetAllStylesFromTable(const t_style_to_key_table table[]);
+	void SetContent(const char* text, bool clear_undo_buffer = false);
+	void SetJScript();
+	void SetIndentation(int line, int indent);
+	void TrackWidth();
 
 private:
 	int m_nBraceCount;
 	int m_nCurrentCallTip;
-	int m_nStartCalltipWord;
 	int m_nLastPosCallTip;
+	int m_nStartCalltipWord;
 	int m_nStatementLookback;
-
-	StyleAndWords m_BlockStart;
+	pfc::list_t<pfc::string_simple> m_apis;
+	pfc::string8_fast m_szCurrentCallTipWord;
+	pfc::string8_fast m_szFunctionDefinition;
 	StyleAndWords m_BlockEnd;
+	StyleAndWords m_BlockStart;
 	StyleAndWords m_StatementEnd;
 	StyleAndWords m_StatementIndent;
-
-	pfc::string8 m_szCurrentCallTipWord;
-	pfc::string8 m_szFunctionDefinition;
-
-	pfc::list_t<pfc::string_simple> m_apis;
 };

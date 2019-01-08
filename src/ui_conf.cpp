@@ -6,6 +6,13 @@
 #include "ui_replace.h"
 #include "helpers.h"
 
+CDialogConf::CDialogConf(js_panel_window* p_parent) : m_parent(p_parent), m_dlgfind(NULL), m_dlgreplace(NULL), m_lastSearchText(""), m_lastFlags(0), m_caption(JSP_NAME " Configuration") {}
+
+CDialogConf::~CDialogConf()
+{
+	m_hWnd = NULL;
+}
+
 LRESULT CDialogConf::OnCloseCmd(WORD wNotifyCode, WORD wID, HWND hWndCtl)
 {
 	switch (wID)
@@ -45,8 +52,8 @@ LRESULT CDialogConf::OnCloseCmd(WORD wNotifyCode, WORD wID, HWND hWndCtl)
 
 LRESULT CDialogConf::OnInitDialog(HWND hwndFocus, LPARAM lParam)
 {
-	// Get caption text
-	uGetWindowText(m_hWnd, m_caption);
+	// Set caption text
+	uSetWindowText(m_hWnd, m_caption);
 
 	// Init resize
 	DlgResize_Init();
@@ -129,8 +136,6 @@ LRESULT CDialogConf::OnInitDialog(HWND hwndFocus, LPARAM lParam)
 
 LRESULT CDialogConf::OnNotify(int idCtrl, LPNMHDR pnmh)
 {
-	SCNotification* notification = (SCNotification *)pnmh;
-
 	switch (pnmh->code)
 	{
 		// dirty
@@ -264,7 +269,7 @@ bool CDialogConf::MatchShortcuts(unsigned vk)
 		if (vk == VK_F3)
 		{
 			// Find next one
-			if (!m_lastSearchText.is_empty())
+			if (m_lastSearchText.get_length())
 			{
 				FindNext(m_hWnd, m_editorctrl.m_hWnd, m_lastFlags, m_lastSearchText);
 			}
@@ -279,7 +284,7 @@ bool CDialogConf::MatchShortcuts(unsigned vk)
 		if (vk == VK_F3)
 		{
 			// Find previous one
-			if (!m_lastSearchText.is_empty())
+			if (m_lastSearchText.get_length())
 			{
 				FindPrevious(m_hWnd, m_editorctrl.m_hWnd, m_lastFlags, m_lastSearchText);
 			}

@@ -2,12 +2,13 @@
 #include "drop_impl.h"
 #include "host.h"
 #include "host_timer_dispatcher.h"
-#include "kmeans.h"
 #include "panel_manager.h"
 #include "script_interface_impl.h"
-#include "stackblur.h"
 #include "stats.h"
 #include "ui_input_box.h"
+
+#include <kmeans.h>
+#include <stackblur.h>
 
 #include <map>
 #include <vector>
@@ -231,7 +232,7 @@ STDMETHODIMP FbMetadbHandle::ClearStats()
 	if (m_handle.is_empty()) return E_POINTER;
 
 	metadb_index_hash hash;
-	if (stats::g_client->hashHandle(m_handle, hash))
+	if (stats::hashHandle(m_handle, hash))
 	{
 		stats::set(hash, stats::fields());
 	}
@@ -286,7 +287,7 @@ STDMETHODIMP FbMetadbHandle::RefreshStats()
 	if (m_handle.is_empty()) return E_POINTER;
 
 	metadb_index_hash hash;
-	if (stats::g_client->hashHandle(m_handle, hash))
+	if (stats::hashHandle(m_handle, hash))
 	{
 		stats::theAPI()->dispatch_refresh(g_guid_jsp_metadb_index, hash);
 	}
@@ -298,7 +299,7 @@ STDMETHODIMP FbMetadbHandle::SetFirstPlayed(BSTR first_played)
 	if (m_handle.is_empty()) return E_POINTER;
 
 	metadb_index_hash hash;
-	if (stats::g_client->hashHandle(m_handle, hash))
+	if (stats::hashHandle(m_handle, hash))
 	{
 		stats::fields tmp = stats::get(hash);
 		string_utf8_from_wide fp(first_played);
@@ -316,7 +317,7 @@ STDMETHODIMP FbMetadbHandle::SetLastPlayed(BSTR last_played)
 	if (m_handle.is_empty()) return E_POINTER;
 
 	metadb_index_hash hash;
-	if (stats::g_client->hashHandle(m_handle, hash))
+	if (stats::hashHandle(m_handle, hash))
 	{
 		stats::fields tmp = stats::get(hash);
 		string_utf8_from_wide lp(last_played);
@@ -334,7 +335,7 @@ STDMETHODIMP FbMetadbHandle::SetLoved(UINT loved)
 	if (m_handle.is_empty()) return E_POINTER;
 
 	metadb_index_hash hash;
-	if (stats::g_client->hashHandle(m_handle, hash))
+	if (stats::hashHandle(m_handle, hash))
 	{
 		stats::fields tmp = stats::get(hash);
 		if (tmp.loved != loved)
@@ -351,7 +352,7 @@ STDMETHODIMP FbMetadbHandle::SetPlaycount(UINT playcount)
 	if (m_handle.is_empty()) return E_POINTER;
 
 	metadb_index_hash hash;
-	if (stats::g_client->hashHandle(m_handle, hash))
+	if (stats::hashHandle(m_handle, hash))
 	{
 		stats::fields tmp = stats::get(hash);
 		if (tmp.playcount != playcount)
@@ -368,7 +369,7 @@ STDMETHODIMP FbMetadbHandle::SetRating(UINT rating)
 	if (m_handle.is_empty()) return E_POINTER;
 
 	metadb_index_hash hash;
-	if (stats::g_client->hashHandle(m_handle, hash))
+	if (stats::hashHandle(m_handle, hash))
 	{
 		stats::fields tmp = stats::get(hash);
 		if (tmp.rating != rating)
@@ -721,7 +722,7 @@ STDMETHODIMP FbMetadbHandleList::RefreshStats()
 	for (t_size i = 0; i < count; ++i)
 	{
 		metadb_index_hash hash;
-		if (stats::g_client->hashHandle(m_handles[i], hash))
+		if (stats::hashHandle(m_handles[i], hash))
 		{
 			tmp += hash;
 		}
@@ -844,14 +845,14 @@ STDMETHODIMP FbMetadbHandleList::UpdateFileInfoFromJSON(BSTR str)
 				for (json::iterator ita = it.value().begin(); ita != it.value().end(); ++ita)
 				{
 					pfc::string8 value = helpers::iterator_to_string(ita);
-					if (!value.is_empty())
+					if (value.get_length())
 						info[i].meta_add(key, value);
 				}
 			}
 			else
 			{
 				pfc::string8 value = helpers::iterator_to_string(it);
-				if (!value.is_empty())
+				if (value.get_length())
 					info[i].meta_set(key, value);
 			}
 		}
@@ -1078,13 +1079,13 @@ STDMETHODIMP FbPlaylistManager::CreatePlaylist(UINT playlistIndex, BSTR name, in
 	auto api = playlist_manager::get();
 	string_utf8_from_wide uname(name);
 
-	if (uname.is_empty())
+	if (uname.length())
 	{
-		*outPlaylistIndex = api->create_playlist_autoname(playlistIndex);
+		*outPlaylistIndex = api->create_playlist(uname, uname.length(), playlistIndex);
 	}
 	else
 	{
-		*outPlaylistIndex = api->create_playlist(uname, uname.length(), playlistIndex);
+		*outPlaylistIndex = api->create_playlist_autoname(playlistIndex);
 	}
 	return S_OK;
 }
@@ -1472,7 +1473,7 @@ STDMETHODIMP FbPlaylistManager::SortByFormat(UINT playlistIndex, BSTR pattern, V
 	if (!outSuccess) return E_POINTER;
 
 	string_utf8_from_wide upattern(pattern);
-	*outSuccess = TO_VARIANT_BOOL(playlist_manager::get()->playlist_sort_by_format(playlistIndex, upattern.is_empty() ? nullptr : upattern.get_ptr(), selOnly != VARIANT_FALSE));
+	*outSuccess = TO_VARIANT_BOOL(playlist_manager::get()->playlist_sort_by_format(playlistIndex, upattern.length() ? upattern.get_ptr() : NULL, selOnly != VARIANT_FALSE));
 	return S_OK;
 }
 

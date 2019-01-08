@@ -42,7 +42,7 @@ namespace
 		void on_quit()
 		{
 			panel_manager::instance().send_msg_to_all(UWM_SCRIPT_TERM, 0, 0);
-			simple_thread_pool::instance().join();
+			simple_thread_pool::instance().exit();
 		}
 
 	private:

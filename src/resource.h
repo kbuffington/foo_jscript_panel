@@ -9,6 +9,8 @@
 #define IDR_SCRIPT                      100
 #define IDR_API                         101
 #define IDAPPLY                         102
+#define IDC_IMPORT                      103
+#define IDC_EXPORT                      104
 
 //ui_conf
 #define IDD_DIALOG_CONF                 110
@@ -42,16 +44,12 @@
 //ui_pref
 #define IDD_DIALOG_PREF                 160
 #define IDC_LIST_EDITOR_PROP            161
-#define IDC_BUTTON_IMPORT               162
-#define IDC_BUTTON_EXPORT               163
 
 //ui_property
 #define IDD_DIALOG_PROPERTY             170
 #define IDC_DEL                         171
 #define IDC_CLEARALL                    172
-#define IDC_IMPORT                      173
-#define IDC_EXPORT                      174
-#define IDC_LIST_PROPERTIES             175
+#define IDC_LIST_PROPERTIES             173
 
 //ui_replace
 #define IDD_DIALOG_REPLACE              180

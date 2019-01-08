@@ -1,13 +1,10 @@
 #pragma once
-
 #include "resource.h"
 
 class CInputBox : public CDialogImpl<CInputBox>
 {
 public:
-	CInputBox(const char* p_prompt, const char* p_caption, const char* p_value) : m_prompt(p_prompt), m_caption(p_caption), m_value(p_value)
-	{
-	}
+	CInputBox(const char* p_prompt, const char* p_caption, const char* p_value);
 
 	BEGIN_MSG_MAP(CInputBox)
 		MSG_WM_INITDIALOG(OnInitDialog)
@@ -24,7 +21,7 @@ public:
 	void GetValue(pfc::string_base& p_value);
 
 private:
-	pfc::string8 m_prompt;
-	pfc::string8 m_caption;
-	pfc::string8 m_value;
+	pfc::string8_fast m_prompt;
+	pfc::string8_fast m_caption;
+	pfc::string8_fast m_value;
 };

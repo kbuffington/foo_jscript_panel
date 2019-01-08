@@ -1678,7 +1678,7 @@ interface IFbMetadbHandle {
 		handle.Dispose();
 		*/
 
-		GetAlbumArt([art_id]); (VBArray)
+		GetAlbumArt([art_id, need_stub]); (VBArray)
 		/*
 		art_id: default 0.
 
@@ -1687,6 +1687,8 @@ interface IFbMetadbHandle {
 		2: disc
 		3: icon
 		4: artist
+
+		need_stub: boolean, default true.
 
 		Returns a VBArray so you need to use .toArray() on the result.
 

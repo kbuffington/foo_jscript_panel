@@ -1,13 +1,10 @@
 #pragma once
-
 #include "resource.h"
 
 class CDialogGoto : public CDialogImpl<CDialogGoto>
 {
 public:
-	CDialogGoto(HWND p_hedit) : m_hedit(p_hedit)
-	{
-	}
+	CDialogGoto(HWND p_hedit);
 
 	BEGIN_MSG_MAP(CDialogGoto)
 		MSG_WM_INITDIALOG(OnInitDialog)

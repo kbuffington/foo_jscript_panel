@@ -36,7 +36,55 @@ const t_style_to_key_table js_style_table[] =
 	{ -1, NULL },
 };
 
-static bool IsSymIncludes(const StyleAndWords & symbols, const SString value)
+static DWORD ParseHex(const char* hex)
+{
+	auto int_from_hex_digit = [](int ch)
+	{
+		if ((ch >= '0') && (ch <= '9'))
+		{
+			return ch - '0';
+		}
+		else if (ch >= 'A' && ch <= 'F')
+		{
+			return ch - 'A' + 10;
+		}
+		else if (ch >= 'a' && ch <= 'f')
+		{
+			return ch - 'a' + 10;
+		}
+		else
+		{
+			return 0;
+		}
+	};
+
+	auto int_from_hex_byte = [int_from_hex_digit](const char* hex_byte)
+	{
+		return (int_from_hex_digit(hex_byte[0]) << 4) | (int_from_hex_digit(hex_byte[1]));
+	};
+
+	// len('#000000') = 7
+	if (pfc::strlen_max(hex, 8) == 8)
+		return 0;
+
+	int r = int_from_hex_byte(hex + 1);
+	int g = int_from_hex_byte(hex + 3);
+	int b = int_from_hex_byte(hex + 5);
+
+	return RGB(r, g, b);
+}
+
+static bool IsBraceChar(int ch)
+{
+	return ch == '[' || ch == ']' || ch == '(' || ch == ')' || ch == '{' || ch == '}';
+}
+
+static bool IsIdentifierChar(int ch)
+{
+	return __iswcsym(ch);
+}
+
+static bool IsSymIncludes(const StyleAndWords& symbols, const SString value)
 {
 	if (symbols.IsEmpty())
 	{
@@ -46,11 +94,11 @@ static bool IsSymIncludes(const StyleAndWords & symbols, const SString value)
 	{
 		// Set of symbols separated by spaces
 		t_size lenVal = value.length();
-		const char *symbol = symbols.words.c_str();
+		const char* symbol = symbols.words.c_str();
 
 		while (symbol)
 		{
-			const char *symbolEnd = strchr(symbol, ' ');
+			const char* symbolEnd = strchr(symbol, ' ');
 			t_size lenSymbol = strlen(symbol);
 
 			if (symbolEnd)
@@ -80,139 +128,18 @@ static bool IsSymIncludes(const StyleAndWords & symbols, const SString value)
 	return false;
 }
 
-static inline bool IsASpace(unsigned int ch)
-{
-	return (ch == ' ') || ((ch >= 0x09) && (ch <= 0x0d));
-}
-
-static bool IsBraceChar(int ch)
-{
-	return ch == '[' || ch == ']' || ch == '(' || ch == ')' || ch == '{' || ch == '}';
-}
-
-static bool IsIdentifierChar(int ch)
-{
-	return __iswcsym(ch);
-}
-
-static int int_from_hex_digit(int ch)
-{
-	if ((ch >= '0') && (ch <= '9'))
-	{
-		return ch - '0';
-	}
-	else if (ch >= 'A' && ch <= 'F')
-	{
-		return ch - 'A' + 10;
-	}
-	else if (ch >= 'a' && ch <= 'f')
-	{
-		return ch - 'a' + 10;
-	}
-	else
-	{
-		return 0;
-	}
-}
-
-static int int_from_hex_byte(const char* hex_byte)
-{
-	return (int_from_hex_digit(hex_byte[0]) << 4) | (int_from_hex_digit(hex_byte[1]));
-}
-
-struct StringComparePartialNC
-{
-	StringComparePartialNC(t_size len_) : len(len_)
-	{
-	}
-
-	int operator()(const char * s1, const char * s2) const
-	{
-		t_size len1 = pfc::strlen_max_t(s1, len);
-		t_size len2 = pfc::strlen_max_t(s2, len);
-
-		return pfc::stricmp_ascii_ex(s1, len1, s2, len2);
-	}
-
-	t_size len;
-};
-
-struct StringCompareSpecial
-{
-	int operator()(const char * s1, const char * s2) const
-	{
-		int result = _stricmp(s1, s2);
-
-		if (result == 0)
-		{
-			if (isalpha(*s1) && (*s1 != *s2))
-			{
-				return islower(*s1) ? -1 : 1;
-			}
-		}
-
-		return result;
-	}
-};
-
-static t_size LengthWord(const char * word, char otherSeparator)
-{
-	const char *endWord = 0;
-	// Find an otherSeparator
-
-	if (otherSeparator)
-		endWord = strchr(word, otherSeparator);
-
-	// Find a '('. If that fails go to the end of the string.
-	if (!endWord)
-		endWord = strchr(word, '(');
-
-	if (!endWord)
-		endWord = word + strlen(word);
-
-	// Last case always succeeds so endWord != 0
-
-	// Drop any space characters.
-	if (endWord > word)
-	{
-		endWord--;
-		// Back from the '(', otherSeparator, or '\0'
-		// Move backwards over any spaces
-
-		while ((endWord > word) && (IsASpace(*endWord)))
-		{
-			endWord--;
-		}
-	}
-
-	return endWord - word;
-}
-
-static DWORD ParseHex(const char * hex)
-{
-	// len('#000000') = 7
-	if (pfc::strlen_max(hex, 8) == 8)
-		return 0;
-
-	int r = int_from_hex_byte(hex + 1);
-	int g = int_from_hex_byte(hex + 3);
-	int b = int_from_hex_byte(hex + 5);
-
-	return RGB(r, g, b);
-}
-
-static bool ParseStyle(const char * p_definition, t_sci_editor_style & p_style)
+static bool ParseStyle(const char* p_definition, t_sci_editor_style& p_style)
 {
 	if (p_definition == 0 || !*p_definition)
 		return false;
 
-	char * val = _strdup(p_definition);
-	char * opt = val;
+	char* val = _strdup(p_definition);
+	char* opt = val;
 
 	while (opt)
 	{
 		// Find attribute separator
-		char * cpComma = strchr(opt, ',');
+		char* cpComma = strchr(opt, ',');
 
 		if (cpComma)
 		{
@@ -221,7 +148,7 @@ static bool ParseStyle(const char * p_definition, t_sci_editor_style & p_style)
 		}
 
 		// Find attribute name/value separator
-		char * colon = strchr(opt, ':');
+		char* colon = strchr(opt, ':');
 
 		if (colon)
 		{
@@ -303,32 +230,107 @@ static bool ParseStyle(const char * p_definition, t_sci_editor_style & p_style)
 	return true;
 }
 
-Sci_CharacterRange CScriptEditorCtrl::GetSelection()
+static inline bool IsASpace(t_size ch)
 {
-	Sci_CharacterRange crange;
-	crange.cpMin = GetSelectionStart();
-	crange.cpMax = GetSelectionEnd();
-	return crange;
+	return (ch == ' ') || ((ch >= 0x09) && (ch <= 0x0d));
 }
 
-int CScriptEditorCtrl::GetCaretInLine()
+static t_size LengthWord(const char* word, char otherSeparator)
 {
-	int caret = GetCurrentPos();
-	int line = LineFromPosition(caret);
-	int lineStart = PositionFromLine(line);
-	return caret - lineStart;
+	const char* endWord = 0;
+	// Find an otherSeparator
+
+	if (otherSeparator)
+		endWord = strchr(word, otherSeparator);
+
+	// Find a '('. If that fails go to the end of the string.
+	if (!endWord)
+		endWord = strchr(word, '(');
+
+	if (!endWord)
+		endWord = word + strlen(word);
+
+	// Last case always succeeds so endWord != 0
+
+	// Drop any space characters.
+	if (endWord > word)
+	{
+		endWord--;
+		// Back from the '(', otherSeparator, or '\0'
+		// Move backwards over any spaces
+
+		while ((endWord > word) && (IsASpace(*endWord)))
+		{
+			endWord--;
+		}
+	}
+
+	return endWord - word;
 }
 
-pfc::string8 CScriptEditorCtrl::GetCurrentLine()
+struct StringComparePartialNC
 {
-	pfc::string8 buf;
-	int len = 0;
+	StringComparePartialNC(t_size len_) : len(len_) {}
 
-	len = GetCurLine(0, 0);
-	GetCurLine(buf.lock_buffer(len), len);
-	buf.unlock_buffer();
+	int operator()(const char* s1, const char* s2) const
+	{
+		t_size len1 = pfc::strlen_max_t(s1, len);
+		t_size len2 = pfc::strlen_max_t(s2, len);
 
-	return buf;
+		return pfc::stricmp_ascii_ex(s1, len1, s2, len2);
+	}
+
+	t_size len;
+};
+
+struct StringCompareSpecial
+{
+	int operator()(const char* s1, const char* s2) const
+	{
+		int result = _stricmp(s1, s2);
+
+		if (result == 0)
+		{
+			if (isalpha(*s1) && (*s1 != *s2))
+			{
+				return islower(*s1) ? -1 : 1;
+			}
+		}
+
+		return result;
+	}
+};
+
+CScriptEditorCtrl::CScriptEditorCtrl() : m_nBraceCount(0), m_nCurrentCallTip(0), m_nStartCalltipWord(0), m_nLastPosCallTip(0), m_nStatementLookback(10) {}
+
+BOOL CScriptEditorCtrl::SubclassWindow(HWND hWnd)
+{
+	BOOL bRet = CScintillaCtrl::SubclassWindow(hWnd);
+
+	if (bRet)
+		Init();
+
+	return bRet;
+}
+
+DWORD CScriptEditorCtrl::GetPropertyColor(const char* key, bool* key_exist)
+{
+	pfc::array_t<char> buff;
+	int len = GetPropertyExpanded(key, 0); // Get property len
+
+	if (key_exist)
+		*key_exist = (len != 0);
+
+	if (len == 0)
+		return 0;
+
+	// Allocate buffer
+	buff.set_size(len + 1);
+	buff[len] = 0;
+	// Get property
+	GetPropertyExpanded(key, buff.get_ptr());
+
+	return ParseHex(buff.get_ptr());
 }
 
 IndentationStatus CScriptEditorCtrl::GetIndentState(int line)
@@ -336,8 +338,8 @@ IndentationStatus CScriptEditorCtrl::GetIndentState(int line)
 	// C like language indentation defined by braces and keywords
 	IndentationStatus indentState = isNone;
 	SString controlWords[20];
-	unsigned int parts = GetLinePartsInStyle(line, m_StatementIndent.styleNumber, -1, controlWords, _countof(controlWords));
-	unsigned int i;
+	t_size parts = GetLinePartsInStyle(line, m_StatementIndent.styleNumber, -1, controlWords, _countof(controlWords));
+	t_size i;
 
 	for (i = 0; i < parts; i++)
 	{
@@ -357,7 +359,7 @@ IndentationStatus CScriptEditorCtrl::GetIndentState(int line)
 
 	parts = GetLinePartsInStyle(line, m_BlockEnd.styleNumber, -1, controlStrings, _countof(controlStrings));
 
-	for (unsigned int j = 0; j < parts; j++)
+	for (t_size j = 0; j < parts; j++)
 	{
 		if (IsSymIncludes(m_BlockEnd, controlStrings[j]))
 			indentState = isBlockEnd;
@@ -369,41 +371,243 @@ IndentationStatus CScriptEditorCtrl::GetIndentState(int line)
 	return indentState;
 }
 
-unsigned int CScriptEditorCtrl::GetLinePartsInStyle(int line, int style1, int style2, SString sv[], int len)
+LRESULT CScriptEditorCtrl::OnChange(UINT uNotifyCode, int nID, HWND wndCtl)
 {
-	for (int i = 0; i < len; i++)
-		sv[i] = "";
+	AutoMarginWidth();
+	return 0;
+}
 
-	SString s;
-	int part = 0;
-	int thisLineStart = PositionFromLine(line);
-	int nextLineStart = PositionFromLine(line + 1);
+LRESULT CScriptEditorCtrl::OnCharAdded(LPNMHDR pnmh)
+{
+	SCNotification* notification = (SCNotification*)pnmh;
+	int ch = notification->ch;
+	Sci_CharacterRange crange = GetSelection();
+	int selStart = crange.cpMin;
+	int selEnd = crange.cpMax;
 
-	for (int pos = thisLineStart; pos < nextLineStart; pos++)
+	if ((selEnd == selStart) && (selStart > 0))
 	{
-		if ((GetStyleAt(pos) == style1) || (GetStyleAt(pos) == style2))
+		if (CallTipActive())
 		{
-			char c[2];
-			c[0] = GetCharAt(pos);
-			c[1] = '\0';
-			s += c;
-		}
-		else if (s.length() > 0)
-		{
-			if (part < len)
+			switch (ch)
 			{
-				sv[part++] = s;
+			case ')':
+				m_nBraceCount--;
+				if (m_nBraceCount < 1)
+					CallTipCancel();
+				else
+					StartCallTip();
+				break;
+
+			case '(':
+				m_nBraceCount++;
+				StartCallTip();
+				break;
+
+			default:
+				ContinueCallTip();
+				break;
 			}
-			s = "";
+		}
+		else if (AutoCActive())
+		{
+			if (ch == '(')
+			{
+				m_nBraceCount++;
+				StartCallTip();
+			}
+			else if (ch == ')')
+			{
+				m_nBraceCount--;
+			}
+			else if (!IsIdentifierChar(ch))
+			{
+				AutoCCancel();
+
+				if (ch == '.')
+					StartAutoComplete();
+			}
+		}
+		else
+		{
+			if (ch == '(')
+			{
+				m_nBraceCount = 1;
+				StartCallTip();
+			}
+			else
+			{
+				AutomaticIndentation(ch);
+
+				if (IsIdentifierChar(ch) || ch == '.')
+					StartAutoComplete();
+			}
 		}
 	}
 
-	if ((s.length() > 0) && (part < len))
+	return 0;
+}
+
+LRESULT CScriptEditorCtrl::OnKeyDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+{
+	bHandled = FALSE;
+	::PostMessage(::GetAncestor(m_hWnd, GA_PARENT), UWM_KEYDOWN, wParam, lParam);
+	return TRUE;
+}
+
+LRESULT CScriptEditorCtrl::OnUpdateUI(LPNMHDR pnmn)
+{
+	// Match Brace
+	int braceAtCaret = -1;
+	int braceOpposite = -1;
+
+	FindBraceMatchPos(braceAtCaret, braceOpposite);
+
+	if (braceAtCaret != -1 && braceOpposite == -1)
 	{
-		sv[part++] = s;
+		BraceBadLight(braceAtCaret);
+		SetHighlightGuide(0);
+	}
+	else
+	{
+		BraceHighlight(braceAtCaret, braceOpposite);
+
+		int columnAtCaret = GetColumn(braceAtCaret);
+		int columnOpposite = GetColumn(braceOpposite);
+
+		SetHighlightGuide(min(columnAtCaret, columnOpposite));
 	}
 
-	return part;
+	return 0;
+}
+
+LRESULT CScriptEditorCtrl::OnZoom(LPNMHDR pnmn)
+{
+	AutoMarginWidth();
+	return 0;
+}
+
+Sci_CharacterRange CScriptEditorCtrl::GetSelection()
+{
+	Sci_CharacterRange crange;
+	crange.cpMin = GetSelectionStart();
+	crange.cpMax = GetSelectionEnd();
+	return crange;
+}
+
+bool CScriptEditorCtrl::FindBraceMatchPos(int& braceAtCaret, int& braceOpposite)
+{
+	bool isInside = false;
+	int caretPos = GetCurrentPos();
+
+	braceAtCaret = -1;
+	braceOpposite = -1;
+
+	char charBefore = 0;
+	int lengthDoc = GetLength();
+
+	if ((lengthDoc > 0) && (caretPos > 0))
+	{
+		// Check to ensure not matching brace that is part of a multibyte character
+		int posBefore = PositionBefore(caretPos);
+
+		if (posBefore == (caretPos - 1))
+		{
+			charBefore = GetCharAt(posBefore);
+		}
+	}
+
+	// Priority goes to character before caret
+	if (charBefore && IsBraceChar(charBefore))
+	{
+		braceAtCaret = caretPos - 1;
+	}
+
+	bool colonMode = false;
+	bool isAfter = true;
+
+	if (lengthDoc > 0 && (braceAtCaret < 0) && (caretPos < lengthDoc))
+	{
+		// No brace found so check other side
+		// Check to ensure not matching brace that is part of a multibyte character
+		char charAfter = GetCharAt(caretPos);
+
+		if (charAfter && IsBraceChar(charAfter))
+		{
+			braceAtCaret = caretPos;
+			isAfter = false;
+		}
+	}
+
+	if (braceAtCaret >= 0)
+	{
+		if (colonMode)
+		{
+			int lineStart = LineFromPosition(braceAtCaret);
+			int lineMaxSubord = GetLastChild(lineStart, -1);
+
+			braceOpposite = GetLineEndPosition(lineMaxSubord);
+		}
+		else
+		{
+			braceOpposite = BraceMatch(braceAtCaret);
+		}
+
+		if (braceOpposite > braceAtCaret)
+			isInside = isAfter;
+		else
+			isInside = !isAfter;
+	}
+
+	return isInside;
+}
+
+bool CScriptEditorCtrl::GetNearestWords(pfc::string_base& out, const char* wordStart, int searchLen, const char* separators)
+{
+	out.reset();
+
+	if (m_apis.get_count() == 0)
+		return false;
+
+	bool status = false;
+
+	while (!status && *separators)
+	{
+		char otherSeparator = *separators;
+		t_size index;
+
+		if (m_apis.bsearch_t(StringComparePartialNC(searchLen), wordStart, index))
+		{
+			t_size pivot = index;
+			status = true;
+
+			// Find first match
+			while ((pivot > 0) &&
+				(StringComparePartialNC(searchLen)(m_apis[pivot - 1], wordStart) == 0))
+			{
+				--pivot;
+			}
+
+			// Grab each match
+			while (pivot <= m_apis.get_count() - 1)
+			{
+				if (StringComparePartialNC(searchLen)(m_apis[pivot], wordStart) != 0)
+					break;
+
+				t_size wordlen = LengthWord(m_apis[pivot], otherSeparator) + 1;
+
+				out.add_string(m_apis[pivot], wordlen);
+				out.add_char(' ');
+
+				++pivot;
+			}
+
+		}
+
+		separators++;
+	}
+
+	return status;
 }
 
 bool CScriptEditorCtrl::RangeIsAllWhitespace(int start, int end)
@@ -420,6 +624,34 @@ bool CScriptEditorCtrl::RangeIsAllWhitespace(int start, int end)
 		if ((c != ' ') && (c != '\t'))
 			return false;
 	}
+
+	return true;
+}
+
+bool CScriptEditorCtrl::StartAutoComplete()
+{
+	pfc::string8_fast line = GetCurrentLine();
+	int current = GetCaretInLine();
+
+	int startword = current;
+
+	while ((startword > 0) && (IsIdentifierChar(line[startword - 1]) || line[startword - 1] == '.'))
+	{
+		startword--;
+	}
+
+	pfc::string8_fast root;
+	root.set_string(line.get_ptr() + startword, current - startword);
+
+	if (m_apis.get_count() == 0)
+		return false;
+
+	pfc::string8_fast words;
+
+	if (!GetNearestWords(words, root.get_ptr(), root.length(), "("))
+		return false;
+
+	AutoCShow(root.length(), words);
 
 	return true;
 }
@@ -482,9 +714,260 @@ bool CScriptEditorCtrl::StartCallTip()
 	return true;
 }
 
+const char* CScriptEditorCtrl::GetNearestWord(const char* wordStart, int searchLen, SString wordCharacters, int wordIndex)
+{
+	if (m_apis.get_count() == 0)
+		return false;
+
+	t_size index;
+
+	if (m_apis.bsearch_t(StringComparePartialNC(searchLen), wordStart, index))
+	{
+		// Find first match
+		t_size start = index;
+
+		while ((start > 0) &&
+			(StringComparePartialNC(searchLen)(m_apis[start - 1], wordStart) == 0))
+		{
+			--start;
+		}
+
+		// Find last match
+		t_size end = index;
+
+		while ((end < m_apis.get_count() - 1) &&
+			(StringComparePartialNC(searchLen)(m_apis[end + 1], wordStart) == 0))
+		{
+			++end;
+		}
+
+		// Finds first word in a series of equal words
+		for (t_size i = start; i <= end; ++i)
+		{
+			const char* word = m_apis[i];
+
+			if (!wordCharacters.contains(word[searchLen]))
+			{
+				if (wordIndex <= 0) // Checks if a specific index was requested
+					return word; // result must not be freed with free()
+
+				--wordIndex;
+			}
+		}
+
+		return NULL;
+	}
+
+	return NULL;
+}
+
+int CScriptEditorCtrl::GetCaretInLine()
+{
+	int caret = GetCurrentPos();
+	int line = LineFromPosition(caret);
+	int lineStart = PositionFromLine(line);
+	return caret - lineStart;
+}
+
+int CScriptEditorCtrl::IndentOfBlock(int line)
+{
+	if (line < 0)
+		return 0;
+
+	int indentSize = GetIndent();
+	int indentBlock = GetLineIndentation(line);
+	int backLine = line;
+	IndentationStatus indentState = isNone;
+
+	int lineLimit = line - m_nStatementLookback;
+
+	if (lineLimit < 0)
+		lineLimit = 0;
+
+	while ((backLine >= lineLimit) && (indentState == 0))
+	{
+		indentState = GetIndentState(backLine);
+
+		if (indentState != 0)
+		{
+			indentBlock = GetLineIndentation(backLine);
+
+			if (indentState == isBlockStart)
+			{
+				indentBlock += indentSize;
+			}
+
+			if (indentState == isBlockEnd)
+			{
+				if (indentBlock < 0)
+					indentBlock = 0;
+			}
+
+			if ((indentState == isKeyWordStart) && (backLine == line))
+				indentBlock += indentSize;
+		}
+
+		backLine--;
+	}
+
+	return indentBlock;
+}
+
+pfc::string8_fast CScriptEditorCtrl::GetCurrentLine()
+{
+	pfc::string8_fast buf;
+	int len = 0;
+
+	len = GetCurLine(0, 0);
+	GetCurLine(buf.lock_buffer(len), len);
+	buf.unlock_buffer();
+
+	return buf;
+}
+
+t_size CScriptEditorCtrl::GetLinePartsInStyle(int line, int style1, int style2, SString sv[], int len)
+{
+	for (int i = 0; i < len; i++)
+		sv[i] = "";
+
+	SString s;
+	int part = 0;
+	int thisLineStart = PositionFromLine(line);
+	int nextLineStart = PositionFromLine(line + 1);
+
+	for (int pos = thisLineStart; pos < nextLineStart; pos++)
+	{
+		if ((GetStyleAt(pos) == style1) || (GetStyleAt(pos) == style2))
+		{
+			char c[2];
+			c[0] = GetCharAt(pos);
+			c[1] = '\0';
+			s += c;
+		}
+		else if (s.length() > 0)
+		{
+			if (part < len)
+			{
+				sv[part++] = s;
+			}
+			s = "";
+		}
+	}
+
+	if ((s.length() > 0) && (part < len))
+	{
+		sv[part++] = s;
+	}
+
+	return part;
+}
+
+void CScriptEditorCtrl::AutoMarginWidth()
+{
+	// Auto margin width
+	int linenumwidth = 1;
+	int marginwidth, oldmarginwidth;
+	int linecount;
+
+	linecount = GetLineCount();
+
+	while (linecount >= 10)
+	{
+		linecount /= 10;
+		++linenumwidth;
+	}
+
+	oldmarginwidth = GetMarginWidthN(0);
+	marginwidth = 4 + linenumwidth * (TextWidth(STYLE_LINENUMBER, "9"));
+
+	if (oldmarginwidth != marginwidth)
+		SetMarginWidthN(0, marginwidth);
+}
+
+void CScriptEditorCtrl::AutomaticIndentation(char ch)
+{
+	Sci_CharacterRange crange = GetSelection();
+	int selStart = crange.cpMin;
+	int curLine = LineFromPosition(GetCurrentPos());
+	int thisLineStart = PositionFromLine(curLine);
+	int indentSize = GetIndent();
+	int indentBlock = IndentOfBlock(curLine - 1);
+
+	if (curLine > 0)
+	{
+		// Smart indent?
+		pfc::array_t<char> linebuf;
+		bool foundBrace = false;
+		int prevLineLength = LineLength(curLine - 1);
+		int slen = 0;
+
+		linebuf.set_size(prevLineLength + 2);
+		GetLine(curLine - 1, linebuf.get_ptr());
+		linebuf[prevLineLength] = 0;
+		slen = strlen(linebuf.get_ptr());
+
+		for (int pos = slen - 1; pos >= 0 && linebuf[pos]; --pos)
+		{
+			char c = linebuf[pos];
+
+			if (c == '\t' || c == ' ' || c == '\r' || c == '\n')
+			{
+				continue;
+			}
+			else if (c == '{' || c == '[' || c == '(')
+			{
+				foundBrace = true;
+			}
+
+			break;
+		}
+
+		if (foundBrace)
+			indentBlock += indentSize;
+	}
+
+	if (ch == '}')
+	{
+		// Dedent maybe
+		if (RangeIsAllWhitespace(thisLineStart, selStart - 1))
+		{
+			SetIndentation(curLine, indentBlock - indentSize);
+		}
+	}
+	else if (ch == '{')
+	{
+		// Dedent maybe if first on line and previous line was starting keyword
+		if ((GetIndentState(curLine - 1) == isKeyWordStart))
+		{
+			if (RangeIsAllWhitespace(thisLineStart, selStart - 1))
+			{
+				SetIndentation(curLine, indentBlock - indentSize);
+			}
+		}
+	}
+	else if ((ch == '\r' || ch == '\n') && (selStart == thisLineStart))
+	{
+		// Dedent previous line maybe
+		SString controlWords[1];
+
+		if (GetLinePartsInStyle(curLine - 1, m_BlockEnd.styleNumber, -1, controlWords, _countof(controlWords)))
+		{
+			if (IsSymIncludes(m_BlockEnd, controlWords[0]))
+			{
+				// Check if first keyword on line is an ender
+				SetIndentation(curLine - 1, IndentOfBlock(curLine - 2) - indentSize);
+				// Recalculate as may have changed previous line
+				indentBlock = IndentOfBlock(curLine - 1);
+			}
+		}
+
+		SetIndentation(curLine, indentBlock);
+	}
+}
+
 void CScriptEditorCtrl::ContinueCallTip()
 {
-	pfc::string8 line = GetCurrentLine();
+	pfc::string8_fast line = GetCurrentLine();
 	int current = GetCaretInLine();
 	int braces = 0;
 	int commas = 0;
@@ -563,7 +1046,7 @@ void CScriptEditorCtrl::FillFunctionDefinition(int pos)
 		}
 
 		// Should get current api definition
-		const char * word = GetNearestWord(m_szCurrentCallTipWord.get_ptr(),
+		const char* word = GetNearestWord(m_szCurrentCallTipWord.get_ptr(),
 			m_szCurrentCallTipWord.get_length(),
 			"_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", m_nCurrentCallTip);
 
@@ -575,342 +1058,6 @@ void CScriptEditorCtrl::FillFunctionDefinition(int pos)
 			ContinueCallTip();
 		}
 	}
-}
-
-bool CScriptEditorCtrl::StartAutoComplete()
-{
-	pfc::string8 line = GetCurrentLine();
-	int current = GetCaretInLine();
-
-	int startword = current;
-
-	while ((startword > 0) && (IsIdentifierChar(line[startword - 1]) || line[startword - 1] == '.'))
-	{
-		startword--;
-	}
-
-	pfc::string8 root;
-	root.set_string(line.get_ptr() + startword, current - startword);
-
-	if (m_apis.get_count() == 0)
-		return false;
-
-	pfc::string8_fast words;
-
-	if (!GetNearestWords(words, root.get_ptr(), root.length(), "("))
-		return false;
-
-	AutoCShow(root.length(), words);
-
-	return true;
-}
-
-int CScriptEditorCtrl::IndentOfBlock(int line)
-{
-	if (line < 0)
-		return 0;
-
-	int indentSize = GetIndent();
-	int indentBlock = GetLineIndentation(line);
-	int backLine = line;
-	IndentationStatus indentState = isNone;
-
-	int lineLimit = line - m_nStatementLookback;
-
-	if (lineLimit < 0)
-		lineLimit = 0;
-
-	while ((backLine >= lineLimit) && (indentState == 0))
-	{
-		indentState = GetIndentState(backLine);
-
-		if (indentState != 0)
-		{
-			indentBlock = GetLineIndentation(backLine);
-
-			if (indentState == isBlockStart)
-			{
-				indentBlock += indentSize;
-			}
-
-			if (indentState == isBlockEnd)
-			{
-				if (indentBlock < 0)
-					indentBlock = 0;
-			}
-
-			if ((indentState == isKeyWordStart) && (backLine == line))
-				indentBlock += indentSize;
-		}
-
-		backLine--;
-	}
-
-	return indentBlock;
-}
-
-void CScriptEditorCtrl::AutomaticIndentation(char ch)
-{
-	Sci_CharacterRange crange = GetSelection();
-	int selStart = crange.cpMin;
-	int curLine = LineFromPosition(GetCurrentPos());
-	int thisLineStart = PositionFromLine(curLine);
-	int indentSize = GetIndent();
-	int indentBlock = IndentOfBlock(curLine - 1);
-
-	if (curLine > 0)
-	{
-		// Smart indent?
-		pfc::array_t<char> linebuf;
-		bool foundBrace = false;
-		int prevLineLength = LineLength(curLine - 1);
-		int len = GetCurLine(0, 0);
-		int slen = 0;
-
-		linebuf.set_size(prevLineLength + 2);
-		GetLine(curLine - 1, linebuf.get_ptr());
-		linebuf[prevLineLength] = 0;
-		slen = strlen(linebuf.get_ptr());
-
-		for (int pos = slen - 1; pos >= 0 && linebuf[pos]; --pos)
-		{
-			char c = linebuf[pos];
-
-			if (c == '\t' || c == ' ' || c == '\r' || c == '\n')
-			{
-				continue;
-			}
-			else if (c == '{' || c == '[' || c == '(')
-			{
-				foundBrace = true;
-			}
-
-			break;
-		}
-
-		if (foundBrace)
-			indentBlock += indentSize;
-	}
-
-	if (ch == '}')
-	{
-		// Dedent maybe
-		if (RangeIsAllWhitespace(thisLineStart, selStart - 1))
-		{
-			SetIndentation(curLine, indentBlock - indentSize);
-		}
-	}
-	else if (ch == '{')
-	{
-		// Dedent maybe if first on line and previous line was starting keyword
-		if ((GetIndentState(curLine - 1) == isKeyWordStart))
-		{
-			if (RangeIsAllWhitespace(thisLineStart, selStart - 1))
-			{
-				SetIndentation(curLine, indentBlock - indentSize);
-			}
-		}
-	}
-	else if ((ch == '\r' || ch == '\n') && (selStart == thisLineStart))
-	{
-		// Dedent previous line maybe
-		SString controlWords[1];
-
-		if (GetLinePartsInStyle(curLine - 1, m_BlockEnd.styleNumber, -1, controlWords, _countof(controlWords)))
-		{
-			if (IsSymIncludes(m_BlockEnd, controlWords[0]))
-			{
-				// Check if first keyword on line is an ender
-				SetIndentation(curLine - 1, IndentOfBlock(curLine - 2) - indentSize);
-				// Recalculate as may have changed previous line
-				indentBlock = IndentOfBlock(curLine - 1);
-			}
-		}
-
-		SetIndentation(curLine, indentBlock);
-	}
-}
-
-bool CScriptEditorCtrl::FindBraceMatchPos(int &braceAtCaret, int &braceOpposite)
-{
-	bool isInside = false;
-	int caretPos = GetCurrentPos();
-
-	braceAtCaret = -1;
-	braceOpposite = -1;
-
-	char charBefore = 0;
-	int lengthDoc = GetLength();
-
-	if ((lengthDoc > 0) && (caretPos > 0))
-	{
-		// Check to ensure not matching brace that is part of a multibyte character
-		int posBefore = PositionBefore(caretPos);
-
-		if (posBefore == (caretPos - 1))
-		{
-			charBefore = GetCharAt(posBefore);
-		}
-	}
-
-	// Priority goes to character before caret
-	if (charBefore && IsBraceChar(charBefore))
-	{
-		braceAtCaret = caretPos - 1;
-	}
-
-	bool colonMode = false;
-	bool isAfter = true;
-
-	if (lengthDoc > 0 && (braceAtCaret < 0) && (caretPos < lengthDoc))
-	{
-		// No brace found so check other side
-		// Check to ensure not matching brace that is part of a multibyte character
-		char charAfter = GetCharAt(caretPos);
-
-		if (charAfter && IsBraceChar(charAfter))
-		{
-			braceAtCaret = caretPos;
-			isAfter = false;
-		}
-	}
-
-	if (braceAtCaret >= 0)
-	{
-		if (colonMode)
-		{
-			int lineStart = LineFromPosition(braceAtCaret);
-			int lineMaxSubord = GetLastChild(lineStart, -1);
-
-			braceOpposite = GetLineEndPosition(lineMaxSubord);
-		}
-		else
-		{
-			braceOpposite = BraceMatch(braceAtCaret);
-		}
-
-		if (braceOpposite > braceAtCaret)
-			isInside = isAfter;
-		else
-			isInside = !isAfter;
-	}
-
-	return isInside;
-}
-
-const char * CScriptEditorCtrl::GetNearestWord(const char *wordStart, int searchLen, SString wordCharacters, int wordIndex)
-{
-	if (m_apis.get_count() == 0)
-		return false;
-
-	t_size index;
-
-	if (m_apis.bsearch_t(StringComparePartialNC(searchLen), wordStart, index))
-	{
-		// Find first match
-		t_size start = index;
-
-		while ((start > 0) &&
-			(StringComparePartialNC(searchLen)(m_apis[start - 1], wordStart) == 0))
-		{
-			--start;
-		}
-
-		// Find last match
-		t_size end = index;
-
-		while ((end < m_apis.get_count() - 1) &&
-			(StringComparePartialNC(searchLen)(m_apis[end + 1], wordStart) == 0))
-		{
-			++end;
-		}
-
-		// Finds first word in a series of equal words
-		for (t_size i = start; i <= end; ++i)
-		{
-			const char * word = m_apis[i];
-
-			if (!wordCharacters.contains(word[searchLen]))
-			{
-				if (wordIndex <= 0) // Checks if a specific index was requested
-					return word; // result must not be freed with free()
-
-				--wordIndex;
-			}
-		}
-
-		return NULL;
-	}
-
-	return NULL;
-}
-
-bool CScriptEditorCtrl::GetNearestWords(pfc::string_base & out, const char * wordStart, int searchLen, const char *separators)
-{
-	out.reset();
-
-	if (m_apis.get_count() == 0)
-		return false;
-
-	bool status = false;
-
-	while (!status && *separators)
-	{
-		char otherSeparator = *separators;
-		t_size index;
-
-		if (m_apis.bsearch_t(StringComparePartialNC(searchLen), wordStart, index))
-		{
-			t_size pivot = index;
-			status = true;
-
-			// Find first match
-			while ((pivot > 0) &&
-				(StringComparePartialNC(searchLen)(m_apis[pivot - 1], wordStart) == 0))
-			{
-				--pivot;
-			}
-
-			// Grab each match
-			while (pivot <= m_apis.get_count() - 1)
-			{
-				if (StringComparePartialNC(searchLen)(m_apis[pivot], wordStart) != 0)
-					break;
-
-				t_size wordlen = LengthWord(m_apis[pivot], otherSeparator) + 1;
-
-				out.add_string(m_apis[pivot], wordlen);
-				out.add_char(' ');
-
-				++pivot;
-			}
-
-		}
-
-		separators++;
-	}
-
-	return status;
-}
-
-DWORD CScriptEditorCtrl::GetPropertyColor(const char * key, bool * key_exist)
-{
-	pfc::array_t<char> buff;
-	int len = GetPropertyExpanded(key, 0); // Get property len
-
-	if (key_exist)
-		*key_exist = (len != 0);
-
-	if (len == 0)
-		return 0;
-
-	// Allocate buffer
-	buff.set_size(len + 1);
-	buff[len] = 0;
-	// Get property
-	GetPropertyExpanded(key, buff.get_ptr());
-
-	return ParseHex(buff.get_ptr());
 }
 
 void CScriptEditorCtrl::Init()
@@ -966,10 +1113,10 @@ void CScriptEditorCtrl::Init()
 	AutoCSetIgnoreCase(true);
 
 	// Load properties
-	LoadProperties(g_sci_prop_sets.val());
+	LoadProperties(g_sci_prop_sets.m_data);
 }
 
-void CScriptEditorCtrl::LoadProperties(const pfc::list_t<t_sci_prop_set> & data)
+void CScriptEditorCtrl::LoadProperties(const pfc::list_t<t_sci_prop_set>& data)
 {
 	for (t_size i = 0; i < data.get_count(); ++i)
 	{
@@ -977,17 +1124,22 @@ void CScriptEditorCtrl::LoadProperties(const pfc::list_t<t_sci_prop_set> & data)
 	}
 }
 
-void CScriptEditorCtrl::SetContent(const char * text, bool clear_undo_buffer)
+void CScriptEditorCtrl::ReadAPI()
 {
-	SetText(text);
-	ConvertEOLs(SC_EOL_CRLF);
+	m_apis.remove_all();
+	puResource pures = uLoadResource(core_api::get_my_instance(), uMAKEINTRESOURCE(IDR_API), "TEXT");
+	pfc::string8_fast content(static_cast<const char*>(pures->GetPointer()), pures->GetSize());
+	pfc::string_list_impl temp;
+	pfc::splitStringByLines(temp, content);
 
-	if (clear_undo_buffer)
-		EmptyUndoBuffer();
-
-	Colourise(0, -1);
-	GrabFocus();
-	TrackWidth();
+	for (t_size i = 0; i < temp.get_count(); ++i)
+	{
+		if (IsIdentifierChar(*temp[i]))
+		{
+			m_apis.add_item(temp[i]);
+		}
+	}
+	m_apis.sort_remove_duplicates_t(StringCompareSpecial());
 }
 
 void CScriptEditorCtrl::RestoreDefaultStyle()
@@ -1045,48 +1197,9 @@ void CScriptEditorCtrl::RestoreDefaultStyle()
 	SetCaretLineBackAlpha(GetPropertyInt("style.caret.line.back.alpha", SC_ALPHA_NOALPHA));
 }
 
-void CScriptEditorCtrl::SetJScript()
-{
-	const char js_keywords[] = "abstract boolean break byte case catch char class const continue"
-		" debugger default delete do double else enum export extends false final"
-		" finally float for function goto if implements import in instanceof int"
-		" interface long native new null package private protected public return"
-		" short static super switch synchronized this throw throws transient true"
-		" try typeof var void while with enum byvalue cast future generic inner"
-		" operator outer rest Array Math RegExp window fb gdi utils plman console";
-
-	RestoreDefaultStyle();
-
-	// Set lexer
-	SetLexer(SCLEX_CPP);
-	// Set keywords
-	SetKeyWords(0, js_keywords);
-	// Set styles
-	SetAllStylesFromTable(js_style_table);
-	// Colorise
-	Colourise(0, -1);
-}
-
-void CScriptEditorCtrl::TrackWidth()
-{
-	int max_width = 1;
-
-	for (int i = 0; i < GetLineCount(); ++i)
-	{
-		// Get max width
-		int pos = GetLineEndPosition(i);
-		int width = PointXFromPosition(pos);
-
-		if (width > max_width)
-			max_width = width;
-	}
-
-	SetScrollWidth(max_width);
-}
-
 void CScriptEditorCtrl::SetAllStylesFromTable(const t_style_to_key_table table[])
 {
-	const char * key = NULL;
+	const char* key = NULL;
 
 	for (int i = 0; table[i].style_num != -1; ++i)
 	{
@@ -1145,36 +1258,39 @@ void CScriptEditorCtrl::SetAllStylesFromTable(const t_style_to_key_table table[]
 	}
 }
 
-void CScriptEditorCtrl::AutoMarginWidth()
+void CScriptEditorCtrl::SetContent(const char* text, bool clear_undo_buffer)
 {
-	// Auto margin width
-	int linenumwidth = 1;
-	int marginwidth, oldmarginwidth;
-	int linecount;
+	SetText(text);
+	ConvertEOLs(SC_EOL_CRLF);
 
-	linecount = GetLineCount();
+	if (clear_undo_buffer)
+		EmptyUndoBuffer();
 
-	while (linecount >= 10)
-	{
-		linecount /= 10;
-		++linenumwidth;
-	}
-
-	oldmarginwidth = GetMarginWidthN(0);
-	marginwidth = 4 + linenumwidth * (TextWidth(STYLE_LINENUMBER, "9"));
-
-	if (oldmarginwidth != marginwidth)
-		SetMarginWidthN(0, marginwidth);
+	Colourise(0, -1);
+	GrabFocus();
+	TrackWidth();
 }
 
-BOOL CScriptEditorCtrl::SubclassWindow(HWND hWnd)
+void CScriptEditorCtrl::SetJScript()
 {
-	BOOL bRet = CScintillaCtrl::SubclassWindow(hWnd);
+	const char js_keywords[] = "abstract boolean break byte case catch char class const continue"
+		" debugger default delete do double else enum export extends false final"
+		" finally float for function goto if implements import in instanceof int"
+		" interface long native new null package private protected public return"
+		" short static super switch synchronized this throw throws transient true"
+		" try typeof var void while with enum byvalue cast future generic inner"
+		" operator outer rest Array Math RegExp window fb gdi utils plman console";
 
-	if (bRet)
-		Init();
+	RestoreDefaultStyle();
 
-	return bRet;
+	// Set lexer
+	SetLexer(SCLEX_CPP);
+	// Set keywords
+	SetKeyWords(0, js_keywords);
+	// Set styles
+	SetAllStylesFromTable(js_style_table);
+	// Colorise
+	Colourise(0, -1);
 }
 
 void CScriptEditorCtrl::SetIndentation(int line, int indent)
@@ -1223,140 +1339,19 @@ void CScriptEditorCtrl::SetIndentation(int line, int indent)
 	SetSel(crange.cpMin, crange.cpMax);
 }
 
-void CScriptEditorCtrl::ReadAPI()
+void CScriptEditorCtrl::TrackWidth()
 {
-	m_apis.remove_all();
-	puResource pures = uLoadResource(core_api::get_my_instance(), uMAKEINTRESOURCE(IDR_API), "TEXT");
-	pfc::string8_fast content(static_cast<const char*>(pures->GetPointer()), pures->GetSize());
-	pfc::string_list_impl temp;
-	pfc::splitStringByLines(temp, content);
+	int max_width = 1;
 
-	for (t_size i = 0; i < temp.get_count(); ++i)
+	for (int i = 0; i < GetLineCount(); ++i)
 	{
-		if (IsIdentifierChar(*temp[i]))
-		{
-			m_apis.add_item(temp[i]);
-		}
-	}
-	m_apis.sort_remove_duplicates_t(StringCompareSpecial());
-}
+		// Get max width
+		int pos = GetLineEndPosition(i);
+		int width = PointXFromPosition(pos);
 
-LRESULT CScriptEditorCtrl::OnKeyDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
-{
-	bHandled = FALSE;
-	::PostMessage(::GetAncestor(m_hWnd, GA_PARENT), UWM_KEYDOWN, wParam, lParam);
-	return TRUE;
-}
-
-LRESULT CScriptEditorCtrl::OnUpdateUI(LPNMHDR pnmn)
-{
-	// Match Brace
-	int braceAtCaret = -1;
-	int braceOpposite = -1;
-
-	FindBraceMatchPos(braceAtCaret, braceOpposite);
-
-	if (braceAtCaret != -1 && braceOpposite == -1)
-	{
-		BraceBadLight(braceAtCaret);
-		SetHighlightGuide(0);
-	}
-	else
-	{
-		char chBrace = GetCharAt(braceAtCaret);
-
-		BraceHighlight(braceAtCaret, braceOpposite);
-
-		int columnAtCaret = GetColumn(braceAtCaret);
-		int columnOpposite = GetColumn(braceOpposite);
-
-		SetHighlightGuide(min(columnAtCaret, columnOpposite));
+		if (width > max_width)
+			max_width = width;
 	}
 
-	return 0;
-}
-
-LRESULT CScriptEditorCtrl::OnCharAdded(LPNMHDR pnmh)
-{
-	SCNotification * notification = (SCNotification *)pnmh;
-	int ch = notification->ch;
-	Sci_CharacterRange crange = GetSelection();
-	int selStart = crange.cpMin;
-	int selEnd = crange.cpMax;
-
-	if ((selEnd == selStart) && (selStart > 0))
-	{
-		if (CallTipActive())
-		{
-			switch (ch)
-			{
-			case ')':
-				m_nBraceCount--;
-				if (m_nBraceCount < 1)
-					CallTipCancel();
-				else
-					StartCallTip();
-				break;
-
-			case '(':
-				m_nBraceCount++;
-				StartCallTip();
-				break;
-
-			default:
-				ContinueCallTip();
-				break;
-			}
-		}
-		else if (AutoCActive())
-		{
-			if (ch == '(')
-			{
-				m_nBraceCount++;
-				StartCallTip();
-			}
-			else if (ch == ')')
-			{
-				m_nBraceCount--;
-			}
-			else if (!IsIdentifierChar(ch))
-			{
-				AutoCCancel();
-
-				if (ch == '.')
-					StartAutoComplete();
-			}
-		}
-		else
-		{
-			if (ch == '(')
-			{
-				m_nBraceCount = 1;
-				StartCallTip();
-			}
-			else
-			{
-				AutomaticIndentation(ch);
-
-				if (IsIdentifierChar(ch) || ch == '.')
-					StartAutoComplete();
-			}
-		}
-	}
-
-	return 0;
-}
-
-LRESULT CScriptEditorCtrl::OnZoom(LPNMHDR pnmn)
-{
-	AutoMarginWidth();
-
-	return 0;
-}
-
-LRESULT CScriptEditorCtrl::OnChange(UINT uNotifyCode, int nID, HWND wndCtl)
-{
-	AutoMarginWidth();
-
-	return 0;
+	SetScrollWidth(max_width);
 }

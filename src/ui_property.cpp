@@ -1,6 +1,9 @@
 #include "stdafx.h"
 #include "ui_property.h"
 
+CDialogProperty::CDialogProperty(js_panel_window* p_parent) : m_parent(p_parent) {}
+CDialogProperty::~CDialogProperty() {}
+
 LRESULT CDialogProperty::OnClearallBnClicked(WORD wNotifyCode, WORD wID, HWND hWndCtl)
 {
 	m_dup_prop_map.remove_all();
@@ -44,7 +47,7 @@ LRESULT CDialogProperty::OnDelBnClicked(WORD wNotifyCode, WORD wID, HWND hWndCtl
 
 LRESULT CDialogProperty::OnExportBnClicked(WORD wNotifyCode, WORD wID, HWND hWndCtl)
 {
-	pfc::string8 path;
+	pfc::string8_fast path;
 
 	if (uGetOpenFileName(m_hWnd, "Property files|*.wsp", 0, "wsp", "Save as", NULL, path, TRUE))
 	{
@@ -56,31 +59,27 @@ LRESULT CDialogProperty::OnExportBnClicked(WORD wNotifyCode, WORD wID, HWND hWnd
 			filesystem::g_open_write_new(io, path, abort);
 			prop_kv_config::g_save(m_dup_prop_map, io.get_ptr(), abort);
 		}
-		catch (...)
-		{
-		}
+		catch (...) {}
 	}
 	return 0;
 }
 
 LRESULT CDialogProperty::OnImportBnClicked(WORD wNotifyCode, WORD wID, HWND hWndCtl)
 {
-	pfc::string8 filename;
+	pfc::string8_fast path;
 
-	if (uGetOpenFileName(m_hWnd, "Property files|*.wsp|All files|*.*", 0, "wsp", "Import from", NULL, filename, FALSE))
+	if (uGetOpenFileName(m_hWnd, "Property files|*.wsp|All files|*.*", 0, "wsp", "Import from", NULL, path, FALSE))
 	{
 		file_ptr io;
 		abort_callback_dummy abort;
 
 		try
 		{
-			filesystem::g_open_read(io, filename, abort);
+			filesystem::g_open_read(io, path, abort);
 			prop_kv_config::g_load(m_dup_prop_map, io.get_ptr(), abort);
 			LoadProperties(false);
 		}
-		catch (...)
-		{
-		}
+		catch (...) {}
 	}
 	return 0;
 }
@@ -96,7 +95,7 @@ LRESULT CDialogProperty::OnInitDialog(HWND hwndFocus, LPARAM lParam)
 
 	LoadProperties();
 
-	return TRUE; // set focus to default control
+	return FALSE;
 }
 
 LRESULT CDialogProperty::OnPinItemChanged(LPNMHDR pnmh)
@@ -107,7 +106,7 @@ LRESULT CDialogProperty::OnPinItemChanged(LPNMHDR pnmh)
 
 	if (m_dup_prop_map.have_item(uname))
 	{
-		prop_kv_config::t_val& val = m_dup_prop_map[uname];
+		_variant_t& val = m_dup_prop_map[uname];
 		_variant_t var;
 
 		if (pnpi->prop->GetValue(&var))
@@ -122,7 +121,7 @@ LRESULT CDialogProperty::OnPinItemChanged(LPNMHDR pnmh)
 void CDialogProperty::Apply()
 {
 	// Copy back
-	m_parent->get_config_prop().get_val() = m_dup_prop_map;
+	m_parent->get_config_prop().m_map = m_dup_prop_map;
 	m_parent->update_script();
 	LoadProperties();
 }
@@ -133,7 +132,7 @@ void CDialogProperty::LoadProperties(bool reload)
 
 	if (reload)
 	{
-		m_dup_prop_map = m_parent->get_config_prop().get_val();
+		m_dup_prop_map = m_parent->get_config_prop().m_map;
 	}
 
 	for (prop_kv_config::t_map::const_iterator iter = m_dup_prop_map.first(); iter.is_valid(); ++iter)

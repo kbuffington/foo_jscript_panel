@@ -105,6 +105,9 @@
     <ClCompile Include="ui_input_box.cpp">
       <Filter>Source Files\UI</Filter>
     </ClCompile>
+    <ClCompile Include="stats.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="host.h">
@@ -179,23 +182,11 @@
     <ClInclude Include="..\PropertyList\PropertyList.h">
       <Filter>Header Files\PropertyList</Filter>
     </ClInclude>
-    <ClInclude Include="json.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="helpers.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="stackblur.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="host_drop_target.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SString.h">
-      <Filter>Header Files\UI</Filter>
-    </ClInclude>
-    <ClInclude Include="wtlscintilla.h">
-      <Filter>Header Files\UI</Filter>
     </ClInclude>
     <ClInclude Include="editorctrl.h">
       <Filter>Header Files\UI</Filter>
@@ -218,13 +209,13 @@
     <ClInclude Include="component_defines.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="kmeans.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ui_input_box.h">
       <Filter>Header Files\UI</Filter>
     </ClInclude>
     <ClInclude Include="drop_impl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="mainmenu.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

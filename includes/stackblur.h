@@ -1,6 +1,4 @@
 #pragma once
-#pragma warning(push)
-#pragma warning(disable: 4018 4244)
 
 /*
 The Stack Blur Algorithm was invented by Mario Klingemann,
@@ -32,7 +30,7 @@ static unsigned short const stackblur_mul[255] =
 	289,287,285,282,280,278,275,273,271,269,267,265,263,261,259
 };
 
-static unsigned char const stackblur_shr[255] =
+static BYTE const stackblur_shr[255] =
 {
 	9, 11, 12, 13, 13, 14, 14, 15, 15, 15, 15, 16, 16, 16, 16, 17,
 	17, 17, 17, 17, 17, 17, 18, 18, 18, 18, 18, 18, 18, 18, 18, 19,
@@ -53,23 +51,23 @@ static unsigned char const stackblur_shr[255] =
 };
 
 /// Stackblur algorithm body
-void stackblurJob(unsigned char* src, ///< input image data
-	unsigned int w, ///< image width
-	unsigned int h, ///< image height
-	unsigned int radius, ///< blur intensity (should be in 2..254 range)
-	int cores, ///< total number of working threads
-	int core, ///< current thread number
-	int step, ///< step of processing (1,2)
-	unsigned char* stack ///< stack buffer
+void stackblurJob(BYTE* src, ///< input image data
+	t_size w, ///< image width
+	t_size h, ///< image height
+	t_size radius, ///< blur intensity (should be in 2..254 range)
+	t_size cores, ///< total number of working threads
+	t_size core, ///< current thread number
+	t_size step, ///< step of processing (1,2)
+	BYTE* stack ///< stack buffer
 )
 {
-	unsigned int x, y, xp, yp, i;
-	unsigned int sp;
-	unsigned int stack_start;
-	unsigned char* stack_ptr;
+	t_size x, y, xp, yp, i;
+	t_size sp;
+	t_size stack_start;
+	BYTE* stack_ptr;
 
-	unsigned char* src_ptr;
-	unsigned char* dst_ptr;
+	BYTE* src_ptr;
+	BYTE* dst_ptr;
 
 	unsigned long sum_r;
 	unsigned long sum_g;
@@ -84,17 +82,17 @@ void stackblurJob(unsigned char* src, ///< input image data
 	unsigned long sum_out_b;
 	unsigned long sum_out_a;
 
-	unsigned int wm = w - 1;
-	unsigned int hm = h - 1;
-	unsigned int w4 = w * 4;
-	unsigned int div = (radius * 2) + 1;
-	unsigned int mul_sum = stackblur_mul[radius];
-	unsigned char shr_sum = stackblur_shr[radius];
+	t_size wm = w - 1;
+	t_size hm = h - 1;
+	t_size w4 = w * 4;
+	t_size div = (radius * 2) + 1;
+	t_size mul_sum = stackblur_mul[radius];
+	BYTE shr_sum = stackblur_shr[radius];
 
 	if (step == 1)
 	{
-		int minY = core * h / cores;
-		int maxY = (core + 1) * h / cores;
+		t_size minY = core * h / cores;
+		t_size maxY = (core + 1) * h / cores;
 
 		for (y = minY; y < maxY; y++)
 		{
@@ -104,7 +102,7 @@ void stackblurJob(unsigned char* src, ///< input image data
 
 			src_ptr = src + w4 * y; // start of line (0,y)
 
-			for (i = 0; i <= radius; i++)
+			for (i = 0; i <= radius; ++i)
 			{
 				stack_ptr = &stack[4 * i];
 				stack_ptr[0] = src_ptr[0];
@@ -121,7 +119,7 @@ void stackblurJob(unsigned char* src, ///< input image data
 				sum_out_a += src_ptr[3];
 			}
 
-			for (i = 1; i <= radius; i++)
+			for (i = 1; i <= radius; ++i)
 			{
 				if (i <= wm) src_ptr += 4;
 				stack_ptr = &stack[4 * (i + radius)];
@@ -146,10 +144,10 @@ void stackblurJob(unsigned char* src, ///< input image data
 			dst_ptr = src + y * w4; // img.pix_ptr(0, y);
 			for (x = 0; x < w; x++)
 			{
-				dst_ptr[0] = (sum_r * mul_sum) >> shr_sum;
-				dst_ptr[1] = (sum_g * mul_sum) >> shr_sum;
-				dst_ptr[2] = (sum_b * mul_sum) >> shr_sum;
-				dst_ptr[3] = (sum_a * mul_sum) >> shr_sum;
+				dst_ptr[0] = static_cast<BYTE>((sum_r * mul_sum) >> shr_sum);
+				dst_ptr[1] = static_cast<BYTE>((sum_g * mul_sum) >> shr_sum);
+				dst_ptr[2] = static_cast<BYTE>((sum_b * mul_sum) >> shr_sum);
+				dst_ptr[3] = static_cast<BYTE>((sum_a * mul_sum) >> shr_sum);
 				dst_ptr += 4;
 
 				sum_r -= sum_out_r;
@@ -205,8 +203,8 @@ void stackblurJob(unsigned char* src, ///< input image data
 	// step 2
 	if (step == 2)
 	{
-		int minX = core * w / cores;
-		int maxX = (core + 1) * w / cores;
+		t_size minX = core * w / cores;
+		t_size maxX = (core + 1) * w / cores;
 
 		for (x = minX; x < maxX; x++)
 		{
@@ -215,7 +213,7 @@ void stackblurJob(unsigned char* src, ///< input image data
 				sum_out_r = sum_out_g = sum_out_b = sum_out_a = 0;
 
 			src_ptr = src + 4 * x; // x,0
-			for (i = 0; i <= radius; i++)
+			for (i = 0; i <= radius; ++i)
 			{
 				stack_ptr = &stack[i * 4];
 				stack_ptr[0] = src_ptr[0];
@@ -231,7 +229,7 @@ void stackblurJob(unsigned char* src, ///< input image data
 				sum_out_b += src_ptr[2];
 				sum_out_a += src_ptr[3];
 			}
-			for (i = 1; i <= radius; i++)
+			for (i = 1; i <= radius; ++i)
 			{
 				if (i <= hm) src_ptr += w4; // +stride
 
@@ -257,10 +255,10 @@ void stackblurJob(unsigned char* src, ///< input image data
 			dst_ptr = src + 4 * x; // img.pix_ptr(x, 0);
 			for (y = 0; y < h; y++)
 			{
-				dst_ptr[0] = (sum_r * mul_sum) >> shr_sum;
-				dst_ptr[1] = (sum_g * mul_sum) >> shr_sum;
-				dst_ptr[2] = (sum_b * mul_sum) >> shr_sum;
-				dst_ptr[3] = (sum_a * mul_sum) >> shr_sum;
+				dst_ptr[0] = static_cast<BYTE>((sum_r * mul_sum) >> shr_sum);
+				dst_ptr[1] = static_cast<BYTE>((sum_g * mul_sum) >> shr_sum);
+				dst_ptr[2] = static_cast<BYTE>((sum_b * mul_sum) >> shr_sum);
+				dst_ptr[3] = static_cast<BYTE>((sum_a * mul_sum) >> shr_sum);
 				dst_ptr += w4;
 
 				sum_r -= sum_out_r;
@@ -317,16 +315,16 @@ void stackblurJob(unsigned char* src, ///< input image data
 class stack_blur_task : public pfc::thread
 {
 public:
-	unsigned char* src;
-	unsigned int w;
-	unsigned int h;
-	unsigned int radius;
-	int cores;
-	int core;
-	int step;
-	unsigned char* stack;
+	BYTE* src;
+	t_size w;
+	t_size h;
+	t_size radius;
+	t_size cores;
+	t_size core;
+	t_size step;
+	BYTE* stack;
 
-	inline stack_blur_task(unsigned char* src, unsigned int w, unsigned int h, unsigned int radius, int cores, int core, int step, unsigned char* stack)
+	inline stack_blur_task(BYTE* src, t_size w, t_size h, t_size radius, t_size cores, t_size core, t_size step, BYTE* stack)
 	{
 		this->src = src;
 		this->w = w;
@@ -344,18 +342,15 @@ public:
 	}
 };
 
-void stackblur(unsigned char* src, ///< input image data
-	unsigned int w, ///< image width
-	unsigned int h, ///< image height
-	unsigned int radius ///< blur intensity (should be in 2..254 range)
+void stackblur(BYTE* src, ///< input image data
+	t_size w, ///< image width
+	t_size h, ///< image height
+	t_size radius ///< blur intensity (should be in 2..254 range)
 )
 {
-	if (radius > 254) return;
-	if (radius < 2) return;
-
-	unsigned int cores = max(1, pfc::getOptimalWorkerThreadCount());
-	unsigned int div = (radius * 2) + 1;
-	unsigned char* stack = new unsigned char[div * 4 * cores];
+	t_size cores = max(1, pfc::getOptimalWorkerThreadCount());
+	t_size div = (radius * 2) + 1;
+	BYTE* stack = new BYTE[div * 4 * cores];
 
 	if (cores == 1)
 	{
@@ -365,25 +360,26 @@ void stackblur(unsigned char* src, ///< input image data
 	}
 	else
 	{
+		t_size i;
 		stack_blur_task** workers = new stack_blur_task*[cores];
-		for (int i = 0; i < cores; i++)
+		for (i = 0; i < cores; ++i)
 		{
 			workers[i] = new stack_blur_task(src, w, h, radius, cores, i, 1, stack + div * 4 * i);
 			workers[i]->start();
 		}
 
-		for (int i = 0; i < cores; i++)
+		for (i = 0; i < cores; ++i)
 		{
 			workers[i]->waitTillDone();
 		}
 
-		for (int i = 0; i < cores; i++)
+		for (i = 0; i < cores; ++i)
 		{
 			workers[i]->step = 2;
 			workers[i]->start();
 		}
 
-		for (int i = 0; i < cores; i++)
+		for (i = 0; i < cores; ++i)
 		{
 			workers[i]->waitTillDone();
 			delete workers[i];
@@ -395,25 +391,19 @@ void stackblur(unsigned char* src, ///< input image data
 	delete[] stack;
 }
 
-void stack_blur_filter(Gdiplus::Bitmap& img, int radius) throw()
+void stack_blur_filter(Gdiplus::Bitmap& img, BYTE radius) throw()
 {
-	int width = img.GetWidth();
-	int height = img.GetHeight();
+	if (radius < 2) radius = 2;
+	if (radius > 254) radius = 254;
+	t_size width = img.GetWidth();
+	t_size height = img.GetHeight();
 
+	Gdiplus::Rect rect(0, 0, width, height);
 	Gdiplus::BitmapData bmpdata;
-	Gdiplus::Rect rect;
-
-	rect.X = rect.Y = 0;
-	rect.Width = width;
-	rect.Height = height;
 
 	if (img.LockBits(&rect, Gdiplus::ImageLockModeRead | Gdiplus::ImageLockModeWrite, PixelFormat32bppPARGB, &bmpdata) == Gdiplus::Ok)
 	{
-		if (radius > 254) radius = 254;
-		if (radius < 2) radius = 2;
-		stackblur((unsigned char*)bmpdata.Scan0, width, height, radius);
+		stackblur((BYTE*)bmpdata.Scan0, width, height, radius);
 		img.UnlockBits(&bmpdata);
 	}
 }
-
-#pragma warning(pop)

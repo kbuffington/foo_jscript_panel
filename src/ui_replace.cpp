@@ -1,6 +1,8 @@
 #include "stdafx.h"
-#include "ui_replace.h"
 #include "ui_conf.h"
+#include "ui_replace.h"
+
+CDialogReplace::CDialogReplace(HWND p_hedit) : m_hedit(p_hedit), m_flags(0), m_havefound(false) {}
 
 CHARRANGE CDialogReplace::GetSelection()
 {
@@ -32,10 +34,10 @@ LRESULT CDialogReplace::OnEditReplaceEnChange(WORD wNotifyCode, WORD wID, HWND h
 
 LRESULT CDialogReplace::OnFindNext(WORD wNotifyCode, WORD wID, HWND hWndCtl)
 {
-	if (m_text.is_empty())
-		return 0;
-
-	m_havefound = CDialogConf::FindNext(m_hWnd, m_hedit, m_flags, m_text.get_ptr());
+	if (m_text.get_length())
+	{
+		m_havefound = CDialogConf::FindNext(m_hWnd, m_hedit, m_flags, m_text.get_ptr());
+	}
 	return 0;
 }
 
@@ -134,4 +136,44 @@ void CDialogReplace::OnFinalMessage(HWND hWnd)
 {
 	modeless_dialog_manager::g_remove(m_hWnd);
 	delete this;
+}
+
+BOOL CDialogReplace::CEditWithReturn::SubclassWindow(HWND hWnd, HWND hParent)
+{
+	m_parent = hParent;
+	return parent::SubclassWindow(hWnd);
+}
+
+LRESULT CDialogReplace::CEditWithReturn::OnChar(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+{
+	switch (wParam)
+	{
+	case '\n':
+	case '\r':
+	case '\t':
+	case '\x1b':
+		return 0;
+	}
+
+	return DefWindowProc(uMsg, wParam, lParam);
+}
+
+LRESULT CDialogReplace::CEditWithReturn::OnKeyDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+{
+	switch (wParam)
+	{
+	case VK_RETURN:
+		::PostMessage(m_parent, WM_COMMAND, MAKEWPARAM(IDC_REPLACE, BN_CLICKED), (LPARAM)m_hWnd);
+		return FALSE;
+
+	case VK_ESCAPE:
+		::PostMessage(m_parent, WM_COMMAND, MAKEWPARAM(IDCANCEL, BN_CLICKED), (LPARAM)m_hWnd);
+		return FALSE;
+
+	case VK_TAB:
+		::PostMessage(m_parent, WM_NEXTDLGCTL, 0, 0);
+		return FALSE;
+	}
+
+	return DefWindowProc(uMsg, wParam, lParam);
 }

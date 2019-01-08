@@ -1,13 +1,10 @@
 #pragma once
-
 #include "resource.h"
 
 class CNameValueEdit : public CDialogImpl<CNameValueEdit>
 {
 public:
-	CNameValueEdit(const char* p_name, const char* p_value) : m_name(p_name), m_value(p_value)
-	{
-	}
+	CNameValueEdit(const char* p_name, const char* p_value);
 
 	BEGIN_MSG_MAP(CNameValueEdit)
 		MSG_WM_INITDIALOG(OnInitDialog)
@@ -24,6 +21,6 @@ public:
 	void GetValue(pfc::string_base& p_value);
 
 private:
-	pfc::string_simple m_name;
-	pfc::string8 m_value;
+	pfc::string8_fast m_name;
+	pfc::string8_fast m_value;
 };
