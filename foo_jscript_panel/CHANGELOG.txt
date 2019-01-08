@@ -19,8 +19,8 @@ v2.2.0 Beta 1
        if ('DlgCode' in window) { window.DlgCode = 4; }
 - CHG: Lots of internal code refactoring and external dependency updates.
 - CHG: If you browse the component folder and notice the "jscript.api" and
-       "interface.api" files are missing, it's intentional. The contents are now included
-       inside the compoent.
+       "interface.api" files are missing, it's intentional. The contents are now
+       included inside the component.
 
 v2.1.8
 - NEW: Add FbMetadbHandleList RemoveAttachedImages method.
