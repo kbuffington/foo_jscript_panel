@@ -12,7 +12,7 @@ namespace helpers
 		return RGB(argb >> RED_SHIFT, argb >> GREEN_SHIFT, argb >> BLUE_SHIFT);
 	}
 
-	DWORD convert_colorref_to_argb(DWORD color)
+	DWORD convert_colorref_to_argb(COLORREF color)
 	{
 		// COLORREF : 0x00bbggrr
 		// ARGB : 0xaarrggbb
@@ -165,11 +165,10 @@ namespace helpers
 		return ret;
 	}
 
-	bool execute_context_command_by_name(const char* p_name, metadb_handle_list_cref p_handles, unsigned flags)
+	bool execute_context_command_by_name(const char* p_command, metadb_handle_list_cref p_handles, t_size flags)
 	{
 		contextmenu_manager::ptr cm;
 		contextmenu_manager::g_create(cm);
-		contextmenu_node* node = NULL;
 		pfc::string8_fast dummy("");
 
 		if (p_handles.get_count() > 0)
@@ -178,189 +177,143 @@ namespace helpers
 		}
 		else
 		{
-			cm->init_context_now_playing(flags);
+			if (!cm->init_context_now_playing(flags))
+			{
+				return false;
+			}
 		}
 
-		if (find_context_command_recur(p_name, dummy, cm->get_root(), node) && node)
+		return execute_context_command_recur(p_command, dummy, cm->get_root());
+	}
+
+	bool execute_context_command_recur(const char* p_command, pfc::string_base& p_path, contextmenu_node* p_parent)
+	{
+		for (t_size i = 0; i < p_parent->get_num_children(); ++i)
 		{
-			node->execute();
-			return true;
-		}
+			contextmenu_node* child = p_parent->get_child(i);
+			pfc::string8_fast path = p_path + child->get_name();
 
+			switch (child->get_type())
+			{
+			case contextmenu_item_node::type_group:
+				path.add_char('/');
+				if (execute_context_command_recur(p_command, path, child))
+				{
+					return true;
+				}
+				break;
+			case contextmenu_item_node::type_command:
+				if (_stricmp(p_command, path) == 0)
+				{
+					child->execute();
+					return true;
+				}
+				break;
+			}
+		}
 		return false;
 	}
 
-	bool execute_mainmenu_command_by_name(const char* p_name)
+	bool execute_mainmenu_command_by_name(const char* p_command)
 	{
-		// First generate a map of all mainmenu_group
-		pfc::map_t<GUID, mainmenu_group::ptr> group_guid_text_map;
-		build_mainmenu_group_map(group_guid_text_map);
+		pfc::map_t<GUID, mainmenu_group::ptr> group_guid_map;
 
-		// Second, generate a list of all mainmenu commands
+		{
+			service_enum_t<mainmenu_group> e;
+			mainmenu_group::ptr ptr;
+
+			while (e.next(ptr))
+			{
+				GUID guid = ptr->get_guid();
+				group_guid_map.find_or_add(guid) = ptr;
+			}
+		}
+
 		service_enum_t<mainmenu_commands> e;
 		mainmenu_commands::ptr ptr;
-		t_size name_len = strlen(p_name);
 
 		while (e.next(ptr))
 		{
-			for (t_uint32 idx = 0; idx < ptr->get_command_count(); ++idx)
+			for (t_size i = 0; i < ptr->get_command_count(); ++i)
 			{
-				GUID group_guid = ptr->get_parent();
 				pfc::string8_fast path;
 
-				while (group_guid_text_map.have_item(group_guid))
+				GUID parent = ptr->get_parent();
+				while (parent != pfc::guid_null)
 				{
-					mainmenu_group::ptr group_ptr = group_guid_text_map[group_guid];
+					mainmenu_group::ptr group_ptr = group_guid_map[parent];
 					mainmenu_group_popup::ptr group_popup_ptr;
 
-					if (group_ptr->service_query_t(group_popup_ptr))
+					if (group_ptr->cast(group_popup_ptr))
 					{
 						pfc::string8_fast temp;
 						group_popup_ptr->get_display_string(temp);
-
-						if (!temp.is_empty())
+						if (temp.get_length())
 						{
 							temp.add_char('/');
 							temp.add_string(path);
 							path = temp;
 						}
 					}
-
-					group_guid = group_ptr->get_parent();
+					parent = group_ptr->get_parent();
 				}
 
-				// for new fb2k1.0 commands
 				mainmenu_commands_v2::ptr v2_ptr;
-
-				if (ptr->service_query_t(v2_ptr))
+				if (ptr->cast(v2_ptr) && v2_ptr->is_command_dynamic(i))
 				{
-					if (v2_ptr->is_command_dynamic(idx))
+					mainmenu_node::ptr node = v2_ptr->dynamic_instantiate(i);
+					if (execute_mainmenu_command_recur(p_command, path, node))
 					{
-						mainmenu_node::ptr node = v2_ptr->dynamic_instantiate(idx);
-
-						if (execute_mainmenu_command_recur_v2(node, path, p_name, name_len))
-							return true;
-						else
-							continue;
+						return true;
 					}
 				}
-
-				// old commands
-				pfc::string8_fast command;
-				ptr->get_name(idx, command);
-				path.add_string(command);
-
-				if (match_menu_command(path, p_name, name_len))
+				else
 				{
-					ptr->execute(idx, NULL);
-					return true;
+					pfc::string8_fast command;
+					ptr->get_name(i, command);
+					path.add_string(command);
+					if (_stricmp(p_command, path) == 0)
+					{
+						ptr->execute(i, NULL);
+						return true;
+					}
 				}
 			}
 		}
-
 		return false;
 	}
 
-	bool execute_mainmenu_command_recur_v2(mainmenu_node::ptr node, pfc::string8_fast path, const char* p_name, t_size p_name_len)
+	bool execute_mainmenu_command_recur(const char* p_command, pfc::string8_fast path, mainmenu_node::ptr node)
 	{
 		pfc::string8_fast text;
-		t_uint32 flags;
-		t_uint32 type = node->get_type();
+		t_size flags;
+		node->get_display(text, flags);
+		path += text;
 
-		if (type != mainmenu_node::type_separator)
+		switch (node->get_type())
 		{
-			node->get_display(text, flags);
-			if (!text.is_empty())
-				path.add_string(text);
-		}
-
-		switch (type)
-		{
+		case mainmenu_node::type_group:
+			if (text.get_length())
+			{
+				path.add_char('/');
+			}
+			for (t_size i = 0; i < node->get_children_count(); ++i)
+			{
+				mainmenu_node::ptr child = node->get_child(i);
+				if (execute_mainmenu_command_recur(p_command, path, child))
+				{
+					return true;
+				}
+			}
+			break;
 		case mainmenu_node::type_command:
-		{
-			if (match_menu_command(path, p_name, p_name_len))
+			if (_stricmp(p_command, path) == 0)
 			{
 				node->execute(NULL);
 				return true;
 			}
+			break;
 		}
-		break;
-
-		case mainmenu_node::type_group:
-		{
-			if (!text.is_empty())
-				path.add_char('/');
-
-			for (t_size i = 0; i < node->get_children_count(); ++i)
-			{
-				mainmenu_node::ptr child = node->get_child(i);
-
-				if (execute_mainmenu_command_recur_v2(child, path, p_name, p_name_len))
-					return true;
-			}
-		}
-		break;
-		}
-
-		return false;
-	}
-
-	bool find_context_command_recur(const char* p_command, pfc::string_base& p_path, contextmenu_node* p_parent, contextmenu_node*& p_out)
-	{
-		if (p_parent != NULL && p_parent->get_type() == contextmenu_item_node::TYPE_POPUP)
-		{
-			for (t_size child_id = 0; child_id < p_parent->get_num_children(); ++child_id)
-			{
-				pfc::string8_fast path;
-				contextmenu_node* child = p_parent->get_child(child_id);
-
-				if (child)
-				{
-					path = p_path;
-					path += child->get_name();
-
-					switch (child->get_type())
-					{
-					case contextmenu_item_node::TYPE_POPUP:
-						path += "/";
-
-						if (find_context_command_recur(p_command, path, child, p_out))
-							return true;
-
-						break;
-
-					case contextmenu_item_node::TYPE_COMMAND:
-						if (match_menu_command(path, p_command))
-						{
-							p_out = child;
-							return true;
-						}
-						break;
-					}
-				}
-			}
-		}
-
-		return false;
-	}
-
-	bool match_menu_command(const pfc::string_base& path, const char* command, t_size command_len)
-	{
-		if (command_len == ~0)
-			command_len = strlen(command);
-
-		if (command_len == path.get_length())
-		{
-			if (_stricmp(command, path) == 0)
-				return true;
-		}
-		else if (command_len < path.get_length())
-		{
-			if ((path[path.get_length() - command_len - 1] == '/') &&
-				(_stricmp(path.get_ptr() + path.get_length() - command_len, command) == 0))
-				return true;
-		}
-
 		return false;
 	}
 
@@ -826,18 +779,6 @@ namespace helpers
 	t_size get_colour_from_variant(VARIANT v)
 	{
 		return (v.vt == VT_R8) ? static_cast<unsigned>(v.dblVal) : v.lVal;
-	}
-
-	void build_mainmenu_group_map(pfc::map_t<GUID, mainmenu_group::ptr>& p_group_guid_text_map)
-	{
-		service_enum_t<mainmenu_group> e;
-		mainmenu_group::ptr ptr;
-
-		while (e.next(ptr))
-		{
-			GUID guid = ptr->get_guid();
-			p_group_guid_text_map.find_or_add(guid) = ptr;
-		}
 	}
 
 	void estimate_line_wrap(HDC hdc, const wchar_t* text, int len, int width, pfc::list_t<wrapped_item>& out)

@@ -2467,7 +2467,7 @@ STDMETHODIMP FbUtils::RunContextCommand(BSTR command, UINT flags, VARIANT_BOOL* 
 	if (!p) return E_POINTER;
 
 	pfc::stringcvt::string_utf8_from_wide ucommand(command);
-	*p = TO_VARIANT_BOOL(helpers::execute_context_command_by_name_SEH(ucommand, metadb_handle_list(), flags));
+	*p = TO_VARIANT_BOOL(helpers::execute_context_command_by_name(ucommand, metadb_handle_list(), flags));
 	return S_OK;
 }
 
@@ -2501,7 +2501,7 @@ STDMETHODIMP FbUtils::RunContextCommandWithMetadb(BSTR command, VARIANT handle, 
 	}
 
 	pfc::stringcvt::string_utf8_from_wide ucommand(command);
-	*p = TO_VARIANT_BOOL(helpers::execute_context_command_by_name_SEH(ucommand, handle_list, flags));
+	*p = TO_VARIANT_BOOL(helpers::execute_context_command_by_name(ucommand, handle_list, flags));
 	return S_OK;
 }
 
@@ -2510,7 +2510,7 @@ STDMETHODIMP FbUtils::RunMainMenuCommand(BSTR command, VARIANT_BOOL* p)
 	if (!p) return E_POINTER;
 
 	pfc::stringcvt::string_utf8_from_wide ucommand(command);
-	*p = TO_VARIANT_BOOL(helpers::execute_mainmenu_command_by_name_SEH(ucommand));
+	*p = TO_VARIANT_BOOL(helpers::execute_mainmenu_command_by_name(ucommand));
 	return S_OK;
 }
 

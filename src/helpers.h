@@ -21,17 +21,16 @@ namespace helpers
 	};
 
 	COLORREF convert_argb_to_colorref(DWORD argb);
-	DWORD convert_colorref_to_argb(DWORD color);
+	DWORD convert_colorref_to_argb(COLORREF color);
 	HBITMAP create_hbitmap_from_gdiplus_bitmap(Gdiplus::Bitmap* bitmap_ptr);
 	HRESULT get_album_art_embedded(BSTR rawpath, IGdiBitmap** pp, t_size art_id);
 	HRESULT get_album_art_v2(const metadb_handle_ptr& handle, IGdiBitmap** pp, t_size art_id, bool need_stub, bool no_load = false, pfc::string_base* image_path_ptr = NULL);
 	IGdiBitmap* load_image(BSTR path);
 	IGdiBitmap* query_album_art(album_art_extractor_instance_v2::ptr extractor, GUID& what, bool no_load = false, pfc::string_base* image_path_ptr = NULL);
-	bool execute_context_command_by_name(const char* p_name, metadb_handle_list_cref p_handles, unsigned flags);
-	bool execute_mainmenu_command_by_name(const char* p_name);
-	bool execute_mainmenu_command_recur_v2(mainmenu_node::ptr node, pfc::string8_fast path, const char* p_name, t_size p_name_len);
-	bool find_context_command_recur(const char* p_command, pfc::string_base& p_path, contextmenu_node* p_parent, contextmenu_node*& p_out);
-	bool match_menu_command(const pfc::string_base& path, const char* command, t_size command_len = ~0);
+	bool execute_context_command_by_name(const char* p_command, metadb_handle_list_cref p_handles, t_size flags);
+	bool execute_context_command_recur(const char* p_command, pfc::string_base& p_path, contextmenu_node* p_parent);
+	bool execute_mainmenu_command_by_name(const char* p_command);
+	bool execute_mainmenu_command_recur(const char* p_command, pfc::string8_fast path, mainmenu_node::ptr node);
 	bool read_album_art_into_bitmap(const album_art_data_ptr& data, Gdiplus::Bitmap** bitmap);
 	bool read_file(const char* path, pfc::string_base& content);
 	bool read_file_wide(unsigned codepage, const wchar_t* path, pfc::array_t<wchar_t>& content);
@@ -48,7 +47,6 @@ namespace helpers
 	pfc::string8_fast get_profile_path();
 	t_size detect_charset(const char* fileName);
 	t_size get_colour_from_variant(VARIANT v);
-	void build_mainmenu_group_map(pfc::map_t<GUID, mainmenu_group::ptr>& p_group_guid_text_map);
 	void estimate_line_wrap(HDC hdc, const wchar_t* text, int len, int width, pfc::list_t<wrapped_item>& out);
 	void estimate_line_wrap_recur(HDC hdc, const wchar_t* text, int len, int width, pfc::list_t<wrapped_item>& out);
 	wchar_t* make_sort_string(const char* in);
@@ -64,38 +62,6 @@ namespace helpers
 	{
 		int ret = direction * StrCmpLogicalW(elem1.text, elem2.text);
 		if (ret == 0) ret = pfc::sgn_t((t_ssize)elem1.index - (t_ssize)elem2.index);
-		return ret;
-	}
-
-	__declspec(noinline) static bool execute_context_command_by_name_SEH(const char* p_name, metadb_handle_list_cref p_handles, unsigned flags)
-	{
-		bool ret = false;
-
-		__try
-		{
-			ret = execute_context_command_by_name(p_name, p_handles, flags);
-		}
-		__except (EXCEPTION_EXECUTE_HANDLER)
-		{
-			ret = false;
-		}
-
-		return ret;
-	}
-
-	__declspec(noinline) static bool execute_mainmenu_command_by_name_SEH(const char* p_name)
-	{
-		bool ret = false;
-
-		__try
-		{
-			ret = execute_mainmenu_command_by_name(p_name);
-		}
-		__except (EXCEPTION_EXECUTE_HANDLER)
-		{
-			ret = false;
-		}
-
 		return ret;
 	}
 
