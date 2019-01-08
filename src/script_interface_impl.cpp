@@ -1,23 +1,21 @@
 #include "stdafx.h"
+#include "drop_impl.h"
+#include "host.h"
+#include "host_timer_dispatcher.h"
+#include "kmeans.h"
+#include "panel_manager.h"
+#include "popup_msg.h"
 #include "script_interface_impl.h"
 #include "stackblur.h"
-#include "popup_msg.h"
 #include "stats.h"
-#include "drop_source_impl.h"
-#include "kmeans.h"
 #include "ui_input_box.h"
+
 #include <map>
 #include <vector>
 #include <algorithm>
 
-ContextMenuManager::ContextMenuManager()
-{
-}
-
-ContextMenuManager::~ContextMenuManager()
-{
-}
-
+ContextMenuManager::ContextMenuManager() {}
+ContextMenuManager::~ContextMenuManager() {}
 void ContextMenuManager::FinalRelease()
 {
 	m_cm.release();
@@ -70,41 +68,9 @@ DropSourceAction::DropSourceAction()
 	Reset();
 }
 
-DropSourceAction::~DropSourceAction()
-{
-}
+DropSourceAction::~DropSourceAction() {}
+void DropSourceAction::FinalRelease() {}
 
-void DropSourceAction::FinalRelease()
-{
-}
-
-DWORD& DropSourceAction::Effect()
-{
-	return m_effect;
-}
-
-bool& DropSourceAction::ToSelect()
-{
-	return m_to_select;
-}
-
-t_size& DropSourceAction::Base()
-{
-	return m_base;
-}
-
-t_size& DropSourceAction::Playlist()
-{
-	return m_playlist_idx;
-}
-
-void DropSourceAction::Reset()
-{
-	m_playlist_idx = -1;
-	m_base = 0;
-	m_to_select = true;
-	m_effect = DROPEFFECT_NONE;
-}
 
 STDMETHODIMP DropSourceAction::get_Effect(UINT* effect)
 {
@@ -138,13 +104,8 @@ STDMETHODIMP DropSourceAction::put_ToSelect(VARIANT_BOOL select)
 	return S_OK;
 }
 
-FbFileInfo::FbFileInfo(file_info_impl* p_info_ptr) : m_info_ptr(p_info_ptr)
-{
-}
-
-FbFileInfo::~FbFileInfo()
-{
-}
+FbFileInfo::FbFileInfo(file_info_impl* p_info_ptr) : m_info_ptr(p_info_ptr) {}
+FbFileInfo::~FbFileInfo() {}
 
 void FbFileInfo::FinalRelease()
 {
@@ -257,17 +218,9 @@ STDMETHODIMP FbFileInfo::get__ptr(void** pp)
 	return S_OK;
 }
 
-FbMetadbHandle::FbMetadbHandle(const metadb_handle_ptr& src) : m_handle(src)
-{
-}
-
-FbMetadbHandle::FbMetadbHandle(metadb_handle* src) : m_handle(src)
-{
-}
-
-FbMetadbHandle::~FbMetadbHandle()
-{
-}
+FbMetadbHandle::FbMetadbHandle(const metadb_handle_ptr& src) : m_handle(src) {}
+FbMetadbHandle::FbMetadbHandle(metadb_handle* src) : m_handle(src) {}
+FbMetadbHandle::~FbMetadbHandle() {}
 
 void FbMetadbHandle::FinalRelease()
 {
@@ -476,13 +429,8 @@ STDMETHODIMP FbMetadbHandle::get__ptr(void** pp)
 	return S_OK;
 }
 
-FbMetadbHandleList::FbMetadbHandleList(metadb_handle_list_cref handles) : m_handles(handles)
-{
-}
-
-FbMetadbHandleList::~FbMetadbHandleList()
-{
-}
+FbMetadbHandleList::FbMetadbHandleList(metadb_handle_list_cref handles) : m_handles(handles) {}
+FbMetadbHandleList::~FbMetadbHandleList() {}
 
 void FbMetadbHandleList::FinalRelease()
 {
@@ -961,9 +909,7 @@ STDMETHODIMP FbMetadbHandleList::put_Item(UINT index, IFbMetadbHandle* handle)
 	return E_INVALIDARG;
 }
 
-FbPlaybackQueueItem::FbPlaybackQueueItem()
-{
-}
+FbPlaybackQueueItem::FbPlaybackQueueItem() {}
 
 FbPlaybackQueueItem::FbPlaybackQueueItem(const t_playback_queue_item& playbackQueueItem)
 {
@@ -972,9 +918,7 @@ FbPlaybackQueueItem::FbPlaybackQueueItem(const t_playback_queue_item& playbackQu
 	m_playback_queue_item.m_item = playbackQueueItem.m_item;
 }
 
-FbPlaybackQueueItem::~FbPlaybackQueueItem()
-{
-}
+FbPlaybackQueueItem::~FbPlaybackQueueItem() {}
 
 void FbPlaybackQueueItem::FinalRelease()
 {
@@ -1015,9 +959,7 @@ STDMETHODIMP FbPlaybackQueueItem::get__ptr(void** pp)
 	return S_OK;
 }
 
-FbPlayingItemLocation::FbPlayingItemLocation(bool isValid, t_size playlistIndex, t_size playlistItemIndex) : m_isValid(isValid), m_playlistIndex(playlistIndex), m_playlistItemIndex(playlistItemIndex)
-{
-}
+FbPlayingItemLocation::FbPlayingItemLocation(bool isValid, t_size playlistIndex, t_size playlistItemIndex) : m_isValid(isValid), m_playlistIndex(playlistIndex), m_playlistItemIndex(playlistItemIndex) {}
 
 STDMETHODIMP FbPlayingItemLocation::get_IsValid(VARIANT_BOOL* outIsValid)
 {
@@ -1043,13 +985,8 @@ STDMETHODIMP FbPlayingItemLocation::get_PlaylistItemIndex(int* outPlaylistItemIn
 	return S_OK;
 }
 
-FbPlaylistManager::FbPlaylistManager() : m_fbPlaylistRecyclerManager(NULL)
-{
-}
-
-FbPlaylistManager::~FbPlaylistManager()
-{
-}
+FbPlaylistManager::FbPlaylistManager() : m_fbPlaylistRecyclerManager(NULL) {}
+FbPlaylistManager::~FbPlaylistManager() {}
 
 STDMETHODIMP FbPlaylistManager::AddItemToPlaybackQueue(IFbMetadbHandle* handle)
 {
@@ -1753,9 +1690,7 @@ FbProfiler::FbProfiler(const char* p_name) : m_name(p_name)
 	m_timer.start();
 }
 
-FbProfiler::~FbProfiler()
-{
-}
+FbProfiler::~FbProfiler() {}
 
 STDMETHODIMP FbProfiler::Print()
 {
@@ -1783,9 +1718,7 @@ FbTitleFormat::FbTitleFormat(BSTR expr)
 	titleformat_compiler::get()->compile_safe(m_obj, uexpr);
 }
 
-FbTitleFormat::~FbTitleFormat()
-{
-}
+FbTitleFormat::~FbTitleFormat() {}
 
 void FbTitleFormat::FinalRelease()
 {
@@ -1911,9 +1844,7 @@ FbTooltip::FbTooltip(HWND p_wndparent, const panel_tooltip_param_ptr& p_param_pt
 	m_panel_tooltip_param_ptr->tooltip_size.cy = -1;
 }
 
-FbTooltip::~FbTooltip()
-{
-}
+FbTooltip::~FbTooltip() {}
 
 void FbTooltip::FinalRelease()
 {
@@ -2004,13 +1935,8 @@ STDMETHODIMP FbTooltip::TrackPosition(int x, int y)
 	return S_OK;
 }
 
-FbUiSelectionHolder::FbUiSelectionHolder(const ui_selection_holder::ptr& holder) : m_holder(holder)
-{
-}
-
-FbUiSelectionHolder::~FbUiSelectionHolder()
-{
-}
+FbUiSelectionHolder::FbUiSelectionHolder(const ui_selection_holder::ptr& holder) : m_holder(holder) {}
+FbUiSelectionHolder::~FbUiSelectionHolder() {}
 
 void FbUiSelectionHolder::FinalRelease()
 {
@@ -2037,13 +1963,8 @@ STDMETHODIMP FbUiSelectionHolder::SetSelection(IFbMetadbHandleList* handles)
 	return S_OK;
 }
 
-FbUtils::FbUtils()
-{
-}
-
-FbUtils::~FbUtils()
-{
-}
+FbUtils::FbUtils() {}
+FbUtils::~FbUtils() {}
 
 STDMETHODIMP FbUtils::AcquireUiSelectionHolder(IFbUiSelectionHolder** outHolder)
 {
@@ -2761,9 +2682,388 @@ STDMETHODIMP FbUtils::put_Volume(float value)
 	return S_OK;
 }
 
-GdiBitmap::GdiBitmap(Gdiplus::Bitmap* p) : GdiObj<IGdiBitmap, Gdiplus::Bitmap>(p)
+FbWindow::FbWindow(HostComm* p) : m_host(p) {}
+
+FbWindow::~FbWindow() {}
+
+STDMETHODIMP FbWindow::ClearInterval(UINT intervalID)
 {
+	host_timer_dispatcher::instance().killTimer(intervalID);
+	return S_OK;
 }
+
+STDMETHODIMP FbWindow::ClearTimeout(UINT timeoutID)
+{
+	host_timer_dispatcher::instance().killTimer(timeoutID);
+	return S_OK;
+}
+
+STDMETHODIMP FbWindow::CreatePopupMenu(IMenuObj** pp)
+{
+	if (!pp) return E_POINTER;
+
+	*pp = new com_object_impl_t<MenuObj>(m_host->GetHWND());
+	return S_OK;
+}
+
+STDMETHODIMP FbWindow::CreateThemeManager(BSTR classid, IThemeManager** pp)
+{
+	if (!pp) return E_POINTER;
+
+	IThemeManager* ptheme = NULL;
+
+	try
+	{
+		ptheme = new com_object_impl_t<ThemeManager>(m_host->GetHWND(), classid);
+	}
+	catch (...)
+	{
+		if (ptheme)
+		{
+			ptheme->Dispose();
+			delete ptheme;
+			ptheme = NULL;
+		}
+	}
+
+	*pp = ptheme;
+	return S_OK;
+}
+
+STDMETHODIMP FbWindow::CreateTooltip(BSTR name, float pxSize, int style, IFbTooltip** pp)
+{
+	if (!pp) return E_POINTER;
+
+	const auto& tooltip_param = m_host->PanelTooltipParam();
+	tooltip_param->font_name = name;
+	tooltip_param->font_size = pxSize;
+	tooltip_param->font_style = style;
+	*pp = new com_object_impl_t<FbTooltip>(m_host->GetHWND(), tooltip_param);
+	return S_OK;
+}
+
+STDMETHODIMP FbWindow::GetColourCUI(UINT type, BSTR guidstr, int* p)
+{
+	if (!p) return E_POINTER;
+	if (m_host->GetInstanceType() != HostComm::KInstanceTypeCUI) return E_NOTIMPL;
+
+	GUID guid;
+
+	if (!*guidstr)
+	{
+		memcpy(&guid, &pfc::guid_null, sizeof(guid));
+	}
+	else
+	{
+		if (CLSIDFromString(guidstr, &guid) != NOERROR)
+		{
+			return E_INVALIDARG;
+		}
+	}
+
+	*p = m_host->GetColourCUI(type, guid);
+	return S_OK;
+}
+
+STDMETHODIMP FbWindow::GetColourDUI(UINT type, int* p)
+{
+	if (!p) return E_POINTER;
+	if (m_host->GetInstanceType() != HostComm::KInstanceTypeDUI) return E_NOTIMPL;
+
+	*p = m_host->GetColourDUI(type);
+	return S_OK;
+}
+
+STDMETHODIMP FbWindow::GetFontCUI(UINT type, BSTR guidstr, IGdiFont** pp)
+{
+	if (!pp) return E_POINTER;
+	if (m_host->GetInstanceType() != HostComm::KInstanceTypeCUI) return E_NOTIMPL;
+
+	GUID guid;
+
+	if (!*guidstr)
+	{
+		memcpy(&guid, &pfc::guid_null, sizeof(guid));
+	}
+	else
+	{
+		if (CLSIDFromString(guidstr, &guid) != NOERROR)
+		{
+			return E_INVALIDARG;
+		}
+	}
+
+	HFONT hFont = m_host->GetFontCUI(type, guid);
+
+	*pp = NULL;
+
+	if (hFont)
+	{
+		Gdiplus::Font* font = new Gdiplus::Font(m_host->GetHDC(), hFont);
+		if (helpers::ensure_gdiplus_object(font))
+		{
+			*pp = new com_object_impl_t<GdiFont>(font, hFont);
+		}
+		else
+		{
+			if (font) delete font;
+			*pp = NULL;
+		}
+	}
+
+	return S_OK;
+}
+
+STDMETHODIMP FbWindow::GetFontDUI(UINT type, IGdiFont** pp)
+{
+	if (!pp) return E_POINTER;
+	if (m_host->GetInstanceType() != HostComm::KInstanceTypeDUI) return E_NOTIMPL;
+
+	HFONT hFont = m_host->GetFontDUI(type);
+	*pp = NULL;
+
+	if (hFont)
+	{
+		Gdiplus::Font* font = new Gdiplus::Font(m_host->GetHDC(), hFont);
+		if (helpers::ensure_gdiplus_object(font))
+		{
+			*pp = new com_object_impl_t<GdiFont>(font, hFont, false);
+		}
+		else
+		{
+			if (font) delete font;
+			*pp = NULL;
+		}
+	}
+
+	return S_OK;
+}
+
+STDMETHODIMP FbWindow::GetProperty(BSTR name, VARIANT defaultval, VARIANT* p)
+{
+	if (!p) return E_POINTER;
+
+	HRESULT hr;
+	_variant_t var;
+	string_utf8_from_wide uname(name);
+
+	if (m_host->get_config_prop().get_config_item(uname, var))
+	{
+		hr = VariantCopy(p, &var);
+	}
+	else
+	{
+		m_host->get_config_prop().set_config_item(uname, defaultval);
+		hr = VariantCopy(p, &defaultval);
+	}
+
+	if (FAILED(hr))
+		p = NULL;
+
+	return S_OK;
+}
+
+STDMETHODIMP FbWindow::NotifyOthers(BSTR name, VARIANT info)
+{
+	if (info.vt & VT_BYREF) return E_INVALIDARG;
+
+	HRESULT hr = S_OK;
+	_variant_t var;
+
+	hr = VariantCopy(&var, &info);
+
+	if (FAILED(hr)) return hr;
+
+	simple_callback_data_2<_bstr_t, _variant_t>* notify_data = new simple_callback_data_2<_bstr_t, _variant_t>(name, NULL);
+
+	notify_data->m_item2.Attach(var.Detach());
+
+	panel_manager::instance().send_msg_to_others_pointer(m_host->GetHWND(), CALLBACK_UWM_ON_NOTIFY_DATA, notify_data);
+
+	return S_OK;
+}
+
+STDMETHODIMP FbWindow::Reload()
+{
+	PostMessage(m_host->GetHWND(), UWM_RELOAD, 0, 0);
+	return S_OK;
+}
+
+STDMETHODIMP FbWindow::Repaint(VARIANT_BOOL force)
+{
+	m_host->Repaint(force != FALSE);
+	return S_OK;
+}
+
+STDMETHODIMP FbWindow::RepaintRect(LONG x, LONG y, LONG w, LONG h, VARIANT_BOOL force)
+{
+	m_host->RepaintRect(x, y, w, h, force != FALSE);
+	return S_OK;
+}
+
+STDMETHODIMP FbWindow::SetCursor(UINT id)
+{
+	::SetCursor(LoadCursor(NULL, MAKEINTRESOURCE(id)));
+	return S_OK;
+}
+
+STDMETHODIMP FbWindow::SetInterval(IDispatch* func, int delay, UINT* outIntervalID)
+{
+	if (!outIntervalID) return E_POINTER;
+
+	*outIntervalID = host_timer_dispatcher::instance().setInterval(m_host->GetHWND(), delay, func);
+	return S_OK;
+}
+
+STDMETHODIMP FbWindow::SetProperty(BSTR name, VARIANT val)
+{
+	m_host->get_config_prop().set_config_item(string_utf8_from_wide(name), val);
+	return S_OK;
+}
+
+STDMETHODIMP FbWindow::SetTimeout(IDispatch* func, int delay, UINT* outTimeoutID)
+{
+	if (!outTimeoutID) return E_POINTER;
+
+	*outTimeoutID = host_timer_dispatcher::instance().setTimeout(m_host->GetHWND(), delay, func);
+	return S_OK;
+}
+
+STDMETHODIMP FbWindow::ShowConfigure()
+{
+	PostMessage(m_host->GetHWND(), UWM_SHOW_CONFIGURE, 0, 0);
+	return S_OK;
+}
+
+STDMETHODIMP FbWindow::ShowProperties()
+{
+	PostMessage(m_host->GetHWND(), UWM_SHOW_PROPERTIES, 0, 0);
+	return S_OK;
+}
+
+STDMETHODIMP FbWindow::get_Height(INT* p)
+{
+	if (!p) return E_POINTER;
+
+	*p = m_host->GetHeight();
+	return S_OK;
+}
+
+STDMETHODIMP FbWindow::get_ID(UINT* p)
+{
+	if (!p) return E_POINTER;
+
+	*p = (UINT)m_host->GetHWND();
+	return S_OK;
+}
+
+STDMETHODIMP FbWindow::get_InstanceType(UINT* p)
+{
+	if (!p) return E_POINTER;
+
+	*p = m_host->GetInstanceType();
+	return S_OK;
+}
+
+STDMETHODIMP FbWindow::get_IsTransparent(VARIANT_BOOL* p)
+{
+	if (!p) return E_POINTER;
+
+	*p = TO_VARIANT_BOOL(m_host->get_pseudo_transparent());
+	return S_OK;
+}
+
+STDMETHODIMP FbWindow::get_IsVisible(VARIANT_BOOL* p)
+{
+	if (!p) return E_POINTER;
+
+	*p = TO_VARIANT_BOOL(IsWindowVisible(m_host->GetHWND()));
+	return S_OK;
+}
+
+STDMETHODIMP FbWindow::get_MaxHeight(UINT* p)
+{
+	if (!p) return E_POINTER;
+
+	*p = m_host->MaxSize().y;
+	return S_OK;
+}
+
+STDMETHODIMP FbWindow::get_MaxWidth(UINT* p)
+{
+	if (!p) return E_POINTER;
+
+	*p = m_host->MaxSize().x;
+	return S_OK;
+}
+
+STDMETHODIMP FbWindow::get_MinHeight(UINT* p)
+{
+	if (!p) return E_POINTER;
+
+	*p = m_host->MinSize().y;
+	return S_OK;
+}
+
+STDMETHODIMP FbWindow::get_MinWidth(UINT* p)
+{
+	if (!p) return E_POINTER;
+
+	*p = m_host->MinSize().x;
+	return S_OK;
+}
+
+STDMETHODIMP FbWindow::get_Name(BSTR* p)
+{
+	if (!p) return E_POINTER;
+
+	pfc::string8_fast name = m_host->ScriptInfo().name;
+	if (name.is_empty())
+	{
+		name = pfc::print_guid(m_host->get_config_guid());
+	}
+
+	*p = SysAllocString(string_wide_from_utf8_fast(name));
+	return S_OK;
+}
+
+STDMETHODIMP FbWindow::get_Width(INT* p)
+{
+	if (!p) return E_POINTER;
+
+	*p = m_host->GetWidth();
+	return S_OK;
+}
+
+STDMETHODIMP FbWindow::put_MaxHeight(UINT height)
+{
+	m_host->MaxSize().y = height;
+	PostMessage(m_host->GetHWND(), UWM_SIZE_LIMIT_CHANGED, 0, uie::size_limit_maximum_height);
+	return S_OK;
+}
+
+STDMETHODIMP FbWindow::put_MaxWidth(UINT width)
+{
+	m_host->MaxSize().x = width;
+	PostMessage(m_host->GetHWND(), UWM_SIZE_LIMIT_CHANGED, 0, uie::size_limit_maximum_width);
+	return S_OK;
+}
+
+STDMETHODIMP FbWindow::put_MinHeight(UINT height)
+{
+	m_host->MinSize().y = height;
+	PostMessage(m_host->GetHWND(), UWM_SIZE_LIMIT_CHANGED, 0, uie::size_limit_minimum_height);
+	return S_OK;
+}
+
+STDMETHODIMP FbWindow::put_MinWidth(UINT width)
+{
+	m_host->MinSize().x = width;
+	PostMessage(m_host->GetHWND(), UWM_SIZE_LIMIT_CHANGED, 0, uie::size_limit_minimum_width);
+	return S_OK;
+}
+
+GdiBitmap::GdiBitmap(Gdiplus::Bitmap* p) : GdiObj<IGdiBitmap, Gdiplus::Bitmap>(p) {}
 
 STDMETHODIMP GdiBitmap::ApplyAlpha(BYTE alpha, IGdiBitmap** pp)
 {

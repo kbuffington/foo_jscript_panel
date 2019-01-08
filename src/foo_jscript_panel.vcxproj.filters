@@ -191,9 +191,6 @@
     <ClInclude Include="stackblur.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="drop_target_impl.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="host_drop_target.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -224,14 +221,14 @@
     <ClInclude Include="component_defines.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="drop_source_impl.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="kmeans.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ui_input_box.h">
       <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="drop_impl.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
