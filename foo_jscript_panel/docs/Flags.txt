@@ -34,9 +34,9 @@ var MF_DISABLED = 0x00000002;
 var MF_UNCHECKED = 0x00000000;
 var MF_CHECKED = 0x00000008;
 var MF_STRING = 0x00000000;
-//var MF_BITMAP = 0x00000004;  // do not use
-//var MF_OWNERDRAW = 0x00000100;  // do not use
-//var MF_POPUP = 0x00000010; // do not use
+// var MF_BITMAP = 0x00000004; // do not use
+// var MF_OWNERDRAW = 0x00000100; // do not use
+// var MF_POPUP = 0x00000010; // do not use
 var MF_MENUBARBREAK = 0x00000020;
 var MF_MENUBREAK = 0x00000040;
 
@@ -91,7 +91,7 @@ var FILE_ATTRIBUTE_HIDDEN              = 0x00000002;
 var FILE_ATTRIBUTE_SYSTEM              = 0x00000004;
 var FILE_ATTRIBUTE_DIRECTORY           = 0x00000010;
 var FILE_ATTRIBUTE_ARCHIVE             = 0x00000020;
-//var FILE_ATTRIBUTE_DEVICE            = 0x00000040; // do not use
+// var FILE_ATTRIBUTE_DEVICE            = 0x00000040; // do not use
 var FILE_ATTRIBUTE_NORMAL              = 0x00000080;
 var FILE_ATTRIBUTE_TEMPORARY           = 0x00000100;
 var FILE_ATTRIBUTE_SPARSE_FILE         = 0x00000200;
@@ -101,20 +101,6 @@ var FILE_ATTRIBUTE_OFFLINE             = 0x00001000;
 var FILE_ATTRIBUTE_NOT_CONTENT_INDEXED = 0x00002000;
 var FILE_ATTRIBUTE_ENCRYPTED           = 0x00004000;
 //var FILE_ATTRIBUTE_VIRTUAL           = 0x00010000; // do not use
-
-// With window.DlgCode, can be combined.
-// If you don't know what they mean, igonre them.
-var DLGC_WANTARROWS            = 0x0001;     /* Control wants arrow keys         */
-var DLGC_WANTTAB               = 0x0002;     /* Control wants tab keys           */
-var DLGC_WANTALLKEYS           = 0x0004;     /* Control wants all keys           */
-var DLGC_WANTMESSAGE           = 0x0004;     /* Pass message to control          */
-var DLGC_HASSETSEL             = 0x0008;     /* Understands EM_SETSEL message    */
-var DLGC_DEFPUSHBUTTON         = 0x0010;     /* Default pushbutton               */
-var DLGC_UNDEFPUSHBUTTON       = 0x0020;     /* Non-default pushbutton           */
-var DLGC_RADIOBUTTON           = 0x0040;     /* Radio button                     */
-var DLGC_WANTCHARS             = 0x0080;     /* Want WM_CHAR messages            */
-var DLGC_STATIC                = 0x0100;     /* Static item: don't include       */
-var DLGC_BUTTON                = 0x2000;     /* Button item: can be checked      */
 
 // Used with utils.IsKeyPressed()
 var VK_BACK = 0x08;

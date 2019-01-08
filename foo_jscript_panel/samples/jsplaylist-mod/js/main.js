@@ -919,7 +919,6 @@ on_init();
 function on_size() {
 	if (!window.Width || !window.Height)
 		return;
-	window.DlgCode = DLGC_WANTALLKEYS;
 
 	if (g_instancetype == 0) { // CUI
 		window.MinWidth = 360;

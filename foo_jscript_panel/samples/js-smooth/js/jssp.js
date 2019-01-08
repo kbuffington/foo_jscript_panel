@@ -3235,7 +3235,6 @@ var g_rating_rowId = -1;
 
 function on_init() {
 	plman.SetActivePlaylistContext();
-	window.DlgCode = DLGC_WANTALLKEYS;
 
 	get_font();
 	get_colors();
@@ -3254,8 +3253,6 @@ on_init();
 
 // START
 function on_size() {
-	window.DlgCode = DLGC_WANTALLKEYS;
-
 	ww = window.Width;
 	wh = window.Height;
 

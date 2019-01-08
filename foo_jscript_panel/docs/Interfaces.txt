@@ -1169,14 +1169,6 @@ interface IJSUtils {
 
 interface IFbWindow {
 	Properties:
-		window.DlgCode(); (int) (read, write)
-		/*
-		See flags.txt > With window.DlgCode
-
-		Example:
-		window.DlgCode(DLGC_WANTALLKEYS);
-		*/
-
 		window.ID; (read) (int)
 		/*
 		Required in fb.CheckClipboardContents, fb.GetClipboardContents, utils.ColourPicker, utils.GetAlbumArtAsync,

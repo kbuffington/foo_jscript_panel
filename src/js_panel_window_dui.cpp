@@ -168,6 +168,9 @@ LRESULT js_panel_window_dui::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM l
 			return DefWindowProc(hwnd, msg, wp, lp);
 		break;
 
+	case WM_GETDLGCODE:
+		return DLGC_WANTALLKEYS;
+
 	case UWM_SIZE_LIMIT_CHANGED:
 		notify_size_limit_changed(lp);
 		return 0;

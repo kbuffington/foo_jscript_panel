@@ -13,7 +13,6 @@ HostComm::HostComm()
 	, m_paint_pending(false)
 	, m_accuracy(0)
 	, m_instance_type(KInstanceTypeCUI)
-	, m_dlg_code(0)
 	, m_script_info(get_config_guid())
 	, m_panel_tooltip_param_ptr(new panel_tooltip_param)
 {
@@ -56,11 +55,6 @@ POINT& HostComm::MaxSize()
 POINT& HostComm::MinSize()
 {
 	return m_min_size;
-}
-
-UINT& HostComm::DlgCode()
-{
-	return m_dlg_code;
 }
 
 UINT HostComm::GetInstanceType()
@@ -857,14 +851,6 @@ STDMETHODIMP FbWindow::ShowProperties()
 	return S_OK;
 }
 
-STDMETHODIMP FbWindow::get_DlgCode(UINT* p)
-{
-	if (!p) return E_POINTER;
-
-	*p = m_host->DlgCode();
-	return S_OK;
-}
-
 STDMETHODIMP FbWindow::get_Height(INT* p)
 {
 	if (!p) return E_POINTER;
@@ -956,12 +942,6 @@ STDMETHODIMP FbWindow::get_Width(INT* p)
 	if (!p) return E_POINTER;
 
 	*p = m_host->GetWidth();
-	return S_OK;
-}
-
-STDMETHODIMP FbWindow::put_DlgCode(UINT code)
-{
-	m_host->DlgCode() = code;
 	return S_OK;
 }
 

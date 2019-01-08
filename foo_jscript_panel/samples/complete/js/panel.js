@@ -193,7 +193,6 @@ _.mixin({
 			}
 		}
 		
-		window.DlgCode = DLGC_WANTALLKEYS;
 		this.fonts = {};
 		this.colours = {};
 		this.w = 0;

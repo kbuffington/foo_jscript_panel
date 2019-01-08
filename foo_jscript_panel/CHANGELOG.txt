@@ -10,6 +10,10 @@ v2.2.0
        included in a script via the "import" preprocessor directive must be
        UTF8 encoded (with or without BOM). If you have lots of panels with lots of
        imports, startup times should be improved! utils.ReadTextFile is unaffected.
+- CHG: Remove window.DlgCode. The docs were wrong, behaviour was inconsistent between
+       Default UI and Columns UI and it's just not needed. Support for all keys will be
+       enabled if you enable "Grab focus" in the Configuration Window. All instances
+       will need removing from scripts.
 
 v2.1.8
 - NEW: Add FbMetadbHandleList RemoveAttachImages method.

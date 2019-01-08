@@ -142,7 +142,6 @@ utils.ReadTextFile(filename[, codepage])
 utils.WriteINI(filename, section, key, val)
 utils.WriteTextFile(filename, content[, write_bom])
 
-window.DlgCode
 window.Height
 window.ID
 window.InstanceType

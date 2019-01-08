@@ -3088,8 +3088,6 @@ var g_wallpaperImg = null;
 var g_rightClickedIndex = -1;
 
 function on_init() {
-	window.DlgCode = DLGC_WANTALLKEYS;
-
 	get_font();
 	get_colors();
 	get_metrics();
@@ -3107,8 +3105,6 @@ on_init();
 
 // START
 function on_size() {
-	window.DlgCode = DLGC_WANTALLKEYS;
-
 	ww = window.Width;
 	wh = window.Height;
 

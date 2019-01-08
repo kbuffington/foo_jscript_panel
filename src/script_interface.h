@@ -494,7 +494,6 @@ __interface IFbWindow : IDispatch
 	STDMETHOD(SetTimeout)(IDispatch* func, int delay, [out, retval] UINT* outTimeoutID);
 	STDMETHOD(ShowConfigure)();
 	STDMETHOD(ShowProperties)();
-	[propget] STDMETHOD(DlgCode)([out, retval] UINT* p);
 	[propget] STDMETHOD(Height)([out, retval] int* p);
 	[propget] STDMETHOD(ID)([out, retval] UINT* p);
 	[propget] STDMETHOD(InstanceType)([out, retval] UINT* p);
@@ -506,7 +505,6 @@ __interface IFbWindow : IDispatch
 	[propget] STDMETHOD(MinWidth)([out, retval] UINT* p);
 	[propget] STDMETHOD(Name)([out, retval] BSTR* p);
 	[propget] STDMETHOD(Width)([out, retval] int* p);
-	[propput] STDMETHOD(DlgCode)(UINT code);
 	[propput] STDMETHOD(MaxHeight)(UINT height);
 	[propput] STDMETHOD(MaxWidth)(UINT width);
 	[propput] STDMETHOD(MinHeight)(UINT height);
