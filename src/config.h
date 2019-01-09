@@ -31,11 +31,7 @@ inline DWORD edge_style_from_config(t_edge_style edge_style)
 class prop_kv_config
 {
 public:
-	typedef prop_kv_config t_self;
-	typedef pfc::string_simple t_key;
-	typedef _variant_t t_val;
-	typedef pfc::map_t<t_key, t_val, pfc::comparator_stricmp_ascii> t_map;
-	t_map m_map;
+	using t_map = pfc::map_t<pfc::string_simple, _variant_t, pfc::comparator_stricmp_ascii>;
 
 	bool get_config_item(const char* p_key, VARIANT& p_out);
 	static bool g_is_allowed_type(VARTYPE p_vt);
@@ -44,15 +40,14 @@ public:
 	void load(stream_reader* reader, abort_callback& abort) throw();
 	void save(stream_writer* writer, abort_callback& abort) const throw();
 	void set_config_item(const char* p_key, const VARIANT& p_val);
+
+	t_map m_map;
 };
 
 class js_panel_vars
 {
 public:
-	js_panel_vars()
-	{
-		reset_config();
-	}
+	js_panel_vars();
 
 	GUID& get_config_guid();
 	WINDOWPLACEMENT& get_windowplacement();
@@ -72,10 +67,10 @@ public:
 private:
 	GUID m_config_guid;
 	WINDOWPLACEMENT m_wndpl;
-	prop_kv_config m_config_prop;
-	pfc::string8 m_script_engine_str;
-	pfc::string8 m_script_code;
-	t_edge_style m_edge_style;
 	bool m_grab_focus;
 	bool m_pseudo_transparent;
+	pfc::string8 m_script_engine_str;
+	pfc::string8 m_script_code;
+	prop_kv_config m_config_prop;
+	t_edge_style m_edge_style;
 };

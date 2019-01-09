@@ -4,7 +4,7 @@
 
 bool prop_kv_config::get_config_item(const char* p_key, VARIANT& p_out)
 {
-	t_val val;
+	_variant_t val;
 
 	if (m_map.query(p_key, val))
 	{
@@ -61,7 +61,7 @@ void prop_kv_config::g_load(t_map& data, stream_reader* reader, abort_callback& 
 		for (t_size i = 0; i < count; ++i)
 		{
 			pfc::string8_fast key;
-			t_val val;
+			_variant_t val;
 			VARTYPE vt;
 			int cbRead = 0;
 
@@ -213,6 +213,11 @@ void prop_kv_config::set_config_item(const char* p_key, const VARIANT& p_val)
 	}
 }
 
+js_panel_vars::js_panel_vars()
+{
+	reset_config();
+}
+
 GUID& js_panel_vars::get_config_guid()
 {
 	return m_config_guid;
@@ -329,7 +334,5 @@ void js_panel_vars::save_config(stream_writer* writer, abort_callback& abort) co
 		writer->write_string(m_script_code, abort);
 		writer->write_object_t(m_pseudo_transparent, abort);
 	}
-	catch (...)
-	{
-	}
+	catch (...) {}
 }
