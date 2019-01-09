@@ -245,6 +245,8 @@ STDMETHODIMP FbMetadbHandle::Compare(IFbMetadbHandle* handle, VARIANT_BOOL* p)
 
 	metadb_handle* ptr = NULL;
 	handle->get__ptr((void**)&ptr);
+	if (!ptr) return E_INVALIDARG;
+
 	*p = TO_VARIANT_BOOL(ptr == m_handle.get_ptr());
 	return S_OK;
 }
@@ -441,6 +443,8 @@ STDMETHODIMP FbMetadbHandleList::Add(IFbMetadbHandle* handle)
 {
 	metadb_handle* ptr = NULL;
 	handle->get__ptr((void**)&ptr);
+	if (!ptr) return E_INVALIDARG;
+
 	m_handles.add_item(ptr);
 	return S_OK;
 }
@@ -491,6 +495,8 @@ STDMETHODIMP FbMetadbHandleList::BSearch(IFbMetadbHandle* handle, int* p)
 
 	metadb_handle* ptr = NULL;
 	handle->get__ptr((void**)&ptr);
+	if (!ptr) return E_INVALIDARG;
+
 	*p = m_handles.bsearch_by_pointer(ptr);
 	return S_OK;
 }
@@ -545,6 +551,8 @@ STDMETHODIMP FbMetadbHandleList::Find(IFbMetadbHandle* handle, int* p)
 
 	metadb_handle* ptr = NULL;
 	handle->get__ptr((void**)&ptr);
+	if (!ptr) return E_INVALIDARG;
+
 	*p = m_handles.find_item(ptr);
 	return S_OK;
 }
@@ -580,6 +588,8 @@ STDMETHODIMP FbMetadbHandleList::Insert(UINT index, IFbMetadbHandle* handle)
 {
 	metadb_handle* ptr = NULL;
 	handle->get__ptr((void**)&ptr);
+	if (!ptr) return E_INVALIDARG;
+	
 	m_handles.insert_item(ptr, index);
 	return S_OK;
 }
@@ -741,6 +751,8 @@ STDMETHODIMP FbMetadbHandleList::Remove(IFbMetadbHandle* handle)
 {
 	metadb_handle* ptr = NULL;
 	handle->get__ptr((void**)&ptr);
+	if (!ptr) return E_INVALIDARG;
+
 	m_handles.remove_item(ptr);
 	return S_OK;
 }
@@ -903,6 +915,8 @@ STDMETHODIMP FbMetadbHandleList::put_Item(UINT index, IFbMetadbHandle* handle)
 	{
 		metadb_handle* ptr = NULL;
 		handle->get__ptr((void**)&ptr);
+		if (!ptr) return E_INVALIDARG;
+
 		m_handles.replace_item(index, ptr);
 		return S_OK;
 	}
@@ -992,6 +1006,8 @@ STDMETHODIMP FbPlaylistManager::AddItemToPlaybackQueue(IFbMetadbHandle* handle)
 {
 	metadb_handle* ptr = NULL;
 	handle->get__ptr((void**)&ptr);
+	if (!ptr) return E_INVALIDARG;
+
 	playlist_manager::get()->queue_add_item(ptr);
 	return S_OK;
 }
@@ -1152,6 +1168,7 @@ STDMETHODIMP FbPlaylistManager::FindPlaybackQueueItemIndex(IFbMetadbHandle* hand
 
 	metadb_handle* ptr = NULL;
 	handle->get__ptr((void**)&ptr);
+	if (!ptr) return E_INVALIDARG;
 
 	t_playback_queue_item item;
 	item.m_handle = ptr;
@@ -1424,6 +1441,8 @@ STDMETHODIMP FbPlaylistManager::SetPlaylistFocusItemByHandle(UINT playlistIndex,
 {
 	metadb_handle* ptr = NULL;
 	handle->get__ptr((void**)&ptr);
+	if (!ptr) return E_INVALIDARG;
+
 	playlist_manager::get()->playlist_set_focus_by_handle(playlistIndex, ptr);
 	return S_OK;
 }
@@ -1748,6 +1767,7 @@ STDMETHODIMP FbTitleFormat::EvalWithMetadb(IFbMetadbHandle* handle, BSTR* p)
 
 	metadb_handle* ptr = NULL;
 	handle->get__ptr((void**)&ptr);
+	if (!ptr) return E_INVALIDARG;
 
 	pfc::string8_fast text;
 	ptr->format_title(NULL, text, m_obj, NULL);
@@ -2175,6 +2195,8 @@ STDMETHODIMP FbUtils::GetLibraryRelativePath(IFbMetadbHandle* handle, BSTR* p)
 
 	metadb_handle* ptr = NULL;
 	handle->get__ptr((void**)&ptr);
+	if (!ptr) return E_INVALIDARG;
+
 	pfc::string8_fast temp;
 	if (!library_manager::get()->get_relative_path(ptr, temp))
 	{
@@ -2322,6 +2344,8 @@ STDMETHODIMP FbUtils::IsMetadbInMediaLibrary(IFbMetadbHandle* handle, VARIANT_BO
 
 	metadb_handle* ptr = NULL;
 	handle->get__ptr((void**)&ptr);
+	if (!ptr) return E_INVALIDARG;
+
 	*p = TO_VARIANT_BOOL(library_manager::get()->is_item_in_library(ptr));
 	return S_OK;
 }
@@ -4269,24 +4293,18 @@ STDMETHODIMP JSUtils::GetAlbumArtAsync(UINT window_id, IFbMetadbHandle* handle, 
 	unsigned cookie = 0;
 	metadb_handle* ptr = NULL;
 	handle->get__ptr((void**)&ptr);
+	if (!ptr) return E_INVALIDARG;
 
-	if (ptr)
+	try
 	{
-		try
-		{
-			helpers::album_art_async* task = new helpers::album_art_async((HWND)window_id, ptr, art_id, need_stub != VARIANT_FALSE, only_embed != VARIANT_FALSE, no_load != VARIANT_FALSE);
+		helpers::album_art_async* task = new helpers::album_art_async((HWND)window_id, ptr, art_id, need_stub != VARIANT_FALSE, only_embed != VARIANT_FALSE, no_load != VARIANT_FALSE);
 
-			if (simple_thread_pool::instance().enqueue(task))
-				cookie = reinterpret_cast<unsigned>(task);
-			else
-				delete task;
-		}
-		catch (...)
-		{
-			cookie = 0;
-		}
+		if (simple_thread_pool::instance().enqueue(task))
+			cookie = reinterpret_cast<unsigned>(task);
+		else
+			delete task;
 	}
-	else
+	catch (...)
 	{
 		cookie = 0;
 	}
@@ -4309,6 +4327,8 @@ STDMETHODIMP JSUtils::GetAlbumArtV2(IFbMetadbHandle* handle, UINT art_id, VARIAN
 
 	metadb_handle* ptr = NULL;
 	handle->get__ptr((void**)&ptr);
+	if (!ptr) return E_INVALIDARG;
+
 	pfc::string8_fast dummy;
 	*pp = helpers::get_album_art(ptr, art_id, need_stub != VARIANT_FALSE, dummy);
 	return S_OK;
