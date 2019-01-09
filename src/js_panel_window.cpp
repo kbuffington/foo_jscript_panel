@@ -482,10 +482,8 @@ bool js_panel_window::script_load()
 	SetWindowLongPtr(m_hwnd, GWL_EXSTYLE, extstyle);
 	SetWindowPos(m_hwnd, NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
 	
-	m_max_size.x = INT_MAX;
-	m_max_size.y = INT_MAX;
-	m_min_size.x = 0;
-	m_min_size.x = 0;
+	m_max_size = { INT_MAX, INT_MAX };
+	m_min_size = { 0, 0 };
 	PostMessage(m_hwnd, UWM_SIZE_LIMIT_CHANGED, 0, uie::size_limit_all);
 
 	HRESULT hr = m_script_host->Initialize();

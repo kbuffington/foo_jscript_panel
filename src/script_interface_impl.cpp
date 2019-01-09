@@ -949,53 +949,53 @@ STDMETHODIMP FbPlaybackQueueItem::get__ptr(void** pp)
 	return S_OK;
 }
 
-STDMETHODIMP FbPlaybackQueueItem::get_Handle(IFbMetadbHandle** outHandle)
+STDMETHODIMP FbPlaybackQueueItem::get_Handle(IFbMetadbHandle** pp)
 {
-	if (!outHandle) return E_POINTER;
+	if (!pp) return E_POINTER;
 
-	*outHandle = new com_object_impl_t<FbMetadbHandle>(m_playback_queue_item.m_handle);
+	*pp = new com_object_impl_t<FbMetadbHandle>(m_playback_queue_item.m_handle);
 	return S_OK;
 }
 
-STDMETHODIMP FbPlaybackQueueItem::get_PlaylistIndex(int* outPlaylistIndex)
+STDMETHODIMP FbPlaybackQueueItem::get_PlaylistIndex(int* p)
 {
-	if (!outPlaylistIndex) return E_POINTER;
+	if (!p) return E_POINTER;
 
-	*outPlaylistIndex = m_playback_queue_item.m_playlist;
+	*p = m_playback_queue_item.m_playlist;
 	return S_OK;
 }
 
-STDMETHODIMP FbPlaybackQueueItem::get_PlaylistItemIndex(int* outPlaylistItemIndex)
+STDMETHODIMP FbPlaybackQueueItem::get_PlaylistItemIndex(int* p)
 {
-	if (!outPlaylistItemIndex) return E_POINTER;
+	if (!p) return E_POINTER;
 
-	*outPlaylistItemIndex = m_playback_queue_item.m_item;
+	*p = m_playback_queue_item.m_item;
 	return S_OK;
 }
 
 FbPlayingItemLocation::FbPlayingItemLocation(bool isValid, t_size playlistIndex, t_size playlistItemIndex) : m_isValid(isValid), m_playlistIndex(playlistIndex), m_playlistItemIndex(playlistItemIndex) {}
 
-STDMETHODIMP FbPlayingItemLocation::get_IsValid(VARIANT_BOOL* outIsValid)
+STDMETHODIMP FbPlayingItemLocation::get_IsValid(VARIANT_BOOL* p)
 {
-	if (!outIsValid) return E_POINTER;
+	if (!p) return E_POINTER;
 
-	*outIsValid = TO_VARIANT_BOOL(m_isValid);
+	*p = TO_VARIANT_BOOL(m_isValid);
 	return S_OK;
 }
 
-STDMETHODIMP FbPlayingItemLocation::get_PlaylistIndex(int* outPlaylistIndex)
+STDMETHODIMP FbPlayingItemLocation::get_PlaylistIndex(int* p)
 {
-	if (!outPlaylistIndex) return E_POINTER;
+	if (!p) return E_POINTER;
 
-	*outPlaylistIndex = m_playlistIndex;
+	*p = m_isValid ? m_playlistIndex : -1;
 	return S_OK;
 }
 
-STDMETHODIMP FbPlayingItemLocation::get_PlaylistItemIndex(int* outPlaylistItemIndex)
+STDMETHODIMP FbPlayingItemLocation::get_PlaylistItemIndex(int* p)
 {
-	if (!outPlaylistItemIndex) return E_POINTER;
+	if (!p) return E_POINTER;
 
-	*outPlaylistItemIndex = m_playlistItemIndex;
+	*p = m_isValid ? m_playlistItemIndex : -1;
 	return S_OK;
 }
 
@@ -1059,9 +1059,9 @@ STDMETHODIMP FbPlaylistManager::ClearPlaylistSelection(UINT playlistIndex)
 	return S_OK;
 }
 
-STDMETHODIMP FbPlaylistManager::CreateAutoPlaylist(UINT playlistIndex, BSTR name, BSTR query, BSTR sort, UINT flags, int* outPlaylistIndex)
+STDMETHODIMP FbPlaylistManager::CreateAutoPlaylist(UINT playlistIndex, BSTR name, BSTR query, BSTR sort, UINT flags, int* p)
 {
-	if (!outPlaylistIndex) return E_POINTER;
+	if (!p) return E_POINTER;
 
 	string_utf8_from_wide uquery(query);
 	string_utf8_from_wide usort(sort);
@@ -1070,45 +1070,45 @@ STDMETHODIMP FbPlaylistManager::CreateAutoPlaylist(UINT playlistIndex, BSTR name
 	CreatePlaylist(playlistIndex, name, &pos);
 	if (pos == pfc_infinite)
 	{
-		*outPlaylistIndex = pos;
+		*p = pos;
 	}
 	else
 	{
 		try
 		{
 			autoplaylist_manager::get()->add_client_simple(uquery, usort, pos, flags);
-			*outPlaylistIndex = pos;
+			*p = pos;
 		}
 		catch (...)
 		{
 			playlist_manager::get()->remove_playlist(pos);
-			*outPlaylistIndex = pfc_infinite;
+			*p = pfc_infinite;
 		}
 	}
 	return S_OK;
 }
 
-STDMETHODIMP FbPlaylistManager::CreatePlaylist(UINT playlistIndex, BSTR name, int* outPlaylistIndex)
+STDMETHODIMP FbPlaylistManager::CreatePlaylist(UINT playlistIndex, BSTR name, int* p)
 {
-	if (!outPlaylistIndex) return E_POINTER;
+	if (!p) return E_POINTER;
 
 	auto api = playlist_manager::get();
 	string_utf8_from_wide uname(name);
 
 	if (uname.length())
 	{
-		*outPlaylistIndex = api->create_playlist(uname, uname.length(), playlistIndex);
+		*p = api->create_playlist(uname, uname.length(), playlistIndex);
 	}
 	else
 	{
-		*outPlaylistIndex = api->create_playlist_autoname(playlistIndex);
+		*p = api->create_playlist_autoname(playlistIndex);
 	}
 	return S_OK;
 }
 
-STDMETHODIMP FbPlaylistManager::DuplicatePlaylist(UINT from, BSTR name, UINT* outPlaylistIndex)
+STDMETHODIMP FbPlaylistManager::DuplicatePlaylist(UINT from, BSTR name, UINT* p)
 {
-	if (!outPlaylistIndex) return E_POINTER;
+	if (!p) return E_POINTER;
 
 	auto api = playlist_manager_v4::get();
 
@@ -1124,7 +1124,7 @@ STDMETHODIMP FbPlaylistManager::DuplicatePlaylist(UINT from, BSTR name, UINT* ou
 		}
 
 		stream_reader_dummy dummy_reader;
-		*outPlaylistIndex = api->create_playlist_ex(uname.get_ptr(), uname.get_length(), from + 1, contents, &dummy_reader, abort_callback_dummy());
+		*p = api->create_playlist_ex(uname.get_ptr(), uname.get_length(), from + 1, contents, &dummy_reader, abort_callback_dummy());
 		return S_OK;
 	}
 	return E_INVALIDARG;
@@ -1136,35 +1136,35 @@ STDMETHODIMP FbPlaylistManager::EnsurePlaylistItemVisible(UINT playlistIndex, UI
 	return S_OK;
 }
 
-STDMETHODIMP FbPlaylistManager::ExecutePlaylistDefaultAction(UINT playlistIndex, UINT playlistItemIndex, VARIANT_BOOL* outSuccess)
+STDMETHODIMP FbPlaylistManager::ExecutePlaylistDefaultAction(UINT playlistIndex, UINT playlistItemIndex, VARIANT_BOOL* p)
 {
-	if (!outSuccess) return E_POINTER;
+	if (!p) return E_POINTER;
 
-	*outSuccess = TO_VARIANT_BOOL(playlist_manager::get()->playlist_execute_default_action(playlistIndex, playlistItemIndex));
+	*p = TO_VARIANT_BOOL(playlist_manager::get()->playlist_execute_default_action(playlistIndex, playlistItemIndex));
 	return S_OK;
 }
 
-STDMETHODIMP FbPlaylistManager::FindOrCreatePlaylist(BSTR name, VARIANT_BOOL unlocked, int* outPlaylistIndex)
+STDMETHODIMP FbPlaylistManager::FindOrCreatePlaylist(BSTR name, VARIANT_BOOL unlocked, int* p)
 {
-	if (!outPlaylistIndex) return E_POINTER;
+	if (!p) return E_POINTER;
 
 	auto api = playlist_manager::get();
 	string_utf8_from_wide uname(name);
 
 	if (unlocked != VARIANT_FALSE)
 	{
-		*outPlaylistIndex = api->find_or_create_playlist_unlocked(uname);
+		*p = api->find_or_create_playlist_unlocked(uname);
 	}
 	else
 	{
-		*outPlaylistIndex = api->find_or_create_playlist(uname);
+		*p = api->find_or_create_playlist(uname);
 	}
 	return S_OK;
 }
 
-STDMETHODIMP FbPlaylistManager::FindPlaybackQueueItemIndex(IFbMetadbHandle* handle, UINT playlistIndex, UINT playlistItemIndex, int* outIndex)
+STDMETHODIMP FbPlaylistManager::FindPlaybackQueueItemIndex(IFbMetadbHandle* handle, UINT playlistIndex, UINT playlistItemIndex, int* p)
 {
-	if (!outIndex) return E_POINTER;
+	if (!p) return E_POINTER;
 
 	metadb_handle* ptr = NULL;
 	handle->get__ptr((void**)&ptr);
@@ -1174,15 +1174,15 @@ STDMETHODIMP FbPlaylistManager::FindPlaybackQueueItemIndex(IFbMetadbHandle* hand
 	item.m_handle = ptr;
 	item.m_playlist = playlistIndex;
 	item.m_item = playlistItemIndex;
-	*outIndex = playlist_manager::get()->queue_find_index(item);
+	*p = playlist_manager::get()->queue_find_index(item);
 	return S_OK;
 }
 
-STDMETHODIMP FbPlaylistManager::FindPlaylist(BSTR name, int* outPlaylistIndex)
+STDMETHODIMP FbPlaylistManager::FindPlaylist(BSTR name, int* p)
 {
-	if (!outPlaylistIndex) return E_POINTER;
+	if (!p) return E_POINTER;
 
-	*outPlaylistIndex = playlist_manager::get()->find_playlist(string_utf8_from_wide(name));
+	*p = playlist_manager::get()->find_playlist(string_utf8_from_wide(name));
 	return S_OK;
 }
 
@@ -1192,9 +1192,9 @@ STDMETHODIMP FbPlaylistManager::FlushPlaybackQueue()
 	return S_OK;
 }
 
-STDMETHODIMP FbPlaylistManager::GetPlaybackQueueContents(VARIANT* outContents)
+STDMETHODIMP FbPlaylistManager::GetPlaybackQueueContents(VARIANT* p)
 {
-	if (!outContents) return E_POINTER;
+	if (!p) return E_POINTER;
 
 	pfc::list_t<t_playback_queue_item> contents;
 	playlist_manager::get()->queue_get_contents(contents);
@@ -1211,14 +1211,14 @@ STDMETHODIMP FbPlaylistManager::GetPlaybackQueueContents(VARIANT* outContents)
 		if (!helper.put_item(i, var)) return E_OUTOFMEMORY;
 	}
 
-	outContents->vt = VT_ARRAY | VT_VARIANT;
-	outContents->parray = helper.get_ptr();
+	p->vt = VT_ARRAY | VT_VARIANT;
+	p->parray = helper.get_ptr();
 	return S_OK;
 }
 
-STDMETHODIMP FbPlaylistManager::GetPlaybackQueueHandles(IFbMetadbHandleList** outItems)
+STDMETHODIMP FbPlaylistManager::GetPlaybackQueueHandles(IFbMetadbHandleList** pp)
 {
-	if (!outItems) return E_POINTER;
+	if (!pp) return E_POINTER;
 
 	pfc::list_t<t_playback_queue_item> contents;
 	playlist_manager::get()->queue_get_contents(contents);
@@ -1228,56 +1228,56 @@ STDMETHODIMP FbPlaylistManager::GetPlaybackQueueHandles(IFbMetadbHandleList** ou
 	{
 		items.add_item(contents[i].m_handle);
 	}
-	*outItems = new com_object_impl_t<FbMetadbHandleList>(items);
+	*pp = new com_object_impl_t<FbMetadbHandleList>(items);
 	return S_OK;
 }
 
-STDMETHODIMP FbPlaylistManager::GetPlayingItemLocation(IFbPlayingItemLocation** outPlayingLocation)
+STDMETHODIMP FbPlaylistManager::GetPlayingItemLocation(IFbPlayingItemLocation** pp)
 {
-	if (!outPlayingLocation) return E_POINTER;
+	if (!pp) return E_POINTER;
 
-	t_size playlistIndex = -1;
-	t_size playlistItemIndex = -1;
+	t_size playlistIndex;
+	t_size playlistItemIndex;
 	bool isValid = playlist_manager::get()->get_playing_item_location(&playlistIndex, &playlistItemIndex);
-	*outPlayingLocation = new com_object_impl_t<FbPlayingItemLocation>(isValid, playlistIndex, playlistItemIndex);
+	*pp = new com_object_impl_t<FbPlayingItemLocation>(isValid, playlistIndex, playlistItemIndex);
 	return S_OK;
 }
 
-STDMETHODIMP FbPlaylistManager::GetPlaylistFocusItemIndex(UINT playlistIndex, int* outPlaylistItemIndex)
+STDMETHODIMP FbPlaylistManager::GetPlaylistFocusItemIndex(UINT playlistIndex, int* p)
 {
-	if (!outPlaylistItemIndex) return E_POINTER;
+	if (!p) return E_POINTER;
 
-	*outPlaylistItemIndex = playlist_manager::get()->playlist_get_focus_item(playlistIndex);
+	*p = playlist_manager::get()->playlist_get_focus_item(playlistIndex);
 	return S_OK;
 }
 
-STDMETHODIMP FbPlaylistManager::GetPlaylistItems(UINT playlistIndex, IFbMetadbHandleList** outItems)
+STDMETHODIMP FbPlaylistManager::GetPlaylistItems(UINT playlistIndex, IFbMetadbHandleList** pp)
 {
-	if (!outItems) return E_POINTER;
+	if (!pp) return E_POINTER;
 
 	metadb_handle_list items;
 	playlist_manager::get()->playlist_get_all_items(playlistIndex, items);
-	*outItems = new com_object_impl_t<FbMetadbHandleList>(items);
+	*pp = new com_object_impl_t<FbMetadbHandleList>(items);
 	return S_OK;
 }
 
-STDMETHODIMP FbPlaylistManager::GetPlaylistName(UINT playlistIndex, BSTR* outName)
+STDMETHODIMP FbPlaylistManager::GetPlaylistName(UINT playlistIndex, BSTR* p)
 {
-	if (!outName) return E_POINTER;
+	if (!p) return E_POINTER;
 
 	pfc::string8_fast temp;
 	playlist_manager::get()->playlist_get_name(playlistIndex, temp);
-	*outName = SysAllocString(string_wide_from_utf8_fast(temp));
+	*p = SysAllocString(string_wide_from_utf8_fast(temp));
 	return S_OK;
 }
 
-STDMETHODIMP FbPlaylistManager::GetPlaylistSelectedItems(UINT playlistIndex, IFbMetadbHandleList** outItems)
+STDMETHODIMP FbPlaylistManager::GetPlaylistSelectedItems(UINT playlistIndex, IFbMetadbHandleList** pp)
 {
-	if (!outItems) return E_POINTER;
+	if (!pp) return E_POINTER;
 
 	metadb_handle_list items;
 	playlist_manager::get()->playlist_get_selected_items(playlistIndex, items);
-	*outItems = new com_object_impl_t<FbMetadbHandleList>(items);
+	*pp = new com_object_impl_t<FbMetadbHandleList>(items);
 	return S_OK;
 }
 
@@ -1310,11 +1310,11 @@ STDMETHODIMP FbPlaylistManager::IsAutoPlaylist(UINT playlistIndex, VARIANT_BOOL*
 	return E_INVALIDARG;
 }
 
-STDMETHODIMP FbPlaylistManager::IsPlaylistItemSelected(UINT playlistIndex, UINT playlistItemIndex, VARIANT_BOOL* outSelected)
+STDMETHODIMP FbPlaylistManager::IsPlaylistItemSelected(UINT playlistIndex, UINT playlistItemIndex, VARIANT_BOOL* p)
 {
-	if (!outSelected) return E_POINTER;
+	if (!p) return E_POINTER;
 
-	*outSelected = TO_VARIANT_BOOL(playlist_manager::get()->playlist_is_item_selected(playlistIndex, playlistItemIndex));
+	*p = TO_VARIANT_BOOL(playlist_manager::get()->playlist_is_item_selected(playlistIndex, playlistItemIndex));
 	return S_OK;
 }
 
@@ -1331,9 +1331,9 @@ STDMETHODIMP FbPlaylistManager::IsPlaylistLocked(UINT playlistIndex, VARIANT_BOO
 	return E_INVALIDARG;
 }
 
-STDMETHODIMP FbPlaylistManager::MovePlaylist(UINT from, UINT to, VARIANT_BOOL* outSuccess)
+STDMETHODIMP FbPlaylistManager::MovePlaylist(UINT from, UINT to, VARIANT_BOOL* p)
 {
-	if (!outSuccess) return E_POINTER;
+	if (!p) return E_POINTER;
 
 	auto api = playlist_manager::get();
 	order_helper order(api->get_playlist_count());
@@ -1349,28 +1349,28 @@ STDMETHODIMP FbPlaylistManager::MovePlaylist(UINT from, UINT to, VARIANT_BOOL* o
 
 		order[to] = from;
 
-		*outSuccess = TO_VARIANT_BOOL(api->reorder(order.get_ptr(), order.get_count()));
+		*p = TO_VARIANT_BOOL(api->reorder(order.get_ptr(), order.get_count()));
 	}
 	else
 	{
-		*outSuccess = VARIANT_FALSE;
+		*p = VARIANT_FALSE;
 	}
 	return S_OK;
 }
 
-STDMETHODIMP FbPlaylistManager::MovePlaylistSelection(UINT playlistIndex, int delta, VARIANT_BOOL* outSuccess)
+STDMETHODIMP FbPlaylistManager::MovePlaylistSelection(UINT playlistIndex, int delta, VARIANT_BOOL* p)
 {
-	if (!outSuccess) return E_POINTER;
+	if (!p) return E_POINTER;
 
-	*outSuccess = TO_VARIANT_BOOL(playlist_manager::get()->playlist_move_selection(playlistIndex, delta));
+	*p = TO_VARIANT_BOOL(playlist_manager::get()->playlist_move_selection(playlistIndex, delta));
 	return S_OK;
 }
 
-STDMETHODIMP FbPlaylistManager::PlaylistItemCount(UINT playlistIndex, UINT* outCount)
+STDMETHODIMP FbPlaylistManager::PlaylistItemCount(UINT playlistIndex, UINT* p)
 {
-	if (!outCount) return E_POINTER;
+	if (!p) return E_POINTER;
 
-	*outCount = playlist_manager::get()->playlist_get_item_count(playlistIndex);
+	*p = playlist_manager::get()->playlist_get_item_count(playlistIndex);
 	return S_OK;
 }
 
@@ -1394,11 +1394,11 @@ STDMETHODIMP FbPlaylistManager::RemoveItemsFromPlaybackQueue(VARIANT affectedIte
 	return S_OK;
 }
 
-STDMETHODIMP FbPlaylistManager::RemovePlaylist(UINT playlistIndex, VARIANT_BOOL* outSuccess)
+STDMETHODIMP FbPlaylistManager::RemovePlaylist(UINT playlistIndex, VARIANT_BOOL* p)
 {
-	if (!outSuccess) return E_POINTER;
+	if (!p) return E_POINTER;
 
-	*outSuccess = TO_VARIANT_BOOL(playlist_manager::get()->remove_playlist(playlistIndex));
+	*p = TO_VARIANT_BOOL(playlist_manager::get()->remove_playlist(playlistIndex));
 	return S_OK;
 }
 
@@ -1408,20 +1408,20 @@ STDMETHODIMP FbPlaylistManager::RemovePlaylistSelection(UINT playlistIndex, VARI
 	return S_OK;
 }
 
-STDMETHODIMP FbPlaylistManager::RemovePlaylistSwitch(UINT playlistIndex, VARIANT_BOOL* outSuccess)
+STDMETHODIMP FbPlaylistManager::RemovePlaylistSwitch(UINT playlistIndex, VARIANT_BOOL* p)
 {
-	if (!outSuccess) return E_POINTER;
+	if (!p) return E_POINTER;
 
-	*outSuccess = TO_VARIANT_BOOL(playlist_manager::get()->remove_playlist_switch(playlistIndex));
+	*p = TO_VARIANT_BOOL(playlist_manager::get()->remove_playlist_switch(playlistIndex));
 	return S_OK;
 }
 
-STDMETHODIMP FbPlaylistManager::RenamePlaylist(UINT playlistIndex, BSTR name, VARIANT_BOOL* outSuccess)
+STDMETHODIMP FbPlaylistManager::RenamePlaylist(UINT playlistIndex, BSTR name, VARIANT_BOOL* p)
 {
-	if (!outSuccess) return E_POINTER;
+	if (!p) return E_POINTER;
 
 	string_utf8_from_wide uname(name);
-	*outSuccess = TO_VARIANT_BOOL(playlist_manager::get()->playlist_rename(playlistIndex, uname, uname.length()));
+	*p = TO_VARIANT_BOOL(playlist_manager::get()->playlist_rename(playlistIndex, uname, uname.length()));
 	return S_OK;
 }
 
@@ -1467,38 +1467,38 @@ STDMETHODIMP FbPlaylistManager::SetPlaylistSelectionSingle(UINT playlistIndex, U
 	return S_OK;
 }
 
-STDMETHODIMP FbPlaylistManager::ShowAutoPlaylistUI(UINT playlistIndex, VARIANT_BOOL* outSuccess)
+STDMETHODIMP FbPlaylistManager::ShowAutoPlaylistUI(UINT playlistIndex, VARIANT_BOOL* p)
 {
-	if (!outSuccess) return E_POINTER;
+	if (!p) return E_POINTER;
 
 	if (playlistIndex < playlist_manager::get()->get_playlist_count())
 	{
-		*outSuccess = VARIANT_FALSE;
+		*p = VARIANT_FALSE;
 
 		auto api = autoplaylist_manager::get();
 		if (api->is_client_present(playlistIndex))
 		{
 			autoplaylist_client_ptr client = api->query_client(playlistIndex);
 			client->show_ui(playlistIndex);
-			*outSuccess = VARIANT_TRUE;
+			*p = VARIANT_TRUE;
 		}
 		return S_OK;
 	}
 	return E_INVALIDARG;
 }
 
-STDMETHODIMP FbPlaylistManager::SortByFormat(UINT playlistIndex, BSTR pattern, VARIANT_BOOL selOnly, VARIANT_BOOL* outSuccess)
+STDMETHODIMP FbPlaylistManager::SortByFormat(UINT playlistIndex, BSTR pattern, VARIANT_BOOL selOnly, VARIANT_BOOL* p)
 {
-	if (!outSuccess) return E_POINTER;
+	if (!p) return E_POINTER;
 
 	string_utf8_from_wide upattern(pattern);
-	*outSuccess = TO_VARIANT_BOOL(playlist_manager::get()->playlist_sort_by_format(playlistIndex, upattern.length() ? upattern.get_ptr() : NULL, selOnly != VARIANT_FALSE));
+	*p = TO_VARIANT_BOOL(playlist_manager::get()->playlist_sort_by_format(playlistIndex, upattern.length() ? upattern.get_ptr() : NULL, selOnly != VARIANT_FALSE));
 	return S_OK;
 }
 
-STDMETHODIMP FbPlaylistManager::SortByFormatV2(UINT playlistIndex, BSTR pattern, int direction, VARIANT_BOOL* outSuccess)
+STDMETHODIMP FbPlaylistManager::SortByFormatV2(UINT playlistIndex, BSTR pattern, int direction, VARIANT_BOOL* p)
 {
-	if (!outSuccess) return E_POINTER;
+	if (!p) return E_POINTER;
 
 	auto api = playlist_manager::get();
 	metadb_handle_list handles;
@@ -1513,7 +1513,7 @@ STDMETHODIMP FbPlaylistManager::SortByFormatV2(UINT playlistIndex, BSTR pattern,
 
 	metadb_handle_list_helper::sort_by_format_get_order(handles, order.get_ptr(), script, NULL, direction);
 
-	*outSuccess = TO_VARIANT_BOOL(api->playlist_reorder_items(playlistIndex, order.get_ptr(), order.get_count()));
+	*p = TO_VARIANT_BOOL(api->playlist_reorder_items(playlistIndex, order.get_ptr(), order.get_count()));
 	return S_OK;
 }
 
@@ -1554,11 +1554,11 @@ STDMETHODIMP FbPlaylistManager::UndoBackup(UINT playlistIndex)
 	return S_OK;
 }
 
-STDMETHODIMP FbPlaylistManager::get_ActivePlaylist(int* outPlaylistIndex)
+STDMETHODIMP FbPlaylistManager::get_ActivePlaylist(int* p)
 {
-	if (!outPlaylistIndex) return E_POINTER;
+	if (!p) return E_POINTER;
 
-	*outPlaylistIndex = playlist_manager::get()->get_active_playlist();
+	*p = playlist_manager::get()->get_active_playlist();
 	return S_OK;
 }
 
@@ -1570,23 +1570,23 @@ STDMETHODIMP FbPlaylistManager::get_PlaybackOrder(UINT* p)
 	return S_OK;
 }
 
-STDMETHODIMP FbPlaylistManager::get_PlayingPlaylist(int* outPlaylistIndex)
+STDMETHODIMP FbPlaylistManager::get_PlayingPlaylist(int* p)
 {
-	if (!outPlaylistIndex) return E_POINTER;
+	if (!p) return E_POINTER;
 
-	*outPlaylistIndex = playlist_manager::get()->get_playing_playlist();
+	*p = playlist_manager::get()->get_playing_playlist();
 	return S_OK;
 }
 
-STDMETHODIMP FbPlaylistManager::get_PlaylistCount(UINT* outCount)
+STDMETHODIMP FbPlaylistManager::get_PlaylistCount(UINT* p)
 {
-	if (!outCount) return E_POINTER;
+	if (!p) return E_POINTER;
 
-	*outCount = playlist_manager::get()->get_playlist_count();
+	*p = playlist_manager::get()->get_playlist_count();
 	return S_OK;
 }
 
-STDMETHODIMP FbPlaylistManager::get_PlaylistRecyclerManager(__interface IFbPlaylistRecyclerManager** outRecyclerManagerManager)
+STDMETHODIMP FbPlaylistManager::get_PlaylistRecyclerManager(__interface IFbPlaylistRecyclerManager** pp)
 {
 	try
 	{
@@ -1595,8 +1595,8 @@ STDMETHODIMP FbPlaylistManager::get_PlaylistRecyclerManager(__interface IFbPlayl
 			m_fbPlaylistRecyclerManager.Attach(new com_object_impl_t<FbPlaylistRecyclerManager>());
 		}
 
-		(*outRecyclerManagerManager) = m_fbPlaylistRecyclerManager;
-		(*outRecyclerManagerManager)->AddRef();
+		(*pp) = m_fbPlaylistRecyclerManager;
+		(*pp)->AddRef();
 	}
 	catch (...)
 	{
@@ -1655,8 +1655,7 @@ STDMETHODIMP FbPlaylistRecyclerManager::Purge(VARIANT affectedItems)
 STDMETHODIMP FbPlaylistRecyclerManager::Restore(UINT index)
 {
 	auto api = playlist_manager_v3::get();
-	t_size count = api->recycler_get_count();
-	if (index < count)
+	if (index < api->recycler_get_count())
 	{
 		api->recycler_restore(index);
 		return S_OK;
@@ -1664,33 +1663,32 @@ STDMETHODIMP FbPlaylistRecyclerManager::Restore(UINT index)
 	return E_INVALIDARG;
 }
 
-STDMETHODIMP FbPlaylistRecyclerManager::get_Content(UINT index, IFbMetadbHandleList** outContent)
+STDMETHODIMP FbPlaylistRecyclerManager::get_Content(UINT index, IFbMetadbHandleList** pp)
 {
-	if (!outContent) return E_POINTER;
+	if (!pp) return E_POINTER;
 
 	auto api = playlist_manager_v3::get();
-	t_size count = api->recycler_get_count();
-	if (index < count)
+	if (index < api->recycler_get_count())
 	{
 		metadb_handle_list handles;
 		api->recycler_get_content(index, handles);
-		*outContent = new com_object_impl_t<FbMetadbHandleList>(handles);
+		*pp = new com_object_impl_t<FbMetadbHandleList>(handles);
 		return S_OK;
 	}
 	return E_INVALIDARG;
 }
 
-STDMETHODIMP FbPlaylistRecyclerManager::get_Count(UINT* outCount)
+STDMETHODIMP FbPlaylistRecyclerManager::get_Count(UINT* p)
 {
-	if (!outCount) return E_POINTER;
+	if (!p) return E_POINTER;
 
-	*outCount = playlist_manager_v3::get()->recycler_get_count();
+	*p = playlist_manager_v3::get()->recycler_get_count();
 	return S_OK;
 }
 
-STDMETHODIMP FbPlaylistRecyclerManager::get_Name(UINT index, BSTR* outName)
+STDMETHODIMP FbPlaylistRecyclerManager::get_Name(UINT index, BSTR* p)
 {
-	if (!outName) return E_POINTER;
+	if (!p) return E_POINTER;
 
 	auto api = playlist_manager_v3::get();
 	t_size count = api->recycler_get_count();
@@ -1698,7 +1696,7 @@ STDMETHODIMP FbPlaylistRecyclerManager::get_Name(UINT index, BSTR* outName)
 	{
 		pfc::string8_fast name;
 		api->recycler_get_name(index, name);
-		*outName = SysAllocString(string_wide_from_utf8_fast(name));
+		*p = SysAllocString(string_wide_from_utf8_fast(name));
 		return S_OK;
 	}
 	return E_INVALIDARG;
@@ -1986,12 +1984,12 @@ STDMETHODIMP FbUiSelectionHolder::SetSelection(IFbMetadbHandleList* handles)
 FbUtils::FbUtils() {}
 FbUtils::~FbUtils() {}
 
-STDMETHODIMP FbUtils::AcquireUiSelectionHolder(IFbUiSelectionHolder** outHolder)
+STDMETHODIMP FbUtils::AcquireUiSelectionHolder(IFbUiSelectionHolder** pp)
 {
-	if (!outHolder) return E_POINTER;
+	if (!pp) return E_POINTER;
 
 	ui_selection_holder::ptr holder = ui_selection_manager::get()->acquire();
-	*outHolder = new com_object_impl_t<FbUiSelectionHolder>(holder);
+	*pp = new com_object_impl_t<FbUiSelectionHolder>(holder);
 	return S_OK;
 }
 
@@ -2007,11 +2005,11 @@ STDMETHODIMP FbUtils::AddFiles()
 	return S_OK;
 }
 
-STDMETHODIMP FbUtils::CheckClipboardContents(UINT window_id, VARIANT_BOOL* outSuccess)
+STDMETHODIMP FbUtils::CheckClipboardContents(UINT window_id, VARIANT_BOOL* p)
 {
-	if (!outSuccess) return E_POINTER;
+	if (!p) return E_POINTER;
 
-	*outSuccess = VARIANT_FALSE;
+	*p = VARIANT_FALSE;
 	pfc::com_ptr_t<IDataObject> pDO;
 	HRESULT hr = OleGetClipboard(pDO.receive_ptr());
 	if (SUCCEEDED(hr))
@@ -2019,7 +2017,7 @@ STDMETHODIMP FbUtils::CheckClipboardContents(UINT window_id, VARIANT_BOOL* outSu
 		bool native;
 		DWORD drop_effect = DROPEFFECT_COPY;
 		hr = ole_interaction::get()->check_dataobject(pDO, drop_effect, native);
-		*outSuccess = TO_VARIANT_BOOL(SUCCEEDED(hr));
+		*p = TO_VARIANT_BOOL(SUCCEEDED(hr));
 	}
 	return S_OK;
 }
@@ -2030,18 +2028,18 @@ STDMETHODIMP FbUtils::ClearPlaylist()
 	return S_OK;
 }
 
-STDMETHODIMP FbUtils::CopyHandleListToClipboard(IFbMetadbHandleList* handles, VARIANT_BOOL* outSuccess)
+STDMETHODIMP FbUtils::CopyHandleListToClipboard(IFbMetadbHandleList* handles, VARIANT_BOOL* p)
 {
-	if (!outSuccess) return E_POINTER;
+	if (!p) return E_POINTER;
 
-	*outSuccess = VARIANT_FALSE;
+	*p = VARIANT_FALSE;
 	metadb_handle_list* handles_ptr = NULL;
 	handles->get__ptr((void**)&handles_ptr);
 
 	pfc::com_ptr_t<IDataObject> pDO = ole_interaction::get()->create_dataobject(*handles_ptr);
 	if (SUCCEEDED(OleSetClipboard(pDO.get_ptr())))
 	{
-		*outSuccess = VARIANT_TRUE;
+		*p = VARIANT_TRUE;
 	}
 	return S_OK;
 }
@@ -2190,13 +2188,13 @@ STDMETHODIMP FbUtils::GetFocusItem(VARIANT_BOOL force, IFbMetadbHandle** pp)
 	return S_OK;
 }
 
-STDMETHODIMP FbUtils::GetLibraryItems(IFbMetadbHandleList** outItems)
+STDMETHODIMP FbUtils::GetLibraryItems(IFbMetadbHandleList** pp)
 {
-	if (!outItems) return E_POINTER;
+	if (!pp) return E_POINTER;
 
 	metadb_handle_list items;
 	library_manager::get()->get_all_items(items);
-	*outItems = new com_object_impl_t<FbMetadbHandleList>(items);
+	*pp = new com_object_impl_t<FbMetadbHandleList>(items);
 	return S_OK;
 }
 
@@ -2909,11 +2907,11 @@ STDMETHODIMP FbWindow::SetCursor(UINT id)
 	return S_OK;
 }
 
-STDMETHODIMP FbWindow::SetInterval(IDispatch* func, int delay, UINT* outIntervalID)
+STDMETHODIMP FbWindow::SetInterval(IDispatch* func, int delay, UINT* p)
 {
-	if (!outIntervalID) return E_POINTER;
+	if (!p) return E_POINTER;
 
-	*outIntervalID = host_timer_dispatcher::instance().setInterval(m_host->GetHWND(), delay, func);
+	*p = host_timer_dispatcher::instance().setInterval(m_host->GetHWND(), delay, func);
 	return S_OK;
 }
 
@@ -2923,11 +2921,11 @@ STDMETHODIMP FbWindow::SetProperty(BSTR name, VARIANT val)
 	return S_OK;
 }
 
-STDMETHODIMP FbWindow::SetTimeout(IDispatch* func, int delay, UINT* outTimeoutID)
+STDMETHODIMP FbWindow::SetTimeout(IDispatch* func, int delay, UINT* p)
 {
-	if (!outTimeoutID) return E_POINTER;
+	if (!p) return E_POINTER;
 
-	*outTimeoutID = host_timer_dispatcher::instance().setTimeout(m_host->GetHWND(), delay, func);
+	*p = host_timer_dispatcher::instance().setTimeout(m_host->GetHWND(), delay, func);
 	return S_OK;
 }
 
@@ -3175,9 +3173,9 @@ STDMETHODIMP GdiBitmap::CreateRawBitmap(IGdiRawBitmap** pp)
 	return S_OK;
 }
 
-STDMETHODIMP GdiBitmap::GetColourScheme(UINT count, VARIANT* outArray)
+STDMETHODIMP GdiBitmap::GetColourScheme(UINT count, VARIANT* p)
 {
-	if (!m_ptr || !outArray) return E_POINTER;
+	if (!m_ptr || !p) return E_POINTER;
 
 	Gdiplus::BitmapData bmpdata;
 	Gdiplus::Rect rect(0, 0, m_ptr->GetWidth(), m_ptr->GetHeight());
@@ -3234,8 +3232,8 @@ STDMETHODIMP GdiBitmap::GetColourScheme(UINT count, VARIANT* outArray)
 
 		if (!helper.put_item(i, var)) return E_OUTOFMEMORY;
 	}
-	outArray->vt = VT_ARRAY | VT_VARIANT;
-	outArray->parray = helper.get_ptr();
+	p->vt = VT_ARRAY | VT_VARIANT;
+	p->parray = helper.get_ptr();
 	return S_OK;
 }
 
@@ -4159,14 +4157,14 @@ STDMETHODIMP JSUtils::CheckFont(BSTR name, VARIANT_BOOL* p)
 	return S_OK;
 }
 
-STDMETHODIMP JSUtils::ColourPicker(UINT window_id, int default_colour, int* out_colour)
+STDMETHODIMP JSUtils::ColourPicker(UINT window_id, int default_colour, int* p)
 {
-	if (!out_colour) return E_POINTER;
+	if (!p) return E_POINTER;
 
 	COLORREF COLOR = helpers::convert_argb_to_colorref(default_colour);
 	COLORREF COLORS[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 	uChooseColor(&COLOR, (HWND)window_id, &COLORS[0]);
-	*out_colour = helpers::convert_colorref_to_argb(COLOR);
+	*p = helpers::convert_colorref_to_argb(COLOR);
 	return S_OK;
 }
 
@@ -4388,9 +4386,9 @@ STDMETHODIMP JSUtils::Glob(BSTR pattern, UINT exc_mask, UINT inc_mask, VARIANT* 
 	return S_OK;
 }
 
-STDMETHODIMP JSUtils::InputBox(UINT window_id, BSTR prompt, BSTR caption, BSTR def, VARIANT_BOOL error_on_cancel, BSTR* out)
+STDMETHODIMP JSUtils::InputBox(UINT window_id, BSTR prompt, BSTR caption, BSTR def, VARIANT_BOOL error_on_cancel, BSTR* p)
 {
-	if (!out) return E_POINTER;
+	if (!p) return E_POINTER;
 
 	modal_dialog_scope scope;
 	if (scope.can_create())
@@ -4406,7 +4404,7 @@ STDMETHODIMP JSUtils::InputBox(UINT window_id, BSTR prompt, BSTR caption, BSTR d
 		{
 			pfc::string8 val;
 			dlg.GetValue(val);
-			*out = SysAllocString(string_wide_from_utf8_fast(val));
+			*p = SysAllocString(string_wide_from_utf8_fast(val));
 		}
 		else if (status == IDCANCEL)
 		{
@@ -4414,7 +4412,7 @@ STDMETHODIMP JSUtils::InputBox(UINT window_id, BSTR prompt, BSTR caption, BSTR d
 			{
 				return E_FAIL;
 			}
-			*out = SysAllocString(def);
+			*p = SysAllocString(def);
 		}
 	}
 	return S_OK;

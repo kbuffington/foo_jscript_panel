@@ -13,11 +13,8 @@ host_comm::host_comm()
 	, m_script_info(get_config_guid())
 	, m_panel_tooltip_param_ptr(new panel_tooltip_param)
 {
-	m_max_size.x = INT_MAX;
-	m_max_size.y = INT_MAX;
-
-	m_min_size.x = 0;
-	m_min_size.y = 0;
+	m_max_size = { INT_MAX, INT_MAX };
+	m_min_size = { 0, 0 };
 }
 
 host_comm::~host_comm() {}
@@ -160,12 +157,7 @@ void host_comm::Repaint(bool force)
 
 void host_comm::RepaintRect(LONG x, LONG y, LONG w, LONG h, bool force)
 {
-	RECT rc;
-	rc.left = x;
-	rc.top = y;
-	rc.right = x + w;
-	rc.bottom = y + h;
-
+	RECT rc = { x, y, x + w, y + h };
 	m_paint_pending = true;
 
 	if (force)

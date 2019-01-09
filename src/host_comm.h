@@ -3,9 +3,6 @@
 #include "script_interface_impl.h"
 #include "script_preprocessor.h"
 
-// Smart pointers for Active Scripting
-_COM_SMARTPTR_TYPEDEF(IActiveScriptParse, IID_IActiveScriptParse);
-
 class host_comm : public js_panel_vars
 {
 protected:

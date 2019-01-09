@@ -1,6 +1,8 @@
 #pragma once
 #include "script_callback_invoker.h"
 
+_COM_SMARTPTR_TYPEDEF(IActiveScriptParse, IID_IActiveScriptParse);
+
 class script_host : public IActiveScriptSite, public IActiveScriptSiteWindow
 {
 public:
