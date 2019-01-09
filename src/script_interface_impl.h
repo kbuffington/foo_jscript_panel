@@ -411,12 +411,12 @@ public:
 	STDMETHODIMP put_Volume(float value);
 };
 
-class HostComm;
+class host_comm;
 
 class FbWindow : public IDispatchImpl3<IFbWindow>
 {
 protected:
-	FbWindow(HostComm* p);
+	FbWindow(host_comm* p);
 	virtual ~FbWindow();
 
 public:
@@ -457,7 +457,7 @@ public:
 	STDMETHODIMP put_MinWidth(UINT width);
 
 private:
-	HostComm* m_host;
+	host_comm* m_host;
 };
 
 class GdiBitmap : public GdiObj<IGdiBitmap, Gdiplus::Bitmap>

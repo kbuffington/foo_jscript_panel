@@ -1,6 +1,6 @@
 #pragma once
 
-class HostComm;
+class host_comm;
 
 struct t_directive_value
 {

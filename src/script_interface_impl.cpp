@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "drop_impl.h"
-#include "host.h"
+#include "host_comm.h"
 #include "host_timer_dispatcher.h"
 #include "panel_manager.h"
 #include "script_interface_impl.h"
@@ -2682,7 +2682,7 @@ STDMETHODIMP FbUtils::put_Volume(float value)
 	return S_OK;
 }
 
-FbWindow::FbWindow(HostComm* p) : m_host(p) {}
+FbWindow::FbWindow(host_comm* p) : m_host(p) {}
 
 FbWindow::~FbWindow() {}
 
@@ -2745,7 +2745,7 @@ STDMETHODIMP FbWindow::CreateTooltip(BSTR name, float pxSize, int style, IFbTool
 STDMETHODIMP FbWindow::GetColourCUI(UINT type, BSTR guidstr, int* p)
 {
 	if (!p) return E_POINTER;
-	if (m_host->GetInstanceType() != HostComm::KInstanceTypeCUI) return E_NOTIMPL;
+	if (m_host->GetInstanceType() != host_comm::KInstanceTypeCUI) return E_NOTIMPL;
 
 	GUID guid;
 
@@ -2768,7 +2768,7 @@ STDMETHODIMP FbWindow::GetColourCUI(UINT type, BSTR guidstr, int* p)
 STDMETHODIMP FbWindow::GetColourDUI(UINT type, int* p)
 {
 	if (!p) return E_POINTER;
-	if (m_host->GetInstanceType() != HostComm::KInstanceTypeDUI) return E_NOTIMPL;
+	if (m_host->GetInstanceType() != host_comm::KInstanceTypeDUI) return E_NOTIMPL;
 
 	*p = m_host->GetColourDUI(type);
 	return S_OK;
@@ -2777,7 +2777,7 @@ STDMETHODIMP FbWindow::GetColourDUI(UINT type, int* p)
 STDMETHODIMP FbWindow::GetFontCUI(UINT type, BSTR guidstr, IGdiFont** pp)
 {
 	if (!pp) return E_POINTER;
-	if (m_host->GetInstanceType() != HostComm::KInstanceTypeCUI) return E_NOTIMPL;
+	if (m_host->GetInstanceType() != host_comm::KInstanceTypeCUI) return E_NOTIMPL;
 
 	GUID guid;
 
@@ -2817,7 +2817,7 @@ STDMETHODIMP FbWindow::GetFontCUI(UINT type, BSTR guidstr, IGdiFont** pp)
 STDMETHODIMP FbWindow::GetFontDUI(UINT type, IGdiFont** pp)
 {
 	if (!pp) return E_POINTER;
-	if (m_host->GetInstanceType() != HostComm::KInstanceTypeDUI) return E_NOTIMPL;
+	if (m_host->GetInstanceType() != host_comm::KInstanceTypeDUI) return E_NOTIMPL;
 
 	HFONT hFont = m_host->GetFontDUI(type);
 	*pp = NULL;

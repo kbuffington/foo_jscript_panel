@@ -173,7 +173,7 @@ END
 // SCRIPT
 //
 
-IDR_SCRIPT              TEXT                  "default.js"
-IDR_API                 TEXT                  "default.api"
+IDR_SCRIPT              TEXT                  "foo_jscript_panel.js"
+IDR_API                 TEXT                  "foo_jscript_panel.api"
 #endif    // English (United States) resources
 /////////////////////////////////////////////////////////////////////////////

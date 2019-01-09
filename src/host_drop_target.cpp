@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "host.h"
+#include "host_comm.h"
 #include "host_drop_target.h"
 #include "js_panel_window.h"
 

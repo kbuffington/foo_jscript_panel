@@ -1,11 +1,11 @@
 #include "stdafx.h"
+#include "host_timer_dispatcher.h"
 #include "js_panel_window.h"
 #include "ui_conf.h"
 #include "ui_property.h"
-#include "panel_manager.h"
 
 js_panel_window::js_panel_window() :
-	m_script_host(new ScriptHost(this)),
+	m_script_host(new script_host(this)),
 	m_is_mouse_tracked(false),
 	m_is_droptarget_registered(false)
 {

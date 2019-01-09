@@ -1,186 +1,10 @@
 #include "stdafx.h"
-#include "host.h"
+#include "helpers.h"
+#include "host_comm.h"
+#include "script_host.h"
+#include "user_message.h"
 
-HostComm::HostComm()
-	: m_hwnd(NULL)
-	, m_hdc(NULL)
-	, m_width(0)
-	, m_height(0)
-	, m_gr_bmp(NULL)
-	, m_suppress_drawing(false)
-	, m_paint_pending(false)
-	, m_instance_type(KInstanceTypeCUI)
-	, m_script_info(get_config_guid())
-	, m_panel_tooltip_param_ptr(new panel_tooltip_param)
-{
-	m_max_size.x = INT_MAX;
-	m_max_size.y = INT_MAX;
-
-	m_min_size.x = 0;
-	m_min_size.y = 0;
-}
-
-HostComm::~HostComm()
-{
-}
-
-HDC HostComm::GetHDC()
-{
-	return m_hdc;
-}
-
-HWND HostComm::GetHWND()
-{
-	return m_hwnd;
-}
-
-INT HostComm::GetHeight()
-{
-	return m_height;
-}
-
-INT HostComm::GetWidth()
-{
-	return m_width;
-}
-
-POINT& HostComm::MaxSize()
-{
-	return m_max_size;
-}
-
-POINT& HostComm::MinSize()
-{
-	return m_min_size;
-}
-
-UINT HostComm::GetInstanceType()
-{
-	return m_instance_type;
-}
-
-panel_tooltip_param_ptr& HostComm::PanelTooltipParam()
-{
-	return m_panel_tooltip_param_ptr;
-}
-
-t_script_info& HostComm::ScriptInfo()
-{
-	return m_script_info;
-}
-
-void HostComm::Redraw()
-{
-	m_paint_pending = false;
-	RedrawWindow(m_hwnd, NULL, NULL, RDW_INVALIDATE | RDW_UPDATENOW);
-}
-
-void HostComm::RefreshBackground(LPRECT lprcUpdate)
-{
-	HWND wnd_parent = GetAncestor(m_hwnd, GA_PARENT);
-
-	if (!wnd_parent || IsIconic(core_api::get_main_window()) || !IsWindowVisible(m_hwnd))
-		return;
-
-	HDC dc_parent = GetDC(wnd_parent);
-	HDC hdc_bk = CreateCompatibleDC(dc_parent);
-	POINT pt = { 0, 0 };
-	RECT rect_child = { 0, 0, m_width, m_height };
-	RECT rect_parent;
-	HRGN rgn_child = NULL;
-
-	// HACK: for Tab control
-	// Find siblings
-	HWND hwnd = NULL;
-	while (hwnd = FindWindowEx(wnd_parent, hwnd, NULL, NULL))
-	{
-		TCHAR buff[64];
-		if (hwnd == m_hwnd) continue;
-		GetClassName(hwnd, buff, _countof(buff));
-		if (_tcsstr(buff, _T("SysTabControl32")))
-		{
-			wnd_parent = hwnd;
-			break;
-		}
-	}
-
-	if (lprcUpdate)
-	{
-		HRGN rgn = CreateRectRgnIndirect(lprcUpdate);
-		rgn_child = CreateRectRgnIndirect(&rect_child);
-		CombineRgn(rgn_child, rgn_child, rgn, RGN_DIFF);
-		DeleteRgn(rgn);
-	}
-	else
-	{
-		rgn_child = CreateRectRgn(0, 0, 0, 0);
-	}
-
-	ClientToScreen(m_hwnd, &pt);
-	ScreenToClient(wnd_parent, &pt);
-
-	CopyRect(&rect_parent, &rect_child);
-	ClientToScreen(m_hwnd, (LPPOINT)&rect_parent);
-	ClientToScreen(m_hwnd, (LPPOINT)&rect_parent + 1);
-	ScreenToClient(wnd_parent, (LPPOINT)&rect_parent);
-	ScreenToClient(wnd_parent, (LPPOINT)&rect_parent + 1);
-
-	// Force Repaint
-	m_suppress_drawing = true;
-	SetWindowRgn(m_hwnd, rgn_child, FALSE);
-	RedrawWindow(wnd_parent, &rect_parent, NULL, RDW_INVALIDATE | RDW_ERASE | RDW_ERASENOW | RDW_UPDATENOW);
-
-	// Background bitmap
-	HBITMAP old_bmp = SelectBitmap(hdc_bk, m_gr_bmp_bk);
-
-	// Paint BK
-	BitBlt(hdc_bk, rect_child.left, rect_child.top, rect_child.right - rect_child.left, rect_child.bottom - rect_child.top, dc_parent, pt.x, pt.y, SRCCOPY);
-
-	SelectBitmap(hdc_bk, old_bmp);
-	DeleteDC(hdc_bk);
-	ReleaseDC(wnd_parent, dc_parent);
-	DeleteRgn(rgn_child);
-	SetWindowRgn(m_hwnd, NULL, FALSE);
-	m_suppress_drawing = false;
-	if (get_edge_style()) SendMessage(m_hwnd, WM_NCPAINT, 1, 0);
-	Repaint(true);
-}
-
-void HostComm::Repaint(bool force)
-{
-	m_paint_pending = true;
-
-	if (force)
-	{
-		RedrawWindow(m_hwnd, NULL, NULL, RDW_INVALIDATE | RDW_UPDATENOW);
-	}
-	else
-	{
-		InvalidateRect(m_hwnd, NULL, FALSE);
-	}
-}
-
-void HostComm::RepaintRect(LONG x, LONG y, LONG w, LONG h, bool force)
-{
-	RECT rc;
-	rc.left = x;
-	rc.top = y;
-	rc.right = x + w;
-	rc.bottom = y + h;
-
-	m_paint_pending = true;
-
-	if (force)
-	{
-		RedrawWindow(m_hwnd, &rc, NULL, RDW_INVALIDATE | RDW_UPDATENOW);
-	}
-	else
-	{
-		InvalidateRect(m_hwnd, &rc, FALSE);
-	}
-}
-
-ScriptHost::ScriptHost(HostComm* host)
+script_host::script_host(host_comm* host)
 	: m_host(host)
 	, m_window(new com_object_impl_t<FbWindow, false>(host))
 	, m_gdi(com_object_singleton_t<GdiUtils>::instance())
@@ -196,11 +20,9 @@ ScriptHost::ScriptHost(HostComm* host)
 {
 }
 
-ScriptHost::~ScriptHost()
-{
-}
+script_host::~script_host() {}
 
-HRESULT ScriptHost::InitScriptEngineByName(const char* engineName)
+HRESULT script_host::InitScriptEngineByName(const char* engineName)
 {
 	HRESULT hr = E_FAIL;
 	const DWORD classContext = CLSCTX_INPROC_SERVER | CLSCTX_INPROC_HANDLER;
@@ -230,7 +52,7 @@ HRESULT ScriptHost::InitScriptEngineByName(const char* engineName)
 	return hr;
 }
 
-HRESULT ScriptHost::Initialize()
+HRESULT script_host::Initialize()
 {
 	Finalize();
 
@@ -275,7 +97,7 @@ HRESULT ScriptHost::Initialize()
 	return hr;
 }
 
-HRESULT ScriptHost::InvokeCallback(int callbackId, VARIANTARG* argv, UINT argc, VARIANT* ret)
+HRESULT script_host::InvokeCallback(int callbackId, VARIANTARG* argv, UINT argc, VARIANT* ret)
 {
 	if (HasError()) return E_FAIL;
 	if (!Ready()) return E_FAIL;
@@ -291,7 +113,7 @@ HRESULT ScriptHost::InvokeCallback(int callbackId, VARIANTARG* argv, UINT argc, 
 	return hr;
 }
 
-HRESULT ScriptHost::ProcessImportedScripts(IActiveScriptParsePtr& parser)
+HRESULT script_host::ProcessImportedScripts(IActiveScriptParsePtr& parser)
 {
 	pfc::string_formatter error_text;
 
@@ -321,17 +143,17 @@ HRESULT ScriptHost::ProcessImportedScripts(IActiveScriptParsePtr& parser)
 	return S_OK;
 }
 
-STDMETHODIMP ScriptHost::EnableModeless(BOOL fEnable)
+STDMETHODIMP script_host::EnableModeless(BOOL fEnable)
 {
 	return S_OK;
 }
 
-STDMETHODIMP ScriptHost::GetDocVersionString(BSTR* pstr)
+STDMETHODIMP script_host::GetDocVersionString(BSTR* pstr)
 {
 	return E_NOTIMPL;
 }
 
-STDMETHODIMP ScriptHost::GetItemInfo(LPCOLESTR name, DWORD mask, IUnknown** ppunk, ITypeInfo** ppti)
+STDMETHODIMP script_host::GetItemInfo(LPCOLESTR name, DWORD mask, IUnknown** ppunk, ITypeInfo** ppti)
 {
 	if (ppti) *ppti = NULL;
 
@@ -383,29 +205,29 @@ STDMETHODIMP ScriptHost::GetItemInfo(LPCOLESTR name, DWORD mask, IUnknown** ppun
 	return TYPE_E_ELEMENTNOTFOUND;
 }
 
-STDMETHODIMP ScriptHost::GetLCID(LCID* plcid)
+STDMETHODIMP script_host::GetLCID(LCID* plcid)
 {
 	return E_NOTIMPL;
 }
 
-STDMETHODIMP ScriptHost::GetWindow(HWND* phwnd)
+STDMETHODIMP script_host::GetWindow(HWND* phwnd)
 {
 	*phwnd = m_host->GetHWND();
 	return S_OK;
 }
 
-STDMETHODIMP ScriptHost::OnEnterScript()
+STDMETHODIMP script_host::OnEnterScript()
 {
 	m_dwStartTime = pfc::getTickCount();
 	return S_OK;
 }
 
-STDMETHODIMP ScriptHost::OnLeaveScript()
+STDMETHODIMP script_host::OnLeaveScript()
 {
 	return S_OK;
 }
 
-STDMETHODIMP ScriptHost::OnScriptError(IActiveScriptError* err)
+STDMETHODIMP script_host::OnScriptError(IActiveScriptError* err)
 {
 	m_has_error = true;
 
@@ -415,22 +237,22 @@ STDMETHODIMP ScriptHost::OnScriptError(IActiveScriptError* err)
 	return S_OK;
 }
 
-STDMETHODIMP ScriptHost::OnScriptTerminate(const VARIANT* result, const EXCEPINFO* excep)
+STDMETHODIMP script_host::OnScriptTerminate(const VARIANT* result, const EXCEPINFO* excep)
 {
 	return E_NOTIMPL;
 }
 
-STDMETHODIMP ScriptHost::OnStateChange(SCRIPTSTATE state)
+STDMETHODIMP script_host::OnStateChange(SCRIPTSTATE state)
 {
 	return E_NOTIMPL;
 }
 
-STDMETHODIMP_(ULONG) ScriptHost::AddRef()
+STDMETHODIMP_(ULONG) script_host::AddRef()
 {
 	return InterlockedIncrement(&m_dwRef);
 }
 
-STDMETHODIMP_(ULONG) ScriptHost::Release()
+STDMETHODIMP_(ULONG) script_host::Release()
 {
 	ULONG n = InterlockedDecrement(&m_dwRef);
 
@@ -442,17 +264,17 @@ STDMETHODIMP_(ULONG) ScriptHost::Release()
 	return n;
 }
 
-bool ScriptHost::HasError()
+bool script_host::HasError()
 {
 	return m_has_error;
 }
 
-bool ScriptHost::Ready()
+bool script_host::Ready()
 {
 	return m_engine_inited && m_script_engine;
 }
 
-void ScriptHost::Finalize()
+void script_host::Finalize()
 {
 	InvokeCallback(CallbackIds::on_script_unload);
 
@@ -487,13 +309,13 @@ void ScriptHost::Finalize()
 	}
 }
 
-void ScriptHost::GenerateSourceContext(const pfc::string8_fast& path, DWORD& source_context)
+void script_host::GenerateSourceContext(const pfc::string8_fast& path, DWORD& source_context)
 {
 	source_context = m_lastSourceContext++;
 	m_contextToPathMap[source_context] = path;
 }
 
-void ScriptHost::ReportError(IActiveScriptError* err)
+void script_host::ReportError(IActiveScriptError* err)
 {
 	if (!err) return;
 
@@ -564,7 +386,7 @@ void ScriptHost::ReportError(IActiveScriptError* err)
 	SendMessage(m_host->GetHWND(), UWM_SCRIPT_ERROR, 0, 0);
 }
 
-void ScriptHost::Stop()
+void script_host::Stop()
 {
 	m_engine_inited = false;
 	if (m_script_engine) m_script_engine->SetScriptState(SCRIPTSTATE_DISCONNECTED);

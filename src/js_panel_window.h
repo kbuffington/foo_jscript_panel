@@ -1,8 +1,11 @@
 #pragma once
+#include "helpers.h"
+#include "host_comm.h"
+#include "host_drop_target.h"
+#include "panel_manager.h"
+#include "script_host.h"
 
-#include "host.h"
-
-class js_panel_window : public HostComm, public ui_helpers::container_window
+class js_panel_window : public host_comm, public ui_helpers::container_window
 {
 public:
 	js_panel_window();
@@ -21,7 +24,7 @@ protected:
 private:
 	CComPtr<IDropTargetImpl> m_drop_target;
 	IGdiGraphicsPtr m_gr_wrap;
-	ScriptHost* m_script_host;
+	script_host* m_script_host;
 
 	bool m_is_droptarget_registered;
 	bool m_is_mouse_tracked;

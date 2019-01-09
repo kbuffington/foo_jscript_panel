@@ -27,9 +27,6 @@
     <ClCompile Include="foo_jscript_panel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="host.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="script_interface_impl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -108,11 +105,14 @@
     <ClCompile Include="stats.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="host_comm.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="script_host.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="host.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -218,9 +218,18 @@
     <ClInclude Include="mainmenu.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="host_comm.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="script_host.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="default.js">
+    <None Include="foo_jscript_panel.api">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="foo_jscript_panel.js">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
