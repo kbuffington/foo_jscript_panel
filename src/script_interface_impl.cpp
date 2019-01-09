@@ -25,10 +25,10 @@ STDMETHODIMP ContextMenuManager::BuildMenu(IMenuObj* p, int base_id, int max_id)
 {
 	if (m_cm.is_empty()) return E_POINTER;
 
-	t_size menuid;
-	p->get_ID(&menuid);
+	HMENU menuid;
+	p->get__ID(&menuid);
 	contextmenu_node* parent = m_cm->get_root();
-	m_cm->win32_build_menu((HMENU)menuid, parent, base_id, max_id);
+	m_cm->win32_build_menu(menuid, parent, base_id, max_id);
 	return S_OK;
 }
 
@@ -132,25 +132,25 @@ STDMETHODIMP FbFileInfo::InfoFind(BSTR name, int* p)
 	return S_OK;
 }
 
-STDMETHODIMP FbFileInfo::InfoName(UINT idx, BSTR* pp)
+STDMETHODIMP FbFileInfo::InfoName(UINT idx, BSTR* p)
 {
-	if (!m_info_ptr || !pp) return E_POINTER;
+	if (!m_info_ptr || !p) return E_POINTER;
 
 	if (idx < m_info_ptr->info_get_count())
 	{
-		*pp = SysAllocString(string_wide_from_utf8_fast(m_info_ptr->info_enum_name(idx)));
+		*p = SysAllocString(string_wide_from_utf8_fast(m_info_ptr->info_enum_name(idx)));
 		return S_OK;
 	}
 	return E_INVALIDARG;
 }
 
-STDMETHODIMP FbFileInfo::InfoValue(UINT idx, BSTR* pp)
+STDMETHODIMP FbFileInfo::InfoValue(UINT idx, BSTR* p)
 {
-	if (!m_info_ptr || !pp) return E_POINTER;
+	if (!m_info_ptr || !p) return E_POINTER;
 
 	if (idx < m_info_ptr->info_get_count())
 	{
-		*pp = SysAllocString(string_wide_from_utf8_fast(m_info_ptr->info_enum_value(idx)));
+		*p = SysAllocString(string_wide_from_utf8_fast(m_info_ptr->info_enum_value(idx)));
 		return S_OK;
 	}
 	return E_INVALIDARG;
@@ -164,27 +164,27 @@ STDMETHODIMP FbFileInfo::MetaFind(BSTR name, int* p)
 	return S_OK;
 }
 
-STDMETHODIMP FbFileInfo::MetaName(UINT idx, BSTR* pp)
+STDMETHODIMP FbFileInfo::MetaName(UINT idx, BSTR* p)
 {
-	if (!m_info_ptr || !pp) return E_POINTER;
+	if (!m_info_ptr || !p) return E_POINTER;
 
 	if (idx < m_info_ptr->meta_get_count())
 	{
-		*pp = SysAllocString(string_wide_from_utf8_fast(m_info_ptr->meta_enum_name(idx)));
+		*p = SysAllocString(string_wide_from_utf8_fast(m_info_ptr->meta_enum_name(idx)));
 		return S_OK;
 	}
 	return E_INVALIDARG;
 }
 
-STDMETHODIMP FbFileInfo::MetaValue(UINT idx, UINT vidx, BSTR* pp)
+STDMETHODIMP FbFileInfo::MetaValue(UINT idx, UINT vidx, BSTR* p)
 {
-	if (!m_info_ptr || !pp) return E_POINTER;
+	if (!m_info_ptr || !p) return E_POINTER;
 
-	*pp = NULL;
+	*p = NULL;
 
 	if (idx < m_info_ptr->meta_get_count() && vidx < m_info_ptr->meta_enum_value_count(idx))
 	{
-		*pp = SysAllocString(string_wide_from_utf8_fast(m_info_ptr->meta_enum_value(idx, vidx)));
+		*p = SysAllocString(string_wide_from_utf8_fast(m_info_ptr->meta_enum_value(idx, vidx)));
 		return S_OK;
 	}
 	return E_INVALIDARG;
@@ -407,19 +407,19 @@ STDMETHODIMP FbMetadbHandle::get_Length(double* p)
 	return S_OK;
 }
 
-STDMETHODIMP FbMetadbHandle::get_Path(BSTR* pp)
+STDMETHODIMP FbMetadbHandle::get_Path(BSTR* p)
 {
-	if (m_handle.is_empty() || !pp) return E_POINTER;
+	if (m_handle.is_empty() || !p) return E_POINTER;
 
-	*pp = SysAllocString(string_wide_from_utf8_fast(file_path_display(m_handle->get_path())));
+	*p = SysAllocString(string_wide_from_utf8_fast(file_path_display(m_handle->get_path())));
 	return S_OK;
 }
 
-STDMETHODIMP FbMetadbHandle::get_RawPath(BSTR* pp)
+STDMETHODIMP FbMetadbHandle::get_RawPath(BSTR* p)
 {
-	if (m_handle.is_empty() || !pp) return E_POINTER;
+	if (m_handle.is_empty() || !p) return E_POINTER;
 
-	*pp = SysAllocString(string_wide_from_utf8_fast(m_handle->get_path()));
+	*p = SysAllocString(string_wide_from_utf8_fast(m_handle->get_path()));
 	return S_OK;
 }
 
@@ -1881,11 +1881,11 @@ void FbTooltip::FinalRelease()
 	}
 }
 
-STDMETHODIMP FbTooltip::get_Text(BSTR* pp)
+STDMETHODIMP FbTooltip::get_Text(BSTR* p)
 {
-	if (!pp) return E_POINTER;
+	if (!p) return E_POINTER;
 
-	*pp = SysAllocString(m_tip_buffer);
+	*p = SysAllocString(m_tip_buffer);
 	return S_OK;
 }
 
@@ -2544,12 +2544,12 @@ STDMETHODIMP FbUtils::get_AlwaysOnTop(VARIANT_BOOL* p)
 	return S_OK;
 }
 
-STDMETHODIMP FbUtils::get_ComponentPath(BSTR* pp)
+STDMETHODIMP FbUtils::get_ComponentPath(BSTR* p)
 {
-	if (!pp) return E_POINTER;
+	if (!p) return E_POINTER;
 
 	static string_wide_from_utf8_fast path(helpers::get_fb2k_component_path());
-	*pp = SysAllocString(path.get_ptr());
+	*p = SysAllocString(path.get_ptr());
 	return S_OK;
 }
 
@@ -2561,13 +2561,13 @@ STDMETHODIMP FbUtils::get_CursorFollowPlayback(VARIANT_BOOL* p)
 	return S_OK;
 }
 
-STDMETHODIMP FbUtils::get_FoobarPath(BSTR* pp)
+STDMETHODIMP FbUtils::get_FoobarPath(BSTR* p)
 {
-	if (!pp) return E_POINTER;
+	if (!p) return E_POINTER;
 
 	static string_wide_from_utf8_fast path(helpers::get_fb2k_path());
 
-	*pp = SysAllocString(path.get_ptr());
+	*p = SysAllocString(path.get_ptr());
 	return S_OK;
 }
 
@@ -2611,12 +2611,12 @@ STDMETHODIMP FbUtils::get_PlaybackTime(double* p)
 	return S_OK;
 }
 
-STDMETHODIMP FbUtils::get_ProfilePath(BSTR* pp)
+STDMETHODIMP FbUtils::get_ProfilePath(BSTR* p)
 {
-	if (!pp) return E_POINTER;
+	if (!p) return E_POINTER;
 
 	static string_wide_from_utf8_fast path(helpers::get_profile_path());
-	*pp = SysAllocString(path.get_ptr());
+	*p = SysAllocString(path.get_ptr());
 	return S_OK;
 }
 
@@ -3375,7 +3375,7 @@ STDMETHODIMP GdiBitmap::SaveAs(BSTR path, BSTR format, VARIANT_BOOL* p)
 	return S_OK;
 }
 
-STDMETHODIMP GdiBitmap::StackBlur(int radius)
+STDMETHODIMP GdiBitmap::StackBlur(BYTE radius)
 {
 	if (!m_ptr) return E_POINTER;
 
@@ -3399,13 +3399,8 @@ STDMETHODIMP GdiBitmap::get_Width(UINT* p)
 	return S_OK;
 }
 
-GdiFont::GdiFont(Gdiplus::Font* p, HFONT hFont, bool managed) : GdiObj<IGdiFont, Gdiplus::Font>(p), m_hFont(hFont), m_managed(managed)
-{
-}
-
-GdiFont:: ~GdiFont()
-{
-}
+GdiFont::GdiFont(Gdiplus::Font* p, HFONT hFont, bool managed) : GdiObj<IGdiFont, Gdiplus::Font>(p), m_hFont(hFont), m_managed(managed) {}
+GdiFont:: ~GdiFont() {}
 
 void GdiFont::FinalRelease()
 {
@@ -3419,7 +3414,7 @@ void GdiFont::FinalRelease()
 	GdiObj<IGdiFont, Gdiplus::Font>::FinalRelease();
 }
 
-STDMETHODIMP GdiFont::get_HFont(UINT* p)
+STDMETHODIMP GdiFont::get__HFont(UINT* p)
 {
 	if (!m_ptr || !p) return E_POINTER;
 
@@ -3437,37 +3432,35 @@ STDMETHODIMP GdiFont::get_Height(UINT* p)
 	return S_OK;
 }
 
-STDMETHODIMP GdiFont::get_Name(LANGID langId, BSTR* outName)
+STDMETHODIMP GdiFont::get_Name(BSTR* p)
 {
-	if (!m_ptr || !outName) return E_POINTER;
+	if (!m_ptr || !p) return E_POINTER;
 
+	wchar_t name[LF_FACESIZE] = { 0 };
 	Gdiplus::FontFamily fontFamily;
-	WCHAR name[LF_FACESIZE] = { 0 };
 	m_ptr->GetFamily(&fontFamily);
-	fontFamily.GetFamilyName(name, langId);
-	*outName = SysAllocString(name);
+	fontFamily.GetFamilyName(name, LANG_NEUTRAL);
+	*p = SysAllocString(name);
 	return S_OK;
 }
 
-STDMETHODIMP GdiFont::get_Size(float* outSize)
+STDMETHODIMP GdiFont::get_Size(float* p)
 {
-	if (!m_ptr || !outSize) return E_POINTER;
+	if (!m_ptr || !p) return E_POINTER;
 
-	*outSize = m_ptr->GetSize();
+	*p = m_ptr->GetSize();
 	return S_OK;
 }
 
-STDMETHODIMP GdiFont::get_Style(INT* outStyle)
+STDMETHODIMP GdiFont::get_Style(int* p)
 {
-	if (!m_ptr || !outStyle) return E_POINTER;
+	if (!m_ptr || !p) return E_POINTER;
 
-	*outStyle = m_ptr->GetStyle();
+	*p = m_ptr->GetStyle();
 	return S_OK;
 }
 
-GdiGraphics::GdiGraphics() : GdiObj<IGdiGraphics, Gdiplus::Graphics>(NULL)
-{
-}
+GdiGraphics::GdiGraphics() : GdiObj<IGdiGraphics, Gdiplus::Graphics>(NULL) {}
 
 void GdiGraphics::GetRoundRectPath(Gdiplus::GraphicsPath& gp, Gdiplus::RectF& rect, float arc_width, float arc_height)
 {
@@ -3500,7 +3493,7 @@ STDMETHODIMP GdiGraphics::CalcTextHeight(BSTR str, IGdiFont* font, UINT* p)
 	if (!m_ptr || !p) return E_POINTER;
 
 	HFONT hFont = NULL;
-	font->get_HFont((UINT *)&hFont);
+	font->get__HFont((UINT *)&hFont);
 	HFONT oldfont;
 	HDC dc = m_ptr->GetHDC();
 	oldfont = SelectFont(dc, hFont);
@@ -3515,7 +3508,7 @@ STDMETHODIMP GdiGraphics::CalcTextWidth(BSTR str, IGdiFont* font, UINT* p)
 	if (!m_ptr || !p) return E_POINTER;
 
 	HFONT hFont = NULL;
-	font->get_HFont((UINT *)&hFont);
+	font->get__HFont((UINT *)&hFont);
 	HFONT oldfont;
 	HDC dc = m_ptr->GetHDC();
 	oldfont = SelectFont(dc, hFont);
@@ -3667,7 +3660,7 @@ STDMETHODIMP GdiGraphics::EstimateLineWrap(BSTR str, IGdiFont* font, int max_wid
 	if (!m_ptr || !p) return E_POINTER;
 
 	HFONT hFont = NULL;
-	font->get_HFont((UINT*)&hFont);
+	font->get__HFont((UINT*)&hFont);
 	HDC dc = m_ptr->GetHDC();
 	HFONT oldfont = SelectFont(dc, hFont);
 
@@ -3806,7 +3799,7 @@ STDMETHODIMP GdiGraphics::GdiDrawText(BSTR str, IGdiFont* font, VARIANT colour, 
 	if (!m_ptr) return E_POINTER;
 
 	HFONT hFont = NULL;
-	font->get_HFont((UINT *)&hFont);
+	font->get__HFont((UINT *)&hFont);
 	HFONT oldfont;
 	HDC dc = m_ptr->GetHDC();
 	RECT rc = { x, y, x + w, y + h };
@@ -3918,9 +3911,7 @@ GdiRawBitmap::GdiRawBitmap(Gdiplus::Bitmap* p_bmp)
 	m_hbmpold = SelectBitmap(m_hdc, m_hbmp);
 }
 
-GdiRawBitmap::~GdiRawBitmap()
-{
-}
+GdiRawBitmap::~GdiRawBitmap() {}
 
 void GdiRawBitmap::FinalRelease()
 {
@@ -3962,13 +3953,8 @@ STDMETHODIMP GdiRawBitmap::get__Handle(HDC* p)
 	return S_OK;
 }
 
-GdiUtils::GdiUtils()
-{
-}
-
-GdiUtils::~GdiUtils()
-{
-}
+GdiUtils::GdiUtils() {}
+GdiUtils::~GdiUtils() {}
 
 STDMETHODIMP GdiUtils::CreateImage(int w, int h, IGdiBitmap** pp)
 {
@@ -4054,13 +4040,8 @@ STDMETHODIMP GdiUtils::LoadImageAsync(UINT window_id, BSTR path, UINT* p)
 	return S_OK;
 }
 
-JSConsole::JSConsole()
-{
-}
-
-JSConsole::~JSConsole()
-{
-}
+JSConsole::JSConsole() {}
+JSConsole::~JSConsole() {}
 
 STDMETHODIMP JSConsole::Log(SAFEARRAY* p)
 {
@@ -4097,13 +4078,8 @@ STDMETHODIMP JSConsole::Log(SAFEARRAY* p)
 	return S_OK;
 }
 
-JSUtils::JSUtils()
-{
-}
-
-JSUtils::~JSUtils()
-{
-}
+JSUtils::JSUtils() {}
+JSUtils::~JSUtils() {}
 
 STDMETHODIMP JSUtils::CheckComponent(BSTR name, VARIANT_BOOL is_dll, VARIANT_BOOL* p)
 {
@@ -4266,23 +4242,23 @@ STDMETHODIMP JSUtils::FileTest(BSTR path, BSTR mode, VARIANT* p)
 	return S_OK;
 }
 
-STDMETHODIMP JSUtils::FormatDuration(double p, BSTR* pp)
+STDMETHODIMP JSUtils::FormatDuration(double seconds, BSTR* p)
 {
-	if (!pp) return E_POINTER;
+	if (!p) return E_POINTER;
 
 	pfc::string8_fast str;
-	str = pfc::format_time_ex(p, 0);
-	*pp = SysAllocString(string_wide_from_utf8_fast(str));
+	str = pfc::format_time_ex(seconds, 0);
+	*p = SysAllocString(string_wide_from_utf8_fast(str));
 	return S_OK;
 }
 
-STDMETHODIMP JSUtils::FormatFileSize(LONGLONG p, BSTR* pp)
+STDMETHODIMP JSUtils::FormatFileSize(LONGLONG bytes, BSTR* p)
 {
-	if (!pp) return E_POINTER;
+	if (!p) return E_POINTER;
 
 	pfc::string8_fast str;
-	str = pfc::format_file_size_short(p);
-	*pp = SysAllocString(string_wide_from_utf8_fast(str));
+	str = pfc::format_file_size_short(bytes);
+	*p = SysAllocString(string_wide_from_utf8_fast(str));
 	return S_OK;
 }
 
@@ -4441,15 +4417,15 @@ STDMETHODIMP JSUtils::IsKeyPressed(UINT vkey, VARIANT_BOOL* p)
 	return S_OK;
 }
 
-STDMETHODIMP JSUtils::MapString(BSTR str, UINT lcid, UINT flags, BSTR* pp)
+STDMETHODIMP JSUtils::MapString(BSTR str, UINT lcid, UINT flags, BSTR* p)
 {
-	if (!pp) return E_POINTER;
+	if (!p) return E_POINTER;
 
 	int r = ::LCMapStringW(lcid, flags, str, wcslen(str) + 1, NULL, 0);
 	if (!r) return E_FAIL;
 	wchar_t* dst = new wchar_t[r];
 	r = ::LCMapStringW(lcid, flags, str, wcslen(str) + 1, dst, r);
-	if (r) *pp = SysAllocString(dst);
+	if (r) *p = SysAllocString(dst);
 	delete[] dst;
 	return S_OK;
 }
@@ -4462,9 +4438,9 @@ STDMETHODIMP JSUtils::PathWildcardMatch(BSTR pattern, BSTR str, VARIANT_BOOL* p)
 	return S_OK;
 }
 
-STDMETHODIMP JSUtils::ReadINI(BSTR filename, BSTR section, BSTR key, VARIANT defaultval, BSTR* pp)
+STDMETHODIMP JSUtils::ReadINI(BSTR filename, BSTR section, BSTR key, VARIANT defaultval, BSTR* p)
 {
-	if (!pp) return E_POINTER;
+	if (!p) return E_POINTER;
 
 	enum
 	{
@@ -4480,27 +4456,26 @@ STDMETHODIMP JSUtils::ReadINI(BSTR filename, BSTR section, BSTR key, VARIANT def
 
 		if (SUCCEEDED(VariantChangeType(&var, &defaultval, 0, VT_BSTR)))
 		{
-			*pp = SysAllocString(var.bstrVal);
+			*p = SysAllocString(var.bstrVal);
 			return S_OK;
 		}
 	}
 
-	*pp = SysAllocString(buff);
+	*p = SysAllocString(buff);
 	return S_OK;
 }
 
-STDMETHODIMP JSUtils::ReadTextFile(BSTR filename, UINT codepage, BSTR* pp)
+STDMETHODIMP JSUtils::ReadTextFile(BSTR filename, UINT codepage, BSTR* p)
 {
-	if (!pp) return E_POINTER;
+	if (!p) return E_POINTER;
+
+	*p = NULL;
 
 	pfc::array_t<wchar_t> content;
-	*pp = NULL;
-
 	if (helpers::read_file_wide(codepage, filename, content))
 	{
-		*pp = SysAllocString(content.get_ptr());
+		*p = SysAllocString(content.get_ptr());
 	}
-
 	return S_OK;
 }
 
@@ -4540,13 +4515,8 @@ STDMETHODIMP JSUtils::get_Version(UINT* v)
 	return S_OK;
 }
 
-MainMenuManager::MainMenuManager()
-{
-}
-
-MainMenuManager::~MainMenuManager()
-{
-}
+MainMenuManager::MainMenuManager() {}
+MainMenuManager::~MainMenuManager() {}
 
 void MainMenuManager::FinalRelease()
 {
@@ -4557,13 +4527,13 @@ STDMETHODIMP MainMenuManager::BuildMenu(IMenuObj* p, int base_id, int count)
 {
 	if (m_mm.is_empty()) return E_POINTER;
 
-	t_size menuid;
-	p->get_ID(&menuid);
+	HMENU menuid;
+	p->get__ID(&menuid);
 
 	// HACK: workaround for foo_menu_addons
 	try
 	{
-		m_mm->generate_menu_win32((HMENU)menuid, base_id, count, mainmenu_manager::flag_show_shortcuts);
+		m_mm->generate_menu_win32(menuid, base_id, count, mainmenu_manager::flag_show_shortcuts);
 	}
 	catch (...)
 	{
@@ -4614,13 +4584,8 @@ STDMETHODIMP MainMenuManager::Init(BSTR root_name)
 	return E_INVALIDARG;
 }
 
-MeasureStringInfo::MeasureStringInfo(float x, float y, float w, float h, int l, int c) : m_x(x), m_y(y), m_w(w), m_h(h), m_l(l), m_c(c)
-{
-}
-
-MeasureStringInfo::~MeasureStringInfo()
-{
-}
+MeasureStringInfo::MeasureStringInfo(float x, float y, float w, float h, int l, int c) : m_x(x), m_y(y), m_w(w), m_h(h), m_l(l), m_c(c) {}
+MeasureStringInfo::~MeasureStringInfo() {}
 
 STDMETHODIMP MeasureStringInfo::get_chars(int* p)
 {
@@ -4675,9 +4640,7 @@ MenuObj::MenuObj(HWND wnd_parent) : m_wnd_parent(wnd_parent), m_has_detached(fal
 	m_hMenu = ::CreatePopupMenu();
 }
 
-MenuObj::~MenuObj()
-{
-}
+MenuObj::~MenuObj() {}
 
 void MenuObj::FinalRelease()
 {
@@ -4748,11 +4711,11 @@ STDMETHODIMP MenuObj::TrackPopupMenu(int x, int y, UINT flags, UINT* item_id)
 	return S_OK;
 }
 
-STDMETHODIMP MenuObj::get_ID(UINT* p)
+STDMETHODIMP MenuObj::get__ID(HMENU* p)
 {
 	if (!m_hMenu || !p) return E_POINTER;
 
-	*p = (UINT)m_hMenu;
+	*p = m_hMenu;
 	return S_OK;
 }
 
@@ -4763,9 +4726,7 @@ ThemeManager::ThemeManager(HWND hwnd, BSTR classlist) : m_theme(NULL), m_partid(
 	if (!m_theme) throw pfc::exception_invalid_params();
 }
 
-ThemeManager::~ThemeManager()
-{
-}
+ThemeManager::~ThemeManager() {}
 
 void ThemeManager::FinalRelease()
 {

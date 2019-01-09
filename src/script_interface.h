@@ -32,7 +32,7 @@ __interface IFbTooltip : IDisposable
 	STDMETHOD(SetDelayTime)(int type, int time);
 	STDMETHOD(SetMaxWidth)(int width);
 	STDMETHOD(TrackPosition)(int x, int y);
-	[propget] STDMETHOD(Text)([out, retval] BSTR* pp);
+	[propget] STDMETHOD(Text)([out, retval] BSTR* p);
 	[propput] STDMETHOD(Text)(BSTR text);
 	[propput] STDMETHOD(TrackActivate)(VARIANT_BOOL activate);
 };
@@ -58,11 +58,11 @@ __interface IGdiObj : IDisposable
 ]
 __interface IGdiFont : IGdiObj
 {
-	[propget] STDMETHOD(HFont)([out, retval] UINT* p);
+	STDMETHOD(get__HFont)([out, retval] UINT* p);
 	[propget] STDMETHOD(Height)([out, retval] UINT* p);
-	[propget] STDMETHOD(Name)([defaultvalue(LANG_NEUTRAL)] LANGID langId, [out, retval] BSTR* outName);
-	[propget] STDMETHOD(Size)([out, retval] float* outSize);
-	[propget] STDMETHOD(Style)([out, retval] int* outStyle);
+	[propget] STDMETHOD(Name)([out, retval] BSTR* p);
+	[propget] STDMETHOD(Size)([out, retval] float* p);
+	[propget] STDMETHOD(Style)([out, retval] int* p);
 };
 
 [
@@ -74,9 +74,9 @@ __interface IGdiFont : IGdiObj
 ]
 __interface IGdiRawBitmap : IDisposable
 {
+	STDMETHOD(get__Handle)([out, retval] HDC* p);
 	[propget] STDMETHOD(Height)([out, retval] UINT* p);
 	[propget] STDMETHOD(Width)([out, retval] UINT* p);
-	[propget] STDMETHOD(_Handle)([out] HDC* p);
 };
 
 [
@@ -99,7 +99,7 @@ __interface IGdiBitmap : IGdiObj
 	STDMETHOD(Resize)(UINT w, UINT h, [defaultvalue(0)] int interpolationMode, [out, retval] IGdiBitmap** pp);
 	STDMETHOD(RotateFlip)(UINT mode);
 	STDMETHOD(SaveAs)(BSTR path, [defaultvalue("image/png")] BSTR format, [out, retval] VARIANT_BOOL* p);
-	STDMETHOD(StackBlur)(int radius);
+	STDMETHOD(StackBlur)(BYTE radius);
 	[propget] STDMETHOD(Height)([out, retval] UINT* p);
 	[propget] STDMETHOD(Width)([out, retval] UINT* p);
 };
@@ -130,6 +130,7 @@ __interface IMeasureStringInfo
 ]
 __interface IGdiGraphics : IGdiObj
 {
+	STDMETHOD(put__ptr)(void* p);
 	STDMETHOD(CalcTextHeight)(BSTR str, IGdiFont* font, [out, retval] UINT* p);
 	STDMETHOD(CalcTextWidth)(BSTR str, IGdiFont* font, [out, retval] UINT* p);
 	STDMETHOD(DrawEllipse)(float x, float y, float w, float h, float line_width, VARIANT colour);
@@ -152,7 +153,6 @@ __interface IGdiGraphics : IGdiObj
 	STDMETHOD(SetInterpolationMode)(int mode);
 	STDMETHOD(SetSmoothingMode)(int mode);
 	STDMETHOD(SetTextRenderingHint)(UINT mode);
-	[propput] STDMETHOD(_ptr)(void* p);
 };
 
 _COM_SMARTPTR_TYPEDEF(IGdiGraphics, __uuidof(IGdiGraphics));
@@ -185,11 +185,11 @@ __interface IFbFileInfo : IDisposable
 {
 	STDMETHOD(get__ptr)([out, retval] void** pp);
 	STDMETHOD(InfoFind)(BSTR name, [out, retval] int* p);
-	STDMETHOD(InfoName)(UINT idx, [out, retval] BSTR* pp);
-	STDMETHOD(InfoValue)(UINT idx, [out, retval] BSTR* pp);
+	STDMETHOD(InfoName)(UINT idx, [out, retval] BSTR* p);
+	STDMETHOD(InfoValue)(UINT idx, [out, retval] BSTR* p);
 	STDMETHOD(MetaFind)(BSTR name, [out, retval] int* p);
-	STDMETHOD(MetaName)(UINT idx, [out, retval] BSTR* pp);
-	STDMETHOD(MetaValue)(UINT idx, UINT vidx, [out, retval] BSTR* pp);
+	STDMETHOD(MetaName)(UINT idx, [out, retval] BSTR* p);
+	STDMETHOD(MetaValue)(UINT idx, UINT vidx, [out, retval] BSTR* p);
 	STDMETHOD(MetaValueCount)(UINT idx, [out, retval] UINT* p);
 	[propget] STDMETHOD(InfoCount)([out, retval] UINT* p);
 	[propget] STDMETHOD(MetaCount)([out, retval] UINT* p);
@@ -217,8 +217,8 @@ __interface IFbMetadbHandle : IDisposable
 	STDMETHOD(SetRating)(UINT rating);
 	[propget] STDMETHOD(FileSize)([out, retval] LONGLONG* p);
 	[propget] STDMETHOD(Length)([out, retval] double* p);
-	[propget] STDMETHOD(Path)([out, retval] BSTR* pp);
-	[propget] STDMETHOD(RawPath)([out, retval] BSTR* pp);
+	[propget] STDMETHOD(Path)([out, retval] BSTR* p);
+	[propget] STDMETHOD(RawPath)([out, retval] BSTR* p);
 	[propget] STDMETHOD(SubSong)([out, retval] UINT* p);
 };
 
@@ -288,13 +288,13 @@ __interface IFbTitleFormat : IDisposable
 ]
 __interface IMenuObj : IDisposable
 {
+	STDMETHOD(get__ID)([out, retval] HMENU* p);
 	STDMETHOD(AppendMenuItem)(UINT flags, UINT item_id, BSTR text);
 	STDMETHOD(AppendMenuSeparator)();
 	STDMETHOD(AppendTo)(IMenuObj* parent, UINT flags, BSTR text);
 	STDMETHOD(CheckMenuItem)(UINT item_id, VARIANT_BOOL check);
 	STDMETHOD(CheckMenuRadioItem)(UINT first, UINT last, UINT selected);
-	STDMETHOD(TrackPopupMenu)(int x, int y, [defaultvalue(0)] UINT flags, [out, retval] UINT* item_id);
-	[propget] STDMETHOD(ID)([out, retval] UINT* p);
+	STDMETHOD(TrackPopupMenu)(int x, int y, [defaultvalue(0)] UINT flags, [out, retval] UINT* p);
 };
 
 [
@@ -364,10 +364,10 @@ __interface IFbUiSelectionHolder : IDisposable
 ]
 __interface IFbUtils : IDispatch
 {
-	STDMETHOD(AcquireUiSelectionHolder)([out, retval] IFbUiSelectionHolder** outHolder);
+	STDMETHOD(AcquireUiSelectionHolder)([out, retval] IFbUiSelectionHolder** pp);
 	STDMETHOD(AddDirectory)();
 	STDMETHOD(AddFiles)();
-	STDMETHOD(CheckClipboardContents)(UINT window_id, [out, retval] VARIANT_BOOL* outSuccess);
+	STDMETHOD(CheckClipboardContents)(UINT window_id, [out, retval] VARIANT_BOOL* p);
 	STDMETHOD(ClearPlaylist)();
 	STDMETHOD(CopyHandleListToClipboard)(IFbMetadbHandleList* handles, [out, retval] VARIANT_BOOL* outSuccess);
 	STDMETHOD(CreateContextMenuManager)([out, retval] IContextMenuManager** pp);
@@ -412,15 +412,15 @@ __interface IFbUtils : IDispatch
 	STDMETHOD(VolumeMute)();
 	STDMETHOD(VolumeUp)();
 	[propget] STDMETHOD(AlwaysOnTop)([out, retval] VARIANT_BOOL* p);
-	[propget] STDMETHOD(ComponentPath)([out, retval] BSTR* pp);
+	[propget] STDMETHOD(ComponentPath)([out, retval] BSTR* p);
 	[propget] STDMETHOD(CursorFollowPlayback)([out, retval] VARIANT_BOOL* p);
-	[propget] STDMETHOD(FoobarPath)([out, retval] BSTR* pp);
+	[propget] STDMETHOD(FoobarPath)([out, retval] BSTR* p);
 	[propget] STDMETHOD(IsPaused)([out, retval] VARIANT_BOOL* p);
 	[propget] STDMETHOD(IsPlaying)([out, retval] VARIANT_BOOL* p);
 	[propget] STDMETHOD(PlaybackFollowCursor)([out, retval] VARIANT_BOOL* p);
 	[propget] STDMETHOD(PlaybackLength)([out, retval] double* p);
 	[propget] STDMETHOD(PlaybackTime)([out, retval] double* p);
-	[propget] STDMETHOD(ProfilePath)([out, retval] BSTR* pp);
+	[propget] STDMETHOD(ProfilePath)([out, retval] BSTR* p);
 	[propget] STDMETHOD(ReplaygainMode)([out, retval] UINT *p);
 	[propget] STDMETHOD(StopAfterCurrent)([out, retval] VARIANT_BOOL* p);
 	[propget] STDMETHOD(Volume)([out, retval] float* p);
@@ -540,8 +540,8 @@ __interface IJSUtils : IDispatch
 	STDMETHOD(CheckFont)(BSTR name, [out, retval] VARIANT_BOOL* p);
 	STDMETHOD(ColourPicker)(UINT window_id, int default_colour, [out, retval] int* out_colour);
 	STDMETHOD(FileTest)(BSTR path, BSTR mode, [out, retval] VARIANT* p);
-	STDMETHOD(FormatDuration)(double p, [out, retval] BSTR* pp);
-	STDMETHOD(FormatFileSize)(LONGLONG p, [out, retval] BSTR* pp);
+	STDMETHOD(FormatDuration)(double seconds, [out, retval] BSTR* p);
+	STDMETHOD(FormatFileSize)(LONGLONG bytes, [out, retval] BSTR* p);
 	STDMETHOD(GetAlbumArtAsync)(UINT window_id, IFbMetadbHandle* handle, [defaultvalue(0)] UINT art_id, [defaultvalue(-1)] VARIANT_BOOL need_stub, [defaultvalue(0)] VARIANT_BOOL only_embed, [defaultvalue(0)] VARIANT_BOOL no_load, [out, retval] UINT* p);
 	STDMETHOD(GetAlbumArtEmbedded)(BSTR rawpath, [defaultvalue(0)] UINT art_id, [out, retval] IGdiBitmap** pp);
 	STDMETHOD(GetAlbumArtV2)(IFbMetadbHandle* handle, [defaultvalue(0)] UINT art_id, [defaultvalue(-1)] VARIANT_BOOL need_stub, [out, retval] IGdiBitmap** pp);
@@ -550,10 +550,10 @@ __interface IJSUtils : IDispatch
 	STDMETHOD(Glob)(BSTR pattern, [defaultvalue(FILE_ATTRIBUTE_DIRECTORY)] UINT exc_mask, [defaultvalue(0xffffffff)] UINT inc_mask, [out, retval] VARIANT* p);
 	STDMETHOD(InputBox)(UINT window_id, BSTR prompt, BSTR caption, [defaultvalue("")] BSTR def, [defaultvalue(0)] VARIANT_BOOL error_on_cancel, [out, retval] BSTR* out);
 	STDMETHOD(IsKeyPressed)(UINT vkey, [out, retval] VARIANT_BOOL* p);
-	STDMETHOD(MapString)(BSTR str, UINT lcid, UINT flags, [out, retval] BSTR* pp);
+	STDMETHOD(MapString)(BSTR str, UINT lcid, UINT flags, [out, retval] BSTR* p);
 	STDMETHOD(PathWildcardMatch)(BSTR pattern, BSTR str, [out, retval] VARIANT_BOOL* p);
-	STDMETHOD(ReadINI)(BSTR filename, BSTR section, BSTR key, [optional] VARIANT defaultval, [out, retval] BSTR* pp);
-	STDMETHOD(ReadTextFile)(BSTR filename, [defaultvalue(0)] UINT codepage, [out, retval] BSTR* pp);
+	STDMETHOD(ReadINI)(BSTR filename, BSTR section, BSTR key, [optional] VARIANT defaultval, [out, retval] BSTR* p);
+	STDMETHOD(ReadTextFile)(BSTR filename, [defaultvalue(0)] UINT codepage, [out, retval] BSTR* p);
 	STDMETHOD(WriteINI)(BSTR filename, BSTR section, BSTR key, VARIANT val, [out, retval] VARIANT_BOOL* p);
 	STDMETHOD(WriteTextFile)(BSTR filename, BSTR content, [defaultvalue(-1)] VARIANT_BOOL write_bom, [out, retval] VARIANT_BOOL* p);
 	[propget] STDMETHOD(Version)([out, retval] UINT* v);
