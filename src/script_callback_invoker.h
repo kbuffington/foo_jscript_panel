@@ -71,21 +71,17 @@ struct CallbackIds
 	};
 };
 
-class ScriptCallbackInvoker
+class script_callback_invoker
 {
 public:
-	ScriptCallbackInvoker();
-	~ScriptCallbackInvoker();
-	void init(IDispatch* pActiveScriptRoot);
-	HRESULT invoke(int callbackId, VARIANTARG* argv = NULL, UINT argc = 0, VARIANT* ret = NULL);
+	script_callback_invoker();
+	~script_callback_invoker();
 
-	void reset()
-	{
-		m_callbackInvokerMap.remove_all();
-	}
+	HRESULT Invoke(int callbackId, VARIANTARG* argv = NULL, UINT argc = 0, VARIANT* ret = NULL);
+	void Init(IDispatch* pActiveScriptRoot);
+	void Reset();
 
 private:
-	typedef pfc::map_t<int, int> CallbackInvokerMap;
-	CallbackInvokerMap m_callbackInvokerMap;
 	IDispatchPtr m_activeScriptRoot;
+	pfc::map_t<int, int> m_callbackInvokerMap;
 };

@@ -14,11 +14,11 @@ namespace
 	service_factory_single_t<my_playlist_callback_static> g_my_playlist_callback_static;
 }
 
-panel_manager panel_manager::sm_instance;
+panel_manager panel_manager::instance_;
 
 panel_manager& panel_manager::instance()
 {
-	return sm_instance;
+	return instance_;
 }
 
 t_size panel_manager::get_count()
@@ -110,7 +110,7 @@ void my_initquit::on_selection_changed(metadb_handle_list_cref p_selection)
 	panel_manager::instance().post_msg_to_all(CALLBACK_UWM_ON_SELECTION_CHANGED);
 }
 
-void my_initquit::on_changed(t_replaygain_config const& cfg)
+void my_initquit::on_changed(const t_replaygain_config& cfg)
 {
 	panel_manager::instance().post_msg_to_all(CALLBACK_UWM_ON_REPLAYGAIN_MODE_CHANGED, (WPARAM)cfg.m_source_mode);
 }
@@ -144,7 +144,7 @@ void my_metadb_io_callback::on_changed_sorted(metadb_handle_list_cref p_items_so
 	panel_manager::instance().post_msg_to_all_pointer(CALLBACK_UWM_ON_METADB_CHANGED, on_changed_sorted_data);
 }
 
-unsigned my_play_callback_static::get_flags()
+t_size my_play_callback_static::get_flags()
 {
 	return flag_on_playback_all | flag_on_volume_change;
 }
@@ -219,20 +219,12 @@ GUID my_config_object_notify::get_watched_object(t_size p_index)
 {
 	switch (p_index)
 	{
-	case 0:
-		return standard_config_objects::bool_playlist_stop_after_current;
-
-	case 1:
-		return standard_config_objects::bool_cursor_follows_playback;
-
-	case 2:
-		return standard_config_objects::bool_playback_follows_cursor;
-
-	case 3:
-		return standard_config_objects::bool_ui_always_on_top;
+	case 0: return standard_config_objects::bool_playlist_stop_after_current;
+	case 1: return standard_config_objects::bool_cursor_follows_playback;
+	case 2: return standard_config_objects::bool_playback_follows_cursor;
+	case 3: return standard_config_objects::bool_ui_always_on_top;
+	default: return pfc::guid_null;
 	}
-
-	return pfc::guid_null;
 }
 
 t_size my_config_object_notify::get_watched_object_count()
@@ -244,7 +236,7 @@ void my_config_object_notify::on_watched_object_changed(const config_object::ptr
 {
 	GUID guid = p_object->get_guid();
 	bool boolval = false;
-	unsigned msg = 0;
+	t_size msg = 0;
 
 	p_object->get_data_bool(boolval);
 

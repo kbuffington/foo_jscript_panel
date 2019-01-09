@@ -78,24 +78,31 @@ static const IDToNameEntry g_idToNames[] =
 	DEFINE_ID_NAME_MAP_ENTRY(on_volume_change),
 };
 
-ScriptCallbackInvoker::ScriptCallbackInvoker()
+script_callback_invoker::script_callback_invoker() {}
+
+script_callback_invoker::~script_callback_invoker()
 {
+	Reset();
 }
 
-ScriptCallbackInvoker::~ScriptCallbackInvoker()
+HRESULT script_callback_invoker::Invoke(int callbackId, VARIANTARG* argv, UINT argc, VARIANT* ret)
 {
-	reset();
+	if (!m_activeScriptRoot) return E_POINTER;
+	DISPPARAMS param = { argv, NULL, argc, 0 };
+	int dispId;
+	if (!m_callbackInvokerMap.query(callbackId, dispId)) return DISP_E_MEMBERNOTFOUND;
+	if (dispId == DISPID_UNKNOWN) return DISP_E_MEMBERNOTFOUND;
+	return m_activeScriptRoot->Invoke(dispId, IID_NULL, LOCALE_USER_DEFAULT, DISPATCH_METHOD, &param, ret, NULL, NULL);
 }
 
-void ScriptCallbackInvoker::init(IDispatch* pActiveScriptRoot)
+void script_callback_invoker::Init(IDispatch* pActiveScriptRoot)
 {
-	reset();
+	Reset();
 	if (!pActiveScriptRoot) return;
 
 	m_activeScriptRoot = pActiveScriptRoot;
-	int count = _countof(g_idToNames);
 
-	for (int i = 0; i < count; ++i)
+	for (t_size i = 0; i < _countof(g_idToNames); ++i)
 	{
 		int callbackId = g_idToNames[i].id;
 		LPOLESTR name = const_cast<LPOLESTR>(g_idToNames[i].name);
@@ -108,12 +115,7 @@ void ScriptCallbackInvoker::init(IDispatch* pActiveScriptRoot)
 	}
 }
 
-HRESULT ScriptCallbackInvoker::invoke(int callbackId, VARIANTARG* argv, UINT argc, VARIANT* ret)
+void script_callback_invoker::Reset()
 {
-	if (!m_activeScriptRoot) return E_POINTER;
-	DISPPARAMS param = { argv, NULL, argc, 0 };
-	int dispId;
-	if (!m_callbackInvokerMap.query(callbackId, dispId)) return DISP_E_MEMBERNOTFOUND;
-	if (dispId == DISPID_UNKNOWN) return DISP_E_MEMBERNOTFOUND;
-	return m_activeScriptRoot->Invoke(dispId, IID_NULL, LOCALE_USER_DEFAULT, DISPATCH_METHOD, &param, ret, NULL, NULL);
+	m_callbackInvokerMap.remove_all();
 }

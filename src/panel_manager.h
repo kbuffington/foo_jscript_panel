@@ -4,43 +4,35 @@
 template <typename T>
 struct simple_callback_data : public pfc::refcounted_object_root
 {
-	T m_item;
+	simple_callback_data(const T& p_item) : m_item(p_item) {}
 
-	simple_callback_data(const T& p_item) : m_item(p_item)
-	{
-	}
+	T m_item;
 };
 
 template <typename T1, typename T2>
 struct simple_callback_data_2 : public pfc::refcounted_object_root
 {
+	simple_callback_data_2(const T1& p_item1, const T2& p_item2) : m_item1(p_item1), m_item2(p_item2) {}
+
 	T1 m_item1;
 	T2 m_item2;
-
-	simple_callback_data_2(const T1& p_item1, const T2& p_item2) : m_item1(p_item1), m_item2(p_item2)
-	{
-	}
 };
 
 template <typename T1, typename T2, typename T3>
 struct simple_callback_data_3 : public pfc::refcounted_object_root
 {
+	simple_callback_data_3(const T1& p_item1, const T2& p_item2, const T3& p_item3) : m_item1(p_item1), m_item2(p_item2), m_item3(p_item3) {}
+
 	T1 m_item1;
 	T2 m_item2;
 	T3 m_item3;
-
-	simple_callback_data_3(const T1& p_item1, const T2& p_item2, const T3& p_item3) : m_item1(p_item1), m_item2(p_item2), m_item3(p_item3)
-	{
-	}
 };
 
 struct metadb_callback_data : public pfc::refcounted_object_root
 {
-	metadb_handle_list m_items;
+	metadb_callback_data(metadb_handle_list_cref p_items) : m_items(p_items) {}
 
-	metadb_callback_data(metadb_handle_list_cref p_items) : m_items(p_items)
-	{
-	}
+	metadb_handle_list m_items;
 };
 
 // Only used in message handler
@@ -71,15 +63,13 @@ public:
 	}
 
 private:
-	T * m_data;
+	T* m_data;
 };
 
 class panel_manager
 {
 public:
-	panel_manager()
-	{
-	}
+	panel_manager() {}
 
 	static panel_manager& instance();
 	t_size get_count();
@@ -94,7 +84,7 @@ public:
 
 private:
 	pfc::list_t<HWND> m_hwnds;
-	static panel_manager sm_instance;
+	static panel_manager instance_;
 
 	PFC_CLASS_NOT_COPYABLE_EX(panel_manager)
 };
@@ -134,7 +124,7 @@ public:
 		ui_selection_manager_v2::get()->unregister_callback(this);
 	}
 
-	virtual void on_changed(t_replaygain_config const& cfg);
+	virtual void on_changed(const t_replaygain_config& cfg);
 	virtual void on_selection_changed(metadb_handle_list_cref p_selection);
 	virtual void outputConfigChanged();
 };
@@ -156,7 +146,7 @@ public:
 class my_play_callback_static : public play_callback_static
 {
 public:
-	virtual unsigned get_flags();
+	virtual t_size get_flags();
 	virtual void on_playback_dynamic_info(const file_info& info);
 	virtual void on_playback_dynamic_info_track(const file_info& info);
 	virtual void on_playback_edited(metadb_handle_ptr track);
@@ -199,7 +189,7 @@ public:
 	virtual void on_items_replaced(t_size p_playlist, const pfc::bit_array& p_mask, const pfc::list_base_const_t<t_on_items_replaced_entry>& p_data) {}
 	virtual void on_playlists_removing(const pfc::bit_array& p_mask, t_size p_old_count, t_size p_new_count) {}
 
-	virtual unsigned get_flags();
+	virtual t_size get_flags();
 	virtual void on_item_ensure_visible(t_size p_playlist, t_size p_idx);
 	virtual void on_item_focus_change(t_size p_playlist, t_size p_from, t_size p_to);
 	virtual void on_items_added(t_size p_playlist, t_size p_start, metadb_handle_list_cref p_data, const pfc::bit_array& p_selection);

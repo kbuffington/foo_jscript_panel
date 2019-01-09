@@ -1,6 +1,5 @@
 #pragma once
 #include "config.h"
-#include "script_callback_invoker.h"
 #include "script_interface_impl.h"
 #include "script_preprocessor.h"
 

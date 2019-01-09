@@ -93,7 +93,7 @@ HRESULT script_host::Initialize()
 		m_has_error = true;
 	}
 
-	m_callback_invoker.init(m_script_root);
+	m_callback_invoker.Init(m_script_root);
 	return hr;
 }
 
@@ -106,7 +106,7 @@ HRESULT script_host::InvokeCallback(int callbackId, VARIANTARG* argv, UINT argc,
 
 	try
 	{
-		hr = m_callback_invoker.invoke(callbackId, argv, argc, ret);
+		hr = m_callback_invoker.Invoke(callbackId, argv, argc, ret);
 	}
 	catch (...) {}
 
@@ -296,7 +296,7 @@ void script_host::Finalize()
 	}
 
 	m_contextToPathMap.remove_all();
-	m_callback_invoker.reset();
+	m_callback_invoker.Reset();
 
 	if (m_script_engine)
 	{

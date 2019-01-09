@@ -1,4 +1,5 @@
 #pragma once
+#include "script_callback_invoker.h"
 
 class script_host : public IActiveScriptSite, public IActiveScriptSiteWindow
 {
@@ -39,12 +40,12 @@ private:
 	IGdiUtilsPtr m_gdi;
 	IJSUtilsPtr m_utils;
 	IJSConsolePtr m_console;
-	ScriptCallbackInvoker m_callback_invoker;
 	bool m_engine_inited;
 	bool m_has_error;
 	host_comm* m_host;
 	pfc::map_t<DWORD, pfc::string8> m_contextToPathMap;
 	pfc::tickcount_t m_dwStartTime;
+	script_callback_invoker m_callback_invoker;
 	volatile DWORD m_dwRef;
 
 	BEGIN_COM_QI_IMPL()
