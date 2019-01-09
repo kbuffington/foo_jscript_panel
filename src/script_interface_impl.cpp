@@ -116,6 +116,14 @@ void FbFileInfo::FinalRelease()
 	}
 }
 
+STDMETHODIMP FbFileInfo::get__ptr(void** pp)
+{
+	if (!pp) return E_POINTER;
+
+	*pp = m_info_ptr;
+	return S_OK;
+}
+
 STDMETHODIMP FbFileInfo::InfoFind(BSTR name, int* p)
 {
 	if (!m_info_ptr || !p) return E_POINTER;
@@ -210,14 +218,6 @@ STDMETHODIMP FbFileInfo::get_MetaCount(UINT* p)
 	return S_OK;
 }
 
-STDMETHODIMP FbFileInfo::get__ptr(void** pp)
-{
-	if (!pp) return E_POINTER;
-
-	*pp = m_info_ptr;
-	return S_OK;
-}
-
 FbMetadbHandle::FbMetadbHandle(const metadb_handle_ptr& src) : m_handle(src) {}
 FbMetadbHandle::FbMetadbHandle(metadb_handle* src) : m_handle(src) {}
 FbMetadbHandle::~FbMetadbHandle() {}
@@ -225,6 +225,14 @@ FbMetadbHandle::~FbMetadbHandle() {}
 void FbMetadbHandle::FinalRelease()
 {
 	m_handle.release();
+}
+
+STDMETHODIMP FbMetadbHandle::get__ptr(void** pp)
+{
+	if (!pp) return E_POINTER;
+
+	*pp = m_handle.get_ptr();
+	return S_OK;
 }
 
 STDMETHODIMP FbMetadbHandle::ClearStats()
@@ -423,20 +431,20 @@ STDMETHODIMP FbMetadbHandle::get_SubSong(UINT* p)
 	return S_OK;
 }
 
-STDMETHODIMP FbMetadbHandle::get__ptr(void** pp)
-{
-	if (!pp) return E_POINTER;
-
-	*pp = m_handle.get_ptr();
-	return S_OK;
-}
-
 FbMetadbHandleList::FbMetadbHandleList(metadb_handle_list_cref handles) : m_handles(handles) {}
 FbMetadbHandleList::~FbMetadbHandleList() {}
 
 void FbMetadbHandleList::FinalRelease()
 {
 	m_handles.remove_all();
+}
+
+STDMETHODIMP FbMetadbHandleList::get__ptr(void** pp)
+{
+	if (!pp) return E_POINTER;
+
+	*pp = &m_handles;
+	return S_OK;
 }
 
 STDMETHODIMP FbMetadbHandleList::Add(IFbMetadbHandle* handle)
@@ -901,14 +909,6 @@ STDMETHODIMP FbMetadbHandleList::get_Item(UINT index, IFbMetadbHandle** pp)
 	return E_INVALIDARG;
 }
 
-STDMETHODIMP FbMetadbHandleList::get__ptr(void** pp)
-{
-	if (!pp) return E_POINTER;
-
-	*pp = &m_handles;
-	return S_OK;
-}
-
 STDMETHODIMP FbMetadbHandleList::put_Item(UINT index, IFbMetadbHandle* handle)
 {
 	if (index < m_handles.get_count())
@@ -941,6 +941,14 @@ void FbPlaybackQueueItem::FinalRelease()
 	m_playback_queue_item.m_item = 0;
 }
 
+STDMETHODIMP FbPlaybackQueueItem::get__ptr(void** pp)
+{
+	if (!pp) return E_POINTER;
+
+	*pp = &m_playback_queue_item;
+	return S_OK;
+}
+
 STDMETHODIMP FbPlaybackQueueItem::get_Handle(IFbMetadbHandle** outHandle)
 {
 	if (!outHandle) return E_POINTER;
@@ -962,14 +970,6 @@ STDMETHODIMP FbPlaybackQueueItem::get_PlaylistItemIndex(int* outPlaylistItemInde
 	if (!outPlaylistItemIndex) return E_POINTER;
 
 	*outPlaylistItemIndex = m_playback_queue_item.m_item;
-	return S_OK;
-}
-
-STDMETHODIMP FbPlaybackQueueItem::get__ptr(void** pp)
-{
-	if (!pp) return E_POINTER;
-
-	*pp = &m_playback_queue_item;
 	return S_OK;
 }
 
@@ -1744,6 +1744,14 @@ void FbTitleFormat::FinalRelease()
 	m_obj.release();
 }
 
+STDMETHODIMP FbTitleFormat::get__ptr(void** pp)
+{
+	if (!pp) return E_POINTER;
+
+	*pp = m_obj.get_ptr();
+	return S_OK;
+}
+
 STDMETHODIMP FbTitleFormat::Eval(VARIANT_BOOL force, BSTR* p)
 {
 	if (m_obj.is_empty() || !p) return E_POINTER;
@@ -1799,14 +1807,6 @@ STDMETHODIMP FbTitleFormat::EvalWithMetadbs(IFbMetadbHandleList* handles, VARIAN
 	}
 	p->vt = VT_ARRAY | VT_VARIANT;
 	p->parray = helper.get_ptr();
-	return S_OK;
-}
-
-STDMETHODIMP FbTitleFormat::get__ptr(void** pp)
-{
-	if (!pp) return E_POINTER;
-
-	*pp = m_obj.get_ptr();
 	return S_OK;
 }
 

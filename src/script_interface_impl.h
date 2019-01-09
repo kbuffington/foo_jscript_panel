@@ -73,6 +73,7 @@ protected:
 	virtual void FinalRelease();
 
 public:
+	STDMETHODIMP get__ptr(void** pp);
 	STDMETHODIMP InfoFind(BSTR name, int* p);
 	STDMETHODIMP InfoName(UINT idx, BSTR* pp);
 	STDMETHODIMP InfoValue(UINT idx, BSTR* pp);
@@ -82,7 +83,6 @@ public:
 	STDMETHODIMP MetaValueCount(UINT idx, UINT* p);
 	STDMETHODIMP get_InfoCount(UINT* p);
 	STDMETHODIMP get_MetaCount(UINT* p);
-	STDMETHODIMP get__ptr(void** pp);
 };
 
 class FbMetadbHandle : public IDisposableImpl4<IFbMetadbHandle>
@@ -96,6 +96,7 @@ protected:
 	virtual void FinalRelease();
 
 public:
+	STDMETHODIMP get__ptr(void** pp);
 	STDMETHODIMP ClearStats();
 	STDMETHODIMP Compare(IFbMetadbHandle* handle, VARIANT_BOOL* p);
 	STDMETHODIMP GetAlbumArt(UINT art_id, VARIANT_BOOL need_stub, VARIANT* p);
@@ -111,7 +112,6 @@ public:
 	STDMETHODIMP get_Path(BSTR* pp);
 	STDMETHODIMP get_RawPath(BSTR* pp);
 	STDMETHODIMP get_SubSong(UINT* p);
-	STDMETHODIMP get__ptr(void** pp);
 };
 
 class FbMetadbHandleList : public IDisposableImpl4<IFbMetadbHandleList>
@@ -124,6 +124,7 @@ protected:
 	virtual void FinalRelease();
 
 public:
+	STDMETHODIMP get__ptr(void** pp);
 	STDMETHODIMP Add(IFbMetadbHandle* handle);
 	STDMETHODIMP AddRange(IFbMetadbHandleList* handles);
 	STDMETHODIMP AttachImage(BSTR image_path, UINT art_id);
@@ -153,7 +154,6 @@ public:
 	STDMETHODIMP UpdateFileInfoFromJSON(BSTR str);
 	STDMETHODIMP get_Count(UINT* p);
 	STDMETHODIMP get_Item(UINT index, IFbMetadbHandle** pp);
-	STDMETHODIMP get__ptr(void** pp);
 	STDMETHODIMP put_Item(UINT index, IFbMetadbHandle* handle);
 };
 
@@ -168,10 +168,10 @@ protected:
 	virtual void FinalRelease();
 
 public:
+	STDMETHODIMP get__ptr(void** pp);
 	STDMETHODIMP get_Handle(IFbMetadbHandle** outHandle);
 	STDMETHODIMP get_PlaylistIndex(int* outPlaylistIndex);
 	STDMETHODIMP get_PlaylistItemIndex(int* outPlaylistItemIndex);
-	STDMETHODIMP get__ptr(void** pp);
 };
 
 class FbPlaylistManager : public IDispatchImpl3<IFbPlaylistManager>
@@ -289,10 +289,10 @@ protected:
 	virtual void FinalRelease();
 
 public:
+	STDMETHODIMP get__ptr(void** pp);
 	STDMETHODIMP Eval(VARIANT_BOOL force, BSTR* p);
 	STDMETHODIMP EvalWithMetadb(IFbMetadbHandle* handle, BSTR* p);
 	STDMETHODIMP EvalWithMetadbs(IFbMetadbHandleList* handles, VARIANT* p);
-	STDMETHODIMP get__ptr(void** pp);
 };
 
 class FbTooltip : public IDisposableImpl4<IFbTooltip>

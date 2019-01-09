@@ -46,7 +46,7 @@ __interface IFbTooltip : IDisposable
 ]
 __interface IGdiObj : IDisposable
 {
-	[propget] STDMETHOD(_ptr)([out]void** pp);
+	STDMETHOD(get__ptr)([out, retval] void** pp);
 };
 
 [
@@ -183,6 +183,7 @@ _COM_SMARTPTR_TYPEDEF(IGdiUtils, __uuidof(IGdiUtils));
 ]
 __interface IFbFileInfo : IDisposable
 {
+	STDMETHOD(get__ptr)([out, retval] void** pp);
 	STDMETHOD(InfoFind)(BSTR name, [out, retval] int* p);
 	STDMETHOD(InfoName)(UINT idx, [out, retval] BSTR* pp);
 	STDMETHOD(InfoValue)(UINT idx, [out, retval] BSTR* pp);
@@ -192,7 +193,6 @@ __interface IFbFileInfo : IDisposable
 	STDMETHOD(MetaValueCount)(UINT idx, [out, retval] UINT* p);
 	[propget] STDMETHOD(InfoCount)([out, retval] UINT* p);
 	[propget] STDMETHOD(MetaCount)([out, retval] UINT* p);
-	[propget] STDMETHOD(_ptr)([out]void** pp);
 };
 
 [
@@ -204,6 +204,7 @@ __interface IFbFileInfo : IDisposable
 ]
 __interface IFbMetadbHandle : IDisposable
 {
+	STDMETHOD(get__ptr)([out, retval] void** pp);
 	STDMETHOD(ClearStats)();
 	STDMETHOD(Compare)(IFbMetadbHandle* handle, [out, retval] VARIANT_BOOL* p);
 	STDMETHOD(GetAlbumArt)([defaultvalue(0)] UINT art_id, [defaultvalue(-1)] VARIANT_BOOL need_stub, [out, retval] VARIANT* p);
@@ -219,7 +220,6 @@ __interface IFbMetadbHandle : IDisposable
 	[propget] STDMETHOD(Path)([out, retval] BSTR* pp);
 	[propget] STDMETHOD(RawPath)([out, retval] BSTR* pp);
 	[propget] STDMETHOD(SubSong)([out, retval] UINT* p);
-	[propget] STDMETHOD(_ptr)([out]void** pp);
 };
 
 [
@@ -231,6 +231,7 @@ __interface IFbMetadbHandle : IDisposable
 ]
 __interface IFbMetadbHandleList : IDisposable
 {
+	STDMETHOD(get__ptr)([out, retval] void** pp);
 	STDMETHOD(Add)(IFbMetadbHandle* handle);
 	STDMETHOD(AddRange)(IFbMetadbHandleList* handles);
 	STDMETHOD(AttachImage)(BSTR image_path, [defaultvalue(0)] UINT art_id);
@@ -260,7 +261,6 @@ __interface IFbMetadbHandleList : IDisposable
 	STDMETHOD(UpdateFileInfoFromJSON)(BSTR str);
 	[propget] STDMETHOD(Count)([out, retval] UINT* p);
 	[propget] STDMETHOD(Item)(UINT index, [out, retval] IFbMetadbHandle** pp);
-	[propget] STDMETHOD(_ptr)([out, retval] void** pp);
 	[propput] STDMETHOD(Item)(UINT index, IFbMetadbHandle* handle);
 };
 
@@ -273,10 +273,10 @@ __interface IFbMetadbHandleList : IDisposable
 ]
 __interface IFbTitleFormat : IDisposable
 {
+	STDMETHOD(get__ptr)([out, retval] void** pp);
 	STDMETHOD(Eval)([defaultvalue(0)] VARIANT_BOOL force, [out, retval] BSTR* p);
 	STDMETHOD(EvalWithMetadb)(IFbMetadbHandle* handle, [out, retval] BSTR* p);
 	STDMETHOD(EvalWithMetadbs)(IFbMetadbHandleList* handles, [out, retval] VARIANT* p);
-	[propget] STDMETHOD(_ptr)([out, retval] void** pp);
 };
 
 [
@@ -570,10 +570,10 @@ _COM_SMARTPTR_TYPEDEF(IJSUtils, __uuidof(IJSUtils));
 ]
 __interface IFbPlaybackQueueItem : IDisposable
 {
+	STDMETHOD(get__ptr)([out, retval] void** pp);
 	[propget] STDMETHOD(Handle)([out, retval] IFbMetadbHandle** outHandle);
 	[propget] STDMETHOD(PlaylistIndex)([out, retval] int* outPlaylistIndex);
 	[propget] STDMETHOD(PlaylistItemIndex)([out, retval] int* outPlaylistItemIndex);
-	[propget] STDMETHOD(_ptr)([out, retval] void** pp);
 };
 
 [
