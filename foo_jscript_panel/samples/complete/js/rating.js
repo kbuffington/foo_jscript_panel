@@ -112,8 +112,7 @@ _.mixin({
 				var tmp = this.hrating == this.rating ? '' : this.hrating;
 				var obj = {};
 				obj[this.properties.tag.value] = tmp;
-				var handles = fb.CreateHandleList();
-				handles.Add(panel.metadb);
+				var handles = fb.CreateHandleList(panel.metadb);
 				handles.UpdateFileInfoFromJSON(JSON.stringify(obj));
 				_.dispose(handles);
 				break;

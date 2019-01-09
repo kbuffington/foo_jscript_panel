@@ -347,7 +347,7 @@ public:
 	STDMETHODIMP ClearPlaylist();
 	STDMETHODIMP CopyHandleListToClipboard(IFbMetadbHandleList* handles, VARIANT_BOOL* outSuccess);
 	STDMETHODIMP CreateContextMenuManager(IContextMenuManager** pp);
-	STDMETHODIMP CreateHandleList(IFbMetadbHandleList** pp);
+	STDMETHODIMP CreateHandleList(VARIANT handle, IFbMetadbHandleList** pp);
 	STDMETHODIMP CreateMainMenuManager(IMainMenuManager** pp);
 	STDMETHODIMP CreateProfiler(BSTR name, IFbProfiler** pp);
 	STDMETHODIMP DoDragDrop(IFbMetadbHandleList* handles, UINT okEffects, UINT* p);

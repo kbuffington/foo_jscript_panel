@@ -1050,8 +1050,7 @@ oItem = function (playlist, row_index, type, handle, track_index, group_index, t
 									this.rating = 0;
 								};
 							} else {
-								var handles = fb.CreateHandleList();
-								handles.Add(this.metadb);
+								var handles = fb.CreateHandleList(this.metadb);
 								if (this.l_rating != this.rating) {
 									handles.UpdateFileInfoFromJSON(JSON.stringify({"RATING" : this.l_rating}));
 									this.rating = this.l_rating;
@@ -1065,8 +1064,7 @@ oItem = function (playlist, row_index, type, handle, track_index, group_index, t
 					} else if (this.mood_hover) {
 						// Mood
 						if (this.tracktype < 2) {
-							var handles = fb.CreateHandleList();
-							handles.Add(this.metadb);
+							var handles = fb.CreateHandleList(this.metadb);
 							if (this.l_mood != this.mood) {
 								handles.UpdateFileInfoFromJSON(JSON.stringify({"MOOD" : getTimestamp()}));
 								this.mood = this.l_mood;

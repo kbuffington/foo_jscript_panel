@@ -186,8 +186,16 @@ interface IFbUtils {
 					InitNowPlaying(); (void)
 			}
 
-		fb.CreateHandleList(); (IFbMetadbHandleList)
-		// Returns an empty handle list.
+		fb.CreateHandleList([handle]); (IFbMetadbHandleList)
+		/*
+		Returns an empty handle list or a list containing a single item if you pass the optional
+		handle argument.
+		
+		Example:
+		var items = fb.CreateHandleList(fb.GetFocusItem());
+		items.AttachImage(...); // quick way to use handle list only method with a single item
+		items.Dispose();
+		*/
 
 		fb.CreateMainMenuManager(); (IMainMenuManager)
 		// See samples\basic\MainMenuManager All-In-One, samples\basic\Menu Sample.txt
@@ -1847,8 +1855,7 @@ interface IFbMetadbHandleList {
 
 		Example2:
 		// since there is no handle method, do this for a single item
-		var handle_list = fb.CreateHandleList();
-		handle_list.Add(fb.GetFocusItem());
+		var handle_list = fb.CreateHandleList(fb.GetFocusItem());
 		var img_path = "C:\\path\\to\\image.jpg";
 		handle_list.AttachImage(img_path, 0);
 		handle_list.Dispose();

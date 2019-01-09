@@ -408,8 +408,7 @@ function addToHistoricPlaylist(handle) {
 
 	g_avoid_on_playlists_changed = true;
 	var historicIndex = plman.FindOrCreatePlaylist("Historic", true);
-	var handles = fb.CreateHandleList();
-	handles.Add(handle);
+	var handles = fb.CreateHandleList(handle);
 	plman.InsertPlaylistItems(historicIndex, plman.PlaylistItemCount(historicIndex), handles, false);
 	g_avoid_on_playlists_changed = false;
 
@@ -710,8 +709,7 @@ function update_statistics() {
 
 		var firstplayed_ts = first_played.EvalWithMetadb(cStats.handle);
 
-		var handles = fb.CreateHandleList();
-		handles.Add(cStats.handle);
+		var handles = fb.CreateHandleList(cStats.handle);
 		
 		var obj = {
 			"LAST_PLAYED" : timestamp,

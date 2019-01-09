@@ -371,7 +371,7 @@ __interface IFbUtils : IDispatch
 	STDMETHOD(ClearPlaylist)();
 	STDMETHOD(CopyHandleListToClipboard)(IFbMetadbHandleList* handles, [out, retval] VARIANT_BOOL* outSuccess);
 	STDMETHOD(CreateContextMenuManager)([out, retval] IContextMenuManager** pp);
-	STDMETHOD(CreateHandleList)([out, retval] IFbMetadbHandleList** pp);
+	STDMETHOD(CreateHandleList)([optional] VARIANT handle, [out, retval] IFbMetadbHandleList** pp);
 	STDMETHOD(CreateMainMenuManager)([out, retval] IMainMenuManager** pp);
 	STDMETHOD(CreateProfiler)([defaultvalue("")] BSTR name, [out, retval] IFbProfiler** pp);
 	STDMETHOD(DoDragDrop)(IFbMetadbHandleList* handles, UINT okEffects, [out, retval] UINT* p);

@@ -1,4 +1,6 @@
 v2.2.0 Beta 1
+- NEW: Update fb.CreateHandleList to take an optional handle argument to create a list
+       containing a single item. See docs\interfaces.txt.
 - NEW: Add FbMetadbHandle GetAlbumArt method which returns the image and path
        without the need for using utils.GetAlbumArtAsync and
        on_get_album_art_done(). See docs\interfaces.txt.
