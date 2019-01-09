@@ -43,10 +43,8 @@ public:
 	panel_tooltip_param_ptr& PanelTooltipParam();
 	t_script_info& ScriptInfo();
 	t_size GetInstanceType();
-	virtual DWORD GetColourCUI(unsigned type, const GUID& guid) = 0;
-	virtual DWORD GetColourDUI(unsigned type) = 0;
-	virtual HFONT GetFontCUI(unsigned type, const GUID& guid) = 0;
-	virtual HFONT GetFontDUI(unsigned type) = 0;
+	virtual DWORD GetColourUI(t_size type) = 0;
+	virtual HFONT GetFontUI(t_size type) = 0;
 	void Redraw();
 	void RefreshBackground(LPRECT lprcUpdate = NULL);
 	void Repaint(bool force = false);

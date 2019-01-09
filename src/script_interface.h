@@ -479,9 +479,9 @@ __interface IFbWindow : IDispatch
 	STDMETHOD(CreatePopupMenu)([out, retval] IMenuObj** pp);
 	STDMETHOD(CreateThemeManager)(BSTR classid, [out, retval] IThemeManager** pp);
 	STDMETHOD(CreateTooltip)([defaultvalue("Segoe UI")] BSTR name, [defaultvalue(12)] float pxSize, [defaultvalue(0)] int style, [out, retval] __interface IFbTooltip** pp);
-	STDMETHOD(GetColourCUI)(UINT type, [defaultvalue("")] BSTR guidstr, [out, retval] int* p);
+	STDMETHOD(GetColourCUI)(UINT type, [out, retval] int* p);
 	STDMETHOD(GetColourDUI)(UINT type, [out, retval] int* p);
-	STDMETHOD(GetFontCUI)(UINT type, [defaultvalue("")] BSTR guidstr, [out, retval] IGdiFont** pp);
+	STDMETHOD(GetFontCUI)(UINT type, [out, retval] IGdiFont** pp);
 	STDMETHOD(GetFontDUI)(UINT type, [out, retval] IGdiFont** pp);
 	STDMETHOD(GetProperty)(BSTR name, [optional] VARIANT defaultval, [out, retval] VARIANT* p);
 	STDMETHOD(NotifyOthers)(BSTR name, VARIANT info);

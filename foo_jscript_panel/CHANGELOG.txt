@@ -17,6 +17,8 @@ v2.2.0 Beta 1
        with the same script, do something like:
 
        if ('DlgCode' in window) { window.DlgCode = 4; }
+- CHG: window.GetColourCUI and window.GetFontCUI no longer accept the previously optional
+       "client_guid" argument.
 - CHG: Lots of internal code refactoring and external dependency updates.
 - CHG: If you browse the component folder and notice the "jscript.api" and
        "interface.api" files are missing, it's intentional. The contents are now

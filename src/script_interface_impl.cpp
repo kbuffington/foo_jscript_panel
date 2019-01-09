@@ -2742,26 +2742,12 @@ STDMETHODIMP FbWindow::CreateTooltip(BSTR name, float pxSize, int style, IFbTool
 	return S_OK;
 }
 
-STDMETHODIMP FbWindow::GetColourCUI(UINT type, BSTR guidstr, int* p)
+STDMETHODIMP FbWindow::GetColourCUI(UINT type, int* p)
 {
 	if (!p) return E_POINTER;
 	if (m_host->GetInstanceType() != host_comm::KInstanceTypeCUI) return E_NOTIMPL;
 
-	GUID guid;
-
-	if (!*guidstr)
-	{
-		memcpy(&guid, &pfc::guid_null, sizeof(guid));
-	}
-	else
-	{
-		if (CLSIDFromString(guidstr, &guid) != NOERROR)
-		{
-			return E_INVALIDARG;
-		}
-	}
-
-	*p = m_host->GetColourCUI(type, guid);
+	*p = m_host->GetColourUI(type);
 	return S_OK;
 }
 
@@ -2770,33 +2756,17 @@ STDMETHODIMP FbWindow::GetColourDUI(UINT type, int* p)
 	if (!p) return E_POINTER;
 	if (m_host->GetInstanceType() != host_comm::KInstanceTypeDUI) return E_NOTIMPL;
 
-	*p = m_host->GetColourDUI(type);
+	*p = m_host->GetColourUI(type);
 	return S_OK;
 }
 
-STDMETHODIMP FbWindow::GetFontCUI(UINT type, BSTR guidstr, IGdiFont** pp)
+STDMETHODIMP FbWindow::GetFontCUI(UINT type, IGdiFont** pp)
 {
 	if (!pp) return E_POINTER;
 	if (m_host->GetInstanceType() != host_comm::KInstanceTypeCUI) return E_NOTIMPL;
 
-	GUID guid;
-
-	if (!*guidstr)
-	{
-		memcpy(&guid, &pfc::guid_null, sizeof(guid));
-	}
-	else
-	{
-		if (CLSIDFromString(guidstr, &guid) != NOERROR)
-		{
-			return E_INVALIDARG;
-		}
-	}
-
-	HFONT hFont = m_host->GetFontCUI(type, guid);
-
 	*pp = NULL;
-
+	HFONT hFont = m_host->GetFontUI(type);
 	if (hFont)
 	{
 		Gdiplus::Font* font = new Gdiplus::Font(m_host->GetHDC(), hFont);
@@ -2807,10 +2777,9 @@ STDMETHODIMP FbWindow::GetFontCUI(UINT type, BSTR guidstr, IGdiFont** pp)
 		else
 		{
 			if (font) delete font;
-			*pp = NULL;
+			font = NULL;
 		}
 	}
-
 	return S_OK;
 }
 
@@ -2819,9 +2788,8 @@ STDMETHODIMP FbWindow::GetFontDUI(UINT type, IGdiFont** pp)
 	if (!pp) return E_POINTER;
 	if (m_host->GetInstanceType() != host_comm::KInstanceTypeDUI) return E_NOTIMPL;
 
-	HFONT hFont = m_host->GetFontDUI(type);
 	*pp = NULL;
-
+	HFONT hFont = m_host->GetFontUI(type);
 	if (hFont)
 	{
 		Gdiplus::Font* font = new Gdiplus::Font(m_host->GetHDC(), hFont);
@@ -2832,10 +2800,9 @@ STDMETHODIMP FbWindow::GetFontDUI(UINT type, IGdiFont** pp)
 		else
 		{
 			if (font) delete font;
-			*pp = NULL;
+			font = NULL;
 		}
 	}
-
 	return S_OK;
 }
 

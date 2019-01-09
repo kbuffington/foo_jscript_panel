@@ -425,9 +425,9 @@ public:
 	STDMETHODIMP CreatePopupMenu(IMenuObj** pp);
 	STDMETHODIMP CreateThemeManager(BSTR classid, IThemeManager** pp);
 	STDMETHODIMP CreateTooltip(BSTR name, float pxSize, int style, IFbTooltip** pp);
-	STDMETHODIMP GetColourCUI(UINT type, BSTR guidstr, int* p);
+	STDMETHODIMP GetColourCUI(UINT type, int* p);
 	STDMETHODIMP GetColourDUI(UINT type, int* p);
-	STDMETHODIMP GetFontCUI(UINT type, BSTR guidstr, IGdiFont** pp);
+	STDMETHODIMP GetFontCUI(UINT type, IGdiFont** pp);
 	STDMETHODIMP GetFontDUI(UINT type, IGdiFont** pp);
 	STDMETHODIMP GetProperty(BSTR name, VARIANT defaultval, VARIANT* p);
 	STDMETHODIMP NotifyOthers(BSTR name, VARIANT info);

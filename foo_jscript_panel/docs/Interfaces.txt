@@ -1315,25 +1315,51 @@ interface IFbWindow {
 					// Check x, y positions have changed from last time otherwise it will flicker
 			}
 
-		window.GetColourCUI(type[, client_guid]); (uint)
-		window.GetColourDUI(type); (uint)
+		window.GetColourCUI(type); (int)
+		/*
+		type:
 
-		window.GetFontCUI(type[, client_guid]); (IGdiFont)
+		0: text
+		1: selection_text
+		2: inactive_selection_text
+		3: background
+		4: selection_background
+		5: inactive_selection_background
+		6: active_item_frame
+		*/
+
+		window.GetColourDUI(type); (int)
+		/*
+		type:
+
+		0: text
+		1: background
+		2: highlight
+		3: selection
+		*/
+
+		window.GetFontCUI(type); (IGdiFont)
+		/*
+		type:
+
+		0: items
+		1: labels
+
+		Returns null on failure.
+		*/
+
 		window.GetFontDUI(type); (IGdiFont)
 		/*
 		type:
-		See flags.txt > Used in window.GetFontXXX()
-		client_guid: default "".
-		See flags.txt > Used in GetFontCUI() as client_guid.
-		This returns null if the component was unable to determine your font.
-		To avoid errors when trying to use the font or access its properties, you
-		should use code something like this...
 
-		var font = window.GetFontDUI(0);
-		if (!font) {
-			console.log("Unable to determine your default font. Using Segoe UI instead.");
-			font = gdi.Font("Segoe UI", 12);
-		}
+		0: default
+		1: tabs
+		2: lists
+		3: playlists
+		4: statusbar
+		5: console
+
+		Returns null on failure.
 		*/
 
 		window.NotifyOthers(name, info); (void)

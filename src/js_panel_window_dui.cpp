@@ -71,12 +71,7 @@ js_panel_window_dui::~js_panel_window_dui()
 	t_parent::destroy();
 }
 
-DWORD js_panel_window_dui::GetColourCUI(unsigned type, const GUID& guid)
-{
-	return 0;
-}
-
-DWORD js_panel_window_dui::GetColourDUI(unsigned type)
+DWORD js_panel_window_dui::GetColourUI(t_size type)
 {
 	const GUID* guids[] = {
 		&ui_color_text,
@@ -103,12 +98,7 @@ GUID js_panel_window_dui::g_get_subclass()
 	return ui_element_subclass_utility;
 }
 
-HFONT js_panel_window_dui::GetFontCUI(unsigned type, const GUID& guid)
-{
-	return NULL;
-}
-
-HFONT js_panel_window_dui::GetFontDUI(unsigned type)
+HFONT js_panel_window_dui::GetFontUI(t_size type)
 {
 	const GUID* guids[] = {
 		&ui_font_default,

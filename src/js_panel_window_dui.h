@@ -11,10 +11,8 @@ public:
 	static pfc::string8 g_get_description();
 	static ui_element_config::ptr g_get_default_configuration();
 	static void g_get_name(pfc::string_base& out);
-	virtual DWORD GetColourCUI(unsigned type, const GUID& guid);
-	virtual DWORD GetColourDUI(unsigned type);
-	virtual HFONT GetFontCUI(unsigned type, const GUID& guid);
-	virtual HFONT GetFontDUI(unsigned type);
+	virtual DWORD GetColourUI(t_size type);
+	virtual HFONT GetFontUI(t_size type);
 	virtual HWND get_wnd();
 	virtual LRESULT on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp);
 	virtual bool edit_mode_context_menu_test(const POINT& p_point, bool p_fromkeyboard);
