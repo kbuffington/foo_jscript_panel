@@ -16,7 +16,8 @@ interface IFbUtils {
 		fb.ComponentPath; (string) (read)
 		/*
 		Example:
-		console.log(fb.ComponentPath); // C:\Users\User\AppData\Roaming\foobar2000\user-components\foo_jscript_panel\
+		console.log(fb.ComponentPath);
+		>> C:\Users\User\AppData\Roaming\foobar2000\user-components\foo_jscript_panel\
 		*/
 
 		fb.CursorFollowPlayback; (boolean) (read, write)
@@ -32,10 +33,12 @@ interface IFbUtils {
 		fb.PlaybackLength; (double) (read)
 		/*
 		Example1:
-		console.log(fb.PlaybackLength); // 322.843414966166
+		console.log(fb.PlaybackLength);
+		>> 322.843414966166
 
 		Example2:
-		console.log(Math.round(fb.PlaybackLength)); // 323
+		console.log(Math.round(fb.PlaybackLength));
+		>> 323
 		*/
 
 		fb.PlaybackTime; (double) (read, write)
@@ -224,8 +227,10 @@ interface IFbUtils {
 				Example:
 				var test = fb.CreateProfiler("test");
 				// do something time consuming
-				console.log(test.Time); // Outputs time in ms like "789"
-				test.Print(); // Outputs component name/version/assigned name like "JScript Panel v2.0.2: FbProfiler (test): 789 ms"
+				console.log(test.Time);
+				>> 789
+				test.Print();
+				>> JScript Panel v2.0.2: FbProfiler (test): 789 ms
 				*/
 
 		fb.DoDragDrop(handle_list, effect); (uint);
@@ -263,7 +268,9 @@ interface IFbUtils {
 		var str = fb.GetDSPPresets();
 		var arr = JSON.parse(str);
 		console.log(arr.length); // number of presets
+		>> 2
 		console.log(JSON.stringify(arr, null, 4)); // using JSON.stringify here for displaying the output below
+		>>
 
 		[
 			{
@@ -310,7 +317,8 @@ interface IFbUtils {
 		path of the now playing item is "D:\Music\Albums\Artist\Some Album\Some Song.flac"
 
 		var handle = fb.GetNowPlaying();
-		console.log(fb.GetLibraryRelativePath(handle)); // Albums\Artist\Some Album\Some Song.flac
+		console.log(fb.GetLibraryRelativePath(handle));
+		>> Albums\Artist\Some Album\Some Song.flac
 
 		NOTE: Do not use this while looping a handle list. Use IFbMetadbHandleList GetLibraryRelativePaths
 		instead.
@@ -525,7 +533,8 @@ interface IFbUtils {
 					Example:
 					var handle_list = fb.GetLibraryItems();
 					var artists = tfo.EvalWithMetadbs(handle_list).toArray();
-					console.log(handle_list.Count === artists.length); // should always be true!
+					console.log(handle_list.Count === artists.length);
+					>> True
 					*/
 			}
 
@@ -543,7 +552,15 @@ interface IGdiUtils {
 		gdi.Font(name, size_px[, style]); (IGdiFont)
 		/*
 		size_px: See helpers.txt > Point2Pixel function for conversions.
-		style: default 0. See flags.txt > FontStyle
+		style: default 0, can be combined.
+
+		0: Regular
+		1: Bold
+		2: Italic
+		3: BoldItalic
+		4: Underline
+		8: Strikeout
+
 		Returns null if font not present. Avoid using inside on_paint.
 		*/
 
@@ -565,11 +582,13 @@ interface IFbPlaylistManager {
 	Properties:
 		plman.ActivePlaylist; (int) (read, write)
 		/*
-		Example1:
-		console.log(plman.ActivePlaylist); // Returns -1 if there is no active playlist.
+		Example1: (read)
+		var ap = plman.ActivePlaylist;
 
-		Example2:
-		plman.ActivePlaylist = 1; // Switches to 2nd playlist.
+		Returns -1 if there is no active playlist.
+
+		Example2: (write)
+		plman.ActivePlaylist = 1;
 		*/
 
 		plman.PlaybackOrder; (uint) (read, write)
@@ -586,7 +605,9 @@ interface IFbPlaylistManager {
 		plman.PlayingPlaylist; (int) (read, write)
 		/*
 		Example:
-		console.log(plman.PlayingPlaylist); // Returns -1 if there is no playing playlist.
+		var pp = plman.PlayingPlaylist;
+
+		Returns -1 if there is no playing playlist.
 		*/
 
 		plman.PlaylistCount; (uint) (read)
@@ -642,7 +663,8 @@ interface IFbPlaylistManager {
 		sort: default "". title formatting pattern.
 		flags: default 0, use 1 to force sort.
 
-		Returns -1 on failure.
+		Returns playlistIndex of newly created autoplaylist or -1 on
+		failure - usually caused by supplying an invalid query.
 		*/
 
 		plman.CreatePlaylist(playlistIndex, name); (uint)
@@ -681,10 +703,7 @@ interface IFbPlaylistManager {
 		// Case insensitive. Returns playlistIndex or -1 on failure.
 
 		plman.GetPlayingItemLocation(); (IFbPlayingItemLocation)
-		/*
-		Retrieves playlist position of currently playing item.
-		On failure, the property "IsValid" of IFbPlayingItemLocation interface will be set to false.
-		*/
+		// Retrieves playlist/playlistIndex of the currently playing item.
 
 			interface IFbPlayingItemLocation {
 				Properties:
@@ -694,18 +713,24 @@ interface IFbPlaylistManager {
 			}
 
 			/*
+			"IsValid" will always be false if foobar2000 isn't playing. It can also be false if the playing track
+			has since been removed from the playlist it was on when playback was started.
+
 			Example:
 			var playing_item_location = plman.GetPlayingItemLocation();
 			if (playing_item_location.IsValid) {
 				console.log(playing_item_location.PlaylistIndex);
+				>> 1
 				console.log(playing_item_location.PlaylistItemIndex);
+				>> 2
 			}
 			*/
 
 		plman.GetPlaylistFocusItemIndex(playlistIndex); (int)
 		/*
 		Example:
-		var focus_item_index = plman.GetPlaylistFocusItemIndex(plman.ActivePlaylist); // 0 would be the first item.
+		var focus_item_index = plman.GetPlaylistFocusItemIndex(plman.ActivePlaylist);
+
 		Returns -1 if nothing is selected.
 		*/
 
@@ -719,6 +744,7 @@ interface IFbPlaylistManager {
 		/*
 		Example:
 		console.log(plman.GetPlaylistName(plman.ActivePlaylist));
+		>> My favourites
 		*/
 
 		plman.GetPlaylistSelectedItems(playlistIndex); (IFbMetadbHandleList)
@@ -773,7 +799,8 @@ interface IFbPlaylistManager {
 		plman.PlaylistItemCount(playlistIndex); (uint)
 		/*
 		Example:
-		console.log(plman.PlaylistItemCount(plman.PlayingPlaylist)); // 12
+		console.log(plman.PlaylistItemCount(plman.PlayingPlaylist));
+		>> 12
 		*/
 
 		plman.RemovePlaylist(playlistIndex); (boolean)
@@ -810,7 +837,7 @@ interface IFbPlaylistManager {
 		when your panel has focus and a dedicated playlist viewer doesn't.
 		Example:
 
-		plman.SetActivePlaylistContext(); // once on startup
+		plman.SetActivePlaylistContext(); // Once on startup.
 
 		function on_focus(is_focused) {
 			if (is_focused) {
@@ -1014,13 +1041,15 @@ interface IJSUtils {
 		utils.FormatDuration(seconds) (string)
 		/*
 		Example:
-		console.log(utils.FormatDuration(plman.GetPlaylistItems(plman.ActivePlaylist).CalcTotalDuration())); // 1wk 1d 17:25:30
+		console.log(utils.FormatDuration(plman.GetPlaylistItems(plman.ActivePlaylist).CalcTotalDuration()));
+		>> 1wk 1d 17:25:30
 		*/
 
 		utils.FormatFileSize(bytes) (string)
 		/*
 		Example:
-		console.log(utils.FormatFileSize(plman.GetPlaylistItems(plman.ActivePlaylist).CalcTotalSize())); // 7.9 GB
+		console.log(utils.FormatFileSize(plman.GetPlaylistItems(plman.ActivePlaylist).CalcTotalSize()));
+		>> 7.9 GB
 		*/
 
 		utils.GetAlbumArtAsync(window_id, handle[, art_id, need_stub, only_embed, no_load]); (uint)
@@ -1166,8 +1195,8 @@ interface IJSUtils {
 
 		Example:
 		utils.WriteTextFile("z:\\1.txt", "test"); // write_bom missing but defaults to true, resulting file is UTF8-BOM
-		utils.WriteTextFile("z:\\2.txt", "test", true); // resulting file is UTF8-BOM
-		utils.WriteTextFile("z:\\3.txt", "test", false); // resulting file is UTF8 without BOM
+		utils.WriteTextFile("z:\\2.txt", "test", true); // Resulting file is UTF8-BOM.
+		utils.WriteTextFile("z:\\3.txt", "test", false); // Resulting file is UTF8 without BOM.
 		*/
 }
 
@@ -1179,7 +1208,7 @@ interface IFbWindow {
 		utils.InputBox, utils.LoadImageAsync, etc.
 		*/
 
-		window.InstanceType; (int)
+		window.InstanceType; (uint)
 		/*
 		Returns 0 if using Columns UI, 1 if using default UI.
 		You need this to determine which GetFontXXX and GetColourXXX methods to use, assuming you want to support both interfaces.
@@ -1195,10 +1224,10 @@ interface IFbWindow {
 
 		window.Height; (int) (read)
 
-		window.MaxHeight; (int) (read, write)
-		window.MaxWidth; (int) (read, write)
-		window.MinHeight; (int) (read, write)
-		window.MinWidth; (int) (read, write)
+		window.MaxHeight; (uint) (read, write)
+		window.MaxWidth; (uint) (read, write)
+		window.MinHeight; (uint) (read, write)
+		window.MinWidth; (uint) (read, write)
 		// The previous 4 methods can be used to lock the panel size. Do not use if panels are contained within Panel Stack Splitter (Columns UI component).
 
 		window.Name; (string) (read)
@@ -1266,7 +1295,14 @@ interface IFbWindow {
 		/*
 		font_name: default "Segoe UI"
 		font_size_px: default 12
-		font_style: default 0. See flags.txt > FontStyle
+		font_style: default 0, can be combined.
+
+		0: Regular
+		1: Bold
+		2: Italic
+		3: BoldItalic
+		4: Underline
+		8: Strikeout
 		*/
 
 			interface IFbTooltip {
@@ -1419,33 +1455,42 @@ interface IGdiFont {
 	/*
 	This will be used in the examples below:
 	var my_font = window.GetFontDUI(0);
-	See flags.txt > FontTypeDUI
 	*/
 
 	Properties:
-		Height (int) (read)
+		Height (uint) (read)
 		/*
 		Example:
-		console.log(my_font.Height); // 15
+		console.log(my_font.Height);
+		>> 15
 		*/
 
 		Name (string) (read)
 		/*
 		Example:
-		console.log(my_font.Name); // Segoe UI
+		console.log(my_font.Name);
+		>> Segoe UI
 		*/
 
 		Size (float) (read)
 		/*
 		Example:
-		console.log(my_font.Size); // 12
+		console.log(my_font.Size);
+		>> 12
 		*/
 
 		Style (int) (read)
 		/*
 		Example:
 		console.log(my_font.Style);
-		See flags.txt > FontStyle
+		>> 0
+
+		0: Regular
+		1: Bold
+		2: Italic
+		3: BoldItalic
+		4: Underline
+		8: Strikeout
 		*/
 
 	Methods:
@@ -1511,11 +1556,23 @@ interface IGdiBitmap {
 
 		ReleaseGraphics(IGdiGraphics); (IGdiGraphics)
 
-		Resize(w, h[, mode]); (IGdiBitmap)
-		// mode: default 0. See flags.txt > InterpolationMode
+		Resize(w, h[, interpolation_mode]); (IGdiBitmap)
+		/*
+		interpolation_mode: default 0.
+
+		-1: Invalid
+		0: Default
+		1: LowQuality
+		2: HighQuality
+		3: Bilinear
+		4: Bicubic
+		5: NearestNeighbor
+		6: HighQualityBilinear
+		7: HighQualityBicubic
+		*/
 
 		RotateFlip(mode); (void)
-		// mode. See flags.txt > RotateFlipType
+		// mode: See flags.txt > Used with RotateFlip()
 
 		SaveAs(path[, format]); (boolean)
 		/*
@@ -1642,20 +1699,52 @@ interface IGdiGraphics {
 						// If we want to calculate height, we must set the height to be far larger than what
 						// the text could possibly be.
 
-						console.log(temp.Height); // 2761.2421875 // far larger than my panel height!
-						console.log(temp.Chars); // 7967
+						console.log(temp.Height);
+						>> 2761.2421875 // far larger than my panel height!
+						console.log(temp.Chars);
+						>> 7967
 					}
 					*/
 			}
 
 		gr.SetInterpolationMode(mode); (void)
-		// See flags.txt > InterpolationMode
+		/*
+		mode:
+
+		-1: Invalid
+		0: Default
+		1: LowQuality
+		2: HighQuality
+		3: Bilinear
+		4: Bicubic
+		5: NearestNeighbor
+		6: HighQualityBilinear
+		7: HighQualityBicubic
+		*/
 
 		gr.SetSmoothingMode(mode); (void)
-		// See flags.txt > SmoothingMode
+		/*
+		mode:
+
+		-1: Invalid
+		0: Default
+		1: HighSpeed
+		2: HighQuality
+		3: None
+		4: AntiAlias
+		*/
 
 		gr.SetTextRenderingHint(mode); (void)
-		// See flags.txt > TextRenderingHint
+		/*
+		mode:
+
+		0: SystemDefault
+		1: SingleBitPerPixelGridFit
+		2: SingleBitPerPixel
+		3: AntiAliasGridFit
+		4: AntiAlias
+		5: ClearTypeGridFit
+		*/
 }
 
 interface IFbMetadbHandle {
@@ -1668,18 +1757,20 @@ interface IFbMetadbHandle {
 		Path; (string) (read)
 		/*
 		Example:
-		console.log(handle.Path); // D:\SomeSong.flac
+		console.log(handle.Path);
+		>> D:\SomeSong.flac
 		*/
 
 		RawPath; (string) (read)
 		/*
 		Example:
-		console.log(handle.RawPath); // file://D:\SomeSong.flac
+		console.log(handle.RawPath);
+		>> file://D:\SomeSong.flac
 		*/
 
-		SubSong; (int) (read)
+		SubSong; (uint) (read)
 
-		FileSize; (LONGLONG) (read) // Requires a system with IE9 or later to work properly.
+		FileSize; (int64) (read)
 
 		Length; (double) (read)
 
@@ -1747,13 +1838,15 @@ interface IFbMetadbHandle {
 					MetaCount; (uint) (read)
 					/*
 					Example:
-					console.log(f.MetaCount); // 11
+					console.log(f.MetaCount);
+					>> 11
 					*/
 
 					InfoCount; (uint) (read)
 					/*
 					Example:
-					console.log(f.InfoCount); // 9
+					console.log(f.InfoCount);
+					>> 9
 					*/
 
 				Methods:
@@ -1779,8 +1872,10 @@ interface IFbMetadbHandle {
 					so using toLowerCase() or toUpperCase() on the result is recommended
 
 					Example:
+					var tags = [];
 					for (var i = 0; i < f.MetaCount; i++) {
-						console.log(f.MetaName(i).toUpperCase());
+						var tag = f.MetaName(i).toUpperCase();
+						tags.push(tag);
 					}
 					*/
 
@@ -1803,13 +1898,13 @@ interface IFbMetadbHandleList {
 		/*
 		Example:
 		console.log(handle_list.Count);
+		>> 11
 		*/
 
 		Item(idx); (IFbMetadbHandle) (read, write)
 		/*
 		Example:
-		console.log(fb.TitleFormat("%artist%").EvalWithMetadb(handle_list.Item(0)));
-		Displays artist of first item in handle list
+		var path = handle_list.Item(0).Path;
 		*/
 
 	Methods:
