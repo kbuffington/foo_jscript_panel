@@ -77,7 +77,7 @@ public:
 private:
 	bool scan_directive_and_value(const wchar_t*& p, const wchar_t* pend);
 	bool scan_value(const wchar_t*& p, const wchar_t* pend);
-	bool extract_preprocessor_block(const wchar_t* script, int& block_begin, int& block_end);
+	bool extract_preprocessor_block(const wchar_t* script, t_size& block_begin, t_size& block_end);
 	void preprocess(const wchar_t* script);
 
 	pfc::array_t<wchar_t> m_directive_buffer;

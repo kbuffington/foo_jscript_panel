@@ -82,59 +82,28 @@ bool script_preprocessor::scan_value(const wchar_t*& p, const wchar_t* pend)
 	return false;
 }
 
-bool script_preprocessor::extract_preprocessor_block(const wchar_t* script, int& block_begin, int& block_end)
+bool script_preprocessor::extract_preprocessor_block(const wchar_t* script, t_size& block_begin, t_size& block_end)
 {
-	block_begin = 0;
-	block_end = 0;
+	std::wstring source(script);
+	t_size start = source.find(L"==PREPROCESSOR==");
+	t_size end = source.find(L"==/PREPROCESSOR==");
+	t_size argh = std::string::npos;
 
-	if (!script)
+	if (start == argh || end == argh || start > end)
 	{
 		return false;
 	}
 
-	const wchar_t preprocessor_begin[] = L"==PREPROCESSOR==";
-	const wchar_t preprocessor_end[] = L"==/PREPROCESSOR==";
-
-	const wchar_t* pblock_begin = wcsstr(script, preprocessor_begin);
-
-	if (!pblock_begin)
-	{
-		return false;
-	}
-
-	pblock_begin += _countof(preprocessor_begin) - 1;
-
-	// to next line
-	while (*pblock_begin && (*pblock_begin != '\n'))
-		++pblock_begin;
-
-	const wchar_t* pblock_end = wcsstr(pblock_begin, preprocessor_end);
-
-	if (!pblock_end)
-	{
-		return false;
-	}
-
-	// to prev line
-	while ((pblock_end > script) && (*pblock_end != '\n'))
-		--pblock_end;
-
-	if (*pblock_end == '\r')
-		--pblock_end;
-
-	if (pblock_end <= pblock_begin)
-		return false;
-
-	block_begin = pblock_begin - script;
-	block_end = pblock_end - script;
+	block_begin = start + 17;
+	block_end = end - start - 1;
 	return true;
 }
 
 void script_preprocessor::preprocess(const wchar_t* script)
 {
 	// Haven't introduce a FSM, so yes, these codes below looks really UGLY.
-	int block_begin = 0;
-	int block_end = 0;
+	t_size block_begin = 0;
+	t_size block_end = 0;
 
 	if (!extract_preprocessor_block(script, block_begin, block_end))
 		return;
