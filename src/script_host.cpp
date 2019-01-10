@@ -115,24 +115,44 @@ HRESULT script_host::InvokeCallback(int callbackId, VARIANTARG* argv, UINT argc,
 
 HRESULT script_host::ProcessImportedScripts(IActiveScriptParsePtr& parser)
 {
-	pfc::string_formatter error_text;
-
 	t_size count = m_host->ScriptInfo().imports.get_count();
+	if (count == 0) return S_OK;
+
+	struct
+	{
+		std::string which;
+		std::string path;
+	} expand_table[] = {
+		{ "%fb2k_path%", helpers::get_fb2k_path().get_ptr() },
+		{ "%fb2k_component_path%", helpers::get_fb2k_component_path().get_ptr() },
+		{ "%fb2k_profile_path%", helpers::get_profile_path().get_ptr() },
+	};
+
+	pfc::string_formatter error_text;
 	for (t_size i = 0; i < count; ++i)
 	{
-		pfc::string8_fast path = m_host->ScriptInfo().imports[i];
+		std::string path = m_host->ScriptInfo().imports[i];
+		for (t_size i = 0; i < _countof(expand_table); ++i)
+		{
+			if (path.find(expand_table[i].which) == 0)
+			{
+				path = expand_table[i].path + path.substr(expand_table[i].which.length());
+				break;
+			}
+		}
+
 		pfc::string8_fast code;
-		helpers::read_file(path, code);
+		helpers::read_file(path.c_str(), code);
 		if (code.get_length())
 		{
 			DWORD source_context;
-			GenerateSourceContext(path, source_context);
+			GenerateSourceContext(path.c_str(), source_context);
 			HRESULT hr = parser->ParseScriptText(string_wide_from_utf8_fast(code), NULL, NULL, NULL, source_context, 0, SCRIPTTEXT_HOSTMANAGESSOURCE | SCRIPTTEXT_ISVISIBLE, NULL, NULL);
 			if (FAILED(hr)) return hr;
 		}
 		else
 		{
-			error_text << "\nError: Failed to load " << path;
+			error_text << "\nError: Failed to load " << path.c_str();
 		}
 	}
 

@@ -82,103 +82,6 @@ bool script_preprocessor::scan_value(const wchar_t*& p, const wchar_t* pend)
 	return false;
 }
 
-bool script_preprocessor::expand_var(pfc::array_t<wchar_t>& out)
-{
-	typedef pfc::string8_fast(*t_func)();
-
-	enum
-	{
-		KStateInNormal,
-		KStateInPercent,
-	};
-
-	struct
-	{
-		const wchar_t* which;
-		t_func func;
-	} expand_table[] = {
-		{L"fb2k_path", helpers::get_fb2k_path},
-		{L"fb2k_component_path", helpers::get_fb2k_component_path},
-		{L"fb2k_profile_path", helpers::get_profile_path},
-	};
-
-	pfc::array_t<wchar_t> buffer;
-
-	wchar_t* pscan = out.get_ptr();
-	const wchar_t* pready = NULL;
-
-	int state = KStateInNormal;
-
-	while (*pscan)
-	{
-		switch (state)
-		{
-		case KStateInNormal:
-			if (*pscan == '%')
-			{
-				pready = pscan;
-				state = KStateInPercent;
-			}
-			else
-			{
-				buffer.append_single(*pscan);
-			}
-			break;
-
-		case KStateInPercent:
-			if (*pscan == '%')
-			{
-				unsigned count = pscan - pready - 1;
-
-				if (!count)
-				{
-					buffer.append_single('%');
-				}
-				else
-				{
-					bool found = false;
-
-					for (t_size i = 0; i < _countof(expand_table); ++i)
-					{
-						t_size expand_which_size = wcslen(expand_table[i].which);
-
-						if (wcsncmp(pready + 1, expand_table[i].which, max(count, expand_which_size)) == 0)
-						{
-							string_wide_from_utf8_fast expanded(expand_table[i].func());
-							t_size expanded_count = expanded.length();
-
-							buffer.append_fromptr(expanded.get_ptr(), expanded_count);
-							found = true;
-							break;
-						}
-					}
-
-					if (!found)
-					{
-						buffer.append_fromptr(pready, count);
-					}
-				}
-
-				state = KStateInNormal;
-			}
-			break;
-		}
-
-		++pscan;
-	}
-
-	if (state == KStateInPercent)
-	{
-		buffer.append_fromptr(pscan, wcslen(pscan));
-	}
-
-	// trailing 'zero'
-	buffer.append_single(0);
-	// Copy
-	out = buffer;
-	return true;
-}
-
 bool script_preprocessor::extract_preprocessor_block(const wchar_t* script, int& block_begin, int& block_end)
 {
 	block_begin = 0;
@@ -274,7 +177,6 @@ void script_preprocessor::process_script_info(t_script_info& info)
 	for (t_size i = 0; i < m_directive_value_list.get_count(); ++i)
 	{
 		t_directive_value& v = m_directive_value_list[i];
-		expand_var(v.value);
 		pfc::string8_fast value = string_utf8_from_wide(v.value.get_ptr());
 
 		if (wcscmp(v.directive.get_ptr(), L"name") == 0)
