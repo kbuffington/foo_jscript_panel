@@ -185,11 +185,11 @@ public:
 	STDMETHODIMP ClearPlaylist(UINT playlistIndex);
 	STDMETHODIMP ClearPlaylistSelection(UINT playlistIndex);
 	STDMETHODIMP CreateAutoPlaylist(UINT playlistIndex, BSTR name, BSTR query, BSTR sort, UINT flags, int* p);
-	STDMETHODIMP CreatePlaylist(UINT playlistIndex, BSTR name, int* p);
+	STDMETHODIMP CreatePlaylist(UINT playlistIndex, BSTR name, UINT* p);
 	STDMETHODIMP DuplicatePlaylist(UINT from, BSTR name, UINT* p);
 	STDMETHODIMP EnsurePlaylistItemVisible(UINT playlistIndex, UINT playlistItemIndex);
 	STDMETHODIMP ExecutePlaylistDefaultAction(UINT playlistIndex, UINT playlistItemIndex, VARIANT_BOOL* p);
-	STDMETHODIMP FindOrCreatePlaylist(BSTR name, VARIANT_BOOL unlocked, int* p);
+	STDMETHODIMP FindOrCreatePlaylist(BSTR name, VARIANT_BOOL unlocked, UINT* p);
 	STDMETHODIMP FindPlaybackQueueItemIndex(IFbMetadbHandle* handle, UINT playlistIndex, UINT playlistItemIndex, int* p);
 	STDMETHODIMP FindPlaylist(BSTR name, int* p);
 	STDMETHODIMP FlushPlaybackQueue();

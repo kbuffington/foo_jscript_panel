@@ -645,7 +645,7 @@ interface IFbPlaylistManager {
 		Returns -1 on failure.
 		*/
 
-		plman.CreatePlaylist(playlistIndex, name); (int)
+		plman.CreatePlaylist(playlistIndex, name); (uint)
 		/*
 		Example1:
 		plman.CreatePlaylist(0, "");
@@ -656,7 +656,7 @@ interface IFbPlaylistManager {
 		plman.CreatePlaylist(plman.PlaylistCount, "my favourites");
 		This will be added at the end of the current playlists.
 
-		Returns -1 on failure.
+		Returns playlistIndex of newly created playlist.
 		*/
 
 		plman.DuplicatePlaylist(playlistIndex, name); (uint)
@@ -668,14 +668,10 @@ interface IFbPlaylistManager {
 
 		plman.EnsurePlaylistItemVisible(playlistIndex, playlistItemIndex); (void)
 
-		plman.FindOrCreatePlaylist(name, unlocked); (int)
+		plman.FindOrCreatePlaylist(name, unlocked); (uint)
 		/*
-		Returns playlistIndex of named playlist or creates new one if not found.
+		Returns playlistIndex of named playlist or that of a newly created one if not found.
 		unlocked: boolean. If true, locked playlists are ignored when looking for existing playlists.
-		If false, the playlistIndex of any playlist with the matching name will be returned.
-		If a new playlist is created, the playlistIndex of that will be returned.
-
-		Returns -1 on failure.
 		*/
 
 		plman.ExecutePlaylistDefaultAction(playlistIndex, playlistItemIndex); (boolean)

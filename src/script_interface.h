@@ -591,11 +591,11 @@ __interface IFbPlaylistManager : IDispatch
 	STDMETHOD(ClearPlaylist)(UINT playlistIndex);
 	STDMETHOD(ClearPlaylistSelection)(UINT playlistIndex);
 	STDMETHOD(CreateAutoPlaylist)(UINT playlistIndex, BSTR name, BSTR query, [defaultvalue("")] BSTR sort, [defaultvalue(0)] UINT flags, [out, retval] int* p);
-	STDMETHOD(CreatePlaylist)(UINT playlistIndex, BSTR name, [out, retval] int* p);
+	STDMETHOD(CreatePlaylist)(UINT playlistIndex, BSTR name, [out, retval] UINT* p);
 	STDMETHOD(DuplicatePlaylist)(UINT from, BSTR name, [out, retval] UINT* p);
 	STDMETHOD(EnsurePlaylistItemVisible)(UINT playlistIndex, UINT playlistItemIndex);
 	STDMETHOD(ExecutePlaylistDefaultAction)(UINT playlistIndex, UINT playlistItemIndex, [out, retval] VARIANT_BOOL* p);
-	STDMETHOD(FindOrCreatePlaylist)(BSTR name, VARIANT_BOOL unlocked, [out, retval] int* p);
+	STDMETHOD(FindOrCreatePlaylist)(BSTR name, VARIANT_BOOL unlocked, [out, retval] UINT* p);
 	STDMETHOD(FindPlaybackQueueItemIndex)(IFbMetadbHandle* handle, UINT playlistIndex, UINT playlistItemIndex, [out, retval] int* p);
 	STDMETHOD(FindPlaylist)(BSTR name, [out, retval] int* p);
 	STDMETHOD(FlushPlaybackQueue)();

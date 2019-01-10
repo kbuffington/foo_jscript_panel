@@ -1063,32 +1063,28 @@ STDMETHODIMP FbPlaylistManager::CreateAutoPlaylist(UINT playlistIndex, BSTR name
 {
 	if (!p) return E_POINTER;
 
-	string_utf8_from_wide uquery(query);
-	string_utf8_from_wide usort(sort);
+	search_filter_v2::ptr filter;
+	pfc::string8_fast uquery = string_utf8_from_wide(query);
+	pfc::string8_fast usort = string_utf8_from_wide(sort);
 
-	int pos;
+	try
+	{
+		filter = search_filter_manager_v2::get()->create_ex(uquery, fb2k::service_new<completion_notify_dummy>(), search_filter_manager_v2::KFlagSuppressNotify);
+	}
+	catch (...)
+	{
+		*p = pfc_infinite;
+		return S_OK;
+	}
+
+	t_size pos;
 	CreatePlaylist(playlistIndex, name, &pos);
-	if (pos == pfc_infinite)
-	{
-		*p = pos;
-	}
-	else
-	{
-		try
-		{
-			autoplaylist_manager::get()->add_client_simple(uquery, usort, pos, flags);
-			*p = pos;
-		}
-		catch (...)
-		{
-			playlist_manager::get()->remove_playlist(pos);
-			*p = pfc_infinite;
-		}
-	}
+	autoplaylist_manager::get()->add_client_simple(uquery, usort, pos, flags);
+	*p = pos;
 	return S_OK;
 }
 
-STDMETHODIMP FbPlaylistManager::CreatePlaylist(UINT playlistIndex, BSTR name, int* p)
+STDMETHODIMP FbPlaylistManager::CreatePlaylist(UINT playlistIndex, BSTR name, UINT* p)
 {
 	if (!p) return E_POINTER;
 
@@ -1144,7 +1140,7 @@ STDMETHODIMP FbPlaylistManager::ExecutePlaylistDefaultAction(UINT playlistIndex,
 	return S_OK;
 }
 
-STDMETHODIMP FbPlaylistManager::FindOrCreatePlaylist(BSTR name, VARIANT_BOOL unlocked, int* p)
+STDMETHODIMP FbPlaylistManager::FindOrCreatePlaylist(BSTR name, VARIANT_BOOL unlocked, UINT* p)
 {
 	if (!p) return E_POINTER;
 
