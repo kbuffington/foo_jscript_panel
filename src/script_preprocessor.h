@@ -15,16 +15,11 @@ struct t_directive_value
 
 struct t_script_info
 {
-	enum
-	{
-		kFeatureDragDrop = 1 << 1
-	};
-
+	bool dragdrop;
 	pfc::string_list_impl imports;
 	pfc::string8_fast name;
 	pfc::string8_fast version;
 	pfc::string8_fast author;
-	t_uint32 feature_mask;
 
 	t_script_info(GUID& guid_ref) : m_guid_ref(guid_ref)
 	{
@@ -33,10 +28,10 @@ struct t_script_info
 	void clear()
 	{
 		imports.remove_all();
+		dragdrop = false;
 		name = "";
 		version = "";
 		author = "";
-		feature_mask = 0;
 	}
 
 	pfc::string8_fast build_info_string() const

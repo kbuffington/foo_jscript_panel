@@ -37,7 +37,7 @@ bool script_preprocessor::process_script_info(t_script_info& info)
 		{
 			if (strcmp(value.get_ptr(), "dragdrop") == 0)
 			{
-				info.feature_mask |= t_script_info::kFeatureDragDrop;
+				info.dragdrop = true;
 			}
 		}
 		else if (wcscmp(v.directive.get_ptr(), L"import") == 0)

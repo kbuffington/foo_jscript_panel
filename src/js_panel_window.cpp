@@ -492,7 +492,7 @@ bool js_panel_window::script_load()
 		return false;
 	}
 
-	if (ScriptInfo().feature_mask & t_script_info::kFeatureDragDrop)
+	if (ScriptInfo().dragdrop)
 	{
 		m_drop_target.Attach(new com_object_impl_t<host_drop_target>(this));
 		m_drop_target->RegisterDragDrop();
