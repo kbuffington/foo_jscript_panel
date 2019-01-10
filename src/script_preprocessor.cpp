@@ -2,96 +2,6 @@
 #include "script_preprocessor.h"
 #include "helpers.h"
 
-bool script_preprocessor::process_script_info(t_script_info& info)
-{
-	bool ret = false;
-
-	info.clear();
-	if (!m_is_ok)
-	{
-		return ret;
-	}
-
-	for (t_size i = 0; i < m_directive_value_list.get_count(); ++i)
-	{
-		t_directive_value& v = m_directive_value_list[i];
-		expand_var(v.value);
-		pfc::string8_fast value = string_utf8_from_wide(v.value.get_ptr());
-
-		if (wcscmp(v.directive.get_ptr(), L"name") == 0)
-		{
-			ret = true;
-			info.name = value;
-		}
-		else if (wcscmp(v.directive.get_ptr(), L"version") == 0)
-		{
-			ret = true;
-			info.version = value;
-		}
-		else if (wcscmp(v.directive.get_ptr(), L"author") == 0)
-		{
-			ret = true;
-			info.author = value;
-		}
-		else if (wcscmp(v.directive.get_ptr(), L"feature") == 0)
-		{
-			if (strcmp(value.get_ptr(), "dragdrop") == 0)
-			{
-				info.dragdrop = true;
-			}
-		}
-		else if (wcscmp(v.directive.get_ptr(), L"import") == 0)
-		{
-			info.imports.add_item(value);
-		}
-	}
-
-	return ret;
-}
-
-bool script_preprocessor::preprocess(const wchar_t* script)
-{
-	// Haven't introduce a FSM, so yes, these codes below looks really UGLY.
-	int block_begin = 0;
-	int block_end = 0;
-
-	if (!extract_preprocessor_block(script, block_begin, block_end))
-		return false;
-
-	const wchar_t* p = script + block_begin;
-	const wchar_t* pend = script + block_end;
-
-	while (*p && p < pend)
-	{
-		while (*p == ' ' || *p == '\t' || *p == '\'')
-			++p;
-
-		if (wcsncmp(p, L"//", 2) == 0)
-		{
-			p += 2;
-
-			// Skip blank chars
-			while (*p == ' ' || *p == '\t')
-				++p;
-
-			if (scan_directive_and_value(p, pend))
-			{
-				// Put in the directive_value list
-				m_directive_value_list.add_item(t_directive_value(m_directive_buffer, m_value_buffer));
-			}
-		}
-
-		// Jump to the next line
-		while (*p && *p != '\n')
-			++p;
-
-		if (*p == '\n')
-			++p;
-	}
-
-	return true;
-}
-
 bool script_preprocessor::scan_directive_and_value(const wchar_t*& p, const wchar_t* pend)
 {
 	m_directive_buffer.force_reset();
@@ -130,8 +40,6 @@ bool script_preprocessor::scan_directive_and_value(const wchar_t*& p, const wcha
 
 bool script_preprocessor::scan_value(const wchar_t*& p, const wchar_t* pend)
 {
-	const t_size delta = 32;
-
 	m_value_buffer.force_reset();
 
 	// Skip leading spaces
@@ -198,7 +106,6 @@ bool script_preprocessor::expand_var(pfc::array_t<wchar_t>& out)
 
 	wchar_t* pscan = out.get_ptr();
 	const wchar_t* pready = NULL;
-	const t_size delta = 32;
 
 	int state = KStateInNormal;
 
@@ -318,4 +225,80 @@ bool script_preprocessor::extract_preprocessor_block(const wchar_t* script, int&
 	block_begin = pblock_begin - script;
 	block_end = pblock_end - script;
 	return true;
+}
+
+void script_preprocessor::preprocess(const wchar_t* script)
+{
+	// Haven't introduce a FSM, so yes, these codes below looks really UGLY.
+	int block_begin = 0;
+	int block_end = 0;
+
+	if (!extract_preprocessor_block(script, block_begin, block_end))
+		return;
+
+	const wchar_t* p = script + block_begin;
+	const wchar_t* pend = script + block_end;
+
+	while (*p && p < pend)
+	{
+		while (*p == ' ' || *p == '\t' || *p == '\'')
+			++p;
+
+		if (wcsncmp(p, L"//", 2) == 0)
+		{
+			p += 2;
+
+			// Skip blank chars
+			while (*p == ' ' || *p == '\t')
+				++p;
+
+			if (scan_directive_and_value(p, pend))
+			{
+				// Put in the directive_value list
+				m_directive_value_list.add_item(t_directive_value(m_directive_buffer, m_value_buffer));
+			}
+		}
+
+		// Jump to the next line
+		while (*p && *p != '\n')
+			++p;
+
+		if (*p == '\n')
+			++p;
+	}
+}
+
+void script_preprocessor::process_script_info(t_script_info& info)
+{
+	info.clear();
+	for (t_size i = 0; i < m_directive_value_list.get_count(); ++i)
+	{
+		t_directive_value& v = m_directive_value_list[i];
+		expand_var(v.value);
+		pfc::string8_fast value = string_utf8_from_wide(v.value.get_ptr());
+
+		if (wcscmp(v.directive.get_ptr(), L"name") == 0)
+		{
+			info.name = value;
+		}
+		else if (wcscmp(v.directive.get_ptr(), L"version") == 0)
+		{
+			info.version = value;
+		}
+		else if (wcscmp(v.directive.get_ptr(), L"author") == 0)
+		{
+			info.author = value;
+		}
+		else if (wcscmp(v.directive.get_ptr(), L"feature") == 0)
+		{
+			if (value.equals("dragdrop"))
+			{
+				info.dragdrop = true;
+			}
+		}
+		else if (wcscmp(v.directive.get_ptr(), L"import") == 0)
+		{
+			info.imports.add_item(value);
+		}
+	}
 }
