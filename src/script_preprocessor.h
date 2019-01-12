@@ -1,17 +1,15 @@
 #pragma once
 #include "helpers.h"
 
-class host_comm;
-
 struct t_directive_value
 {
 	typedef pfc::array_t<wchar_t> t_array;
 
+	t_directive_value() {}
+	t_directive_value(const t_array& p_directive, const t_array& p_value) : directive(p_directive), value(p_value) {}
+
 	t_array directive;
 	t_array value;
-
-	t_directive_value()	{}
-	t_directive_value(const t_array& p_directive, const t_array& p_value) : directive(p_directive), value(p_value) {}
 };
 
 struct t_script_info

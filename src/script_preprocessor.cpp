@@ -87,7 +87,7 @@ bool script_preprocessor::extract_preprocessor_block(const wchar_t* script, t_si
 	std::wstring source(script);
 	t_size start = source.find(L"==PREPROCESSOR==");
 	t_size end = source.find(L"==/PREPROCESSOR==");
-	t_size argh = std::string::npos;
+	t_size argh = std::wstring::npos;
 
 	if (start == argh || end == argh || start > end)
 	{

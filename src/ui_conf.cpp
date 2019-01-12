@@ -1,10 +1,9 @@
 #include "stdafx.h"
-#include "ui_conf.h"
 #include "js_panel_window.h"
-#include "ui_goto.h"
+#include "ui_conf.h"
 #include "ui_find.h"
+#include "ui_goto.h"
 #include "ui_replace.h"
-#include "helpers.h"
 
 CDialogConf::CDialogConf(js_panel_window* p_parent) : m_parent(p_parent), m_dlgfind(NULL), m_dlgreplace(NULL), m_lastSearchText(""), m_lastFlags(0), m_caption(JSP_NAME " Configuration") {}
 
@@ -29,17 +28,14 @@ LRESULT CDialogConf::OnCloseCmd(WORD wNotifyCode, WORD wID, HWND hWndCtl)
 	case IDCANCEL:
 		if (m_editorctrl.GetModify())
 		{
-			// Prompt?
-			int ret = uMessageBox(m_hWnd, "Do you want to apply your changes?", m_caption, MB_ICONWARNING | MB_SETFOREGROUND | MB_YESNOCANCEL);
+			int ret = uMessageBox(m_hWnd, "All changes will be lost. Are you sure?", m_caption, MB_ICONWARNING | MB_SETFOREGROUND | MB_YESNO);
 
 			switch (ret)
 			{
 			case IDYES:
-				Apply();
-				EndDialog(IDOK);
 				break;
 
-			case IDCANCEL:
+			default:
 				return 0;
 			}
 		}
@@ -131,26 +127,21 @@ LRESULT CDialogConf::OnInitDialog(HWND hwndFocus, LPARAM lParam)
 	// Grab Focus
 	uButton_SetCheck(m_hWnd, IDC_CHECK_GRABFOCUS, m_parent->get_grab_focus());
 
-	return TRUE; // set focus to default control
+	return FALSE;
 }
 
 LRESULT CDialogConf::OnNotify(int idCtrl, LPNMHDR pnmh)
 {
+	pfc::string8_fast caption = m_caption;
+
 	switch (pnmh->code)
 	{
-		// dirty
-	case SCN_SAVEPOINTLEFT:
-	{
-		pfc::string8 caption = m_caption;
-
+	case SCN_SAVEPOINTLEFT: // dirty
 		caption += " *";
 		uSetWindowText(m_hWnd, caption);
-	}
-	break;
-
-	// not dirty
-	case SCN_SAVEPOINTREACHED:
-		uSetWindowText(m_hWnd, m_caption);
+		break;
+	case SCN_SAVEPOINTREACHED: // not dirty
+		uSetWindowText(m_hWnd, caption);
 		break;
 	}
 
@@ -208,34 +199,17 @@ LRESULT CDialogConf::OnTools(WORD wNotifyCode, WORD wID, HWND hWndCtl)
 
 LRESULT CDialogConf::OnUwmKeyDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
-	return MatchShortcuts(wParam);
-}
+	int modifiers = (IsKeyPressed(VK_SHIFT) ? SCMOD_SHIFT : 0) | (IsKeyPressed(VK_CONTROL) ? SCMOD_CTRL : 0) | (IsKeyPressed(VK_MENU) ? SCMOD_ALT : 0);
 
-LRESULT CDialogConf::OnUwmFindTextChanged(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
-{
-	m_lastFlags = wParam;
-	m_lastSearchText = reinterpret_cast<const char*>(lParam);
-	return 0;
-}
-
-bool CDialogConf::MatchShortcuts(unsigned vk)
-{
-	int modifiers =
-		(IsKeyPressed(VK_SHIFT) ? SCMOD_SHIFT : 0) |
-		(IsKeyPressed(VK_CONTROL) ? SCMOD_CTRL : 0) |
-		(IsKeyPressed(VK_MENU) ? SCMOD_ALT : 0);
-
-	// Hotkeys
 	if (modifiers == SCMOD_CTRL)
 	{
-		switch (vk)
+		switch (wParam)
 		{
 		case 'F':
 			OpenFindDialog();
-			return true;
+			break;
 
 		case 'H':
-		{
 			if (!m_dlgreplace)
 			{
 				m_dlgreplace = new CDialogReplace(GetDlgItem(IDC_EDIT));
@@ -248,25 +222,24 @@ bool CDialogConf::MatchShortcuts(unsigned vk)
 
 			m_dlgreplace->ShowWindow(SW_SHOW);
 			m_dlgreplace->SetFocus();
-		}
-		return true;
+			break;
 
 		case 'G':
-		{
-			modal_dialog_scope scope(m_hWnd);
-			CDialogGoto dlg(GetDlgItem(IDC_EDIT));
-			dlg.DoModal(m_hWnd);
-		}
-		return true;
+			{
+				modal_dialog_scope scope(m_hWnd);
+				CDialogGoto dlg(GetDlgItem(IDC_EDIT));
+				dlg.DoModal(m_hWnd);
+			}
+			break;
 
 		case 'S':
 			Apply();
-			return true;
+			break;
 		}
 	}
 	else if (modifiers == 0)
 	{
-		if (vk == VK_F3)
+		if (wParam == VK_F3)
 		{
 			// Find next one
 			if (m_lastSearchText.get_length())
@@ -281,7 +254,7 @@ bool CDialogConf::MatchShortcuts(unsigned vk)
 	}
 	else if (modifiers == SCMOD_SHIFT)
 	{
-		if (vk == VK_F3)
+		if (wParam == VK_F3)
 		{
 			// Find previous one
 			if (m_lastSearchText.get_length())
@@ -294,8 +267,14 @@ bool CDialogConf::MatchShortcuts(unsigned vk)
 			}
 		}
 	}
+	return 0;
+}
 
-	return false;
+LRESULT CDialogConf::OnUwmFindTextChanged(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+{
+	m_lastFlags = wParam;
+	m_lastSearchText = reinterpret_cast<const char*>(lParam);
+	return 0;
 }
 
 bool CDialogConf::FindNext(HWND hWnd, HWND hWndEdit, unsigned flags, const char* which)
@@ -335,21 +314,20 @@ bool CDialogConf::FindResult(HWND hWnd, HWND hWndEdit, int pos, const char* whic
 
 void CDialogConf::Apply()
 {
-	pfc::string8 name;
-	pfc::array_t<char> code;
-	int len = 0;
-
 	// Get engine name
+	pfc::string8 name;
 	uGetWindowText(GetDlgItem(IDC_COMBO_ENGINE), name);
+
 	// Get script text
-	len = m_editorctrl.GetTextLength();
-	code.set_size(len + 1);
-	m_editorctrl.GetText(code.get_ptr(), len + 1);
+	pfc::array_t<char> code;
+	int len = m_editorctrl.GetTextLength() + 1;
+	code.set_size(len);
+	m_editorctrl.GetText(code.get_ptr(), len);
+	m_parent->update_script(name, code.get_ptr());
 
 	m_parent->get_edge_style() = static_cast<t_edge_style>(ComboBox_GetCurSel(GetDlgItem(IDC_COMBO_EDGE)));
 	m_parent->get_grab_focus() = uButton_GetCheck(m_hWnd, IDC_CHECK_GRABFOCUS);
 	m_parent->get_pseudo_transparent() = uButton_GetCheck(m_hWnd, IDC_CHECK_PSEUDO_TRANSPARENT);
-	m_parent->update_script(name, code.get_ptr());
 
 	// Wndow position
 	GetWindowPlacement(&m_parent->get_windowplacement());
@@ -380,9 +358,7 @@ void CDialogConf::OnImport()
 
 	if (uGetOpenFileName(m_hWnd, "Text files|*.txt|JScript files|*.js|All files|*.*", 0, "txt", "Import from", NULL, filename, FALSE))
 	{
-		// Open file
 		pfc::string8_fast text;
-
 		helpers::read_file(filename, text);
 		m_editorctrl.SetContent(text);
 	}

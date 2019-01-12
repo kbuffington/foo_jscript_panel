@@ -51,7 +51,6 @@ public:
 	LRESULT OnTools(WORD wNotifyCode, WORD wID, HWND hWndCtl);
 	LRESULT OnUwmFindTextChanged(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 	LRESULT OnUwmKeyDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-	bool MatchShortcuts(unsigned vk);
 	static bool FindNext(HWND hWnd, HWND hWndEdit, unsigned flags, const char* which);
 	static bool FindPrevious(HWND hWnd, HWND hWndEdit, unsigned flags, const char* which);
 	static bool FindResult(HWND hWnd, HWND hWndEdit, int pos, const char* which);
