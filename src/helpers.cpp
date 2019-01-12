@@ -580,6 +580,52 @@ namespace helpers
 		return value.c_str();
 	}
 
+	pfc::string8_fast read_file(const char* path)
+	{
+		pfc::string8_fast content;
+		HANDLE hFile = uCreateFile(path, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+
+		if (hFile == INVALID_HANDLE_VALUE)
+		{
+			return content;
+		}
+
+		HANDLE hFileMapping = uCreateFileMapping(hFile, NULL, PAGE_READONLY, 0, 0, NULL);
+
+		if (hFileMapping == NULL)
+		{
+			CloseHandle(hFile);
+			return content;
+		}
+
+		DWORD dwFileSize = GetFileSize(hFile, NULL);
+		LPCBYTE pAddr = (LPCBYTE)MapViewOfFile(hFileMapping, FILE_MAP_READ, 0, 0, 0);
+
+		if (pAddr == NULL)
+		{
+			CloseHandle(hFileMapping);
+			CloseHandle(hFile);
+			return content;
+		}
+
+		if (dwFileSize == INVALID_FILE_SIZE)
+		{
+			UnmapViewOfFile(pAddr);
+			CloseHandle(hFileMapping);
+			CloseHandle(hFile);
+			return content;
+		}
+
+		t_size offset = dwFileSize >= 3 && pAddr[0] == 0xEF && pAddr[1] == 0xBB && pAddr[2] == 0xBF ? 3 : 0;
+		const char* pSource = (const char*)(pAddr + offset);
+		content.set_string(pSource);
+
+		UnmapViewOfFile(pAddr);
+		CloseHandle(hFileMapping);
+		CloseHandle(hFile);
+		return content;
+	}
+
 	t_size detect_charset(const char* fileName)
 	{
 		_COM_SMARTPTR_TYPEDEF(IMultiLanguage2, IID_IMultiLanguage2);
@@ -749,50 +795,6 @@ namespace helpers
 				estimate_line_wrap_recur(hdc, text + textLength, len - textLength, width, out);
 			}
 		}
-	}
-
-	void read_file(const char* path, pfc::string_base& content)
-	{
-		HANDLE hFile = uCreateFile(path, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
-
-		if (hFile == INVALID_HANDLE_VALUE)
-		{
-			return;
-		}
-
-		HANDLE hFileMapping = uCreateFileMapping(hFile, NULL, PAGE_READONLY, 0, 0, NULL);
-
-		if (hFileMapping == NULL)
-		{
-			CloseHandle(hFile);
-			return;
-		}
-
-		DWORD dwFileSize = GetFileSize(hFile, NULL);
-		LPCBYTE pAddr = (LPCBYTE)MapViewOfFile(hFileMapping, FILE_MAP_READ, 0, 0, 0);
-
-		if (pAddr == NULL)
-		{
-			CloseHandle(hFileMapping);
-			CloseHandle(hFile);
-			return;
-		}
-
-		if (dwFileSize == INVALID_FILE_SIZE)
-		{
-			UnmapViewOfFile(pAddr);
-			CloseHandle(hFileMapping);
-			CloseHandle(hFile);
-			return;
-		}
-
-		t_size offset = dwFileSize >= 3 && pAddr[0] == 0xEF && pAddr[1] == 0xBB && pAddr[2] == 0xBF ? 3 : 0;
-		const char* pSource = (const char*)(pAddr + offset);
-		content.set_string(pSource);
-
-		UnmapViewOfFile(pAddr);
-		CloseHandle(hFileMapping);
-		CloseHandle(hFile);
 	}
 
 	wchar_t* make_sort_string(const char* in)

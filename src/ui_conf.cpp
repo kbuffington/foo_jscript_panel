@@ -358,9 +358,7 @@ void CDialogConf::OnImport()
 
 	if (uGetOpenFileName(m_hWnd, "Text files|*.txt|JScript files|*.js|All files|*.*", 0, "txt", "Import from", NULL, filename, FALSE))
 	{
-		pfc::string8_fast text;
-		helpers::read_file(filename, text);
-		m_editorctrl.SetContent(text);
+		m_editorctrl.SetContent(helpers::read_file(filename));
 	}
 }
 

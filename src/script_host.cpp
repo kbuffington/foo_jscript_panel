@@ -120,8 +120,7 @@ HRESULT script_host::ProcessImportedScripts(IActiveScriptParsePtr& parser)
 	for (t_size i = 0; i < count; ++i)
 	{
 		pfc::string8_fast path = m_host->m_script_info.expand_import(i);
-		pfc::string8_fast code;
-		helpers::read_file(path, code);
+		pfc::string8_fast code = helpers::read_file(path);
 		if (code.get_length())
 		{
 			DWORD source_context;
