@@ -61,7 +61,7 @@ HRESULT script_host::Initialize()
 	IActiveScriptParsePtr parser;
 	string_wide_from_utf8_fast wcode(m_host->get_script_code());
 	script_preprocessor preprocessor(wcode.get_ptr());
-	preprocessor.process_script_info(m_host->ScriptInfo());
+	preprocessor.process_script_info(m_host->m_script_info);
 
 	HRESULT hr = InitScriptEngineByName(m_host->get_script_engine());
 	if (SUCCEEDED(hr)) hr = m_script_engine->SetScriptSite(this);
@@ -116,10 +116,10 @@ HRESULT script_host::InvokeCallback(int callbackId, VARIANTARG* argv, UINT argc,
 HRESULT script_host::ProcessImportedScripts(IActiveScriptParsePtr& parser)
 {
 	pfc::string_formatter error_text;
-	t_size count = m_host->ScriptInfo().imports.get_count();
+	t_size count = m_host->m_script_info.imports.get_count();
 	for (t_size i = 0; i < count; ++i)
 	{
-		pfc::string8_fast path = m_host->ScriptInfo().expand_import(i);
+		pfc::string8_fast path = m_host->m_script_info.expand_import(i);
 		pfc::string8_fast code;
 		helpers::read_file(path, code);
 		if (code.get_length())
@@ -137,7 +137,7 @@ HRESULT script_host::ProcessImportedScripts(IActiveScriptParsePtr& parser)
 
 	if (error_text.get_length())
 	{
-		FB2K_console_formatter() << m_host->ScriptInfo().build_info_string() << error_text;
+		FB2K_console_formatter() << m_host->m_script_info.build_info_string() << error_text;
 	}
 	return S_OK;
 }
@@ -349,7 +349,7 @@ void script_host::ReportError(IActiveScriptError* err)
 	}
 
 	pfc::string_formatter formatter;
-	formatter << m_host->ScriptInfo().build_info_string() << "\n";
+	formatter << m_host->m_script_info.build_info_string() << "\n";
 
 	if (excep.bstrSource && excep.bstrDescription)
 	{

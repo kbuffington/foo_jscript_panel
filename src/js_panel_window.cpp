@@ -38,20 +38,20 @@ LRESULT js_panel_window::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 	switch (msg)
 	{
 	case WM_CREATE:
-	{
-		RECT rect;
-		m_hwnd = hwnd;
-		m_hdc = GetDC(m_hwnd);
-		GetClientRect(m_hwnd, &rect);
-		m_width = rect.right - rect.left;
-		m_height = rect.bottom - rect.top;
-		create_context();
-		// Interfaces
-		m_gr_wrap.Attach(new com_object_impl_t<GdiGraphics>(), false);
-		panel_manager::instance().add_window(m_hwnd);
-		script_load();
-	}
-	return 0;
+		{
+			RECT rect;
+			m_hwnd = hwnd;
+			m_hdc = GetDC(m_hwnd);
+			GetClientRect(m_hwnd, &rect);
+			m_width = rect.right - rect.left;
+			m_height = rect.bottom - rect.top;
+			create_context();
+			// Interfaces
+			m_gr_wrap.Attach(new com_object_impl_t<GdiGraphics>(), false);
+			panel_manager::instance().add_window(m_hwnd);
+			script_load();
+		}
+		return 0;
 
 	case WM_DESTROY:
 		script_unload();
@@ -109,8 +109,8 @@ LRESULT js_panel_window::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 	case WM_GETMINMAXINFO:
 		{
 			LPMINMAXINFO pmmi = reinterpret_cast<LPMINMAXINFO>(lp);
-			memcpy(&pmmi->ptMaxTrackSize, &MaxSize(), sizeof(POINT));
-			memcpy(&pmmi->ptMinTrackSize, &MinSize(), sizeof(POINT));
+			memcpy(&pmmi->ptMaxTrackSize, &m_max_size, sizeof(POINT));
+			memcpy(&pmmi->ptMinTrackSize, &m_min_size, sizeof(POINT));
 		}
 		return 0;
 
@@ -492,7 +492,7 @@ bool js_panel_window::script_load()
 		return false;
 	}
 
-	if (ScriptInfo().dragdrop)
+	if (m_script_info.dragdrop)
 	{
 		m_drop_target.Attach(new com_object_impl_t<host_drop_target>(this));
 		m_drop_target->RegisterDragDrop();
@@ -502,7 +502,7 @@ bool js_panel_window::script_load()
 	// HACK: Script update will not call on_size, so invoke it explicitly
 	SendMessage(m_hwnd, UWM_SIZE, 0, 0);
 
-	FB2K_console_formatter() << ScriptInfo().build_info_string() << ": initialised in " << (int)(timer.query() * 1000) << " ms";
+	FB2K_console_formatter() << m_script_info.build_info_string() << ": initialised in " << (int)(timer.query() * 1000) << " ms";
 	return true;
 }
 

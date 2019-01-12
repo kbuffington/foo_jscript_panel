@@ -29,16 +29,6 @@ HWND host_comm::GetHWND()
 	return m_hwnd;
 }
 
-POINT& host_comm::MaxSize()
-{
-	return m_max_size;
-}
-
-POINT& host_comm::MinSize()
-{
-	return m_min_size;
-}
-
 UINT host_comm::GetInstanceType()
 {
 	return m_instance_type;
@@ -47,11 +37,6 @@ UINT host_comm::GetInstanceType()
 panel_tooltip_param_ptr& host_comm::PanelTooltipParam()
 {
 	return m_panel_tooltip_param_ptr;
-}
-
-t_script_info& host_comm::ScriptInfo()
-{
-	return m_script_info;
 }
 
 int host_comm::GetHeight()

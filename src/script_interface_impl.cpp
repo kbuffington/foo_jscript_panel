@@ -2981,7 +2981,7 @@ STDMETHODIMP FbWindow::get_MaxHeight(UINT* p)
 {
 	if (!p) return E_POINTER;
 
-	*p = m_host->MaxSize().y;
+	*p = m_host->m_max_size.y;
 	return S_OK;
 }
 
@@ -2989,7 +2989,7 @@ STDMETHODIMP FbWindow::get_MaxWidth(UINT* p)
 {
 	if (!p) return E_POINTER;
 
-	*p = m_host->MaxSize().x;
+	*p = m_host->m_max_size.x;
 	return S_OK;
 }
 
@@ -2997,7 +2997,7 @@ STDMETHODIMP FbWindow::get_MinHeight(UINT* p)
 {
 	if (!p) return E_POINTER;
 
-	*p = m_host->MinSize().y;
+	*p = m_host->m_min_size.y;
 	return S_OK;
 }
 
@@ -3005,7 +3005,7 @@ STDMETHODIMP FbWindow::get_MinWidth(UINT* p)
 {
 	if (!p) return E_POINTER;
 
-	*p = m_host->MinSize().x;
+	*p = m_host->m_min_size.x;
 	return S_OK;
 }
 
@@ -3013,7 +3013,7 @@ STDMETHODIMP FbWindow::get_Name(BSTR* p)
 {
 	if (!p) return E_POINTER;
 
-	pfc::string8_fast name = m_host->ScriptInfo().name;
+	pfc::string8_fast name = m_host->m_script_info.name;
 	if (name.is_empty())
 	{
 		name = pfc::print_guid(m_host->get_config_guid());
@@ -3033,28 +3033,28 @@ STDMETHODIMP FbWindow::get_Width(INT* p)
 
 STDMETHODIMP FbWindow::put_MaxHeight(UINT height)
 {
-	m_host->MaxSize().y = height;
+	m_host->m_max_size.y = height;
 	PostMessage(m_host->GetHWND(), UWM_SIZE_LIMIT_CHANGED, 0, uie::size_limit_maximum_height);
 	return S_OK;
 }
 
 STDMETHODIMP FbWindow::put_MaxWidth(UINT width)
 {
-	m_host->MaxSize().x = width;
+	m_host->m_max_size.x = width;
 	PostMessage(m_host->GetHWND(), UWM_SIZE_LIMIT_CHANGED, 0, uie::size_limit_maximum_width);
 	return S_OK;
 }
 
 STDMETHODIMP FbWindow::put_MinHeight(UINT height)
 {
-	m_host->MinSize().y = height;
+	m_host->m_min_size.y = height;
 	PostMessage(m_host->GetHWND(), UWM_SIZE_LIMIT_CHANGED, 0, uie::size_limit_minimum_height);
 	return S_OK;
 }
 
 STDMETHODIMP FbWindow::put_MinWidth(UINT width)
 {
-	m_host->MinSize().x = width;
+	m_host->m_min_size.x = width;
 	PostMessage(m_host->GetHWND(), UWM_SIZE_LIMIT_CHANGED, 0, uie::size_limit_minimum_width);
 	return S_OK;
 }
