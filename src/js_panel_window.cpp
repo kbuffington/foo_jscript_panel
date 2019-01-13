@@ -232,7 +232,7 @@ LRESULT js_panel_window::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 		return 0;
 
 	case CALLBACK_UWM_ON_GET_ALBUM_ART_DONE:
-		on_get_album_art_done(lp);
+		on_get_album_art_done(wp);
 		return 0;
 
 	case CALLBACK_UWM_ON_ITEM_FOCUS_CHANGE:
@@ -256,7 +256,7 @@ LRESULT js_panel_window::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 		return 0;
 
 	case CALLBACK_UWM_ON_LOAD_IMAGE_DONE:
-		on_load_image_done(lp);
+		on_load_image_done(wp);
 		return 0;
 
 	case CALLBACK_UWM_ON_MAIN_MENU:
@@ -457,11 +457,11 @@ void js_panel_window::execute_context_menu_command(int id, int id_base)
 		update_script();
 		break;
 	case 2:
-	{
-		string_wide_from_utf8_fast folder(helpers::get_fb2k_component_path());
-		ShellExecute(nullptr, _T("open"), folder, nullptr, nullptr, SW_SHOW);
-	}
-	break;
+		{
+			string_wide_from_utf8_fast folder(helpers::get_fb2k_component_path());
+			ShellExecute(nullptr, _T("open"), folder, nullptr, nullptr, SW_SHOW);
+		}
+		break;
 	case 3:
 		show_property_popup(m_hwnd);
 		break;
@@ -598,10 +598,10 @@ void js_panel_window::on_font_changed()
 	script_invoke_v(CallbackIds::on_font_changed);
 }
 
-void js_panel_window::on_get_album_art_done(LPARAM lp)
+void js_panel_window::on_get_album_art_done(WPARAM wp)
 {
 	using namespace helpers;
-	album_art_async::t_param* param = reinterpret_cast<album_art_async::t_param *>(lp);
+	album_art_async::t_param* param = reinterpret_cast<album_art_async::t_param *>(wp);
 
 	VARIANTARG args[4];
 	args[0].vt = VT_BSTR;
@@ -617,7 +617,7 @@ void js_panel_window::on_get_album_art_done(LPARAM lp)
 
 void js_panel_window::on_item_focus_change(WPARAM wp)
 {
-	simple_callback_data_scope_releaser<simple_callback_data_3<t_size, t_size, t_size>> data(wp);
+	callback_data_scope_releaser<callback_data<t_size, t_size, t_size>> data(wp);
 
 	VARIANTARG args[3];
 	args[0].vt = VT_I4;
@@ -631,8 +631,8 @@ void js_panel_window::on_item_focus_change(WPARAM wp)
 
 void js_panel_window::on_item_played(WPARAM wp)
 {
-	simple_callback_data_scope_releaser<simple_callback_data<metadb_handle_ptr>> data(wp);
-	FbMetadbHandle* handle = new com_object_impl_t<FbMetadbHandle>(data->m_item);
+	callback_data_scope_releaser<callback_data<metadb_handle_ptr>> data(wp);
+	FbMetadbHandle* handle = new com_object_impl_t<FbMetadbHandle>(data->m_item1);
 
 	VARIANTARG args[1];
 	args[0].vt = VT_DISPATCH;
@@ -643,10 +643,10 @@ void js_panel_window::on_item_played(WPARAM wp)
 		handle->Release();
 }
 
-void js_panel_window::on_load_image_done(LPARAM lp)
+void js_panel_window::on_load_image_done(WPARAM wp)
 {
 	using namespace helpers;
-	load_image_async::t_param* param = reinterpret_cast<load_image_async::t_param *>(lp);
+	load_image_async::t_param* param = reinterpret_cast<load_image_async::t_param *>(wp);
 
 	VARIANTARG args[3];
 	args[0].vt = VT_BSTR;
@@ -660,7 +660,7 @@ void js_panel_window::on_load_image_done(LPARAM lp)
 
 void js_panel_window::on_library_items_added(WPARAM wp)
 {
-	simple_callback_data_scope_releaser<metadb_callback_data> data(wp);
+	callback_data_scope_releaser<metadb_callback_data> data(wp);
 	FbMetadbHandleList* handles = new com_object_impl_t<FbMetadbHandleList>(data->m_items);
 
 	VARIANTARG args[1];
@@ -674,7 +674,7 @@ void js_panel_window::on_library_items_added(WPARAM wp)
 
 void js_panel_window::on_library_items_changed(WPARAM wp)
 {
-	simple_callback_data_scope_releaser<metadb_callback_data> data(wp);
+	callback_data_scope_releaser<metadb_callback_data> data(wp);
 	FbMetadbHandleList* handles = new com_object_impl_t<FbMetadbHandleList>(data->m_items);
 
 	VARIANTARG args[1];
@@ -688,7 +688,7 @@ void js_panel_window::on_library_items_changed(WPARAM wp)
 
 void js_panel_window::on_library_items_removed(WPARAM wp)
 {
-	simple_callback_data_scope_releaser<metadb_callback_data> data(wp);
+	callback_data_scope_releaser<metadb_callback_data> data(wp);
 	FbMetadbHandleList* handles = new com_object_impl_t<FbMetadbHandleList>(data->m_items);
 
 	VARIANTARG args[1];
@@ -710,7 +710,7 @@ void js_panel_window::on_main_menu(WPARAM wp)
 
 void js_panel_window::on_metadb_changed(WPARAM wp)
 {
-	simple_callback_data_scope_releaser<metadb_callback_data> data(wp);
+	callback_data_scope_releaser<metadb_callback_data> data(wp);
 	FbMetadbHandleList* handles = new com_object_impl_t<FbMetadbHandleList>(data->m_items);
 
 	VARIANTARG args[1];
@@ -882,7 +882,7 @@ void js_panel_window::on_mouse_wheel_h(WPARAM wp)
 
 void js_panel_window::on_notify_data(WPARAM wp)
 {
-	simple_callback_data_scope_releaser<simple_callback_data_2<_bstr_t, _variant_t>> data(wp);
+	callback_data_scope_releaser<callback_data<_bstr_t, _variant_t>> data(wp);
 
 	VARIANTARG args[2];
 	args[0] = data->m_item2;
@@ -1021,8 +1021,8 @@ void js_panel_window::on_playback_dynamic_info_track()
 
 void js_panel_window::on_playback_edited(WPARAM wp)
 {
-	simple_callback_data_scope_releaser<simple_callback_data<metadb_handle_ptr>> data(wp);
-	FbMetadbHandle* handle = new com_object_impl_t<FbMetadbHandle>(data->m_item);
+	callback_data_scope_releaser<callback_data<metadb_handle_ptr>> data(wp);
+	FbMetadbHandle* handle = new com_object_impl_t<FbMetadbHandle>(data->m_item1);
 
 	VARIANTARG args[1];
 	args[0].vt = VT_DISPATCH;
@@ -1043,8 +1043,8 @@ void js_panel_window::on_playback_follow_cursor_changed(WPARAM wp)
 
 void js_panel_window::on_playback_new_track(WPARAM wp)
 {
-	simple_callback_data_scope_releaser<simple_callback_data<metadb_handle_ptr>> data(wp);
-	FbMetadbHandle* handle = new com_object_impl_t<FbMetadbHandle>(data->m_item);
+	callback_data_scope_releaser<callback_data<metadb_handle_ptr>> data(wp);
+	FbMetadbHandle* handle = new com_object_impl_t<FbMetadbHandle>(data->m_item1);
 
 	VARIANTARG args[1];
 	args[0].vt = VT_DISPATCH;
@@ -1081,11 +1081,11 @@ void js_panel_window::on_playback_queue_changed(WPARAM wp)
 
 void js_panel_window::on_playback_seek(WPARAM wp)
 {
-	simple_callback_data_scope_releaser<simple_callback_data<double>> data(wp);
+	callback_data_scope_releaser<callback_data<double>> data(wp);
 
 	VARIANTARG args[1];
 	args[0].vt = VT_R8;
-	args[0].dblVal = data->m_item;
+	args[0].dblVal = data->m_item1;
 	script_invoke_v(CallbackIds::on_playback_seek, args, _countof(args));
 }
 
@@ -1109,11 +1109,11 @@ void js_panel_window::on_playback_stop(play_control::t_stop_reason reason)
 
 void js_panel_window::on_playback_time(WPARAM wp)
 {
-	simple_callback_data_scope_releaser<simple_callback_data<double>> data(wp);
+	callback_data_scope_releaser<callback_data<double>> data(wp);
 
 	VARIANTARG args[1];
 	args[0].vt = VT_R8;
-	args[0].dblVal = data->m_item;
+	args[0].dblVal = data->m_item1;
 	script_invoke_v(CallbackIds::on_playback_time, args, _countof(args));
 }
 
@@ -1202,11 +1202,11 @@ void js_panel_window::on_size(int w, int h)
 
 void js_panel_window::on_volume_change(WPARAM wp)
 {
-	simple_callback_data_scope_releaser<simple_callback_data<float>> data(wp);
+	callback_data_scope_releaser<callback_data<float>> data(wp);
 
 	VARIANTARG args[1];
 	args[0].vt = VT_R4;
-	args[0].fltVal = data->m_item;
+	args[0].fltVal = data->m_item1;
 	script_invoke_v(CallbackIds::on_volume_change, args, _countof(args));
 }
 

@@ -1,27 +1,12 @@
 #pragma once
 #include "user_message.h"
 
-template <typename T>
-struct simple_callback_data : public pfc::refcounted_object_root
+template <typename T1, typename T2 = char, typename T3 = char>
+struct callback_data : public pfc::refcounted_object_root
 {
-	simple_callback_data(const T& p_item) : m_item(p_item) {}
-
-	T m_item;
-};
-
-template <typename T1, typename T2>
-struct simple_callback_data_2 : public pfc::refcounted_object_root
-{
-	simple_callback_data_2(const T1& p_item1, const T2& p_item2) : m_item1(p_item1), m_item2(p_item2) {}
-
-	T1 m_item1;
-	T2 m_item2;
-};
-
-template <typename T1, typename T2, typename T3>
-struct simple_callback_data_3 : public pfc::refcounted_object_root
-{
-	simple_callback_data_3(const T1& p_item1, const T2& p_item2, const T3& p_item3) : m_item1(p_item1), m_item2(p_item2), m_item3(p_item3) {}
+	callback_data(const T1& p_item1) : m_item1(p_item1) {}
+	callback_data(const T1& p_item1, const T2& p_item2) : m_item1(p_item1), m_item2(p_item2) {}
+	callback_data(const T1& p_item1, const T2& p_item2, const T3& p_item3) : m_item1(p_item1), m_item2(p_item2), m_item3(p_item3) {}
 
 	T1 m_item1;
 	T2 m_item2;
@@ -35,24 +20,23 @@ struct metadb_callback_data : public pfc::refcounted_object_root
 	metadb_handle_list m_items;
 };
 
-// Only used in message handler
 template <class T>
-class simple_callback_data_scope_releaser
+class callback_data_scope_releaser
 {
 public:
 	template <class TParam>
-	simple_callback_data_scope_releaser(TParam p_data)
+	callback_data_scope_releaser(TParam p_data)
 	{
 		m_data = reinterpret_cast<T *>(p_data);
 	}
 
 	template <class TParam>
-	simple_callback_data_scope_releaser(TParam* p_data)
+	callback_data_scope_releaser(TParam* p_data)
 	{
 		m_data = reinterpret_cast<T *>(p_data);
 	}
 
-	~simple_callback_data_scope_releaser()
+	~callback_data_scope_releaser()
 	{
 		m_data->refcount_release();
 	}
@@ -74,9 +58,7 @@ public:
 	static panel_manager& instance();
 	t_size get_count();
 	void add_window(HWND p_wnd);
-	void post_msg_to_all(UINT p_msg);
-	void post_msg_to_all(UINT p_msg, WPARAM p_wp);
-	void post_msg_to_all(UINT p_msg, WPARAM p_wp, LPARAM p_lp);
+	void post_msg_to_all(UINT p_msg, WPARAM p_wp = 0, LPARAM p_lp = 0);
 	void post_msg_to_all_pointer(UINT p_msg, pfc::refcounted_object_root* p_param);
 	void remove_window(HWND p_wnd);
 	void send_msg_to_all(UINT p_msg, WPARAM p_wp, LPARAM p_lp);

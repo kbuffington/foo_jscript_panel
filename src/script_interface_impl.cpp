@@ -2863,19 +2863,12 @@ STDMETHODIMP FbWindow::NotifyOthers(BSTR name, VARIANT info)
 {
 	if (info.vt & VT_BYREF) return E_INVALIDARG;
 
-	HRESULT hr = S_OK;
 	_variant_t var;
+	if (FAILED(VariantCopy(&var, &info))) return E_INVALIDARG;
 
-	hr = VariantCopy(&var, &info);
-
-	if (FAILED(hr)) return hr;
-
-	simple_callback_data_2<_bstr_t, _variant_t>* notify_data = new simple_callback_data_2<_bstr_t, _variant_t>(name, NULL);
-
-	notify_data->m_item2.Attach(var.Detach());
-
-	panel_manager::instance().send_msg_to_others_pointer(m_host->GetHWND(), CALLBACK_UWM_ON_NOTIFY_DATA, notify_data);
-
+	auto data = new callback_data<_bstr_t, _variant_t>(name, NULL);
+	data->m_item2.Attach(var.Detach());
+	panel_manager::instance().send_msg_to_others_pointer(m_host->GetHWND(), CALLBACK_UWM_ON_NOTIFY_DATA, data);
 	return S_OK;
 }
 
@@ -4705,12 +4698,11 @@ STDMETHODIMP MenuObj::TrackPopupMenu(int x, int y, UINT flags, UINT* item_id)
 {
 	if (!m_hMenu || !item_id) return E_POINTER;
 
-	POINT pt = { x, y };
-
 	// Only include specified flags
 	flags |= TPM_NONOTIFY | TPM_RETURNCMD | TPM_RIGHTBUTTON;
 	flags &= ~TPM_RECURSE;
 
+	POINT pt = { x, y };
 	ClientToScreen(m_wnd_parent, &pt);
 	*item_id = ::TrackPopupMenu(m_hMenu, flags, pt.x, pt.y, 0, m_wnd_parent, 0);
 	return S_OK;

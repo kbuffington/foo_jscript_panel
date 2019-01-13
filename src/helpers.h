@@ -192,7 +192,7 @@ namespace helpers
 			}
 
 			t_param param(handle, m_art_id, bitmap, image_path);
-			SendMessage(m_notify_hwnd, CALLBACK_UWM_ON_GET_ALBUM_ART_DONE, 0, (LPARAM)&param);
+			SendMessage(m_notify_hwnd, CALLBACK_UWM_ON_GET_ALBUM_ART_DONE, (WPARAM)&param, 0);
 		}
 
 		HWND m_notify_hwnd;
@@ -230,7 +230,7 @@ namespace helpers
 		{
 			IGdiBitmap* bitmap = load_image(m_path);
 			t_param param(reinterpret_cast<t_size>(this), bitmap, m_path);
-			SendMessage(m_notify_hwnd, CALLBACK_UWM_ON_LOAD_IMAGE_DONE, 0, (LPARAM)&param);
+			SendMessage(m_notify_hwnd, CALLBACK_UWM_ON_LOAD_IMAGE_DONE, (WPARAM)&param, 0);
 		}
 
 		HWND m_notify_hwnd;
