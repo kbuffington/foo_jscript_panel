@@ -3205,7 +3205,7 @@ STDMETHODIMP GdiBitmap::GetColourScheme(UINT count, VARIANT* p)
 	m_ptr->UnlockBits(&bmpdata);
 
 	// Sorting
-	typedef std::pair<unsigned, int> sort_vec_pair_t;
+	using sort_vec_pair_t = std::pair<unsigned, int>;
 	std::vector<sort_vec_pair_t> sort_vec(color_counters.begin(), color_counters.end());
 	count = min(count, sort_vec.size());
 	std::partial_sort(

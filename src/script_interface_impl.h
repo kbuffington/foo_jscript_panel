@@ -14,7 +14,7 @@ struct panel_tooltip_param
 	int font_style;
 };
 
-typedef std::shared_ptr<panel_tooltip_param> panel_tooltip_param_ptr;
+using panel_tooltip_param_ptr = std::shared_ptr<panel_tooltip_param>;
 
 class ContextMenuManager : public IDisposableImpl4<IContextMenuManager>
 {

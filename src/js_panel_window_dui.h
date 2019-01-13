@@ -24,7 +24,7 @@ public:
 	void initialize_window(HWND parent);
 
 private:
-	typedef js_panel_window t_parent;
+	using t_parent =  js_panel_window;
 	ui_element_instance_callback::ptr m_callback;
 	virtual void notify_size_limit_changed(LPARAM lp);
 };
