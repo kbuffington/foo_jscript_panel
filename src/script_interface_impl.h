@@ -1,7 +1,8 @@
 #pragma once
 #include "com_tools.h"
-#include "helpers.h"
 #include "script_interface.h"
+
+#include <memory>
 
 struct panel_tooltip_param
 {

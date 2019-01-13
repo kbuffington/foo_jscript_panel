@@ -4026,14 +4026,14 @@ STDMETHODIMP GdiUtils::LoadImageAsync(UINT window_id, BSTR path, UINT* p)
 {
 	if (!p) return E_POINTER;
 
-	unsigned cookie = 0;
+	t_size cookie = 0;
 
 	try
 	{
 		helpers::load_image_async* task = new helpers::load_image_async((HWND)window_id, path);
 
 		if (simple_thread_pool::instance().enqueue(task))
-			cookie = reinterpret_cast<unsigned>(task);
+			cookie = reinterpret_cast<t_size>(task);
 		else
 			delete task;
 	}
@@ -4271,7 +4271,7 @@ STDMETHODIMP JSUtils::GetAlbumArtAsync(UINT window_id, IFbMetadbHandle* handle, 
 {
 	if (!p) return E_POINTER;
 
-	unsigned cookie = 0;
+	t_size cookie = 0;
 	metadb_handle* ptr = NULL;
 	handle->get__ptr((void**)&ptr);
 	if (!ptr) return E_INVALIDARG;
@@ -4281,7 +4281,7 @@ STDMETHODIMP JSUtils::GetAlbumArtAsync(UINT window_id, IFbMetadbHandle* handle, 
 		helpers::album_art_async* task = new helpers::album_art_async((HWND)window_id, ptr, art_id, need_stub != VARIANT_FALSE, only_embed != VARIANT_FALSE, no_load != VARIANT_FALSE);
 
 		if (simple_thread_pool::instance().enqueue(task))
-			cookie = reinterpret_cast<unsigned>(task);
+			cookie = reinterpret_cast<t_size>(task);
 		else
 			delete task;
 	}
@@ -4298,7 +4298,7 @@ STDMETHODIMP JSUtils::GetAlbumArtEmbedded(BSTR rawpath, UINT art_id, IGdiBitmap*
 {
 	if (!pp) return E_POINTER;
 
-	*pp = helpers::get_album_art_embedded(rawpath, art_id);
+	*pp = helpers::get_album_art_embedded(string_utf8_from_wide(rawpath).get_ptr(), art_id);
 	return S_OK;
 }
 

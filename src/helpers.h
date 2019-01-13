@@ -1,8 +1,9 @@
 #pragma once
-
+#include "script_interface_impl.h"
 #include "thread_pool.h"
-#include "script_interface.h"
-#include "json.hpp"
+#include "user_message.h"
+
+#include <json.hpp>
 
 using json = nlohmann::json;
 
@@ -24,16 +25,16 @@ namespace helpers
 	DWORD convert_colorref_to_argb(COLORREF color);
 	HBITMAP create_hbitmap_from_gdiplus_bitmap(Gdiplus::Bitmap* bitmap_ptr);
 	IGdiBitmap* get_album_art(const metadb_handle_ptr& handle, t_size art_id, bool need_stub, pfc::string_base& image_path, bool no_load = false);
-	IGdiBitmap* get_album_art_embedded(BSTR rawpath, t_size art_id);
+	IGdiBitmap* get_album_art_embedded(const pfc::string8_fast& rawpath, t_size art_id);
 	IGdiBitmap* load_image(BSTR path);
 	bool execute_context_command_by_name(const char* p_command, metadb_handle_list_cref p_handles, t_size flags);
 	bool execute_context_command_recur(const char* p_command, pfc::string_base& p_path, contextmenu_node* p_parent);
 	bool execute_mainmenu_command_by_name(const char* p_command);
 	bool execute_mainmenu_command_recur(const char* p_command, pfc::string8_fast path, mainmenu_node::ptr node);
 	bool read_album_art_into_bitmap(const album_art_data_ptr& data, Gdiplus::Bitmap** bitmap);
-	bool read_file_wide(unsigned codepage, const wchar_t* path, pfc::array_t<wchar_t>& content);
+	bool read_file_wide(t_size codepage, const wchar_t* path, pfc::array_t<wchar_t>& content);
 	bool supports_chakra();
-	bool write_file(const char* path, const pfc::string_base& content, bool write_bom = true);
+	bool write_file(const char* path, const pfc::string_base& content, bool write_bom = false);
 	const GUID convert_artid_to_guid(t_size art_id);
 	int get_encoder_clsid(const wchar_t* format, CLSID* pClsid);
 	int get_text_height(HDC hdc, const wchar_t* text, int len);
@@ -95,24 +96,24 @@ namespace helpers
 							aaep->remove(what);
 							break;
 						case remove_all:
-						{
-							album_art_editor_instance_v2::ptr v2;
-							if (aaep->cast(v2))
 							{
-								// not all file formats support this
-								v2->remove_all();
+								album_art_editor_instance_v2::ptr v2;
+								if (aaep->cast(v2))
+								{
+									// not all file formats support this
+									v2->remove_all();
+								}
+								else
+								{
+									// m4a is one example that needs this fallback
+									aaep->remove(album_art_ids::artist);
+									aaep->remove(album_art_ids::cover_back);
+									aaep->remove(album_art_ids::cover_front);
+									aaep->remove(album_art_ids::disc);
+									aaep->remove(album_art_ids::icon);
+								}
 							}
-							else
-							{
-								// m4a is one example that needs this fallback
-								aaep->remove(album_art_ids::artist);
-								aaep->remove(album_art_ids::cover_back);
-								aaep->remove(album_art_ids::cover_front);
-								aaep->remove(album_art_ids::disc);
-								aaep->remove(album_art_ids::icon);
-							}
-						}
-						break;
+							break;
 						}
 						aaep->commit(p_abort);
 					}
@@ -139,70 +140,99 @@ namespace helpers
 	class album_art_async : public simple_thread_task
 	{
 	public:
+		album_art_async(HWND notify_hwnd, metadb_handle* handle, t_size art_id, bool need_stub, bool only_embed, bool no_load) : m_notify_hwnd(notify_hwnd), m_handle(handle), m_art_id(art_id), m_need_stub(need_stub), m_only_embed(only_embed), m_no_load(no_load) {}
+
 		struct t_param
 		{
-			IFbMetadbHandle* handle;
-			t_size art_id;
-			IGdiBitmap* bitmap;
-			string_wide_from_utf8_fast image_path;
-
-			t_param(IFbMetadbHandle* p_handle, t_size p_art_id, IGdiBitmap* p_bitmap, const char* p_image_path) : handle(p_handle), art_id(p_art_id), bitmap(p_bitmap), image_path(p_image_path)
-			{
-			}
+			t_param(IFbMetadbHandle* p_handle, t_size p_art_id, IGdiBitmap* p_bitmap, const char* p_image_path) : handle(p_handle), art_id(p_art_id), bitmap(p_bitmap), image_path(p_image_path) {}
 
 			~t_param()
 			{
 				if (handle)
+				{
 					handle->Release();
+				}
 
 				if (bitmap)
+				{
 					bitmap->Release();
+				}
 			}
+
+			IFbMetadbHandle* handle;
+			IGdiBitmap* bitmap;
+			string_wide_from_utf8_fast image_path;
+			t_size art_id;
 		};
 
-		album_art_async(HWND notify_hwnd, metadb_handle* handle, t_size art_id, bool need_stub, bool only_embed, bool no_load) : m_notify_hwnd(notify_hwnd), m_handle(handle), m_art_id(art_id), m_need_stub(need_stub), m_only_embed(only_embed), m_no_load(no_load)
+	private:
+		virtual void run()
 		{
+			FbMetadbHandle* handle = NULL;
+			IGdiBitmap* bitmap = NULL;
+			pfc::string8_fast image_path;
+
 			if (m_handle.is_valid())
-				m_rawpath = string_wide_from_utf8_fast(m_handle->get_path());
+			{
+				if (m_only_embed)
+				{
+					pfc::string8_fast rawpath = m_handle->get_path();
+					bitmap = get_album_art_embedded(rawpath, m_art_id);
+					if (bitmap)
+					{
+						image_path = file_path_display(rawpath);
+					}
+				}
+				else
+				{
+					bitmap = get_album_art(m_handle, m_art_id, m_need_stub, image_path, m_no_load);
+				}
+
+				handle = new com_object_impl_t<FbMetadbHandle>(m_handle);
+			}
+
+			t_param param(handle, m_art_id, bitmap, image_path);
+			SendMessage(m_notify_hwnd, CALLBACK_UWM_ON_GET_ALBUM_ART_DONE, 0, (LPARAM)&param);
 		}
 
-	private:
-		virtual void run();
-		metadb_handle_ptr m_handle;
-		_bstr_t m_rawpath;
-		t_size m_art_id;
-		bool m_need_stub;
-		bool m_only_embed;
-		bool m_no_load;
 		HWND m_notify_hwnd;
+		bool m_need_stub;
+		bool m_no_load;
+		bool m_only_embed;
+		metadb_handle_ptr m_handle;
+		t_size m_art_id;
 	};
 
 	class load_image_async : public simple_thread_task
 	{
 	public:
+		load_image_async(HWND notify_wnd, BSTR path) : m_notify_hwnd(notify_wnd), m_path(path) {}
+
 		struct t_param
 		{
-			unsigned cookie;
-			IGdiBitmap* bitmap;
-			_bstr_t path;
-
-			t_param(int p_cookie, IGdiBitmap* p_bitmap, BSTR p_path) : cookie(p_cookie), bitmap(p_bitmap), path(p_path)
-			{
-			}
+			t_param(t_size p_cookie, IGdiBitmap* p_bitmap, BSTR p_path) : cookie(p_cookie), bitmap(p_bitmap), path(p_path) {}
 
 			~t_param()
 			{
 				if (bitmap)
+				{
 					bitmap->Release();
+				}
 			}
+
+			IGdiBitmap* bitmap;
+			_bstr_t path;
+			t_size cookie;
 		};
 
-		load_image_async(HWND notify_wnd, BSTR path) : m_notify_hwnd(notify_wnd), m_path(path)
+	private:
+		virtual void run()
 		{
+			IGdiBitmap* bitmap = load_image(m_path);
+			t_param param(reinterpret_cast<t_size>(this), bitmap, m_path);
+			SendMessage(m_notify_hwnd, CALLBACK_UWM_ON_LOAD_IMAGE_DONE, 0, (LPARAM)&param);
 		}
 
-	private:
-		virtual void run();
 		HWND m_notify_hwnd;
 		_bstr_t m_path;
 	};
@@ -224,9 +254,9 @@ namespace helpers
 	class js_process_locations : public process_locations_notify
 	{
 	public:
-		js_process_locations(bool to_select, t_size base, t_size playlist) : m_to_select(to_select), m_base(base), m_playlist(playlist)
-		{
-		}
+		js_process_locations(bool to_select, t_size base, t_size playlist) : m_to_select(to_select), m_base(base), m_playlist(playlist) {}
+
+		void on_aborted() {}
 
 		void on_completion(metadb_handle_list_cref p_items)
 		{
@@ -242,10 +272,6 @@ namespace helpers
 					api->playlist_set_focus_item(m_playlist, m_base);
 				}
 			}
-		}
-
-		void on_aborted()
-		{
 		}
 
 	private:

@@ -1,7 +1,5 @@
 #include "stdafx.h"
 #include "helpers.h"
-#include "script_interface_impl.h"
-#include "user_message.h"
 
 #include <MLang.h>
 
@@ -14,24 +12,13 @@ namespace helpers
 
 	DWORD convert_colorref_to_argb(COLORREF color)
 	{
-		// COLORREF : 0x00bbggrr
-		// ARGB : 0xaarrggbb
-		return (GetRValue(color) << RED_SHIFT) |
-			(GetGValue(color) << GREEN_SHIFT) |
-			(GetBValue(color) << BLUE_SHIFT) |
-			0xff000000;
+		return GetRValue(color) << RED_SHIFT | GetGValue(color) << GREEN_SHIFT | GetBValue(color) << BLUE_SHIFT | 0xff000000;
 	}
 
 	HBITMAP create_hbitmap_from_gdiplus_bitmap(Gdiplus::Bitmap* bitmap_ptr)
 	{
-		BITMAP bm;
-		Gdiplus::Rect rect;
+		Gdiplus::Rect rect(0, 0, bitmap_ptr->GetWidth(), bitmap_ptr->GetHeight());
 		Gdiplus::BitmapData bmpdata;
-		HBITMAP hBitmap;
-
-		rect.X = rect.Y = 0;
-		rect.Width = bitmap_ptr->GetWidth();
-		rect.Height = bitmap_ptr->GetHeight();
 
 		if (bitmap_ptr->LockBits(&rect, Gdiplus::ImageLockModeRead, PixelFormat32bppPARGB, &bmpdata) != Gdiplus::Ok)
 		{
@@ -39,6 +26,7 @@ namespace helpers
 			return NULL;
 		}
 
+		BITMAP bm;
 		bm.bmType = 0;
 		bm.bmWidth = bmpdata.Width;
 		bm.bmHeight = bmpdata.Height;
@@ -47,7 +35,7 @@ namespace helpers
 		bm.bmBitsPixel = 32;
 		bm.bmBits = bmpdata.Scan0;
 
-		hBitmap = CreateBitmapIndirect(&bm);
+		HBITMAP hBitmap = CreateBitmapIndirect(&bm);
 		bitmap_ptr->UnlockBits(&bmpdata);
 		return hBitmap;
 	}
@@ -95,13 +83,12 @@ namespace helpers
 		return ret;
 	}
 
-	IGdiBitmap* get_album_art_embedded(BSTR rawpath, t_size art_id)
+	IGdiBitmap* get_album_art_embedded(const pfc::string8_fast& rawpath, t_size art_id)
 	{
-		string_utf8_from_wide urawpath(rawpath);
 		IGdiBitmap* ret = NULL;
 
 		album_art_extractor::ptr ptr;
-		if (album_art_extractor::g_get_interface(ptr, urawpath))
+		if (album_art_extractor::g_get_interface(ptr, rawpath))
 		{
 			album_art_extractor_instance_ptr aaep;
 			GUID what = convert_artid_to_guid(art_id);
@@ -109,7 +96,7 @@ namespace helpers
 
 			try
 			{	
-				aaep = ptr->open(NULL, urawpath, abort);
+				aaep = ptr->open(NULL, rawpath, abort);
 
 				album_art_data_ptr data = aaep->query(what, abort);
 				Gdiplus::Bitmap* bitmap = NULL;
@@ -130,8 +117,7 @@ namespace helpers
 	{
 		IGdiBitmap* ret = NULL;
 		IStreamPtr pStream;
-		HRESULT hr = SHCreateStreamOnFileEx(path, STGM_READ | STGM_SHARE_DENY_WRITE, GENERIC_READ, FALSE, NULL, &pStream);
-		if (SUCCEEDED(hr))
+		if (SUCCEEDED(SHCreateStreamOnFileEx(path, STGM_READ | STGM_SHARE_DENY_WRITE, GENERIC_READ, FALSE, NULL, &pStream)))
 		{
 			Gdiplus::Bitmap* img = new Gdiplus::Bitmap(pStream, PixelFormat32bppPARGB);
 			if (helpers::ensure_gdiplus_object(img))
@@ -302,40 +288,36 @@ namespace helpers
 	bool read_album_art_into_bitmap(const album_art_data_ptr& data, Gdiplus::Bitmap** bitmap)
 	{
 		*bitmap = NULL;
+		bool ret = false;
 
 		if (!data.is_valid())
-			return false;
+			return ret;
 
 		// Using IStream
 		IStreamPtr is;
-		Gdiplus::Bitmap* bmp = NULL;
-		bool ret = true;
-		HRESULT hr = CreateStreamOnHGlobal(NULL, TRUE, &is);
-
-		if (SUCCEEDED(hr) && bitmap && is)
+		if (SUCCEEDED(CreateStreamOnHGlobal(NULL, TRUE, &is)) && is)
 		{
 			ULONG bytes_written = 0;
-
-			hr = is->Write(data->get_ptr(), data->get_size(), &bytes_written);
-
-			if (SUCCEEDED(hr) && bytes_written == data->get_size())
+			if (SUCCEEDED(is->Write(data->get_ptr(), data->get_size(), &bytes_written)) && bytes_written == data->get_size())
 			{
-				bmp = new Gdiplus::Bitmap(is, PixelFormat32bppPARGB);
+				Gdiplus::Bitmap* bmp = new Gdiplus::Bitmap(is, PixelFormat32bppPARGB);
 
-				if (!ensure_gdiplus_object(bmp))
+				if (ensure_gdiplus_object(bmp))
 				{
-					ret = false;
+					*bitmap = bmp;
+					ret = true;
+				}
+				else
+				{
 					if (bmp) delete bmp;
 					bmp = NULL;
 				}
 			}
 		}
-
-		*bitmap = bmp;
 		return ret;
 	}
 
-	bool read_file_wide(unsigned codepage, const wchar_t* path, pfc::array_t<wchar_t>& content)
+	bool read_file_wide(t_size codepage, const wchar_t* path, pfc::array_t<wchar_t>& content)
 	{
 		HANDLE hFile = CreateFile(path, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 
@@ -650,7 +632,7 @@ namespace helpers
 
 		if (FAILED(hr)) return 0;
 
-		unsigned codepage = 0;
+		t_size codepage = 0;
 		bool found = false;
 
 		// MLang fine tunes
@@ -701,7 +683,7 @@ namespace helpers
 
 	t_size get_colour_from_variant(VARIANT v)
 	{
-		return (v.vt == VT_R8) ? static_cast<unsigned>(v.dblVal) : v.lVal;
+		return (v.vt == VT_R8) ? static_cast<t_size>(v.dblVal) : v.lVal;
 	}
 
 	void estimate_line_wrap(HDC hdc, const wchar_t* text, int len, int width, pfc::list_t<wrapped_item>& out)
@@ -794,40 +776,5 @@ namespace helpers
 		out[0] = ' ';//StrCmpLogicalW bug workaround.
 		convert_utf8_to_wide_unchecked(out + 1, in);
 		return out;
-	}
-
-	void album_art_async::run()
-	{
-		pfc::string8_fast image_path;
-		FbMetadbHandle* handle = NULL;
-		IGdiBitmap* bitmap = NULL;
-
-		if (m_handle.is_valid())
-		{
-			if (m_only_embed)
-			{
-				bitmap = get_album_art_embedded(m_rawpath, m_art_id);
-				if (bitmap)
-				{
-					image_path = file_path_display(m_handle->get_path());
-				}
-			}
-			else
-			{
-				bitmap = get_album_art(m_handle, m_art_id, m_need_stub, image_path, m_no_load);
-			}
-
-			handle = new com_object_impl_t<FbMetadbHandle>(m_handle);
-		}
-
-		t_param param(handle, m_art_id, bitmap, image_path);
-		SendMessage(m_notify_hwnd, CALLBACK_UWM_ON_GET_ALBUM_ART_DONE, 0, (LPARAM)&param);
-	}
-
-	void load_image_async::run()
-	{
-		IGdiBitmap* bitmap = load_image(m_path);
-		t_param param(reinterpret_cast<unsigned>(this), bitmap, m_path);
-		SendMessage(m_notify_hwnd, CALLBACK_UWM_ON_LOAD_IMAGE_DONE, 0, (LPARAM)&param);
 	}
 }
