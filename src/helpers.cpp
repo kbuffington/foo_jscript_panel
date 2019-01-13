@@ -370,10 +370,7 @@ namespace helpers
 			return false;
 		}
 
-		bool status = false;
-
-		// UTF16 LE?
-		if (dwFileSize >=2 && pAddr[0] == 0xFF && pAddr[1] == 0xFE)
+		if (dwFileSize >=2 && pAddr[0] == 0xFF && pAddr[1] == 0xFE) // UTF16 LE?
 		{
 			const wchar_t* pSource = (const wchar_t *)(pAddr + 2);
 			t_size len = (dwFileSize - 2) >> 1;
@@ -381,10 +378,8 @@ namespace helpers
 			content.set_size(len + 1);
 			pfc::__unsafe__memcpy_t(content.get_ptr(), pSource, len);
 			content[len] = 0;
-			status = true;
 		}
-		// UTF8-BOM?
-		else if (dwFileSize >= 3 && pAddr[0] == 0xEF && pAddr[1] == 0xBB && pAddr[2] == 0xBF)
+		else if (dwFileSize >= 3 && pAddr[0] == 0xEF && pAddr[1] == 0xBB && pAddr[2] == 0xBF) // UTF8-BOM?
 		{
 			const char* pSource = (const char *)(pAddr + 3);
 			t_size pSourceSize = dwFileSize - 3;
@@ -392,16 +387,13 @@ namespace helpers
 			const t_size size = estimate_utf8_to_wide_quick(pSource, pSourceSize);
 			content.set_size(size);
 			convert_utf8_to_wide(content.get_ptr(), size, pSource, pSourceSize);
-			status = true;
 		}
-
-		if (!status)
+		else
 		{
 			const char* pSource = (const char *)(pAddr);
 			t_size pSourceSize = dwFileSize;
 
-			t_size tmp = detect_charset(string_utf8_from_wide(path));
-			if (tmp == CP_UTF8)
+			if (pfc::is_valid_utf8(pSource))
 			{
 				const t_size size = estimate_utf8_to_wide_quick(pSource, pSourceSize);
 				content.set_size(size);
@@ -413,13 +405,12 @@ namespace helpers
 				content.set_size(size);
 				convert_codepage_to_wide(codepage, content.get_ptr(), size, pSource, pSourceSize);
 			}
-			status = true;
 		}
 
 		UnmapViewOfFile(pAddr);
 		CloseHandle(hFileMapping);
 		CloseHandle(hFile);
-		return status;
+		return true;
 	}
 
 	bool supports_chakra()
