@@ -219,7 +219,7 @@ _.mixin({
 		return _.now() - _.lastModified(file) > period;
 	},
 	formatNumber : function (number, separator) {
-		return number.replace(/\B(?=(\d{3})+(?!\d))/g, separator);
+		return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, separator);
 	},
 	gdiFont : function (name, size, style) {
 		return gdi.Font(name, _.scale(size), style);
