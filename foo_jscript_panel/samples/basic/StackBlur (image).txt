@@ -1,5 +1,5 @@
 // ==PREPROCESSOR==
-// @name "StackBlur"
+// @name "StackBlur (image)"
 // @author "marc2003"
 // @import "%fb2k_component_path%docs\flags.txt"
 // @import "%fb2k_component_path%docs\helpers.txt"

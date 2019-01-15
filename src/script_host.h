@@ -29,6 +29,7 @@ public:
 	bool Ready();
 	void Finalize();
 	void GenerateSourceContext(const pfc::string8_fast& path, DWORD& source_context);
+	void ProcessScriptInfo(t_script_info& info);
 	void ReportError(IActiveScriptError* err);
 	void Stop();
 

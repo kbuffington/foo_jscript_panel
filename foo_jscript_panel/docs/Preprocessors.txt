@@ -31,10 +31,7 @@ VERSION
 AUTHOR
 @author "author"
 
-With "name", "version" and "author", if you want to use double quotes then you must escape
-each one with another...
-
-@name "One aka ""1"""
+As of v2.2.0, you can use double quotes in the name/author without escaping them.
 
 Example:
 // ==PREPROCESSOR==

@@ -59,9 +59,7 @@ HRESULT script_host::Initialize()
 	m_has_error = false;
 
 	IActiveScriptParsePtr parser;
-	string_wide_from_utf8_fast wcode(m_host->get_script_code());
-	script_preprocessor preprocessor(wcode.get_ptr());
-	preprocessor.process_script_info(m_host->m_script_info);
+	ProcessScriptInfo(m_host->m_script_info);
 
 	HRESULT hr = InitScriptEngineByName(m_host->get_script_engine());
 	if (SUCCEEDED(hr)) hr = m_script_engine->SetScriptSite(this);
@@ -80,7 +78,7 @@ HRESULT script_host::Initialize()
 	{
 		DWORD source_context = 0;
 		GenerateSourceContext("<main>", source_context);
-		hr = parser->ParseScriptText(wcode.get_ptr(), NULL, NULL, NULL, source_context, 0, SCRIPTTEXT_HOSTMANAGESSOURCE | SCRIPTTEXT_ISVISIBLE, NULL, NULL);
+		hr = parser->ParseScriptText(string_wide_from_utf8_fast(m_host->get_script_code()), NULL, NULL, NULL, source_context, 0, SCRIPTTEXT_HOSTMANAGESSOURCE | SCRIPTTEXT_ISVISIBLE, NULL, NULL);
 	}
 
 	if (SUCCEEDED(hr))
@@ -311,6 +309,56 @@ void script_host::GenerateSourceContext(const pfc::string8_fast& path, DWORD& so
 {
 	source_context = m_lastSourceContext++;
 	m_contextToPathMap[source_context] = path;
+}
+
+void script_host::ProcessScriptInfo(t_script_info& info)
+{
+	info.clear();
+
+	std::string source(m_host->get_script_code());
+	t_size start = source.find("// ==PREPROCESSOR==");
+	t_size end = source.find("// ==/PREPROCESSOR==");
+	t_size argh = std::string::npos;
+
+	if (start == argh || end == argh || start > end)
+	{
+		return;
+	}
+
+	std::string pre = source.substr(start + 21, end - start - 21);
+
+	pfc::string_list_impl lines;
+	pfc::splitStringByLines(lines, pre.c_str());
+
+	for (t_size i = 0; i < lines.get_count(); ++i)
+	{
+		std::string line = lines[i];
+		t_size tmp;
+		if (line.find("@name") < argh)
+		{
+			tmp = line.find_first_of('"') + 1;
+			info.name = line.substr(tmp, line.find_last_of('"') - tmp).c_str();
+		}
+		else if (line.find("@author") < argh)
+		{
+			tmp = line.find_first_of('"') + 1;
+			info.author = line.substr(tmp, line.find_last_of('"') - tmp).c_str();
+		}
+		else if (line.find("@version") < argh)
+		{
+			tmp = line.find_first_of('"') + 1;
+			info.version = line.substr(tmp, line.find_last_of('"') - tmp).c_str();
+		}
+		else if (line.find("@feature") < argh && line.find("dragdrop") < argh)
+		{
+			info.dragdrop = true;
+		}
+		else if (line.find("@import") < argh)
+		{
+			tmp = line.find_first_of('"') + 1;
+			info.imports.add_item(line.substr(tmp, line.find_last_of('"') - tmp).c_str());
+		}
+	}
 }
 
 void script_host::ReportError(IActiveScriptError* err)
