@@ -12,9 +12,6 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
-    <Filter Include="Header Files\PropertyList">
-      <UniqueIdentifier>{7c4b1259-195a-40df-b8e3-be0f7da15111}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\UI">
       <UniqueIdentifier>{bf006e7d-6138-477c-8a35-67c6d86e3248}</UniqueIdentifier>
     </Filter>
@@ -169,18 +166,6 @@
     </ClInclude>
     <ClInclude Include="script_callback_invoker.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\PropertyList\PropertyItem.h">
-      <Filter>Header Files\PropertyList</Filter>
-    </ClInclude>
-    <ClInclude Include="..\PropertyList\PropertyItemEditors.h">
-      <Filter>Header Files\PropertyList</Filter>
-    </ClInclude>
-    <ClInclude Include="..\PropertyList\PropertyItemImpl.h">
-      <Filter>Header Files\PropertyList</Filter>
-    </ClInclude>
-    <ClInclude Include="..\PropertyList\PropertyList.h">
-      <Filter>Header Files\PropertyList</Filter>
     </ClInclude>
     <ClInclude Include="helpers.h">
       <Filter>Header Files</Filter>

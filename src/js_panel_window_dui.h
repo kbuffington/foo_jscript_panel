@@ -26,5 +26,5 @@ public:
 private:
 	using t_parent =  js_panel_window;
 	ui_element_instance_callback::ptr m_callback;
-	virtual void notify_size_limit_changed(LPARAM lp);
+	virtual void notify_size_limit_changed(WPARAM wp);
 };

@@ -408,7 +408,7 @@ LRESULT js_panel_window::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 		return 0;
 
 	case UWM_SIZE_LIMIT_CHANGED:
-		notify_size_limit_changed(lp);
+		notify_size_limit_changed(wp);
 		return 0;
 
 	case UWM_TIMER:
@@ -484,7 +484,7 @@ bool js_panel_window::script_load()
 	
 	m_max_size = { INT_MAX, INT_MAX };
 	m_min_size = { 0, 0 };
-	PostMessage(m_hwnd, UWM_SIZE_LIMIT_CHANGED, 0, uie::size_limit_all);
+	PostMessage(m_hwnd, UWM_SIZE_LIMIT_CHANGED, uie::size_limit_all, 0);
 
 	HRESULT hr = m_script_host->Initialize();
 	if (FAILED(hr))

@@ -3027,28 +3027,28 @@ STDMETHODIMP FbWindow::get_Width(INT* p)
 STDMETHODIMP FbWindow::put_MaxHeight(UINT height)
 {
 	m_host->m_max_size.y = height;
-	PostMessage(m_host->GetHWND(), UWM_SIZE_LIMIT_CHANGED, 0, uie::size_limit_maximum_height);
+	PostMessage(m_host->GetHWND(), UWM_SIZE_LIMIT_CHANGED, uie::size_limit_maximum_height, 0);
 	return S_OK;
 }
 
 STDMETHODIMP FbWindow::put_MaxWidth(UINT width)
 {
 	m_host->m_max_size.x = width;
-	PostMessage(m_host->GetHWND(), UWM_SIZE_LIMIT_CHANGED, 0, uie::size_limit_maximum_width);
+	PostMessage(m_host->GetHWND(), UWM_SIZE_LIMIT_CHANGED, uie::size_limit_maximum_width, 0);
 	return S_OK;
 }
 
 STDMETHODIMP FbWindow::put_MinHeight(UINT height)
 {
 	m_host->m_min_size.y = height;
-	PostMessage(m_host->GetHWND(), UWM_SIZE_LIMIT_CHANGED, 0, uie::size_limit_minimum_height);
+	PostMessage(m_host->GetHWND(), UWM_SIZE_LIMIT_CHANGED, uie::size_limit_minimum_height, 0);
 	return S_OK;
 }
 
 STDMETHODIMP FbWindow::put_MinWidth(UINT width)
 {
 	m_host->m_min_size.x = width;
-	PostMessage(m_host->GetHWND(), UWM_SIZE_LIMIT_CHANGED, 0, uie::size_limit_minimum_width);
+	PostMessage(m_host->GetHWND(), UWM_SIZE_LIMIT_CHANGED, uie::size_limit_minimum_width, 0);
 	return S_OK;
 }
 

@@ -363,7 +363,7 @@ namespace helpers
 		}
 		else if (dwFileSize >= 3 && pAddr[0] == 0xEF && pAddr[1] == 0xBB && pAddr[2] == 0xBF) // UTF8-BOM?
 		{
-			const char* pSource = (const char *)(pAddr + 3);
+			const char* pSource = (const char*)(pAddr + 3);
 			t_size pSourceSize = dwFileSize - 3;
 
 			const t_size size = estimate_utf8_to_wide_quick(pSource, pSourceSize);
@@ -372,7 +372,7 @@ namespace helpers
 		}
 		else
 		{
-			const char* pSource = (const char *)(pAddr);
+			const char* pSource = (const char*)(pAddr);
 			t_size pSourceSize = dwFileSize;
 
 			if (pfc::is_valid_utf8(pSource))
@@ -603,12 +603,9 @@ namespace helpers
 	{
 		_COM_SMARTPTR_TYPEDEF(IMultiLanguage2, IID_IMultiLanguage2);
 		IMultiLanguage2Ptr lang;
-		HRESULT hr;
-
-		hr = lang.CreateInstance(CLSID_CMultiLanguage, NULL, CLSCTX_INPROC_SERVER);
-		// mlang is not working...
-		if (FAILED(hr)) return 0;
-
+		
+		if (FAILED(lang.CreateInstance(CLSID_CMultiLanguage, NULL, CLSCTX_INPROC_SERVER))) return 0;
+		
 		const int maxEncodings = 2;
 		int encodingCount = maxEncodings;
 		DetectEncodingInfo encodings[maxEncodings];
@@ -628,55 +625,32 @@ namespace helpers
 			return 0;
 		}
 
-		hr = lang->DetectInputCodepage(MLDETECTCP_NONE, 0, const_cast<char *>(text.get_ptr()), &textSize, encodings, &encodingCount);
+		if (FAILED(lang->DetectInputCodepage(MLDETECTCP_NONE, 0, const_cast<char*>(text.get_ptr()), &textSize, encodings, &encodingCount))) return 0;
 
-		if (FAILED(hr)) return 0;
+		t_size codepage = encodings[0].nCodePage;
 
-		t_size codepage = 0;
-		bool found = false;
-
-		// MLang fine tunes
 		if (encodingCount == 2 && encodings[0].nCodePage == 1252)
 		{
 			switch (encodings[1].nCodePage)
 			{
 			case 850:
 			case 65001:
-				found = true;
 				codepage = 65001;
 				break;
-				// DBCS
 			case 932: // shift-jis
 			case 936: // gbk
 			case 949: // korean
 			case 950: // big5
-			{
-				// '¡¯', <= special char
-				// "ve" "d" "ll" "m" 't' 're'
-				bool fallback = true;
-				t_size index;
-				if (index = text.find_first("\x92") != pfc_infinite)
-				{
-					if ((index < text.get_length() - 1) &&
-						(strchr("vldmtr ", text[index + 1])))
-					{
-						codepage = encodings[0].nCodePage;
-						fallback = false;
-					}
-				}
-				if (fallback)
-					codepage = encodings[1].nCodePage;
-				found = true;
-			}
-			break;
+				codepage = encodings[1].nCodePage;
+				break;
 			}
 		}
 
-		if (!found)
-			codepage = encodings[0].nCodePage;
 		// ASCII?
 		if (codepage == 20127)
+		{
 			codepage = 0;
+		}
 
 		return codepage;
 	}

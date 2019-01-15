@@ -203,7 +203,7 @@ void js_panel_window_dui::notify(const GUID& p_what, t_size p_param1, const void
 	}
 }
 
-void js_panel_window_dui::notify_size_limit_changed(LPARAM lp)
+void js_panel_window_dui::notify_size_limit_changed(WPARAM wp)
 {
 	m_callback->on_min_max_info_change();
 }

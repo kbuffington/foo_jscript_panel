@@ -26,5 +26,5 @@ protected:
 private:
 	using t_parent =  js_panel_window;
 	uie::window_host_ptr m_host;
-	virtual void notify_size_limit_changed(LPARAM lp);
+	virtual void notify_size_limit_changed(WPARAM wp);
 };

@@ -1,11 +1,5 @@
 #pragma once
 
-enum t_version_info
-{
-	JSP_VERSION_100 = 123, // must start with 123 so we don't break component upgrades
-	CONFIG_VERSION_CURRENT = JSP_VERSION_100
-};
-
 enum t_edge_style : char
 {
 	NO_EDGE = 0,

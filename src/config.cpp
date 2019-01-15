@@ -267,7 +267,7 @@ void js_panel_vars::get_default_script_code(pfc::string_base& out)
 {
 	out.reset();
 	puResource pures = uLoadResource(core_api::get_my_instance(), uMAKEINTRESOURCE(IDR_SCRIPT), "TEXT");
-	out.set_string(reinterpret_cast<const char *>(pures->GetPointer()), pures->GetSize());
+	out.set_string(reinterpret_cast<const char*>(pures->GetPointer()), pures->GetSize());
 }
 
 t_edge_style& js_panel_vars::get_edge_style()
@@ -279,9 +279,9 @@ void js_panel_vars::load_config(stream_reader* reader, t_size size, abort_callba
 {
 	reset_config();
 
-	if (size > sizeof(unsigned))
+	if (size > sizeof(t_size))
 	{
-		unsigned ver = 0;
+		t_size ver = 0;
 		try
 		{
 			reader->read_object_t(ver, abort);
@@ -317,12 +317,11 @@ void js_panel_vars::reset_config()
 
 void js_panel_vars::save_config(stream_writer* writer, abort_callback& abort) const
 {
-	unsigned const VERSION_CURRENT = CONFIG_VERSION_CURRENT;
+	const t_size ver = 123;
 
 	try
 	{
-		// Write version
-		writer->write_object_t(VERSION_CURRENT, abort);
+		writer->write_object_t(ver, abort);
 		writer->write_object_t(false, abort); // HACK: write this in place of "delay load"
 		writer->write_object_t(m_config_guid, abort);
 		writer->write_object(&m_edge_style, sizeof(m_edge_style), abort);

@@ -156,7 +156,7 @@ void js_panel_window_cui::set_config(stream_reader* reader, t_size size, abort_c
 	load_config(reader, size, abort);
 }
 
-void js_panel_window_cui::notify_size_limit_changed(LPARAM lp)
+void js_panel_window_cui::notify_size_limit_changed(WPARAM wp)
 {
-	get_host()->on_size_limit_change(m_hwnd, lp);
+	get_host()->on_size_limit_change(m_hwnd, wp);
 }
