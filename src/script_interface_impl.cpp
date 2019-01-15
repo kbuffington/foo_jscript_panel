@@ -4467,12 +4467,14 @@ STDMETHODIMP JSUtils::ReadTextFile(BSTR filename, UINT codepage, BSTR* p)
 {
 	if (!p) return E_POINTER;
 
-	*p = NULL;
-
 	pfc::array_t<wchar_t> content;
 	if (helpers::read_file_wide(codepage, filename, content))
 	{
 		*p = SysAllocString(content.get_ptr());
+	}
+	else
+	{
+		*p = SysAllocString(std::wstring().c_str());
 	}
 	return S_OK;
 }
