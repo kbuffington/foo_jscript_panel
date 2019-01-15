@@ -180,8 +180,6 @@ STDMETHODIMP FbFileInfo::MetaValue(UINT idx, UINT vidx, BSTR* p)
 {
 	if (!m_info_ptr || !p) return E_POINTER;
 
-	*p = NULL;
-
 	if (idx < m_info_ptr->meta_get_count() && vidx < m_info_ptr->meta_enum_value_count(idx))
 	{
 		*p = SysAllocString(string_wide_from_utf8_fast(m_info_ptr->meta_enum_value(idx, vidx)));

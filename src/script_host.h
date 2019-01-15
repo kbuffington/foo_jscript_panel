@@ -27,6 +27,7 @@ public:
 	STDMETHOD_(ULONG, Release)();
 	bool HasError();
 	bool Ready();
+	pfc::string8_fast ExtractValue(const std::string& source);
 	void Finalize();
 	void GenerateSourceContext(const pfc::string8_fast& path, DWORD& source_context);
 	void ProcessScriptInfo(t_script_info& info);

@@ -270,6 +270,12 @@ bool script_host::Ready()
 	return m_engine_inited && m_script_engine;
 }
 
+pfc::string8_fast script_host::ExtractValue(const std::string& source)
+{
+	t_size tmp = source.find_first_of('"') + 1;
+	return source.substr(tmp, source.find_last_of('"') - tmp).c_str();
+}
+
 void script_host::Finalize()
 {
 	InvokeCallback(CallbackIds::on_script_unload);
@@ -333,21 +339,17 @@ void script_host::ProcessScriptInfo(t_script_info& info)
 	for (t_size i = 0; i < lines.get_count(); ++i)
 	{
 		std::string line = lines[i];
-		t_size tmp;
 		if (line.find("@name") < argh)
 		{
-			tmp = line.find_first_of('"') + 1;
-			info.name = line.substr(tmp, line.find_last_of('"') - tmp).c_str();
+			info.name = ExtractValue(line);
 		}
 		else if (line.find("@author") < argh)
 		{
-			tmp = line.find_first_of('"') + 1;
-			info.author = line.substr(tmp, line.find_last_of('"') - tmp).c_str();
+			info.author = ExtractValue(line);
 		}
 		else if (line.find("@version") < argh)
 		{
-			tmp = line.find_first_of('"') + 1;
-			info.version = line.substr(tmp, line.find_last_of('"') - tmp).c_str();
+			info.version = ExtractValue(line);
 		}
 		else if (line.find("@feature") < argh && line.find("dragdrop") < argh)
 		{
@@ -355,8 +357,7 @@ void script_host::ProcessScriptInfo(t_script_info& info)
 		}
 		else if (line.find("@import") < argh)
 		{
-			tmp = line.find_first_of('"') + 1;
-			info.imports.add_item(line.substr(tmp, line.find_last_of('"') - tmp).c_str());
+			info.imports.add_item(ExtractValue(line));
 		}
 	}
 }
