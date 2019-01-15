@@ -601,14 +601,6 @@ namespace helpers
 
 	t_size detect_charset(const char* fileName)
 	{
-		_COM_SMARTPTR_TYPEDEF(IMultiLanguage2, IID_IMultiLanguage2);
-		IMultiLanguage2Ptr lang;
-		
-		if (FAILED(lang.CreateInstance(CLSID_CMultiLanguage, NULL, CLSCTX_INPROC_SERVER))) return 0;
-		
-		const int maxEncodings = 2;
-		int encodingCount = maxEncodings;
-		DetectEncodingInfo encodings[maxEncodings];
 		pfc::string8_fast text;
 		int textSize = 0;
 
@@ -626,6 +618,13 @@ namespace helpers
 			return 0;
 		}
 
+		const int maxEncodings = 2;
+		int encodingCount = maxEncodings;
+		DetectEncodingInfo encodings[maxEncodings];
+
+		_COM_SMARTPTR_TYPEDEF(IMultiLanguage2, IID_IMultiLanguage2);
+		IMultiLanguage2Ptr lang;
+		if (FAILED(lang.CreateInstance(CLSID_CMultiLanguage, NULL, CLSCTX_INPROC_SERVER))) return 0;
 		if (FAILED(lang->DetectInputCodepage(MLDETECTCP_NONE, 0, const_cast<char*>(text.get_ptr()), &textSize, encodings, &encodingCount))) return 0;
 
 		t_size codepage = encodings[0].nCodePage;
