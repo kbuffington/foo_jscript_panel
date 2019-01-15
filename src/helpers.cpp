@@ -619,6 +619,7 @@ namespace helpers
 			filesystem::g_open_read(io, fileName, abort);
 			io->read_string_raw(text, abort);
 			textSize = text.get_length();
+			if (pfc::is_valid_utf8(text)) return 65001;
 		}
 		catch (...)
 		{
@@ -633,10 +634,6 @@ namespace helpers
 		{
 			switch (encodings[1].nCodePage)
 			{
-			case 850:
-			case 65001:
-				codepage = 65001;
-				break;
 			case 932: // shift-jis
 			case 936: // gbk
 			case 949: // korean
