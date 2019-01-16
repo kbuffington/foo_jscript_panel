@@ -14,7 +14,6 @@
 
 //ui_conf
 #define IDD_DIALOG_CONF                 110
-#define IDC_STATIC_GUID                 111
 #define IDC_EDIT                        112
 #define IDC_TOOLS                       113
 #define IDC_STATIC_ENGINE               114

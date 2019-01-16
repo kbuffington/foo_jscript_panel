@@ -5,7 +5,10 @@
 #include "ui_goto.h"
 #include "ui_replace.h"
 
-CDialogConf::CDialogConf(js_panel_window* p_parent) : m_parent(p_parent), m_dlgfind(NULL), m_dlgreplace(NULL), m_lastSearchText(""), m_lastFlags(0), m_caption(JSP_NAME " Configuration") {}
+CDialogConf::CDialogConf(js_panel_window* p_parent) : m_parent(p_parent), m_dlgfind(NULL), m_dlgreplace(NULL), m_lastSearchText(""), m_lastFlags(0)
+{
+	m_caption << JSP_NAME " Configuration {" << pfc::print_guid(m_parent->get_config_guid()) << "}";
+}
 
 CDialogConf::~CDialogConf()
 {
@@ -68,11 +71,6 @@ LRESULT CDialogConf::OnInitDialog(HWND hwndFocus, LPARAM lParam)
 	{
 		SetWindowPlacement(&m_parent->get_windowplacement());
 	}
-
-	// GUID Text
-	pfc::string8 guid_text = "GUID: ";
-	guid_text += pfc::print_guid(m_parent->get_config_guid());
-	uSetWindowText(GetDlgItem(IDC_STATIC_GUID), guid_text);
 
 	// Edit Control
 	m_editorctrl.SubclassWindow(GetDlgItem(IDC_EDIT));
