@@ -1,5 +1,4 @@
 #pragma once
-#include "user_message.h"
 
 template <typename T1, typename T2 = char, typename T3 = char>
 struct callback_data : public pfc::refcounted_object_root

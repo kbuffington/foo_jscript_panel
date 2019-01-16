@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "editorctrl.h"
 #include "helpers.h"
-#include "resource.h"
 #include "scintilla_prop_sets.h"
 
 const t_style_to_key_table js_style_table[] =

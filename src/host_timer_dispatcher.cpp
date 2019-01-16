@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "host_timer_dispatcher.h"
-#include "user_message.h"
 
 host_timer::host_timer(HWND hWnd, t_size id, t_size delay, bool isRepeated)
 {

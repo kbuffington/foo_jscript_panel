@@ -41,5 +41,7 @@
 #endif
 
 #include "component_defines.h"
+#include "resource.h"
+#include "user_message.h"
 
 using namespace pfc::stringcvt;

@@ -1,5 +1,4 @@
 #pragma once
-#include "resource.h"
 
 class CDialogPref : public CDialogImpl<CDialogPref>, public CWinDataExchange<CDialogPref>, public preferences_page_instance
 {

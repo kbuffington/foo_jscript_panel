@@ -1,5 +1,4 @@
 #pragma once
-#include "resource.h"
 
 class CDialogReplace : public CDialogImpl<CDialogReplace>, public CDialogResize<CDialogReplace>
 {

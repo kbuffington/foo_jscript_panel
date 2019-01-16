@@ -2,7 +2,6 @@
 #include "helpers.h"
 #include "host_comm.h"
 #include "script_host.h"
-#include "user_message.h"
 
 script_host::script_host(host_comm* host)
 	: m_host(host)

@@ -1,5 +1,4 @@
 #pragma once
-#include "resource.h"
 
 class CDialogGoto : public CDialogImpl<CDialogGoto>
 {

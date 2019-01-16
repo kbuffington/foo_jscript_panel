@@ -1,7 +1,6 @@
 #pragma once
 #include "config.h"
 #include "js_panel_window.h"
-#include "resource.h"
 
 #include <PropertyList.h>
 

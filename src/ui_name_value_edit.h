@@ -1,5 +1,4 @@
 #pragma once
-#include "resource.h"
 
 class CNameValueEdit : public CDialogImpl<CNameValueEdit>
 {

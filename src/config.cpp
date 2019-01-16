@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "config.h"
-#include "resource.h"
 
 bool prop_kv_config::get_config_item(const char* p_key, VARIANT& p_out)
 {

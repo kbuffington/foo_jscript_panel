@@ -1,5 +1,4 @@
 #pragma once
-#include "resource.h"
 
 class CDialogFind : public CDialogImpl<CDialogFind>, public CDialogResize<CDialogFind>
 {

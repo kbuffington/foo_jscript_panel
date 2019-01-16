@@ -1,7 +1,6 @@
 #pragma once
 #include "script_interface_impl.h"
 #include "thread_pool.h"
-#include "user_message.h"
 
 #include <json.hpp>
 

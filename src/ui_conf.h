@@ -1,6 +1,5 @@
 #pragma once
 #include "editorctrl.h"
-#include "resource.h"
 
 // Forward declarations
 class js_panel_window;
