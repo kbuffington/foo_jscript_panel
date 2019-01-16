@@ -119,7 +119,7 @@ namespace helpers
 		IStreamPtr pStream;
 		if (SUCCEEDED(SHCreateStreamOnFileEx(path, STGM_READ | STGM_SHARE_DENY_WRITE, GENERIC_READ, FALSE, NULL, &pStream)))
 		{
-			Gdiplus::Bitmap* img = new Gdiplus::Bitmap(pStream, PixelFormat32bppPARGB);
+			Gdiplus::Bitmap* img = new Gdiplus::Bitmap(pStream, TRUE);
 			if (helpers::ensure_gdiplus_object(img))
 			{
 				ret = new com_object_impl_t<GdiBitmap>(img);
@@ -300,7 +300,7 @@ namespace helpers
 			ULONG bytes_written = 0;
 			if (SUCCEEDED(is->Write(data->get_ptr(), data->get_size(), &bytes_written)) && bytes_written == data->get_size())
 			{
-				Gdiplus::Bitmap* bmp = new Gdiplus::Bitmap(is, PixelFormat32bppPARGB);
+				Gdiplus::Bitmap* bmp = new Gdiplus::Bitmap(is, TRUE);
 
 				if (ensure_gdiplus_object(bmp))
 				{
