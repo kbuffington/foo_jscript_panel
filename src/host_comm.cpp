@@ -62,27 +62,26 @@ void host_comm::RefreshBackground(LPRECT lprcUpdate)
 	if (!wnd_parent || IsIconic(core_api::get_main_window()) || !IsWindowVisible(m_hwnd))
 		return;
 
+	// HACK: for Tab control
+	HWND hwnd = FindWindowEx(wnd_parent, NULL, NULL, NULL);
+	while (hwnd != NULL)
+	{
+		pfc::string8_fast name;
+		uGetClassName(hwnd, name);
+		if (name.equals("SysTabControl32"))
+		{
+			wnd_parent = hwnd;
+			break;
+		}
+		hwnd = FindWindowEx(wnd_parent, hwnd, NULL, NULL);
+	}
+
 	HDC dc_parent = GetDC(wnd_parent);
 	HDC hdc_bk = CreateCompatibleDC(dc_parent);
 	POINT pt = { 0, 0 };
 	RECT rect_child = { 0, 0, m_width, m_height };
 	RECT rect_parent;
 	HRGN rgn_child = NULL;
-
-	// HACK: for Tab control
-	// Find siblings
-	HWND hwnd = NULL;
-	while (hwnd = FindWindowEx(wnd_parent, hwnd, NULL, NULL))
-	{
-		TCHAR buff[64];
-		if (hwnd == m_hwnd) continue;
-		GetClassName(hwnd, buff, _countof(buff));
-		if (_tcsstr(buff, _T("SysTabControl32")))
-		{
-			wnd_parent = hwnd;
-			break;
-		}
-	}
 
 	if (lprcUpdate)
 	{
