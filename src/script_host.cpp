@@ -271,8 +271,14 @@ bool script_host::Ready()
 
 pfc::string8_fast script_host::ExtractValue(const std::string& source)
 {
-	t_size tmp = source.find_first_of('"') + 1;
-	return source.substr(tmp, source.find_last_of('"') - tmp).c_str();
+	char q = '"';
+	t_size first = source.find_first_of(q);
+	t_size last = source.find_last_of(q);
+	if (first < last && last < source.length())
+	{
+		return source.substr(first + 1, last - first - 1).c_str();
+	}
+	return "";
 }
 
 void script_host::Finalize()
