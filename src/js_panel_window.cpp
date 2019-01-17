@@ -441,12 +441,12 @@ bool js_panel_window::show_property_popup(HWND parent)
 
 void js_panel_window::build_context_menu(HMENU menu, int x, int y, int id_base)
 {
-	::AppendMenu(menu, MF_STRING, id_base + 1, _T("&Reload"));
-	::AppendMenu(menu, MF_SEPARATOR, 0, 0);
-	::AppendMenu(menu, MF_STRING, id_base + 2, _T("&Open component folder"));
-	::AppendMenu(menu, MF_SEPARATOR, 0, 0);
-	::AppendMenu(menu, MF_STRING, id_base + 3, _T("&Properties"));
-	::AppendMenu(menu, MF_STRING, id_base + 4, _T("&Configure..."));
+	uAppendMenu(menu, MF_STRING, id_base + 1, "&Reload");
+	uAppendMenu(menu, MF_SEPARATOR, 0, 0);
+	uAppendMenu(menu, MF_STRING, id_base + 2, "&Open component folder");
+	uAppendMenu(menu, MF_SEPARATOR, 0, 0);
+	uAppendMenu(menu, MF_STRING, id_base + 3, "&Properties");
+	uAppendMenu(menu, MF_STRING, id_base + 4, "&Configure...");
 }
 
 void js_panel_window::execute_context_menu_command(int id, int id_base)

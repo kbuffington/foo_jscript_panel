@@ -31,7 +31,7 @@ LRESULT CDialogConf::OnCloseCmd(WORD wNotifyCode, WORD wID, HWND hWndCtl)
 	case IDCANCEL:
 		if (m_editorctrl.GetModify())
 		{
-			int ret = uMessageBox(m_hWnd, "All changes will be lost. Are you sure?", m_caption, MB_ICONWARNING | MB_SETFOREGROUND | MB_YESNO);
+			int ret = uMessageBox(m_hWnd, "All changes will be lost. Are you sure?", JSP_NAME, MB_ICONWARNING | MB_SETFOREGROUND | MB_YESNO);
 
 			switch (ret)
 			{
@@ -49,8 +49,107 @@ LRESULT CDialogConf::OnCloseCmd(WORD wNotifyCode, WORD wID, HWND hWndCtl)
 	return 0;
 }
 
+LRESULT CDialogConf::OnEditReset(WORD wNotifyCode, WORD wID, HWND hWndCtl)
+{
+	HWND combo = GetDlgItem(IDC_COMBO_ENGINE);
+	uComboBox_SelectString(combo, "Chakra");
+	pfc::string8 code;
+	js_panel_vars::get_default_script_code(code);
+	m_editorctrl.SetContent(code);
+	return 0;
+}
+
+LRESULT CDialogConf::OnFileSave(WORD wNotifyCode, WORD wID, HWND hWndCtl)
+{
+	Apply();
+	return 0;
+}
+
+LRESULT CDialogConf::OnFileImport(WORD wNotifyCode, WORD wID, HWND hWndCtl)
+{
+	pfc::string8 filename;
+
+	if (uGetOpenFileName(m_hWnd, "Text files|*.txt|JScript files|*.js|All files|*.*", 0, "txt", "Import from", NULL, filename, FALSE))
+	{
+		m_editorctrl.SetContent(helpers::read_file(filename));
+	}
+	return 0;
+}
+
+LRESULT CDialogConf::OnFileExport(WORD wNotifyCode, WORD wID, HWND hWndCtl)
+{
+	pfc::string8 filename;
+
+	if (uGetOpenFileName(m_hWnd, "Text files|*.txt|All files|*.*", 0, "txt", "Save as", NULL, filename, TRUE))
+	{
+		int len = m_editorctrl.GetTextLength();
+		pfc::string8_fast text;
+
+		m_editorctrl.GetText(text.lock_buffer(len), len + 1);
+		text.unlock_buffer();
+
+		helpers::write_file(filename, text);
+	}
+	return 0;
+}
+
 LRESULT CDialogConf::OnInitDialog(HWND hwndFocus, LPARAM lParam)
 {
+	// Generate samples menu
+	m_menu = GetMenu();
+
+	HMENU samples = CreateMenu();
+
+	auto list = [](const char* path, bool files, pfc::string_list_impl& out)
+	{
+		abort_callback_dummy abort;
+		pfc::string8_fast folder;
+		filesystem::g_get_canonical_path(path, folder);
+
+		try
+		{
+			if (files)
+			{
+				foobar2000_io::listFiles(folder, out, abort);
+			}
+			else
+			{
+				foobar2000_io::listDirectories(folder, out, abort);
+			}
+		}
+		catch (...) {}
+	};
+
+	pfc::string8_fast base = helpers::get_fb2k_component_path();
+	base << "samples\\";
+
+	pfc::string_list_impl folders;
+	list(base, false, folders);
+
+	t_size count = folders.get_count();
+
+	for (t_size i = 0; i < count; ++i)
+	{
+		HMENU sub = CreatePopupMenu();
+		pfc::string8_fast folder = folders[i];
+
+		pfc::string_list_impl sub_files;
+		list(folder, true, sub_files);
+
+		for (t_size j = 0; j < sub_files.get_count(); ++j)
+		{
+			m_samples.add_item(sub_files[j]);
+			pfc::string8_fast display = pfc::string_filename(sub_files[j]);
+			uAppendMenu(sub, MF_STRING, 999 + m_samples.get_count(), display);
+		}
+
+		pfc::string_list_impl path_split;
+		pfc::splitStringSimple_toList(path_split, "\\", folder);
+		uAppendMenu(samples, MF_STRING | MF_POPUP, (UINT_PTR)sub, path_split[path_split.get_count() - 1]);
+	}
+
+	m_menu.AppendMenu(MF_STRING | MF_POPUP, (UINT_PTR)samples, L"Samples");
+
 	// Set caption text
 	uSetWindowText(m_hWnd, m_caption);
 
@@ -147,51 +246,9 @@ LRESULT CDialogConf::OnNotify(int idCtrl, LPNMHDR pnmh)
 	return 0;
 }
 
-LRESULT CDialogConf::OnTools(WORD wNotifyCode, WORD wID, HWND hWndCtl)
+LRESULT CDialogConf::OnSample(WORD wNotifyCode, WORD wID, HWND hWndCtl)
 {
-	enum
-	{
-		kImport = 1,
-		kExport,
-		kResetDefault,
-		kResetCurrent,
-	};
-
-	HMENU menu = CreatePopupMenu();
-	int ret = 0;
-	int flags = TPM_RIGHTBUTTON | TPM_NONOTIFY | TPM_RETURNCMD;
-	RECT rc = { 0 };
-
-	AppendMenu(menu, MF_STRING, kImport, _T("&Import"));
-	AppendMenu(menu, MF_STRING, kExport, _T("E&xport"));
-	AppendMenu(menu, MF_SEPARATOR, 0, 0);
-	AppendMenu(menu, MF_STRING, kResetDefault, _T("Reset &Default"));
-	AppendMenu(menu, MF_STRING, kResetCurrent, _T("Reset &Current"));
-
-	::GetWindowRect(::GetDlgItem(m_hWnd, IDC_TOOLS), &rc);
-
-	ret = TrackPopupMenu(menu, flags, rc.left, rc.bottom, 0, m_hWnd, 0);
-
-	switch (ret)
-	{
-	case kImport:
-		OnImport();
-		break;
-
-	case kExport:
-		OnExport();
-		break;
-
-	case kResetDefault:
-		OnResetDefault();
-		break;
-
-	case kResetCurrent:
-		OnResetCurrent();
-		break;
-	}
-
-	DestroyMenu(menu);
+	m_editorctrl.SetContent(helpers::read_file(file_path_display(m_samples[wID - 1000])));
 	return 0;
 }
 
@@ -332,48 +389,6 @@ void CDialogConf::Apply()
 
 	// Save point
 	m_editorctrl.SetSavePoint();
-}
-
-void CDialogConf::OnExport()
-{
-	pfc::string8 filename;
-
-	if (uGetOpenFileName(m_hWnd, "Text files|*.txt|All files|*.*", 0, "txt", "Save as", NULL, filename, TRUE))
-	{
-		int len = m_editorctrl.GetTextLength();
-		pfc::string8_fast text;
-
-		m_editorctrl.GetText(text.lock_buffer(len), len + 1);
-		text.unlock_buffer();
-
-		helpers::write_file(filename, text);
-	}
-}
-
-void CDialogConf::OnImport()
-{
-	pfc::string8 filename;
-
-	if (uGetOpenFileName(m_hWnd, "Text files|*.txt|JScript files|*.js|All files|*.*", 0, "txt", "Import from", NULL, filename, FALSE))
-	{
-		m_editorctrl.SetContent(helpers::read_file(filename));
-	}
-}
-
-void CDialogConf::OnResetCurrent()
-{
-	HWND combo = GetDlgItem(IDC_COMBO_ENGINE);
-	uComboBox_SelectString(combo, m_parent->get_script_engine());
-	m_editorctrl.SetContent(m_parent->get_script_code());
-}
-
-void CDialogConf::OnResetDefault()
-{
-	HWND combo = GetDlgItem(IDC_COMBO_ENGINE);
-	uComboBox_SelectString(combo, "Chakra");
-	pfc::string8 code;
-	js_panel_vars::get_default_script_code(code);
-	m_editorctrl.SetContent(code);
 }
 
 void CDialogConf::OpenFindDialog()

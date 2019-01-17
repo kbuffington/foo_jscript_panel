@@ -1,4 +1,14 @@
-v2.2.0 Beta 3
+v2.2.0 Beta 4
+- CHG: Remove window.DlgCode. The docs were wrong, behaviour was inconsistent between
+       Default UI and Columns UI and it's just not needed. Support for all keys will be
+       enabled if you check "Grab focus" in the Configuration Window. All instances
+       will need removing from scripts. If you want to support this and older components
+       with the same script, do something like:
+
+       if ('DlgCode' in window) { window.DlgCode = 4; }
+- NEW: Add menu to "Configuration Window" which provides quick access to all included samples.
+       All previous "Tools" button commands are now on this menu. Idea shamelessly stolen
+       from TheQwertiest!! 
 - NEW: Update fb.CreateHandleList to take an optional handle argument to create a list
        containing a single item. See docs\interfaces.txt.
 - NEW: Add FbMetadbHandle GetAlbumArt method which returns the image and path
@@ -15,13 +25,6 @@ v2.2.0 Beta 3
        included in a script via the "import" preprocessor directive must be
        UTF8 encoded (with or without BOM). utils.ReadTextFile is unaffected although
        it should have better UTF8 detection than before.
-- CHG: Remove window.DlgCode. The docs were wrong, behaviour was inconsistent between
-       Default UI and Columns UI and it's just not needed. Support for all keys will be
-       enabled if you check "Grab focus" in the Configuration Window. All instances
-       will need removing from scripts. If you want to support this and older components
-       with the same script, do something like:
-
-       if ('DlgCode' in window) { window.DlgCode = 4; }
 - CHG: window.GetColourCUI and window.GetFontCUI no longer accept the previously optional
        "client_guid" argument.
 - CHG: Lots of internal code refactoring and external dependency updates.

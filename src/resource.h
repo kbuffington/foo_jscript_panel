@@ -15,7 +15,6 @@
 //ui_conf
 #define IDD_DIALOG_CONF                 110
 #define IDC_EDIT                        112
-#define IDC_TOOLS                       113
 #define IDC_STATIC_ENGINE               114
 #define IDC_COMBO_ENGINE                115
 #define IDC_STATIC_EDGE                 116
@@ -63,3 +62,10 @@
 #define IDC_FINDNEXT                    189
 #define IDC_REPLACE                     190
 #define IDC_REPLACEALL                  191
+
+//menu
+#define IDR_MENU                        200
+#define ID_FILE_APPLY                   201
+#define ID_FILE_IMPORT                  203
+#define ID_FILE_EXPORT                  204
+#define ID_EDIT_RESET                   205
