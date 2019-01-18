@@ -1155,6 +1155,21 @@ interface IJSUtils {
 		Some are defined in Flags.txt > Used with utils.IsKeyPressed()
 		*/
 
+		utils.ListFiles(folder[, recursive]) (VBArray)
+		/*
+		Returns a VBArray so you need to use .toArray() on the result.
+
+		folder: string, path to a folder.
+		recursive: boolean, default false. If set to true, all files in any subfolders will be included.
+		*/
+
+		utils.ListFolders(folder) (VBArray)
+		/*
+		Returns a VBArray so you need to use .toArray() on the result.
+
+		folder: string, path to a folder.
+		*/
+
 		utils.MapString(text, lcid, flags); (string)
 
 		utils.PathWildcardMatch(pattern, str); (boolean)

@@ -4413,6 +4413,50 @@ STDMETHODIMP JSUtils::IsKeyPressed(UINT vkey, VARIANT_BOOL* p)
 	return S_OK;
 }
 
+STDMETHODIMP JSUtils::ListFiles(BSTR folder, VARIANT_BOOL recur, VARIANT* p)
+{
+	if (!p) return E_POINTER;
+
+	pfc::string_list_impl list;
+	helpers::list(string_utf8_from_wide(folder).get_ptr(), true, recur != VARIANT_FALSE, list);
+
+	LONG count = list.get_count();
+	helpers::com_array helper;
+	if (!helper.create(count)) return E_OUTOFMEMORY;
+	for (LONG i = 0; i < count; ++i)
+	{
+		_variant_t var;
+		var.vt = VT_BSTR;
+		var.bstrVal = SysAllocString(string_wide_from_utf8_fast(file_path_display(list.get_item(i))));
+		if (!helper.put_item(i, var)) return E_OUTOFMEMORY;
+	}
+	p->vt = VT_ARRAY | VT_VARIANT;
+	p->parray = helper.get_ptr();
+	return S_OK;
+}
+
+STDMETHODIMP JSUtils::ListFolders(BSTR folder, VARIANT* p)
+{
+	if (!p) return E_POINTER;
+
+	pfc::string_list_impl list;
+	helpers::list(string_utf8_from_wide(folder).get_ptr(), false, false, list);
+
+	LONG count = list.get_count();
+	helpers::com_array helper;
+	if (!helper.create(count)) return E_OUTOFMEMORY;
+	for (LONG i = 0; i < count; ++i)
+	{
+		_variant_t var;
+		var.vt = VT_BSTR;
+		var.bstrVal = SysAllocString(string_wide_from_utf8_fast(file_path_display(list.get_item(i))));
+		if (!helper.put_item(i, var)) return E_OUTOFMEMORY;
+	}
+	p->vt = VT_ARRAY | VT_VARIANT;
+	p->parray = helper.get_ptr();
+	return S_OK;
+}
+
 STDMETHODIMP JSUtils::MapString(BSTR str, UINT lcid, UINT flags, BSTR* p)
 {
 	if (!p) return E_POINTER;

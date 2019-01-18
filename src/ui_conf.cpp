@@ -25,7 +25,7 @@ BOOL CDialogConf::OnInitDialog(HWND hwndFocus, LPARAM lParam)
 	HMENU samples = CreateMenu();
 
 	pfc::string_list_impl folders;
-	helpers::list(base + "samples\\", false, folders);
+	helpers::list(base + "samples\\", false, false, folders);
 
 	t_size i, j, count;
 
@@ -37,7 +37,7 @@ BOOL CDialogConf::OnInitDialog(HWND hwndFocus, LPARAM lParam)
 		pfc::string8_fast folder = folders[i];
 
 		pfc::string_list_impl sub_files;
-		helpers::list(folder, true, sub_files);
+		helpers::list(folder, true, false, sub_files);
 
 		for (j = 0; j < sub_files.get_count(); ++j)
 		{
@@ -56,7 +56,7 @@ BOOL CDialogConf::OnInitDialog(HWND hwndFocus, LPARAM lParam)
 	// Generate docs menu
 	HMENU docs = CreateMenu();
 
-	helpers::list(base + "docs\\", true, m_docs);
+	helpers::list(base + "docs\\", true, false, m_docs);
 	count = m_docs.get_count();
 
 	for (i = 0; i < count; ++i)

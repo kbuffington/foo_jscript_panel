@@ -597,6 +597,8 @@ public:
 	STDMETHODIMP Glob(BSTR pattern, UINT exc_mask, UINT inc_mask, VARIANT* p);
 	STDMETHODIMP InputBox(UINT window_id, BSTR prompt, BSTR caption, BSTR def, VARIANT_BOOL error_on_cancel, BSTR* p);
 	STDMETHODIMP IsKeyPressed(UINT vkey, VARIANT_BOOL* p);
+	STDMETHODIMP ListFiles(BSTR folder, VARIANT_BOOL recur, VARIANT* p);
+	STDMETHODIMP ListFolders(BSTR folder, VARIANT* p);
 	STDMETHODIMP MapString(BSTR str, UINT lcid, UINT flags, BSTR* p);
 	STDMETHODIMP PathWildcardMatch(BSTR pattern, BSTR str, VARIANT_BOOL* p);
 	STDMETHODIMP ReadINI(BSTR filename, BSTR section, BSTR key, VARIANT defaultval, BSTR* p);

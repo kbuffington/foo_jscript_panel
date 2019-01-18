@@ -550,6 +550,8 @@ __interface IJSUtils : IDispatch
 	STDMETHOD(Glob)(BSTR pattern, [defaultvalue(FILE_ATTRIBUTE_DIRECTORY)] UINT exc_mask, [defaultvalue(0xffffffff)] UINT inc_mask, [out, retval] VARIANT* p);
 	STDMETHOD(InputBox)(UINT window_id, BSTR prompt, BSTR caption, [defaultvalue("")] BSTR def, [defaultvalue(0)] VARIANT_BOOL error_on_cancel, [out, retval] BSTR* p);
 	STDMETHOD(IsKeyPressed)(UINT vkey, [out, retval] VARIANT_BOOL* p);
+	STDMETHOD(ListFiles)(BSTR folder, [defaultvalue(0)] VARIANT_BOOL recur, [out, retval] VARIANT* p);
+	STDMETHOD(ListFolders)(BSTR folder, [out, retval] VARIANT* p);
 	STDMETHOD(MapString)(BSTR str, UINT lcid, UINT flags, [out, retval] BSTR* p);
 	STDMETHOD(PathWildcardMatch)(BSTR pattern, BSTR str, [out, retval] VARIANT_BOOL* p);
 	STDMETHOD(ReadINI)(BSTR filename, BSTR section, BSTR key, [optional] VARIANT defaultval, [out, retval] BSTR* p);

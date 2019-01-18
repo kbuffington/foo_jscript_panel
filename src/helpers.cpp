@@ -740,7 +740,7 @@ namespace helpers
 		}
 	}
 
-	void list(const char* path, bool files, pfc::string_list_impl& out)
+	void list(const char* path, bool files, bool recur, pfc::string_list_impl& out)
 	{
 		abort_callback_dummy abort;
 		pfc::string8_fast folder;
@@ -750,7 +750,14 @@ namespace helpers
 		{
 			if (files)
 			{
-				foobar2000_io::listFiles(folder, out, abort);
+				if (recur)
+				{
+					foobar2000_io::listFilesRecur(folder, out, abort);
+				}
+				else
+				{
+					foobar2000_io::listFiles(folder, out, abort);
+				}
 			}
 			else
 			{
