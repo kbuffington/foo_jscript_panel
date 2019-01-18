@@ -10,7 +10,7 @@ v2.2.0 Beta 4
        and docs. All previous "Tools" button commands are now on this menu. Idea shamelessly
        stolen from TheQwertiest!! 
 - NEW: The preset colour schemes previously bundled inside the "Colour Schemes" folder can
-       now be loaded directly from the preferences page under "Tools>Options>JScript Panel".
+       now be loaded directly from the main preferences under "Tools>JScript Panel".
 - NEW: Update fb.CreateHandleList to take an optional handle argument to create a list
        containing a single item. See docs\interfaces.txt.
 - NEW: Add FbMetadbHandle GetAlbumArt method which returns the image and path
