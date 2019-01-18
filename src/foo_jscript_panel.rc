@@ -154,6 +154,7 @@ BEGIN
     CONTROL         "", IDC_LIST_EDITOR_PROP, "SysListView32", LVS_REPORT | LVS_SINGLESEL | LVS_ALIGNLEFT | WS_BORDER | WS_TABSTOP, 0, 12, 323, 240
     PUSHBUTTON      "&Import", IDC_IMPORT, 0, 256, 50, 14
     PUSHBUTTON      "E&xport", IDC_EXPORT, 54, 256, 50, 14
+    PUSHBUTTON      "&Preset", IDC_PRESET, 108, 256, 50, 14
 END
 
 IDD_DIALOG_PROPERTY DIALOGEX 0, 0, 620, 381
@@ -163,7 +164,7 @@ FONT 8, "Tahoma", 400, 0, 0x0
 BEGIN
     LISTBOX         IDC_LIST_PROPERTIES, 0, 0, 620, 355, LBS_OWNERDRAWVARIABLE | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | NOT WS_TABSTOP
     PUSHBUTTON      "De&lete", IDC_DEL, 7, 360, 50, 14
-    PUSHBUTTON      "C&lear", IDC_CLEARALL, 61, 360, 50, 14
+    PUSHBUTTON      "C&lear", IDC_CLEAR, 61, 360, 50, 14
     PUSHBUTTON      "I&mport", IDC_IMPORT, 115, 360, 50, 14
     PUSHBUTTON      "E&xport", IDC_EXPORT, 169, 360, 50, 14
     DEFPUSHBUTTON   "&OK", IDOK, 455, 360, 50, 14
@@ -197,5 +198,8 @@ END
 
 IDR_SCRIPT              TEXT                  "foo_jscript_panel.js"
 IDR_API                 TEXT                  "foo_jscript_panel.api"
+IDR_BRIGHT              TEXT                  "cfgBright.cfg"
+IDR_DARK                TEXT                  "cfgDark.cfg"
+IDR_RUBY                TEXT                  "cfgRubyBlue.cfg"
 #endif    // English (United States) resources
 /////////////////////////////////////////////////////////////////////////////

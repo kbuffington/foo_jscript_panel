@@ -1,1 +1,0 @@
-Use File>Preferences>Tools>JScript Panel to import these.

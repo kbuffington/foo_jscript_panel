@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "helpers.h"
 #include "ui_name_value_edit.h"
 #include "ui_pref.h"
 #include "scintilla_prop_sets.h"
@@ -41,9 +42,31 @@ LRESULT CDialogPref::OnImportBnClicked(WORD wNotifyCode, WORD wID, HWND hWndCtl)
 	pfc::string8_fast filename;
 	if (uGetOpenFileName(m_hWnd, "Configuration files|*.cfg|All files|*.*", 0, "cfg", "Import from", NULL, filename, FALSE))
 	{
-		g_sci_prop_sets.import_from_file(filename);
+		g_sci_prop_sets.import(helpers::read_file(filename));
 	}
 	LoadProps();
+	return 0;
+}
+
+LRESULT CDialogPref::OnPresetBnClicked(WORD wNotifyCode, WORD wID, HWND hWndCtl)
+{
+	HMENU menu = CreatePopupMenu();
+
+	uAppendMenu(menu, MF_STRING, 1, "Bright");
+	uAppendMenu(menu, MF_STRING, 2, "Dark");
+	uAppendMenu(menu, MF_STRING, 3, "Ruby Blue");
+
+	RECT rc;
+	::GetWindowRect(::GetDlgItem(m_hWnd, IDC_PRESET), &rc);
+	int idx = TrackPopupMenu(menu, TPM_RIGHTBUTTON | TPM_NONOTIFY | TPM_RETURNCMD, rc.left, rc.bottom, 0, m_hWnd, 0);
+	if (idx > 0)
+	{
+		puResource pures = uLoadResource(core_api::get_my_instance(), uMAKEINTRESOURCE(idx == 1 ? IDR_BRIGHT : idx == 2 ? IDR_DARK : IDR_RUBY), "TEXT");
+		pfc::string8_fast content(static_cast<const char*>(pures->GetPointer()), pures->GetSize());
+		g_sci_prop_sets.import(content);
+		LoadProps();
+	}
+	DestroyMenu(menu);
 	return 0;
 }
 

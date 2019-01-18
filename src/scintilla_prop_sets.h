@@ -48,7 +48,7 @@ public:
 
 	void export_to_file(const char* filename);
 	void get_data_raw(stream_writer* p_stream, abort_callback& p_abort);
-	void import_from_file(const char* filename);
+	void import(const char* content);
 	void reset();
 	void set_data_raw(stream_reader* p_stream, t_size p_sizehint, abort_callback& p_abort);
 

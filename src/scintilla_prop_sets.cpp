@@ -57,10 +57,8 @@ void cfg_sci_prop_sets::get_data_raw(stream_writer* p_stream, abort_callback& p_
 	catch (...) {}
 }
 
-void cfg_sci_prop_sets::import_from_file(const char* filename)
+void cfg_sci_prop_sets::import(const char* content)
 {
-	pfc::string8_fast content = helpers::read_file(filename);
-
 	using t_string_chain_list = pfc::chain_list_v2_t<pfc::string8_fast>;
 	t_string_chain_list lines;
 	pfc::splitStringByLines(lines, content);

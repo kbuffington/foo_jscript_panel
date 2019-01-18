@@ -11,8 +11,9 @@ public:
 
 	BEGIN_MSG_MAP(CDialogPref)
 		MSG_WM_INITDIALOG(OnInitDialog)
-		COMMAND_HANDLER_EX(IDC_EXPORT, BN_CLICKED, OnExportBnClicked)
 		COMMAND_HANDLER_EX(IDC_IMPORT, BN_CLICKED, OnImportBnClicked)
+		COMMAND_HANDLER_EX(IDC_EXPORT, BN_CLICKED, OnExportBnClicked)
+		COMMAND_HANDLER_EX(IDC_PRESET, BN_CLICKED, OnPresetBnClicked)
 		NOTIFY_HANDLER_EX(IDC_LIST_EDITOR_PROP, NM_DBLCLK, OnPropDblClk)
 	END_MSG_MAP()
 
@@ -25,6 +26,7 @@ public:
 	HWND get_wnd();
 	LRESULT OnExportBnClicked(WORD wNotifyCode, WORD wID, HWND hWndCtl);
 	LRESULT OnImportBnClicked(WORD wNotifyCode, WORD wID, HWND hWndCtl);
+	LRESULT OnPresetBnClicked(WORD wNotifyCode, WORD wID, HWND hWndCtl);
 	LRESULT OnPropDblClk(LPNMHDR pnmh);
 	t_size get_state();
 	void LoadProps(bool reset = false);
