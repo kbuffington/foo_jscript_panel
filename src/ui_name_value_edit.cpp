@@ -3,7 +3,7 @@
 
 CNameValueEdit::CNameValueEdit(const char* p_name, const char* p_value) : m_name(p_name), m_value(p_value) {}
 
-LRESULT CNameValueEdit::OnInitDialog(HWND hwndFocus, LPARAM lParam)
+BOOL CNameValueEdit::OnInitDialog(HWND hwndFocus, LPARAM lParam)
 {
 	uSendDlgItemMessageText(m_hWnd, IDC_EDIT_NAME, WM_SETTEXT, 0, m_name);
 	uSendDlgItemMessageText(m_hWnd, IDC_EDIT_VALUE, WM_SETTEXT, 0, m_value);

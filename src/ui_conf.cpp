@@ -15,85 +15,7 @@ CDialogConf::~CDialogConf()
 	m_hWnd = NULL;
 }
 
-LRESULT CDialogConf::OnCloseCmd(WORD wNotifyCode, WORD wID, HWND hWndCtl)
-{
-	switch (wID)
-	{
-	case IDOK:
-		Apply();
-		EndDialog(IDOK);
-		break;
-
-	case IDAPPLY:
-		Apply();
-		break;
-
-	case IDCANCEL:
-		if (m_editorctrl.GetModify())
-		{
-			int ret = uMessageBox(m_hWnd, "All changes will be lost. Are you sure?", JSP_NAME, MB_ICONWARNING | MB_SETFOREGROUND | MB_YESNO);
-
-			switch (ret)
-			{
-			case IDYES:
-				break;
-
-			default:
-				return 0;
-			}
-		}
-
-		EndDialog(IDCANCEL);
-	}
-
-	return 0;
-}
-
-LRESULT CDialogConf::OnEditReset(WORD wNotifyCode, WORD wID, HWND hWndCtl)
-{
-	HWND combo = GetDlgItem(IDC_COMBO_ENGINE);
-	uComboBox_SelectString(combo, "Chakra");
-	pfc::string8 code;
-	js_panel_vars::get_default_script_code(code);
-	m_editorctrl.SetContent(code);
-	return 0;
-}
-
-LRESULT CDialogConf::OnFileSave(WORD wNotifyCode, WORD wID, HWND hWndCtl)
-{
-	Apply();
-	return 0;
-}
-
-LRESULT CDialogConf::OnFileImport(WORD wNotifyCode, WORD wID, HWND hWndCtl)
-{
-	pfc::string8 filename;
-
-	if (uGetOpenFileName(m_hWnd, "Text files|*.txt|JScript files|*.js|All files|*.*", 0, "txt", "Import from", NULL, filename, FALSE))
-	{
-		m_editorctrl.SetContent(helpers::read_file(filename));
-	}
-	return 0;
-}
-
-LRESULT CDialogConf::OnFileExport(WORD wNotifyCode, WORD wID, HWND hWndCtl)
-{
-	pfc::string8 filename;
-
-	if (uGetOpenFileName(m_hWnd, "Text files|*.txt|All files|*.*", 0, "txt", "Save as", NULL, filename, TRUE))
-	{
-		int len = m_editorctrl.GetTextLength();
-		pfc::string8_fast text;
-
-		m_editorctrl.GetText(text.lock_buffer(len), len + 1);
-		text.unlock_buffer();
-
-		helpers::write_file(filename, text);
-	}
-	return 0;
-}
-
-LRESULT CDialogConf::OnInitDialog(HWND hwndFocus, LPARAM lParam)
+BOOL CDialogConf::OnInitDialog(HWND hwndFocus, LPARAM lParam)
 {
 	// Generate samples menu
 	m_menu = GetMenu();
@@ -227,6 +149,84 @@ LRESULT CDialogConf::OnInitDialog(HWND hwndFocus, LPARAM lParam)
 	return FALSE;
 }
 
+LRESULT CDialogConf::OnCloseCmd(WORD wNotifyCode, WORD wID, HWND hWndCtl)
+{
+	switch (wID)
+	{
+	case IDOK:
+		Apply();
+		EndDialog(IDOK);
+		break;
+
+	case IDAPPLY:
+		Apply();
+		break;
+
+	case IDCANCEL:
+		if (m_editorctrl.GetModify())
+		{
+			int ret = uMessageBox(m_hWnd, "Unsaved changes will be lost. Are you sure?", JSP_NAME, MB_ICONWARNING | MB_SETFOREGROUND | MB_YESNO);
+
+			switch (ret)
+			{
+			case IDYES:
+				break;
+
+			default:
+				return 0;
+			}
+		}
+
+		EndDialog(IDCANCEL);
+	}
+
+	return 0;
+}
+
+LRESULT CDialogConf::OnEditReset(WORD wNotifyCode, WORD wID, HWND hWndCtl)
+{
+	HWND combo = GetDlgItem(IDC_COMBO_ENGINE);
+	uComboBox_SelectString(combo, "Chakra");
+	pfc::string8 code;
+	js_panel_vars::get_default_script_code(code);
+	m_editorctrl.SetContent(code);
+	return 0;
+}
+
+LRESULT CDialogConf::OnFileSave(WORD wNotifyCode, WORD wID, HWND hWndCtl)
+{
+	Apply();
+	return 0;
+}
+
+LRESULT CDialogConf::OnFileImport(WORD wNotifyCode, WORD wID, HWND hWndCtl)
+{
+	pfc::string8 filename;
+
+	if (uGetOpenFileName(m_hWnd, "Text files|*.txt|JScript files|*.js|All files|*.*", 0, "txt", "Import from", NULL, filename, FALSE))
+	{
+		m_editorctrl.SetContent(helpers::read_file(filename));
+	}
+	return 0;
+}
+
+LRESULT CDialogConf::OnFileExport(WORD wNotifyCode, WORD wID, HWND hWndCtl)
+{
+	pfc::string8 filename;
+
+	if (uGetOpenFileName(m_hWnd, "Text files|*.txt|All files|*.*", 0, "txt", "Save as", NULL, filename, TRUE))
+	{
+		int len = m_editorctrl.GetTextLength();
+		pfc::string8_fast text;
+
+		m_editorctrl.GetText(text.lock_buffer(len), len + 1);
+		text.unlock_buffer();
+
+		helpers::write_file(filename, text);
+	}
+	return 0;
+}
+
 LRESULT CDialogConf::OnNotify(int idCtrl, LPNMHDR pnmh)
 {
 	pfc::string8_fast caption = m_caption;
@@ -246,7 +246,7 @@ LRESULT CDialogConf::OnNotify(int idCtrl, LPNMHDR pnmh)
 	return 0;
 }
 
-LRESULT CDialogConf::OnSample(WORD wNotifyCode, WORD wID, HWND hWndCtl)
+LRESULT CDialogConf::OnSamples(WORD wNotifyCode, WORD wID, HWND hWndCtl)
 {
 	m_editorctrl.SetContent(helpers::read_file(file_path_display(m_samples[wID - 1000])));
 	return 0;

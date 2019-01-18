@@ -4,6 +4,14 @@
 
 CDialogFind::CDialogFind(HWND p_hedit) : m_hedit(p_hedit), m_flags(0) {}
 
+BOOL CDialogFind::OnInitDialog(HWND hwndFocus, LPARAM lParam)
+{
+	modeless_dialog_manager::g_add(m_hWnd);
+	DlgResize_Init();
+	m_find.SubclassWindow(GetDlgItem(IDC_EDIT_FINDWHAT), m_hWnd);
+	return TRUE;
+}
+
 LRESULT CDialogFind::OnCancel(WORD wNotifyCode, WORD wID, HWND hWndCtl)
 {
 	ShowWindow(SW_HIDE);
@@ -64,14 +72,6 @@ LRESULT CDialogFind::OnFlagCommand(WORD wNotifyCode, WORD wID, HWND hWndCtl)
 		m_flags &= ~flag;
 
 	return 0;
-}
-
-LRESULT CDialogFind::OnInitDialog(HWND hwndFocus, LPARAM lParam)
-{
-	modeless_dialog_manager::g_add(m_hWnd);
-	DlgResize_Init();
-	m_find.SubclassWindow(GetDlgItem(IDC_EDIT_FINDWHAT), m_hWnd);
-	return TRUE; // set focus to default control
 }
 
 void CDialogFind::OnFinalMessage(HWND hWnd)

@@ -27,12 +27,12 @@ public:
 		IDD = IDD_DIALOG_FIND
 	};
 
+	BOOL OnInitDialog(HWND hwndFocus, LPARAM lParam);
 	LRESULT OnCancel(WORD wNotifyCode, WORD wID, HWND hWndCtl);
 	LRESULT OnEditFindWhatEnChange(WORD wNotifyCode, WORD wID, HWND hWndCtl);
 	LRESULT OnFindDown(WORD wNotifyCode, WORD wID, HWND hWndCtl);
 	LRESULT OnFindUp(WORD wNotifyCode, WORD wID, HWND hWndCtl);
 	LRESULT OnFlagCommand(WORD wNotifyCode, WORD wID, HWND hWndCtl);
-	LRESULT OnInitDialog(HWND hwndFocus, LPARAM lParam);
 	void OnFinalMessage(HWND hWnd);
 
 private:

@@ -25,7 +25,7 @@ public:
 		MSG_WM_INITDIALOG(OnInitDialog)
 		COMMAND_RANGE_HANDLER_EX(IDOK, IDCANCEL, OnCloseCmd)
 		COMMAND_ID_HANDLER_EX(IDAPPLY, OnCloseCmd)
-		COMMAND_HANDLER_EX(IDC_CLEARALL, BN_CLICKED, OnClearallBnClicked)
+		COMMAND_HANDLER_EX(IDC_CLEARALL, BN_CLICKED, OnClearBnClicked)
 		COMMAND_HANDLER_EX(IDC_DEL, BN_CLICKED, OnDelBnClicked)
 		COMMAND_HANDLER_EX(IDC_EXPORT, BN_CLICKED, OnExportBnClicked)
 		COMMAND_HANDLER_EX(IDC_IMPORT, BN_CLICKED, OnImportBnClicked)
@@ -39,12 +39,12 @@ public:
 		IDD = IDD_DIALOG_PROPERTY
 	};
 
-	LRESULT OnClearallBnClicked(WORD wNotifyCode, WORD wID, HWND hWndCtl);
+	BOOL OnInitDialog(HWND hwndFocus, LPARAM lParam);
+	LRESULT OnClearBnClicked(WORD wNotifyCode, WORD wID, HWND hWndCtl);
 	LRESULT OnCloseCmd(WORD wNotifyCode, WORD wID, HWND hWndCtl);
 	LRESULT OnDelBnClicked(WORD wNotifyCode, WORD wID, HWND hWndCtl);
 	LRESULT OnExportBnClicked(WORD wNotifyCode, WORD wID, HWND hWndCtl);
 	LRESULT OnImportBnClicked(WORD wNotifyCode, WORD wID, HWND hWndCtl);
-	LRESULT OnInitDialog(HWND hwndFocus, LPARAM lParam);
 	LRESULT OnPinItemChanged(LPNMHDR pnmh);
 	void Apply();
 	void LoadProperties(bool reload = true);

@@ -15,8 +15,8 @@ public:
 		IDD = IDD_DIALOG_GOTO
 	};
 
+	BOOL OnInitDialog(HWND hwndFocus, LPARAM lParam);
 	LRESULT OnCloseCmd(WORD wNotifyCode, WORD wID, HWND hWndCtl);
-	LRESULT OnInitDialog(HWND hwndFocus, LPARAM lParam);
 
 private:
 	HWND m_hedit;

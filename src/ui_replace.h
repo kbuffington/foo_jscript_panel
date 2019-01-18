@@ -31,13 +31,13 @@ public:
 		IDD = IDD_DIALOG_REPLACE
 	};
 
+	BOOL OnInitDialog(HWND hwndFocus, LPARAM lParam);
 	CHARRANGE GetSelection();
 	LRESULT OnCancel(WORD wNotifyCode, WORD wID, HWND hWndCtl);
 	LRESULT OnEditFindWhatEnChange(WORD wNotifyCode, WORD wID, HWND hWndCtl);
 	LRESULT OnEditReplaceEnChange(WORD wNotifyCode, WORD wID, HWND hWndCtl);
 	LRESULT OnFindNext(WORD wNotifyCode, WORD wID, HWND hWndCtl);
 	LRESULT OnFlagCommand(WORD wNotifyCode, WORD wID, HWND hWndCtl);
-	LRESULT OnInitDialog(HWND hwndFocus, LPARAM lParam);
 	LRESULT OnReplace(WORD wNotifyCode, WORD wID, HWND hWndCtl);
 	LRESULT OnReplaceall(WORD wNotifyCode, WORD wID, HWND hWndCtl);
 	void OnFinalMessage(HWND hWnd);

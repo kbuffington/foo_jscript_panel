@@ -18,7 +18,7 @@ BOOL CDialogPref::OnInitDialog(HWND hwndFocus, LPARAM lParam)
 	m_props.SetColumnWidth(1, 310);
 	LoadProps();
 
-	return TRUE; // set focus to default control
+	return TRUE;
 }
 
 HWND CDialogPref::get_wnd()
@@ -26,7 +26,28 @@ HWND CDialogPref::get_wnd()
 	return m_hWnd;
 }
 
-LRESULT CDialogPref::OnPropNMDblClk(LPNMHDR pnmh)
+LRESULT CDialogPref::OnExportBnClicked(WORD wNotifyCode, WORD wID, HWND hWndCtl)
+{
+	pfc::string8_fast filename;
+	if (uGetOpenFileName(m_hWnd, "Configuration files|*.cfg", 0, "cfg", "Save as", NULL, filename, TRUE))
+	{
+		g_sci_prop_sets.export_to_file(filename);
+	}
+	return 0;
+}
+
+LRESULT CDialogPref::OnImportBnClicked(WORD wNotifyCode, WORD wID, HWND hWndCtl)
+{
+	pfc::string8_fast filename;
+	if (uGetOpenFileName(m_hWnd, "Configuration files|*.cfg|All files|*.*", 0, "cfg", "Import from", NULL, filename, FALSE))
+	{
+		g_sci_prop_sets.import_from_file(filename);
+	}
+	LoadProps();
+	return 0;
+}
+
+LRESULT CDialogPref::OnPropDblClk(LPNMHDR pnmh)
 {
 	//for ListView - (LPNMITEMACTIVATE)pnmh
 	//for StatusBar	- (LPNMMOUSE)pnmh
@@ -64,7 +85,6 @@ LRESULT CDialogPref::OnPropNMDblClk(LPNMHDR pnmh)
 			}
 		}
 	}
-
 	return 0;
 }
 
@@ -93,38 +113,7 @@ void CDialogPref::LoadProps(bool reset)
 		conv.convert(prop_sets[i].val);
 		m_props.AddItem(i, 1, conv);
 	}
-
-	OnChanged();
-}
-
-void CDialogPref::OnButtonExportBnClicked(WORD wNotifyCode, WORD wID, HWND hWndCtl)
-{
-	pfc::string8_fast filename;
-	if (uGetOpenFileName(m_hWnd, "Configuration files|*.cfg", 0, "cfg", "Save as", NULL, filename, TRUE))
-	{
-		g_sci_prop_sets.export_to_file(filename);
-	}
-}
-
-void CDialogPref::OnButtonImportBnClicked(WORD wNotifyCode, WORD wID, HWND hWndCtl)
-{
-	pfc::string8_fast filename;
-	if (uGetOpenFileName(m_hWnd, "Configuration files|*.cfg|All files|*.*", 0, "cfg", "Import from", NULL, filename, FALSE))
-	{
-		g_sci_prop_sets.import_from_file(filename);
-	}
-
-	LoadProps();
-}
-
-void CDialogPref::OnChanged()
-{
 	m_callback->on_state_changed();
-}
-
-void CDialogPref::OnEditChange(WORD, WORD, HWND)
-{
-	OnChanged();
 }
 
 void CDialogPref::uGetItemText(int nItem, int nSubItem, pfc::string_base& out)
@@ -136,7 +125,7 @@ void CDialogPref::uGetItemText(int nItem, int nSubItem, pfc::string_base& out)
 
 void CDialogPref::apply()
 {
-	OnChanged();
+	m_callback->on_state_changed();
 }
 
 void CDialogPref::reset()

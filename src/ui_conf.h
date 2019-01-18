@@ -36,7 +36,7 @@ public:
 		COMMAND_ID_HANDLER_EX(ID_FILE_IMPORT, OnFileImport)
 		COMMAND_ID_HANDLER_EX(ID_FILE_EXPORT, OnFileExport)
 		COMMAND_ID_HANDLER_EX(ID_EDIT_RESET, OnEditReset)
-		COMMAND_RANGE_HANDLER_EX(1000, 2000, OnSample)
+		COMMAND_RANGE_HANDLER_EX(1000, 2000, OnSamples)
 		CHAIN_MSG_MAP(CDialogResize<CDialogConf>)
 		REFLECT_NOTIFICATIONS()
 	END_MSG_MAP()
@@ -46,14 +46,14 @@ public:
 		IDD = IDD_DIALOG_CONF
 	};
 
+	BOOL OnInitDialog(HWND hwndFocus, LPARAM lParam);
 	LRESULT OnCloseCmd(WORD wNotifyCode, WORD wID, HWND hWndCtl);
 	LRESULT OnEditReset(WORD wNotifyCode, WORD wID, HWND hWndCtl);
 	LRESULT OnFileSave(WORD wNotifyCode, WORD wID, HWND hWndCtl);
 	LRESULT OnFileImport(WORD wNotifyCode, WORD wID, HWND hWndCtl);
 	LRESULT OnFileExport(WORD wNotifyCode, WORD wID, HWND hWndCtl);
-	LRESULT OnInitDialog(HWND hwndFocus, LPARAM lParam);
 	LRESULT OnNotify(int idCtrl, LPNMHDR pnmh);
-	LRESULT OnSample(WORD wNotifyCode, WORD wID, HWND hWndCtl);
+	LRESULT OnSamples(WORD wNotifyCode, WORD wID, HWND hWndCtl);
 	LRESULT OnUwmFindTextChanged(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 	LRESULT OnUwmKeyDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 	static bool FindNext(HWND hWnd, HWND hWndEdit, unsigned flags, const char* which);

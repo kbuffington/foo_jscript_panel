@@ -4,7 +4,21 @@
 CDialogProperty::CDialogProperty(js_panel_window* p_parent) : m_parent(p_parent) {}
 CDialogProperty::~CDialogProperty() {}
 
-LRESULT CDialogProperty::OnClearallBnClicked(WORD wNotifyCode, WORD wID, HWND hWndCtl)
+BOOL CDialogProperty::OnInitDialog(HWND hwndFocus, LPARAM lParam)
+{
+	DlgResize_Init();
+
+	// Subclassing
+	m_properties.SubclassWindow(GetDlgItem(IDC_LIST_PROPERTIES));
+	m_properties.ModifyStyle(0, LBS_SORT | LBS_HASSTRINGS);
+	m_properties.SetExtendedListStyle(PLS_EX_SORTED | PLS_EX_XPLOOK);
+
+	LoadProperties();
+
+	return FALSE;
+}
+
+LRESULT CDialogProperty::OnClearBnClicked(WORD wNotifyCode, WORD wID, HWND hWndCtl)
 {
 	m_dup_prop_map.remove_all();
 	m_properties.ResetContent();
@@ -82,20 +96,6 @@ LRESULT CDialogProperty::OnImportBnClicked(WORD wNotifyCode, WORD wID, HWND hWnd
 		catch (...) {}
 	}
 	return 0;
-}
-
-LRESULT CDialogProperty::OnInitDialog(HWND hwndFocus, LPARAM lParam)
-{
-	DlgResize_Init();
-
-	// Subclassing
-	m_properties.SubclassWindow(GetDlgItem(IDC_LIST_PROPERTIES));
-	m_properties.ModifyStyle(0, LBS_SORT | LBS_HASSTRINGS);
-	m_properties.SetExtendedListStyle(PLS_EX_SORTED | PLS_EX_XPLOOK);
-
-	LoadProperties();
-
-	return FALSE;
 }
 
 LRESULT CDialogProperty::OnPinItemChanged(LPNMHDR pnmh)

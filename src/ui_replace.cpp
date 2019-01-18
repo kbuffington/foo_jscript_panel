@@ -4,6 +4,15 @@
 
 CDialogReplace::CDialogReplace(HWND p_hedit) : m_hedit(p_hedit), m_flags(0), m_havefound(false) {}
 
+BOOL CDialogReplace::OnInitDialog(HWND hwndFocus, LPARAM lParam)
+{
+	modeless_dialog_manager::g_add(m_hWnd);
+	DlgResize_Init();
+	m_replace.SubclassWindow(GetDlgItem(IDC_EDIT_FINDWHAT), m_hWnd);
+	m_find.SubclassWindow(GetDlgItem(IDC_EDIT_REPLACE), m_hWnd);
+	return TRUE;
+}
+
 CHARRANGE CDialogReplace::GetSelection()
 {
 	CHARRANGE cr;
@@ -71,15 +80,6 @@ LRESULT CDialogReplace::OnFlagCommand(WORD wNotifyCode, WORD wID, HWND hWndCtl)
 		m_flags &= ~flag;
 
 	return 0;
-}
-
-LRESULT CDialogReplace::OnInitDialog(HWND hwndFocus, LPARAM lParam)
-{
-	modeless_dialog_manager::g_add(m_hWnd);
-	DlgResize_Init();
-	m_replace.SubclassWindow(GetDlgItem(IDC_EDIT_FINDWHAT), m_hWnd);
-	m_find.SubclassWindow(GetDlgItem(IDC_EDIT_REPLACE), m_hWnd);
-	return TRUE; // set focus to default control
 }
 
 LRESULT CDialogReplace::OnReplace(WORD wNotifyCode, WORD wID, HWND hWndCtl)

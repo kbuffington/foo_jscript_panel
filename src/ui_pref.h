@@ -11,9 +11,9 @@ public:
 
 	BEGIN_MSG_MAP(CDialogPref)
 		MSG_WM_INITDIALOG(OnInitDialog)
-		COMMAND_HANDLER_EX(IDC_EXPORT, BN_CLICKED, OnButtonExportBnClicked)
-		COMMAND_HANDLER_EX(IDC_IMPORT, BN_CLICKED, OnButtonImportBnClicked)
-		NOTIFY_HANDLER_EX(IDC_LIST_EDITOR_PROP, NM_DBLCLK, OnPropNMDblClk)
+		COMMAND_HANDLER_EX(IDC_EXPORT, BN_CLICKED, OnExportBnClicked)
+		COMMAND_HANDLER_EX(IDC_IMPORT, BN_CLICKED, OnImportBnClicked)
+		NOTIFY_HANDLER_EX(IDC_LIST_EDITOR_PROP, NM_DBLCLK, OnPropDblClk)
 	END_MSG_MAP()
 
 	enum
@@ -23,13 +23,11 @@ public:
 
 	BOOL OnInitDialog(HWND hwndFocus, LPARAM lParam);
 	HWND get_wnd();
-	LRESULT OnPropNMDblClk(LPNMHDR pnmh);
+	LRESULT OnExportBnClicked(WORD wNotifyCode, WORD wID, HWND hWndCtl);
+	LRESULT OnImportBnClicked(WORD wNotifyCode, WORD wID, HWND hWndCtl);
+	LRESULT OnPropDblClk(LPNMHDR pnmh);
 	t_size get_state();
 	void LoadProps(bool reset = false);
-	void OnButtonExportBnClicked(WORD wNotifyCode, WORD wID, HWND hWndCtl);
-	void OnButtonImportBnClicked(WORD wNotifyCode, WORD wID, HWND hWndCtl);
-	void OnChanged();
-	void OnEditChange(WORD, WORD, HWND);
 	void uGetItemText(int nItem, int nSubItem, pfc::string_base& out);
 	void apply();
 	void reset();
