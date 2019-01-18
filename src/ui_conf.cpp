@@ -19,46 +19,27 @@ BOOL CDialogConf::OnInitDialog(HWND hwndFocus, LPARAM lParam)
 {
 	m_menu = GetMenu();
 
+	pfc::string8_fast base = helpers::get_fb2k_component_path();
+
 	// Generate samples menu
 	HMENU samples = CreateMenu();
 
-	auto list = [](const char* path, bool files, pfc::string_list_impl& out)
-	{
-		abort_callback_dummy abort;
-		pfc::string8_fast folder;
-		filesystem::g_get_canonical_path(path, folder);
-
-		try
-		{
-			if (files)
-			{
-				foobar2000_io::listFiles(folder, out, abort);
-			}
-			else
-			{
-				foobar2000_io::listDirectories(folder, out, abort);
-			}
-		}
-		catch (...) {}
-	};
-
-	pfc::string8_fast base = helpers::get_fb2k_component_path();
-	base << "samples\\";
-
 	pfc::string_list_impl folders;
-	list(base, false, folders);
+	helpers::list(base + "samples\\", false, folders);
 
-	t_size count = folders.get_count();
+	t_size i, j, count;
+	
+	count = folders.get_count();
 
-	for (t_size i = 0; i < count; ++i)
+	for (i = 0; i < count; ++i)
 	{
 		HMENU sub = CreatePopupMenu();
 		pfc::string8_fast folder = folders[i];
 
 		pfc::string_list_impl sub_files;
-		list(folder, true, sub_files);
+		helpers::list(folder, true, sub_files);
 
-		for (t_size j = 0; j < sub_files.get_count(); ++j)
+		for (j = 0; j < sub_files.get_count(); ++j)
 		{
 			m_samples.add_item(sub_files[j]);
 			pfc::string8_fast display = pfc::string_filename(sub_files[j]);
@@ -72,11 +53,27 @@ BOOL CDialogConf::OnInitDialog(HWND hwndFocus, LPARAM lParam)
 
 	m_menu.AppendMenu(MF_STRING | MF_POPUP, (UINT_PTR)samples, L"Samples");
 
-	// Generate help menu
-	//HMENU help = CreateMenu();
-	//uAppendMenu(help, MF_STRING, ID_HELP_BEGIN, "blah");
+	// Generate docs menu
+	HMENU docs = CreateMenu();
 
-	//m_menu.AppendMenu(MF_STRING | MF_POPUP, (UINT_PTR)help, L"Help");
+	helpers::list(base + "docs\\", true, m_docs);
+	count = m_docs.get_count();
+
+	for (i = 0; i < count; ++i)
+	{
+		pfc::string8_fast display;
+		uFixAmpersandChars_v2(pfc::string_filename(m_docs[i]), display);
+		uAppendMenu(docs, MF_STRING, ID_DOCS_BEGIN + i, display);
+	}
+
+	m_menu.AppendMenu(MF_STRING | MF_POPUP, (UINT_PTR)docs, L"Docs");
+
+	// Generate help menu
+	HMENU help = CreateMenu();
+	uAppendMenu(help, MF_STRING, ID_HELP_BEGIN, "Wiki");
+	uAppendMenu(help, MF_STRING, ID_HELP_BEGIN + 1, "Releases");
+	uAppendMenu(help, MF_STRING, ID_HELP_BEGIN + 2, "Report an issue");
+	m_menu.AppendMenu(MF_STRING | MF_POPUP, (UINT_PTR)help , L"Help");
 
 	// Set caption text
 	uSetWindowText(m_hWnd, m_caption);
@@ -189,6 +186,14 @@ LRESULT CDialogConf::OnCloseCmd(WORD wNotifyCode, WORD wID, HWND hWndCtl)
 	return 0;
 }
 
+LRESULT CDialogConf::OnDocs(WORD wNotifyCode, WORD wID, HWND hWndCtl)
+{
+	pfc::string8_fast tmp = file_path_display(m_docs[wID - ID_DOCS_BEGIN]);
+	string_wide_from_utf8_fast path(tmp);
+	ShellExecute(nullptr, _T("open"), path, nullptr, nullptr, SW_SHOW);
+	return 0;
+}
+
 LRESULT CDialogConf::OnEditReset(WORD wNotifyCode, WORD wID, HWND hWndCtl)
 {
 	HWND combo = GetDlgItem(IDC_COMBO_ENGINE);
@@ -235,7 +240,13 @@ LRESULT CDialogConf::OnFileExport(WORD wNotifyCode, WORD wID, HWND hWndCtl)
 
 LRESULT CDialogConf::OnHelp(WORD wNotifyCode, WORD wID, HWND hWndCtl)
 {
-	
+	const wchar_t* links[] = {
+		_T("https://github.com/marc2k3/foo_jscript_panel/wiki"),
+		_T("https://github.com/marc2k3/foo_jscript_panel/releases"),
+		_T("https://github.com/marc2k3/foo_jscript_panel/issues")
+	};
+
+	ShellExecute(nullptr, _T("open"), links[wID - ID_HELP_BEGIN], nullptr, nullptr, SW_SHOW);
 	return 0;
 }
 

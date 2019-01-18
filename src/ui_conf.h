@@ -37,6 +37,7 @@ public:
 		COMMAND_ID_HANDLER_EX(ID_FILE_EXPORT, OnFileExport)
 		COMMAND_ID_HANDLER_EX(ID_EDIT_RESET, OnEditReset)
 		COMMAND_RANGE_HANDLER_EX(ID_SAMPLES_BEGIN, ID_SAMPLES_END, OnSamples)
+		COMMAND_RANGE_HANDLER_EX(ID_DOCS_BEGIN, ID_DOCS_END, OnDocs)
 		COMMAND_RANGE_HANDLER_EX(ID_HELP_BEGIN, ID_HELP_END, OnHelp)
 		CHAIN_MSG_MAP(CDialogResize<CDialogConf>)
 		REFLECT_NOTIFICATIONS()
@@ -49,6 +50,7 @@ public:
 
 	BOOL OnInitDialog(HWND hwndFocus, LPARAM lParam);
 	LRESULT OnCloseCmd(WORD wNotifyCode, WORD wID, HWND hWndCtl);
+	LRESULT OnDocs(WORD wNotifyCode, WORD wID, HWND hWndCtl);
 	LRESULT OnEditReset(WORD wNotifyCode, WORD wID, HWND hWndCtl);
 	LRESULT OnFileSave(WORD wNotifyCode, WORD wID, HWND hWndCtl);
 	LRESULT OnFileImport(WORD wNotifyCode, WORD wID, HWND hWndCtl);
@@ -72,6 +74,7 @@ private:
 	js_panel_window* m_parent;
 	pfc::string8 m_caption;
 	pfc::string8 m_lastSearchText;
+	pfc::string_list_impl m_docs;
 	pfc::string_list_impl m_samples;
 	t_size m_lastFlags;
 };

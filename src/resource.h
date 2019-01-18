@@ -73,5 +73,8 @@
 #define ID_SAMPLES_BEGIN                300
 #define ID_SAMPLES_END                  399
 
-#define ID_HELP_BEGIN                   400
-#define ID_HELP_END                     499
+#define ID_DOCS_BEGIN                   400
+#define ID_DOCS_END                     499
+
+#define ID_HELP_BEGIN                   500
+#define ID_HELP_END                     599

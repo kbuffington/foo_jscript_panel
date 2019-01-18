@@ -740,6 +740,26 @@ namespace helpers
 		}
 	}
 
+	void list(const char* path, bool files, pfc::string_list_impl& out)
+	{
+		abort_callback_dummy abort;
+		pfc::string8_fast folder;
+		filesystem::g_get_canonical_path(path, folder);
+
+		try
+		{
+			if (files)
+			{
+				foobar2000_io::listFiles(folder, out, abort);
+			}
+			else
+			{
+				foobar2000_io::listDirectories(folder, out, abort);
+			}
+		}
+		catch (...) {}
+	}
+
 	wchar_t* make_sort_string(const char* in)
 	{
 		wchar_t* out = new wchar_t[estimate_utf8_to_wide(in) + 1];
