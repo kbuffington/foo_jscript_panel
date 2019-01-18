@@ -45,7 +45,7 @@
 //ui_pref
 #define IDD_DIALOG_PREF                 160
 #define IDC_LIST_EDITOR_PROP            161
-#define IDC_PRESET                      162
+#define IDC_PRESETS                     162
 
 //ui_property
 #define IDD_DIALOG_PROPERTY             170

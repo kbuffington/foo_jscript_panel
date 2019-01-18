@@ -43,12 +43,12 @@ LRESULT CDialogPref::OnImportBnClicked(WORD wNotifyCode, WORD wID, HWND hWndCtl)
 	if (uGetOpenFileName(m_hWnd, "Configuration files|*.cfg|All files|*.*", 0, "cfg", "Import from", NULL, filename, FALSE))
 	{
 		g_sci_prop_sets.import(helpers::read_file(filename));
+		LoadProps();
 	}
-	LoadProps();
 	return 0;
 }
 
-LRESULT CDialogPref::OnPresetBnClicked(WORD wNotifyCode, WORD wID, HWND hWndCtl)
+LRESULT CDialogPref::OnPresetsBnClicked(WORD wNotifyCode, WORD wID, HWND hWndCtl)
 {
 	HMENU menu = CreatePopupMenu();
 
@@ -57,7 +57,7 @@ LRESULT CDialogPref::OnPresetBnClicked(WORD wNotifyCode, WORD wID, HWND hWndCtl)
 	uAppendMenu(menu, MF_STRING, 3, "Ruby Blue");
 
 	RECT rc;
-	::GetWindowRect(::GetDlgItem(m_hWnd, IDC_PRESET), &rc);
+	::GetWindowRect(::GetDlgItem(m_hWnd, IDC_PRESETS), &rc);
 	int idx = TrackPopupMenu(menu, TPM_RIGHTBUTTON | TPM_NONOTIFY | TPM_RETURNCMD, rc.left, rc.bottom, 0, m_hWnd, 0);
 	if (idx > 0)
 	{

@@ -30,8 +30,6 @@ public:
 		MSG_WM_NOTIFY(OnNotify)
 		MESSAGE_HANDLER(UWM_KEYDOWN, OnUwmKeyDown)
 		MESSAGE_HANDLER(UWM_FIND_TEXT_CHANGED, OnUwmFindTextChanged)
-		COMMAND_RANGE_HANDLER_EX(IDOK, IDCANCEL, OnCloseCmd)
-		COMMAND_ID_HANDLER_EX(IDC_APPLY, OnCloseCmd)
 		COMMAND_ID_HANDLER_EX(ID_FILE_APPLY, OnFileSave)
 		COMMAND_ID_HANDLER_EX(ID_FILE_IMPORT, OnFileImport)
 		COMMAND_ID_HANDLER_EX(ID_FILE_EXPORT, OnFileExport)
@@ -39,6 +37,8 @@ public:
 		COMMAND_RANGE_HANDLER_EX(ID_SAMPLES_BEGIN, ID_SAMPLES_END, OnSamples)
 		COMMAND_RANGE_HANDLER_EX(ID_DOCS_BEGIN, ID_DOCS_END, OnDocs)
 		COMMAND_RANGE_HANDLER_EX(ID_HELP_BEGIN, ID_HELP_END, OnHelp)
+		COMMAND_RANGE_HANDLER_EX(IDOK, IDCANCEL, OnCloseCmd)
+		COMMAND_ID_HANDLER_EX(IDC_APPLY, OnCloseCmd)
 		CHAIN_MSG_MAP(CDialogResize<CDialogConf>)
 		REFLECT_NOTIFICATIONS()
 	END_MSG_MAP()
@@ -60,8 +60,8 @@ public:
 	LRESULT OnSamples(WORD wNotifyCode, WORD wID, HWND hWndCtl);
 	LRESULT OnUwmFindTextChanged(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 	LRESULT OnUwmKeyDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-	static bool FindNext(HWND hWnd, HWND hWndEdit, unsigned flags, const char* which);
-	static bool FindPrevious(HWND hWnd, HWND hWndEdit, unsigned flags, const char* which);
+	static bool FindNext(HWND hWnd, HWND hWndEdit, t_size flags, const char* which);
+	static bool FindPrevious(HWND hWnd, HWND hWndEdit, t_size flags, const char* which);
 	static bool FindResult(HWND hWnd, HWND hWndEdit, int pos, const char* which);
 	void Apply();
 	void OpenFindDialog();
@@ -72,8 +72,8 @@ private:
 	CMenu m_menu;
 	CScriptEditorCtrl m_editorctrl;
 	js_panel_window* m_parent;
-	pfc::string8 m_caption;
-	pfc::string8 m_lastSearchText;
+	pfc::string8_fast m_caption;
+	pfc::string8_fast m_lastSearchText;
 	pfc::string_list_impl m_docs;
 	pfc::string_list_impl m_samples;
 	t_size m_lastFlags;

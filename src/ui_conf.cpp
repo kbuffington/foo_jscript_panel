@@ -28,7 +28,7 @@ BOOL CDialogConf::OnInitDialog(HWND hwndFocus, LPARAM lParam)
 	helpers::list(base + "samples\\", false, folders);
 
 	t_size i, j, count;
-	
+
 	count = folders.get_count();
 
 	for (i = 0; i < count; ++i)
@@ -275,6 +275,13 @@ LRESULT CDialogConf::OnSamples(WORD wNotifyCode, WORD wID, HWND hWndCtl)
 	return 0;
 }
 
+LRESULT CDialogConf::OnUwmFindTextChanged(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+{
+	m_lastFlags = wParam;
+	m_lastSearchText = reinterpret_cast<const char*>(lParam);
+	return 0;
+}
+
 LRESULT CDialogConf::OnUwmKeyDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
 	int modifiers = (IsKeyPressed(VK_SHIFT) ? SCMOD_SHIFT : 0) | (IsKeyPressed(VK_CONTROL) ? SCMOD_CTRL : 0) | (IsKeyPressed(VK_MENU) ? SCMOD_ALT : 0);
@@ -348,14 +355,7 @@ LRESULT CDialogConf::OnUwmKeyDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL&
 	return 0;
 }
 
-LRESULT CDialogConf::OnUwmFindTextChanged(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
-{
-	m_lastFlags = wParam;
-	m_lastSearchText = reinterpret_cast<const char*>(lParam);
-	return 0;
-}
-
-bool CDialogConf::FindNext(HWND hWnd, HWND hWndEdit, unsigned flags, const char* which)
+bool CDialogConf::FindNext(HWND hWnd, HWND hWndEdit, t_size flags, const char* which)
 {
 	::SendMessage(::GetAncestor(hWndEdit, GA_PARENT), UWM_FIND_TEXT_CHANGED, flags, reinterpret_cast<LPARAM>(which));
 
@@ -365,7 +365,7 @@ bool CDialogConf::FindNext(HWND hWnd, HWND hWndEdit, unsigned flags, const char*
 	return FindResult(hWnd, hWndEdit, pos, which);
 }
 
-bool CDialogConf::FindPrevious(HWND hWnd, HWND hWndEdit, unsigned flags, const char* which)
+bool CDialogConf::FindPrevious(HWND hWnd, HWND hWndEdit, t_size flags, const char* which)
 {
 	::SendMessage(::GetAncestor(hWndEdit, GA_PARENT), UWM_FIND_TEXT_CHANGED, flags, reinterpret_cast<LPARAM>(which));
 
@@ -383,7 +383,7 @@ bool CDialogConf::FindResult(HWND hWnd, HWND hWndEdit, int pos, const char* whic
 		return true;
 	}
 
-	pfc::string8 buff = "Cannot find \"";
+	pfc::string8_fast buff = "Cannot find \"";
 	buff += which;
 	buff += "\"";
 	uMessageBox(hWnd, buff.get_ptr(), JSP_NAME, MB_ICONINFORMATION | MB_SETFOREGROUND);
@@ -407,7 +407,7 @@ void CDialogConf::Apply()
 	m_parent->get_grab_focus() = uButton_GetCheck(m_hWnd, IDC_CHECK_GRABFOCUS);
 	m_parent->get_pseudo_transparent() = uButton_GetCheck(m_hWnd, IDC_CHECK_PSEUDO_TRANSPARENT);
 
-	// Wndow position
+	// Window position
 	GetWindowPlacement(&m_parent->get_windowplacement());
 
 	// Save point
@@ -418,7 +418,6 @@ void CDialogConf::OpenFindDialog()
 {
 	if (!m_dlgfind)
 	{
-		// Create it on request.
 		m_dlgfind = new CDialogFind(GetDlgItem(IDC_EDIT));
 		m_dlgfind->Create(m_hWnd);
 	}
