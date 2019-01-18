@@ -8,7 +8,7 @@
 
 #define IDR_SCRIPT                      100
 #define IDR_API                         101
-#define IDAPPLY                         102
+#define IDC_APPLY                       102
 #define IDC_IMPORT                      103
 #define IDC_EXPORT                      104
 

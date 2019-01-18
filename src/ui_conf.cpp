@@ -62,7 +62,7 @@ BOOL CDialogConf::OnInitDialog(HWND hwndFocus, LPARAM lParam)
 		{
 			m_samples.add_item(sub_files[j]);
 			pfc::string8_fast display = pfc::string_filename(sub_files[j]);
-			uAppendMenu(sub, MF_STRING, 999 + m_samples.get_count(), display);
+			uAppendMenu(sub, MF_STRING, 199 + m_samples.get_count(), display);
 		}
 
 		pfc::string_list_impl path_split;
@@ -158,7 +158,7 @@ LRESULT CDialogConf::OnCloseCmd(WORD wNotifyCode, WORD wID, HWND hWndCtl)
 		EndDialog(IDOK);
 		break;
 
-	case IDAPPLY:
+	case IDC_APPLY:
 		Apply();
 		break;
 
@@ -248,7 +248,7 @@ LRESULT CDialogConf::OnNotify(int idCtrl, LPNMHDR pnmh)
 
 LRESULT CDialogConf::OnSamples(WORD wNotifyCode, WORD wID, HWND hWndCtl)
 {
-	m_editorctrl.SetContent(helpers::read_file(file_path_display(m_samples[wID - 1000])));
+	m_editorctrl.SetContent(helpers::read_file(file_path_display(m_samples[wID - 200])));
 	return 0;
 }
 

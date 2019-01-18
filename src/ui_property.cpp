@@ -34,7 +34,7 @@ LRESULT CDialogProperty::OnCloseCmd(WORD wNotifyCode, WORD wID, HWND hWndCtl)
 		Apply();
 		break;
 
-	case IDAPPLY:
+	case IDC_APPLY:
 		Apply();
 		return 0;
 	}
