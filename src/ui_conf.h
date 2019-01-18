@@ -36,7 +36,8 @@ public:
 		COMMAND_ID_HANDLER_EX(ID_FILE_IMPORT, OnFileImport)
 		COMMAND_ID_HANDLER_EX(ID_FILE_EXPORT, OnFileExport)
 		COMMAND_ID_HANDLER_EX(ID_EDIT_RESET, OnEditReset)
-		COMMAND_RANGE_HANDLER_EX(300, 399, OnSamples)
+		COMMAND_RANGE_HANDLER_EX(ID_SAMPLES_BEGIN, ID_SAMPLES_END, OnSamples)
+		COMMAND_RANGE_HANDLER_EX(ID_HELP_BEGIN, ID_HELP_END, OnHelp)
 		CHAIN_MSG_MAP(CDialogResize<CDialogConf>)
 		REFLECT_NOTIFICATIONS()
 	END_MSG_MAP()
@@ -52,6 +53,7 @@ public:
 	LRESULT OnFileSave(WORD wNotifyCode, WORD wID, HWND hWndCtl);
 	LRESULT OnFileImport(WORD wNotifyCode, WORD wID, HWND hWndCtl);
 	LRESULT OnFileExport(WORD wNotifyCode, WORD wID, HWND hWndCtl);
+	LRESULT OnHelp(WORD wNotifyCode, WORD wID, HWND hWndCtl);
 	LRESULT OnNotify(int idCtrl, LPNMHDR pnmh);
 	LRESULT OnSamples(WORD wNotifyCode, WORD wID, HWND hWndCtl);
 	LRESULT OnUwmFindTextChanged(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);

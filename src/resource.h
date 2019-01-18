@@ -69,3 +69,9 @@
 #define ID_FILE_IMPORT                  203
 #define ID_FILE_EXPORT                  204
 #define ID_EDIT_RESET                   205
+
+#define ID_SAMPLES_BEGIN                300
+#define ID_SAMPLES_END                  399
+
+#define ID_HELP_BEGIN                   400
+#define ID_HELP_END                     499

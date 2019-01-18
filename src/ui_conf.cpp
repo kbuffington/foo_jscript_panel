@@ -17,9 +17,9 @@ CDialogConf::~CDialogConf()
 
 BOOL CDialogConf::OnInitDialog(HWND hwndFocus, LPARAM lParam)
 {
-	// Generate samples menu
 	m_menu = GetMenu();
 
+	// Generate samples menu
 	HMENU samples = CreateMenu();
 
 	auto list = [](const char* path, bool files, pfc::string_list_impl& out)
@@ -62,7 +62,7 @@ BOOL CDialogConf::OnInitDialog(HWND hwndFocus, LPARAM lParam)
 		{
 			m_samples.add_item(sub_files[j]);
 			pfc::string8_fast display = pfc::string_filename(sub_files[j]);
-			uAppendMenu(sub, MF_STRING, 299 + m_samples.get_count(), display);
+			uAppendMenu(sub, MF_STRING, ID_SAMPLES_BEGIN + m_samples.get_count() - 1, display);
 		}
 
 		pfc::string_list_impl path_split;
@@ -71,6 +71,12 @@ BOOL CDialogConf::OnInitDialog(HWND hwndFocus, LPARAM lParam)
 	}
 
 	m_menu.AppendMenu(MF_STRING | MF_POPUP, (UINT_PTR)samples, L"Samples");
+
+	// Generate help menu
+	//HMENU help = CreateMenu();
+	//uAppendMenu(help, MF_STRING, ID_HELP_BEGIN, "blah");
+
+	//m_menu.AppendMenu(MF_STRING | MF_POPUP, (UINT_PTR)help, L"Help");
 
 	// Set caption text
 	uSetWindowText(m_hWnd, m_caption);
@@ -227,6 +233,12 @@ LRESULT CDialogConf::OnFileExport(WORD wNotifyCode, WORD wID, HWND hWndCtl)
 	return 0;
 }
 
+LRESULT CDialogConf::OnHelp(WORD wNotifyCode, WORD wID, HWND hWndCtl)
+{
+	
+	return 0;
+}
+
 LRESULT CDialogConf::OnNotify(int idCtrl, LPNMHDR pnmh)
 {
 	pfc::string8_fast caption = m_caption;
@@ -248,7 +260,7 @@ LRESULT CDialogConf::OnNotify(int idCtrl, LPNMHDR pnmh)
 
 LRESULT CDialogConf::OnSamples(WORD wNotifyCode, WORD wID, HWND hWndCtl)
 {
-	m_editorctrl.SetContent(helpers::read_file(file_path_display(m_samples[wID - 300])));
+	m_editorctrl.SetContent(helpers::read_file(file_path_display(m_samples[wID - ID_SAMPLES_BEGIN])));
 	return 0;
 }
 
