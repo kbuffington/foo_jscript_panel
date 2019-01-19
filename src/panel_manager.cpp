@@ -242,7 +242,7 @@ void my_config_object_notify::on_watched_object_changed(const config_object::ptr
 	panel_manager::instance().post_msg_to_all(msg, TO_VARIANT_BOOL(boolval));
 }
 
-unsigned my_playlist_callback_static::get_flags()
+t_size my_playlist_callback_static::get_flags()
 {
 	return flag_on_items_added | flag_on_items_reordered | flag_on_items_removed |
 		flag_on_items_selection_change | flag_on_item_focus_change | flag_on_item_ensure_visible |

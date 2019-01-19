@@ -595,7 +595,7 @@ STDMETHODIMP FbMetadbHandleList::Insert(UINT index, IFbMetadbHandle* handle)
 	metadb_handle* ptr = NULL;
 	handle->get__ptr((void**)&ptr);
 	if (!ptr) return E_INVALIDARG;
-	
+
 	m_handles.insert_item(ptr, index);
 	return S_OK;
 }
@@ -2156,7 +2156,7 @@ STDMETHODIMP FbUtils::GetDSPPresets(BSTR* p)
 
 		j.push_back({
 			{ "active", api->get_selected_preset() == i },
-			{ "name",  name.get_ptr() }
+			{ "name", name.get_ptr() }
 		});
 	}
 	*p = SysAllocString(string_wide_from_utf8_fast((j.dump()).c_str()));
@@ -3062,17 +3062,13 @@ STDMETHODIMP GdiBitmap::ApplyAlpha(BYTE alpha, IGdiBitmap** pp)
 	Gdiplus::Graphics g(out);
 	Gdiplus::ImageAttributes ia;
 	Gdiplus::ColorMatrix cm = { 0.0 };
-	Gdiplus::Rect rc;
+	Gdiplus::Rect rect(0, 0, width, height);
 
 	cm.m[0][0] = cm.m[1][1] = cm.m[2][2] = cm.m[4][4] = 1.0;
 	cm.m[3][3] = static_cast<float>(alpha) / 255;
 	ia.SetColorMatrix(&cm);
 
-	rc.X = rc.Y = 0;
-	rc.Width = width;
-	rc.Height = height;
-
-	g.DrawImage(m_ptr, rc, 0, 0, width, height, Gdiplus::UnitPixel, &ia);
+	g.DrawImage(m_ptr, rect, 0, 0, width, height, Gdiplus::UnitPixel, &ia);
 
 	*pp = new com_object_impl_t<GdiBitmap>(out);
 	return S_OK;
@@ -3109,10 +3105,10 @@ STDMETHODIMP GdiBitmap::ApplyMask(IGdiBitmap* mask, VARIANT_BOOL* p)
 	const int height = rect.Height;
 	const int size = width * height;
 	//const int size_threshold = 512;
-	t_uint32* p_mask = reinterpret_cast<t_uint32 *>(bmpdata_mask.Scan0);
-	t_uint32* p_dst = reinterpret_cast<t_uint32 *>(bmpdata_dst.Scan0);
-	const t_uint32* p_mask_end = p_mask + rect.Width * rect.Height;
-	t_uint32 alpha;
+	t_size* p_mask = reinterpret_cast<t_size*>(bmpdata_mask.Scan0);
+	t_size* p_dst = reinterpret_cast<t_size*>(bmpdata_dst.Scan0);
+	const t_size* p_mask_end = p_mask + rect.Width * rect.Height;
+	t_size alpha;
 
 	while (p_mask < p_mask_end)
 	{
@@ -3169,17 +3165,17 @@ STDMETHODIMP GdiBitmap::GetColourScheme(UINT count, VARIANT* p)
 
 	if (m_ptr->LockBits(&rect, Gdiplus::ImageLockModeRead, PixelFormat32bppARGB, &bmpdata) != Gdiplus::Ok) return E_POINTER;
 
-	std::map<unsigned, int> color_counters;
-	const unsigned colors_length = bmpdata.Width * bmpdata.Height;
-	const t_uint32* colors = (const t_uint32 *)bmpdata.Scan0;
+	std::map<t_size, int> color_counters;
+	const t_size colors_length = bmpdata.Width * bmpdata.Height;
+	const t_size* colors = (const t_size*)bmpdata.Scan0;
 
-	for (unsigned i = 0; i < colors_length; ++i)
+	for (t_size i = 0; i < colors_length; ++i)
 	{
 		// format: 0xaarrggbb
-		unsigned color = colors[i];
-		unsigned r = (color >> 16) & 0xff;
-		unsigned g = (color >> 8) & 0xff;
-		unsigned b = (color) & 0xff;
+		t_size color = colors[i];
+		BYTE r = (color >> 16) & 0xff;
+		BYTE g = (color >> 8) & 0xff;
+		BYTE b = (color) & 0xff;
 
 		// Round colors
 		r = (r + 16) & 0xffffffe0;
@@ -3196,7 +3192,7 @@ STDMETHODIMP GdiBitmap::GetColourScheme(UINT count, VARIANT* p)
 	m_ptr->UnlockBits(&bmpdata);
 
 	// Sorting
-	using sort_vec_pair_t = std::pair<unsigned, int>;
+	using sort_vec_pair_t = std::pair<t_size, int>;
 	std::vector<sort_vec_pair_t> sort_vec(color_counters.begin(), color_counters.end());
 	count = min(count, sort_vec.size());
 	std::partial_sort(
@@ -3242,16 +3238,16 @@ STDMETHODIMP GdiBitmap::GetColourSchemeJSON(UINT count, BSTR* p)
 	if (bitmap->LockBits(&rect, Gdiplus::ImageLockModeRead, PixelFormat32bppARGB, &bmpdata) != Gdiplus::Ok)
 		return E_POINTER;
 
-	std::map<unsigned, int> colour_counters;
-	const unsigned colours_length = bmpdata.Width * bmpdata.Height;
-	const t_uint32* colours = (const t_uint32 *)bmpdata.Scan0;
+	std::map<t_size, int> colour_counters;
+	const t_size colours_length = bmpdata.Width * bmpdata.Height;
+	const t_size* colours = (const t_size*)bmpdata.Scan0;
 
 	// reduce color set to pass to k-means by rounding colour components to multiples of 8
-	for (unsigned i = 0; i < colours_length; ++i)
+	for (t_size i = 0; i < colours_length; ++i)
 	{
-		unsigned int r = (colours[i] >> 16) & 0xff;
-		unsigned int g = (colours[i] >> 8) & 0xff;
-		unsigned int b = (colours[i] & 0xff);
+		BYTE r = (colours[i] >> 16) & 0xff;
+		BYTE g = (colours[i] >> 8) & 0xff;
+		BYTE b = (colours[i] & 0xff);
 
 		// round colours
 		r = (r + 4) & 0xfffffff8;
@@ -3266,17 +3262,17 @@ STDMETHODIMP GdiBitmap::GetColourSchemeJSON(UINT count, BSTR* p)
 	}
 	bitmap->UnlockBits(&bmpdata);
 
-	std::map<unsigned, int>::iterator it;
+	std::map<t_size, int>::iterator it;
 	std::vector<Point> points;
 	int idx = 0;
 
 	for (it = colour_counters.begin(); it != colour_counters.end(); it++, idx++)
 	{
-		unsigned int r = (it->first >> 16) & 0xff;
-		unsigned int g = (it->first >> 8) & 0xff;
-		unsigned int b = (it->first & 0xff);
+		BYTE r = (it->first >> 16) & 0xff;
+		BYTE g = (it->first >> 8) & 0xff;
+		BYTE b = (it->first & 0xff);
 
-		std::vector<unsigned int> values = { r, g, b };
+		std::vector<t_size> values = { r, g, b };
 		Point p(idx, values, it->second);
 		points.push_back(p);
 	}
@@ -3489,7 +3485,7 @@ STDMETHODIMP GdiGraphics::CalcTextHeight(BSTR str, IGdiFont* font, UINT* p)
 	if (!m_ptr || !p) return E_POINTER;
 
 	HFONT hFont = NULL;
-	font->get__HFont((UINT *)&hFont);
+	font->get__HFont((UINT*)&hFont);
 	HFONT oldfont;
 	HDC dc = m_ptr->GetHDC();
 	oldfont = SelectFont(dc, hFont);
@@ -3504,7 +3500,7 @@ STDMETHODIMP GdiGraphics::CalcTextWidth(BSTR str, IGdiFont* font, UINT* p)
 	if (!m_ptr || !p) return E_POINTER;
 
 	HFONT hFont = NULL;
-	font->get__HFont((UINT *)&hFont);
+	font->get__HFont((UINT*)&hFont);
 	HFONT oldfont;
 	HDC dc = m_ptr->GetHDC();
 	oldfont = SelectFont(dc, hFont);
@@ -3795,7 +3791,7 @@ STDMETHODIMP GdiGraphics::GdiDrawText(BSTR str, IGdiFont* font, VARIANT colour, 
 	if (!m_ptr) return E_POINTER;
 
 	HFONT hFont = NULL;
-	font->get__HFont((UINT *)&hFont);
+	font->get__HFont((UINT*)&hFont);
 	HFONT oldfont;
 	HDC dc = m_ptr->GetHDC();
 	RECT rc = { x, y, x + w, y + h };
@@ -3892,7 +3888,7 @@ STDMETHODIMP GdiGraphics::SetTextRenderingHint(UINT mode)
 
 STDMETHODIMP GdiGraphics::put__ptr(void* p)
 {
-	m_ptr = (Gdiplus::Graphics *)p;
+	m_ptr = (Gdiplus::Graphics*)p;
 	return S_OK;
 }
 
@@ -4539,7 +4535,7 @@ STDMETHODIMP JSUtils::WriteTextFile(BSTR filename, BSTR content, VARIANT_BOOL wr
 {
 	if (!p) return E_POINTER;
 
-	if (filename == nullptr || content == nullptr)
+	if (filename == NULL || content == NULL)
 	{
 		*p = VARIANT_FALSE;
 	}

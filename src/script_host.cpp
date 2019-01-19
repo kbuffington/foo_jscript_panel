@@ -15,18 +15,59 @@ script_host::script_host(host_comm* host)
 	, m_dwRef(1)
 	, m_engine_inited(false)
 	, m_has_error(false)
-	, m_lastSourceContext(0)
-{
-}
+	, m_lastSourceContext(0) {}
 
 script_host::~script_host() {}
 
-HRESULT script_host::InitScriptEngineByName(const char* engineName)
+HRESULT script_host::Initialize()
+{
+	Finalize();
+
+	m_has_error = false;
+
+	IActiveScriptParsePtr parser;
+	ProcessScriptInfo(m_host->m_script_info);
+
+	HRESULT hr = InitScriptEngine();
+	if (SUCCEEDED(hr)) hr = m_script_engine->SetScriptSite(this);
+	if (SUCCEEDED(hr)) hr = m_script_engine->QueryInterface(&parser);
+	if (SUCCEEDED(hr)) hr = parser->InitNew();
+	if (SUCCEEDED(hr)) hr = m_script_engine->AddNamedItem(L"window", SCRIPTITEM_ISVISIBLE);
+	if (SUCCEEDED(hr)) hr = m_script_engine->AddNamedItem(L"gdi", SCRIPTITEM_ISVISIBLE);
+	if (SUCCEEDED(hr)) hr = m_script_engine->AddNamedItem(L"fb", SCRIPTITEM_ISVISIBLE);
+	if (SUCCEEDED(hr)) hr = m_script_engine->AddNamedItem(L"utils", SCRIPTITEM_ISVISIBLE);
+	if (SUCCEEDED(hr)) hr = m_script_engine->AddNamedItem(L"plman", SCRIPTITEM_ISVISIBLE);
+	if (SUCCEEDED(hr)) hr = m_script_engine->AddNamedItem(L"console", SCRIPTITEM_ISVISIBLE);
+	if (SUCCEEDED(hr)) hr = m_script_engine->SetScriptState(SCRIPTSTATE_CONNECTED);
+	if (SUCCEEDED(hr)) hr = m_script_engine->GetScriptDispatch(NULL, &m_script_root);
+	if (SUCCEEDED(hr)) hr = ProcessImportedScripts(parser);
+	if (SUCCEEDED(hr))
+	{
+		DWORD source_context;
+		GenerateSourceContext("<main>", source_context);
+		hr = parser->ParseScriptText(string_wide_from_utf8_fast(m_host->get_script_code()), NULL, NULL, NULL, source_context, 0, SCRIPTTEXT_HOSTMANAGESSOURCE | SCRIPTTEXT_ISVISIBLE, NULL, NULL);
+	}
+
+	if (SUCCEEDED(hr))
+	{
+		m_engine_inited = true;
+	}
+	else
+	{
+		m_engine_inited = false;
+		m_has_error = true;
+	}
+
+	m_callback_invoker.Init(m_script_root);
+	return hr;
+}
+
+HRESULT script_host::InitScriptEngine()
 {
 	HRESULT hr = E_FAIL;
 	const DWORD classContext = CLSCTX_INPROC_SERVER | CLSCTX_INPROC_HANDLER;
 
-	if (helpers::supports_chakra() && _stricmp(engineName, "Chakra") == 0)
+	if (helpers::supports_chakra() && _stricmp(m_host->get_script_engine(), "Chakra") == 0)
 	{
 		static const CLSID jscript9clsid = { 0x16d51579, 0xa30b, 0x4c8b,{ 0xa2, 0x76, 0x0f, 0xf4, 0xdc, 0x41, 0xe7, 0x55 } };
 		hr = m_script_engine.CreateInstance(jscript9clsid, NULL, classContext);
@@ -47,50 +88,6 @@ HRESULT script_host::InitScriptEngineByName(const char* engineName)
 		pActScriProp->SetProperty(SCRIPTPROP_INVOKEVERSIONING, NULL, &scriptLangVersion);
 		pActScriProp->Release();
 	}
-
-	return hr;
-}
-
-HRESULT script_host::Initialize()
-{
-	Finalize();
-
-	m_has_error = false;
-
-	IActiveScriptParsePtr parser;
-	ProcessScriptInfo(m_host->m_script_info);
-
-	HRESULT hr = InitScriptEngineByName(m_host->get_script_engine());
-	if (SUCCEEDED(hr)) hr = m_script_engine->SetScriptSite(this);
-	if (SUCCEEDED(hr)) hr = m_script_engine->QueryInterface(&parser);
-	if (SUCCEEDED(hr)) hr = parser->InitNew();
-	if (SUCCEEDED(hr)) hr = m_script_engine->AddNamedItem(L"window", SCRIPTITEM_ISVISIBLE);
-	if (SUCCEEDED(hr)) hr = m_script_engine->AddNamedItem(L"gdi", SCRIPTITEM_ISVISIBLE);
-	if (SUCCEEDED(hr)) hr = m_script_engine->AddNamedItem(L"fb", SCRIPTITEM_ISVISIBLE);
-	if (SUCCEEDED(hr)) hr = m_script_engine->AddNamedItem(L"utils", SCRIPTITEM_ISVISIBLE);
-	if (SUCCEEDED(hr)) hr = m_script_engine->AddNamedItem(L"plman", SCRIPTITEM_ISVISIBLE);
-	if (SUCCEEDED(hr)) hr = m_script_engine->AddNamedItem(L"console", SCRIPTITEM_ISVISIBLE);
-	if (SUCCEEDED(hr)) hr = m_script_engine->SetScriptState(SCRIPTSTATE_CONNECTED);
-	if (SUCCEEDED(hr)) hr = m_script_engine->GetScriptDispatch(NULL, &m_script_root);
-	if (SUCCEEDED(hr)) hr = ProcessImportedScripts(parser);
-	if (SUCCEEDED(hr))
-	{
-		DWORD source_context = 0;
-		GenerateSourceContext("<main>", source_context);
-		hr = parser->ParseScriptText(string_wide_from_utf8_fast(m_host->get_script_code()), NULL, NULL, NULL, source_context, 0, SCRIPTTEXT_HOSTMANAGESSOURCE | SCRIPTTEXT_ISVISIBLE, NULL, NULL);
-	}
-
-	if (SUCCEEDED(hr))
-	{
-		m_engine_inited = true;
-	}
-	else
-	{
-		m_engine_inited = false;
-		m_has_error = true;
-	}
-
-	m_callback_invoker.Init(m_script_root);
 	return hr;
 }
 
@@ -375,7 +372,6 @@ void script_host::ReportError(IActiveScriptError* err)
 	ULONG line = 0;
 	LONG charpos = 0;
 	EXCEPINFO excep = { 0 };
-	//WCHAR buf[512] = { 0 };
 	_bstr_t sourceline;
 	_bstr_t name;
 
@@ -416,7 +412,7 @@ void script_host::ReportError(IActiveScriptError* err)
 		if (uFormatSystemErrorMessage(errorMessage, excep.scode))
 			formatter << errorMessage;
 		else
-			formatter << "Unknown error code: 0x" << pfc::format_hex_lowercase((unsigned)excep.scode);
+			formatter << "Unknown error code: 0x" << pfc::format_hex_lowercase((t_size)excep.scode);
 	}
 
 	if (m_contextToPathMap.exists(ctx))
@@ -424,7 +420,7 @@ void script_host::ReportError(IActiveScriptError* err)
 		formatter << "File: " << m_contextToPathMap[ctx] << "\n";
 	}
 
-	formatter << "Line: " << (t_uint32)(line + 1) << ", Col: " << (t_uint32)(charpos + 1) << "\n";
+	formatter << "Line: " << (t_size)(line + 1) << ", Col: " << (t_size)(charpos + 1) << "\n";
 	formatter << string_utf8_from_wide(sourceline);
 	if (name.length() > 0) formatter << "\nAt: " << name;
 

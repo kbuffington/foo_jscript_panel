@@ -120,9 +120,7 @@ void prop_kv_config::g_load(t_map& data, stream_reader* reader, abort_callback& 
 			data[key] = val;
 		}
 	}
-	catch (...)
-	{
-	}
+	catch (...) {}
 }
 
 void prop_kv_config::g_save(const t_map& data, stream_writer* writer, abort_callback& abort) throw()
@@ -185,9 +183,7 @@ void prop_kv_config::g_save(const t_map& data, stream_writer* writer, abort_call
 			}
 		}
 	}
-	catch (...)
-	{
-	}
+	catch (...) {}
 }
 
 void prop_kv_config::load(stream_reader* reader, abort_callback& abort) throw()

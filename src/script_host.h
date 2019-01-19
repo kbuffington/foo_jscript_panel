@@ -9,8 +9,8 @@ public:
 	script_host(host_comm* host);
 	virtual ~script_host();
 
-	HRESULT InitScriptEngineByName(const char* engineName);
 	HRESULT Initialize();
+	HRESULT InitScriptEngine();
 	HRESULT InvokeCallback(int callbackId, VARIANTARG* argv = NULL, UINT argc = 0, VARIANT* ret = NULL);
 	HRESULT ProcessImportedScripts(IActiveScriptParsePtr& parser);
 	STDMETHODIMP EnableModeless(BOOL fEnable);

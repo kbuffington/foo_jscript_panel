@@ -40,7 +40,6 @@ HWND js_panel_window_cui::create_or_transfer_window(HWND parent, const uie::wind
 		m_host = host; //store interface to host
 		create(parent, this, p_position);
 	}
-
 	return get_wnd();
 }
 
@@ -65,9 +64,7 @@ LRESULT js_panel_window_cui::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM l
 			static_api_ptr_t<cui::fonts::manager>()->register_common_callback(this);
 			static_api_ptr_t<cui::colours::manager>()->register_common_callback(this);
 		}
-		catch (...)
-		{
-		}
+		catch (...) {}
 		break;
 
 	case WM_DESTROY:
@@ -76,12 +73,9 @@ LRESULT js_panel_window_cui::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM l
 			static_api_ptr_t<cui::fonts::manager>()->deregister_common_callback(this);
 			static_api_ptr_t<cui::colours::manager>()->deregister_common_callback(this);
 		}
-		catch (...)
-		{
-		}
+		catch (...) {}
 		break;
 	}
-
 	return t_parent::on_message(hwnd, msg, wp, lp);
 }
 
@@ -110,7 +104,7 @@ const uie::window_host_ptr& js_panel_window_cui::get_host() const
 	return m_host;
 }
 
-unsigned js_panel_window_cui::get_type() const
+t_size js_panel_window_cui::get_type() const
 {
 	return uie::type_toolbar | uie::type_panel;
 }

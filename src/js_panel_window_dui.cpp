@@ -137,7 +137,6 @@ LRESULT js_panel_window_dui::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM l
 	case WM_GETDLGCODE:
 		return DLGC_WANTALLKEYS;
 	}
-
 	return t_parent::on_message(hwnd, msg, wp, lp);
 }
 
@@ -146,7 +145,7 @@ bool js_panel_window_dui::edit_mode_context_menu_test(const POINT& p_point, bool
 	return true;
 }
 
-pfc::string8 js_panel_window_dui::g_get_description()
+pfc::string8_fast js_panel_window_dui::g_get_description()
 {
 	return "Customisable panel with JScript scripting support.";
 }
@@ -166,17 +165,16 @@ ui_element_config::ptr js_panel_window_dui::get_configuration()
 {
 	ui_element_config_builder builder;
 	abort_callback_dummy abort;
-
 	save_config(&builder.m_stream, abort);
 	return builder.finish(g_get_guid());
 }
 
-void js_panel_window_dui::edit_mode_context_menu_build(const POINT& p_point, bool p_fromkeyboard, HMENU p_menu, unsigned p_id_base)
+void js_panel_window_dui::edit_mode_context_menu_build(const POINT& p_point, bool p_fromkeyboard, HMENU p_menu, t_size p_id_base)
 {
 	build_context_menu(p_menu, p_point.x, p_point.y, p_id_base);
 }
 
-void js_panel_window_dui::edit_mode_context_menu_command(const POINT& p_point, bool p_fromkeyboard, unsigned p_id, unsigned p_id_base)
+void js_panel_window_dui::edit_mode_context_menu_command(const POINT& p_point, bool p_fromkeyboard, t_size p_id, t_size p_id_base)
 {
 	execute_context_menu_command(p_id, p_id_base);
 }

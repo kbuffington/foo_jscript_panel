@@ -15,7 +15,7 @@ public:
 		m_dwLastEffect = dwEffect;
 		return DRAGDROP_S_USEDEFAULTCURSORS;
 	}
-	
+
 	STDMETHODIMP QueryContinueDrag(BOOL fEscapePressed, DWORD grfKeyState)
 	{
 		if (fEscapePressed || (grfKeyState & MK_RBUTTON) || (grfKeyState & MK_MBUTTON))

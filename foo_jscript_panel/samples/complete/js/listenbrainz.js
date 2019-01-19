@@ -108,7 +108,7 @@ _.mixin({
 				payload : payload
 			}
 			this.xmlhttp.open('POST', 'https://api.listenbrainz.org/1/submit-listens', true);
-			this.xmlhttp.setRequestHeader('Authorization' , 'Token ' + this.token);
+			this.xmlhttp.setRequestHeader('Authorization', 'Token ' + this.token);
 			this.xmlhttp.send(JSON.stringify(data));
 			this.xmlhttp.onreadystatechange = _.bind(function () {
 				if (this.xmlhttp.readyState == 4) {

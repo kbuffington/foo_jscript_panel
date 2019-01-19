@@ -10,6 +10,7 @@ class js_panel_window : public host_comm, public ui_helpers::container_window
 public:
 	js_panel_window();
 	virtual ~js_panel_window();
+
 	HRESULT script_invoke_v(int callbackId, VARIANTARG* argv = NULL, UINT argc = 0, VARIANT* ret = NULL);
 	void update_script(const char* name = NULL, const char* code = NULL);
 
@@ -22,14 +23,7 @@ protected:
 	void execute_context_menu_command(int id, int id_base);
 
 private:
-	CComPtr<IDropTargetImpl> m_drop_target;
-	IGdiGraphicsPtr m_gr_wrap;
-	script_host* m_script_host;
-
-	bool m_is_droptarget_registered;
-	bool m_is_mouse_tracked;
 	bool on_mouse_button_up(UINT msg, WPARAM wp, LPARAM lp);
-	bool script_load();
 	virtual class_data& get_class_data() const;
 	void create_context();
 	void delete_context();
@@ -83,5 +77,12 @@ private:
 	void on_selection_changed();
 	void on_size(int w, int h);
 	void on_volume_change(WPARAM wp);
+	void script_load();
 	void script_unload();
+
+	CComPtr<IDropTargetImpl> m_drop_target;
+	IGdiGraphicsPtr m_gr_wrap;
+	bool m_is_droptarget_registered;
+	bool m_is_mouse_tracked;
+	script_host* m_script_host;
 };

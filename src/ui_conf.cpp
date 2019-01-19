@@ -105,8 +105,8 @@ BOOL CDialogConf::OnInitDialog(HWND hwndFocus, LPARAM lParam)
 
 	// Script Engine
 	HWND combo_engine = GetDlgItem(IDC_COMBO_ENGINE);
-	ComboBox_AddString(combo_engine, _T("Chakra"));
-	ComboBox_AddString(combo_engine, _T("JScript"));
+	ComboBox_AddString(combo_engine, L"Chakra");
+	ComboBox_AddString(combo_engine, L"JScript");
 
 	if (helpers::supports_chakra())
 	{
@@ -120,9 +120,9 @@ BOOL CDialogConf::OnInitDialog(HWND hwndFocus, LPARAM lParam)
 
 	// Edge Style
 	HWND combo_edge = GetDlgItem(IDC_COMBO_EDGE);
-	ComboBox_AddString(combo_edge, _T("None"));
-	ComboBox_AddString(combo_edge, _T("Sunken"));
-	ComboBox_AddString(combo_edge, _T("Grey"));
+	ComboBox_AddString(combo_edge, L"None");
+	ComboBox_AddString(combo_edge, L"Sunken");
+	ComboBox_AddString(combo_edge, L"Grey");
 
 	if (core_version_info_v2::get()->test_version(1, 4, 0, 0) && m_parent->GetInstanceType() == host_comm::KInstanceTypeDUI)
 	{
@@ -190,7 +190,7 @@ LRESULT CDialogConf::OnDocs(WORD wNotifyCode, WORD wID, HWND hWndCtl)
 {
 	pfc::string8_fast tmp = file_path_display(m_docs[wID - ID_DOCS_BEGIN]);
 	string_wide_from_utf8_fast path(tmp);
-	ShellExecute(nullptr, _T("open"), path, nullptr, nullptr, SW_SHOW);
+	ShellExecute(NULL, L"open", path, NULL, NULL, SW_SHOW);
 	return 0;
 }
 
@@ -241,12 +241,12 @@ LRESULT CDialogConf::OnFileExport(WORD wNotifyCode, WORD wID, HWND hWndCtl)
 LRESULT CDialogConf::OnHelp(WORD wNotifyCode, WORD wID, HWND hWndCtl)
 {
 	const wchar_t* links[] = {
-		_T("https://github.com/marc2k3/foo_jscript_panel/wiki"),
-		_T("https://github.com/marc2k3/foo_jscript_panel/releases"),
-		_T("https://github.com/marc2k3/foo_jscript_panel/issues")
+		L"https://github.com/marc2k3/foo_jscript_panel/wiki",
+		L"https://github.com/marc2k3/foo_jscript_panel/releases",
+		L"https://github.com/marc2k3/foo_jscript_panel/issues"
 	};
 
-	ShellExecute(nullptr, _T("open"), links[wID - ID_HELP_BEGIN], nullptr, nullptr, SW_SHOW);
+	ShellExecute(NULL, L"open", links[wID - ID_HELP_BEGIN], NULL, NULL, SW_SHOW);
 	return 0;
 }
 

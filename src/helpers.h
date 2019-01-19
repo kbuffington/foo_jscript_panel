@@ -309,7 +309,7 @@ namespace helpers
 
 			IDispatch* pdisp = v->pdispVal;
 			DISPID id_length;
-			LPOLESTR slength = _T("length");
+			LPOLESTR slength = L"length";
 			DISPPARAMS params = { 0 };
 			_variant_t ret;
 

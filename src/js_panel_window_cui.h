@@ -13,7 +13,7 @@ protected:
 	virtual bool show_config_popup(HWND parent);
 	virtual const GUID& get_extension_guid() const;
 	virtual const uie::window_host_ptr& get_host() const;
-	virtual unsigned get_type() const;
+	virtual t_size get_type() const;
 	virtual void destroy_window();
 	virtual void get_category(pfc::string_base& out) const;
 	virtual void get_config(stream_writer* writer, abort_callback& abort) const;
@@ -24,7 +24,7 @@ protected:
 	virtual void set_config(stream_reader* reader, t_size size, abort_callback& abort);
 
 private:
-	using t_parent =  js_panel_window;
-	uie::window_host_ptr m_host;
+	using t_parent = js_panel_window;
 	virtual void notify_size_limit_changed(WPARAM wp);
+	uie::window_host_ptr m_host;
 };

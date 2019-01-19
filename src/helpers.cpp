@@ -95,7 +95,7 @@ namespace helpers
 			abort_callback_dummy abort;
 
 			try
-			{	
+			{
 				aaep = ptr->open(NULL, rawpath, abort);
 
 				album_art_data_ptr data = aaep->query(what, abort);
@@ -106,9 +106,7 @@ namespace helpers
 					ret = new com_object_impl_t<GdiBitmap>(bitmap);
 				}
 			}
-			catch (...)
-			{
-			}
+			catch (...) {}
 		}
 		return ret;
 	}
@@ -354,7 +352,7 @@ namespace helpers
 
 		if (dwFileSize >=2 && pAddr[0] == 0xFF && pAddr[1] == 0xFE) // UTF16 LE?
 		{
-			const wchar_t* pSource = (const wchar_t *)(pAddr + 2);
+			const wchar_t* pSource = (const wchar_t*)(pAddr + 2);
 			t_size len = (dwFileSize - 2) >> 1;
 
 			content.set_size(len + 1);
