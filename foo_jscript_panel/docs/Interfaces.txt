@@ -1016,19 +1016,19 @@ interface IJSUtils {
 		utils.FileTest(path, mode); (VARIANT)
 		/*
 		mode:
-		"chardet"
+		"chardet" (uint)
 		Guess the charset of a file and return the codepage. It may not be accurate and returns 0 if an error occurred.
 
-		"e"
+		"e" (boolean)
 		If file path exists, return true.
 
-		"s"
-		Retrieve file size, in bytes.
+		"s" (int64)
+		Retrieve file size, in bytes. Requires a system with IE9 or later to work properly.
 
-		"d"
+		"d" (boolean)
 		If path is a directory, return true.
 
-		"split"
+		"split" (VBArray)
 		Returns a VBArray so you need to use .toArray() on the result.
 
 		Example:
@@ -1791,6 +1791,7 @@ interface IFbMetadbHandle {
 		SubSong; (uint) (read)
 
 		FileSize; (int64) (read)
+		// Requires a system with IE9 or later to work properly.
 
 		Length; (double) (read)
 
@@ -1981,7 +1982,7 @@ interface IFbMetadbHandleList {
 		CalcTotalDuration(); (double)
 		// Returns total in seconds. For display purposes, consider using utils.FormatDuration() on the result.
 
-		CalcTotalSize(); (LONGLONG)
+		CalcTotalSize(); (int64)
 		/*
 		Requires a system with IE9 or later to work properly.
 		Returns total in bytes. For display purposes, consider using utils.FormatFileSize() on the result.

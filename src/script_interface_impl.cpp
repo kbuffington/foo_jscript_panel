@@ -4171,9 +4171,8 @@ STDMETHODIMP JSUtils::FileTest(BSTR path, BSTR mode, VARIANT* p)
 			CloseHandle(fh);
 		}
 
-		// Only 32bit integers...
-		p->vt = VT_UI4;
-		p->ulVal = (size.HighPart) ? pfc::infinite32 : size.LowPart;
+		p->vt = VT_I8;
+		p->llVal = size.QuadPart;
 	}
 	else if (wcscmp(mode, L"d") == 0)
 	{
