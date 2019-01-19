@@ -2443,12 +2443,12 @@ oBrowser = function (name) {
 										if (this.rows[this.activeRow].metadb) {
 											this.rows[this.activeRow].rating = l_rating;
 											window.Repaint();
-											var bool = fb.RunContextCommandWithMetadb("Rating/" + ((l_rating == 0) ? "<not set>" : l_rating), this.rows[this.activeRow].metadb);
+											fb.RunContextCommandWithMetadb("Playback Statistics/Rating/" + ((l_rating == 0) ? "<not set>" : l_rating), this.rows[this.activeRow].metadb);
 										};
 									} else {
 										this.rows[this.activeRow].rating = 0;
 										window.Repaint();
-										var bool = fb.RunContextCommandWithMetadb("Rating/<not set>", this.rows[this.activeRow].metadb);
+										fb.RunContextCommandWithMetadb("Playback Statistics/Rating/<not set>", this.rows[this.activeRow].metadb);
 									};
 								} else {
 									var handles = fb.CreateHandleList(this.rows[this.activeRow].metadb);

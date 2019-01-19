@@ -1042,11 +1042,11 @@ oItem = function (playlist, row_index, type, handle, track_index, group_index, t
 								// Rate to database statistics brought by foo_playcount.dll
 								if (this.l_rating != this.rating) {
 									if (this.metadb) {
-										var bool = fb.RunContextCommandWithMetadb("Rating/" + ((this.l_rating == 0) ? "<not set>" : this.l_rating), this.metadb);
+										fb.RunContextCommandWithMetadb("Playback Statistics/Rating/" + ((this.l_rating == 0) ? "<not set>" : this.l_rating), this.metadb);
 										this.rating = this.l_rating;
 									};
 								} else {
-									var bool = fb.RunContextCommandWithMetadb("Rating/<not set>", this.metadb);
+									fb.RunContextCommandWithMetadb("Playback Statistics/Rating/<not set>", this.metadb);
 									this.rating = 0;
 								};
 							} else {

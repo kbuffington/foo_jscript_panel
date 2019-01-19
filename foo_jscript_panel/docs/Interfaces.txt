@@ -447,6 +447,8 @@ interface IFbUtils {
 
 		fb.Random(); (void)
 
+		// IMPORTANT: As of v2.2.0, the following menu methods all require the full paths to their commands.
+
 		fb.RunContextCommand(command[, flags]); (boolean)
 		/*
 		Now playing file only.
