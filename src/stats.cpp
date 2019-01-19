@@ -97,19 +97,19 @@ namespace stats
 			switch (index)
 			{
 			case 0:
-				out = "jsp_playcount";
+				out = JSP_STATS_PREFIX "playcount";
 				break;
 			case 1:
-				out = "jsp_loved";
+				out = JSP_STATS_PREFIX "loved";
 				break;
 			case 2:
-				out = "jsp_first_played";
+				out = JSP_STATS_PREFIX "first_played";
 				break;
 			case 3:
-				out = "jsp_last_played";
+				out = JSP_STATS_PREFIX "last_played";
 				break;
 			case 4:
-				out = "jsp_rating";
+				out = JSP_STATS_PREFIX "rating";
 				break;
 			}
 		}

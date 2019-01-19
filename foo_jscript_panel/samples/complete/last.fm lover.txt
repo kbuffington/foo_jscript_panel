@@ -95,29 +95,29 @@ function on_mouse_lbtn_up(x, y) {
 function on_mouse_rbtn_up(x, y) {
 	if (buttons.buttons.lover.trace(x, y)) {
 		var m = window.CreatePopupMenu();
-		m.AppendMenuItem(MF_STRING, 1, "Set and authorise your Last.fm username");
-		m.AppendMenuItem(lastfm.sk.length == 32 ? MF_STRING : MF_GRAYED, 2, 'Bulk import Last.fm loved tracks');
+		m.AppendMenuItem(MF_STRING, 1, "Last.fm username...");
+		m.AppendMenuItem(lastfm.username.length ? MF_STRING : MF_GRAYED, 2, "Authorise");
 		m.AppendMenuSeparator();
-		m.AppendMenuItem(MF_STRING, 3, 'Show loved tracks');
+		m.AppendMenuItem(lastfm.sk.length == 32 ? MF_STRING : MF_GRAYED, 3, 'Bulk import Last.fm loved tracks');
 		m.AppendMenuSeparator();
-		m.AppendMenuItem(MF_STRING, 4, 'Configure...');
+		m.AppendMenuItem(MF_STRING, 4, 'Show loved tracks');
+		m.AppendMenuSeparator();
+		m.AppendMenuItem(MF_STRING, 5, 'Configure...');
 		var idx = m.TrackPopupMenu(x, y);
 		switch (idx) {
 		case 1:
 			lastfm.update_username();
-			if (lastfm.username.length) {
-				lastfm.post('auth.getToken');
-			}
-			buttons.update();
-			window.Repaint();
 			break;
 		case 2:
-			lastfm.get_loved_tracks(1);
+			lastfm.post('auth.getToken');
 			break;
 		case 3:
-			fb.ShowLibrarySearchUI('%JSP_LOVED% IS 1');
+			lastfm.get_loved_tracks(1);
 			break;
 		case 4:
+			fb.ShowLibrarySearchUI('%JSP_LOVED% IS 1');
+			break;
+		case 5:
 			window.ShowConfigure();
 			break;
 		}

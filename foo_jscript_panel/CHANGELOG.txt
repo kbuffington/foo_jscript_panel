@@ -17,6 +17,9 @@ v2.2.0 Beta 4
 - NEW: Add FbMetadbHandle GetAlbumArt method which returns the image and path
        without the need for using utils.GetAlbumArtAsync and
        on_get_album_art_done(). See docs\interfaces.txt.
+- FIX: utils.FileTest can now query files over 4GB in size when in "s" mode.
+       See docs\interfaces.txt
+- FIX: Various Last.fm sample fixes.
 - CHG: fb.RunMainMenuCommand, fb.RunContextCommand, fb.RunContextCommandWithMetadb
        have all been rewritten and must be supplied with the full path to their commands.
        Case is not important. You should use forward slashes with no spaces. eg:
