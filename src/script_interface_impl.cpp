@@ -4447,9 +4447,12 @@ STDMETHODIMP JSUtils::ListFolders(BSTR folder, VARIANT* p)
 	if (!helper.create(count)) return E_OUTOFMEMORY;
 	for (LONG i = 0; i < count; ++i)
 	{
+		pfc::string8_fast path = file_path_display(list.get_item(i));
+		path.add_char('\\');
+
 		_variant_t var;
 		var.vt = VT_BSTR;
-		var.bstrVal = SysAllocString(string_wide_from_utf8_fast(file_path_display(list.get_item(i))));
+		var.bstrVal = SysAllocString(string_wide_from_utf8_fast(path));
 		if (!helper.put_item(i, var)) return E_OUTOFMEMORY;
 	}
 	p->vt = VT_ARRAY | VT_VARIANT;

@@ -543,7 +543,7 @@ namespace helpers
 	pfc::string8_fast get_profile_path()
 	{
 		pfc::string8_fast path = file_path_display(core_api::get_profile_path());
-		path.fix_dir_separator('\\');
+		path.add_char('\\');
 		return path;
 	}
 
