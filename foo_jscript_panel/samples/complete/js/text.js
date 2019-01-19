@@ -375,7 +375,7 @@ _.mixin({
 				this.properties.filename_tf = new _.p('2K3.TEXT.FILENAME.TF', '$directory_path(%path%)');
 				this.properties.title_tf = new _.p('2K3.TEXT.TITLE.TF', '$directory_path(%path%)');
 				this.properties.fixed = new _.p('2K3.TEXT.FONTS.FIXED', true);
-				this.exts = 'txt|log';
+				this.exts = ['txt', 'log'];
 				break;
 			}
 		}

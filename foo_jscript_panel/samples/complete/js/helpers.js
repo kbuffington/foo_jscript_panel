@@ -235,16 +235,16 @@ _.mixin({
 		doc.close();
 		return data;
 	},
+	getExt : function (path) {
+		return path.split('.').pop().toLowerCase();
+	},
 	getFiles : function (folder, exts, newest_first) {
-		var files = [];
-		if (_.isFolder(folder)) {
-			var e = new Enumerator(fso.GetFolder(folder).Files);
-			for (; !e.atEnd(); e.moveNext()) {
-				var path = e.item().Path;
-				if (exts.toLowerCase().indexOf(path.split('.').pop().toLowerCase()) > -1) {
-					files.push(path);
-				}
-			}
+		var files = utils.ListFiles(folder).toArray();
+		if (exts) {
+			files = _.filter(files, function (item) {
+				var ext = _.getExt(item);
+				return _.includes(exts, ext);
+			});
 		}
 		if (newest_first) {
 			return _.sortByOrder(files, function (item) {

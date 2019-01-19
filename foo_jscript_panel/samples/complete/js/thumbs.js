@@ -554,7 +554,7 @@ _.mixin({
 		this.pxs = [75, 100, 150, 200, 250, 300];
 		this.ini_file = folders.data + 'thumbs.ini';
 		this.vbs_file = folders.home + 'vbs\\download.vbs';
-		this.exts = 'jpg|jpeg|png|gif';
+		this.exts = ['jpg', 'jpeg', 'png' , 'gif'];
 		this.folder = '';
 		this.default_file = '';
 		this.artist = '';
