@@ -768,8 +768,6 @@ oPlaylistManager = function (obj_name) {
 		_menu.AppendMenuItem(MF_SEPARATOR, 0, "");
 		_menu.AppendMenuItem(MF_STRING, 2, "Load a Playlist");
 		if (!add_mode) {
-			_menu.AppendMenuItem(MF_STRING, 4, "Save this Playlist");
-			_menu.AppendMenuItem(MF_SEPARATOR, 0, "");
 			_menu.AppendMenuItem(MF_STRING, 5, "Duplicate this playlist");
 			if (id > 0 || !cPlaylistManager.mediaLibraryPlaylist) {
 				_menu.AppendMenuItem(MF_STRING, 3, "Rename this playlist");
@@ -852,7 +850,7 @@ oPlaylistManager = function (obj_name) {
 			cPlaylistManager.inputbox_timer = window.SetTimeout(inputboxPlaylistManager_activate, 20);
 			break;
 		case (idx == 2):
-			fb.RunMainMenuCommand("File/Load Playlist...");
+			fb.LoadPlaylist();
 			break;
 		case (idx == 3):
 			// set rename it
@@ -864,9 +862,6 @@ oPlaylistManager = function (obj_name) {
 				cPlaylistManager.inputbox_timer = false;
 			};
 			cPlaylistManager.inputbox_timer = window.SetTimeout(inputboxPlaylistManager_activate, 20);
-			break;
-		case (idx == 4):
-			fb.RunMainMenuCommand("File/Save Playlist...");
 			break;
 		case (idx == 5):
 			plman.DuplicatePlaylist(id, "Copy of " + plman.GetPlaylistName(id));

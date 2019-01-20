@@ -1413,8 +1413,6 @@ oBrowser = function (name) {
 		_menu.AppendMenuItem(MF_SEPARATOR, 0, "");
 		_menu.AppendMenuItem(MF_STRING, 2, "Load a Playlist");
 		if (!add_mode) {
-			_menu.AppendMenuItem(MF_STRING, 4, "Save this Playlist");
-			_menu.AppendMenuItem(MF_SEPARATOR, 0, "");
 			_menu.AppendMenuItem(MF_STRING, 5, "Duplicate this playlist");
 
 			_menu.AppendMenuItem(MF_STRING, 3, "Rename this playlist");
@@ -1488,7 +1486,7 @@ oBrowser = function (name) {
 			this.repaint();
 			break;
 		case (idx == 2):
-			fb.RunMainMenuCommand("File/Load Playlist...");
+			fb.LoadPlaylist();
 			break;
 		case (idx == 3):
 			// set rename it
@@ -1513,9 +1511,6 @@ oBrowser = function (name) {
 			this.inputbox.text_selected = this.inputbox.text;
 			this.inputbox.select = true;
 			this.repaint();
-			break;
-		case (idx == 4):
-			fb.RunMainMenuCommand("File/Save Playlist...");
 			break;
 		case (idx == 5):
 			plman.DuplicatePlaylist(pl_idx, "Copy of " + plman.GetPlaylistName(pl_idx));

@@ -634,7 +634,8 @@ oPlaylistManager = function (name) {
 						// send to a new playlist
 						this.drop_done = true;
 						window.NotifyOthers("JSSmoothPlaylist->JSSmoothBrowser:avoid_on_playlist_switch_callbacks_on_sendItemToPlaylist", true);
-						fb.RunMainMenuCommand("File/New playlist");
+						plman.CreatePlaylist(plman.PlaylistCount, "");
+						plman.ActivePlaylist = plman.PlaylistCount - 1;
 						plman.InsertPlaylistItems(plman.PlaylistCount - 1, 0, brw.metadblist_selection, false);
 					} else {
 						// send to selected (hover) playlist
@@ -2839,7 +2840,8 @@ oBrowser = function (name) {
 				plman.RemovePlaylistSelection(g_active_playlist, false);
 				break;
 			case 2000:
-				fb.RunMainMenuCommand("File/New playlist");
+				plman.CreatePlaylist(plman.PlaylistCount, "");
+				plman.ActivePlaylist = plman.PlaylistCount - 1;
 				plman.InsertPlaylistItems(plman.PlaylistCount - 1, 0, this.metadblist_selection, false);
 				break;
 			default:

@@ -836,16 +836,6 @@ function getTimestamp() {
 	return timestamp;
 };
 
-function RefreshBG() {
-	if (fb.IsPlaying || fb.IsPaused) {
-		fb.RunMainMenuCommand("Playback/Play or Pause");
-		fb.RunMainMenuCommand("Playback/Play or Pause");
-	} else {
-		fb.RunMainMenuCommand("Playback/Play");
-		fb.RunMainMenuCommand("Playback/Stop");
-	};
-};
-
 // --- UIHacks
 
 MainMenuState = {
