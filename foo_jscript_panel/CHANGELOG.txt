@@ -1,4 +1,5 @@
-v2.2.0 Beta 4
+v2.2.0 Beta 5
+- FIX: (Beta5) Restore Windows XP support which was broken in Beta1 to Beta4.
 - CHG: Remove window.DlgCode. The docs were wrong, behaviour was inconsistent between
        Default UI and Columns UI and it's just not needed. Support for all keys will be
        enabled if you check "Grab focus" in the Configuration Window. All instances
@@ -19,7 +20,7 @@ v2.2.0 Beta 4
        on_get_album_art_done(). See docs\interfaces.txt.
 - FIX: utils.FileTest can now query files over 4GB in size when in "s" mode.
        See docs\interfaces.txt
-- FIX: Various Last.fm sample fixes.
+- FIX: Various sample fixes.
 - CHG: fb.RunMainMenuCommand, fb.RunContextCommand, fb.RunContextCommandWithMetadb
        have all been rewritten and must be supplied with the full path to their commands.
        Case is not important. You should use forward slashes with no spaces. eg:
