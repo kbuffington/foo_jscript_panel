@@ -131,11 +131,10 @@ host_timer_dispatcher::~host_timer_dispatcher()
 	m_taskMap.clear();
 }
 
-host_timer_dispatcher host_timer_dispatcher::instance_;
-
 host_timer_dispatcher& host_timer_dispatcher::instance()
 {
-	return instance_;
+	static host_timer_dispatcher timerDispatcher;
+	return timerDispatcher;
 }
 
 t_size host_timer_dispatcher::createTimer(HWND hWnd, t_size delay, bool isRepeated, IDispatch* pDisp)

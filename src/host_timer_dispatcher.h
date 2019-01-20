@@ -46,7 +46,6 @@ private:
 class host_timer_dispatcher
 {
 public:
-	host_timer_dispatcher();
 	~host_timer_dispatcher();
 
 	static host_timer_dispatcher& instance();
@@ -60,7 +59,8 @@ public:
 	void onTimerStopRequest(HWND hWnd, HANDLE hTimer, t_size timerId);
 
 private:
-	static host_timer_dispatcher instance_;
+	host_timer_dispatcher();
+
 	t_size createTimer(HWND hWnd, t_size delay, bool isRepeated, IDispatch* pDisp);
 	void createThread();
 	void stopThread();
