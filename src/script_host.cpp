@@ -322,6 +322,7 @@ void script_host::GenerateSourceContext(const pfc::string8_fast& path, DWORD& so
 void script_host::ProcessScriptInfo(t_script_info& info)
 {
 	info.clear();
+	info.id = (t_size)m_host->GetHWND();
 
 	std::string source(m_host->get_script_code());
 	t_size start = source.find("// ==PREPROCESSOR==");

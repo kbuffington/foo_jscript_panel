@@ -2940,7 +2940,7 @@ STDMETHODIMP FbWindow::get_ID(UINT* p)
 {
 	if (!p) return E_POINTER;
 
-	*p = (UINT)m_host->GetHWND();
+	*p = m_host->m_script_info.id;
 	return S_OK;
 }
 
@@ -3007,7 +3007,7 @@ STDMETHODIMP FbWindow::get_Name(BSTR* p)
 	pfc::string8_fast name = m_host->m_script_info.name;
 	if (name.is_empty())
 	{
-		name = pfc::print_guid(m_host->get_config_guid());
+		name << "id:" << m_host->m_script_info.id;
 	}
 
 	*p = SysAllocString(string_wide_from_utf8_fast(name));

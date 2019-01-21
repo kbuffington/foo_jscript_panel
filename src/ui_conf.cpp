@@ -7,7 +7,7 @@
 
 CDialogConf::CDialogConf(js_panel_window* p_parent) : m_parent(p_parent), m_dlgfind(NULL), m_dlgreplace(NULL), m_lastSearchText(""), m_lastFlags(0)
 {
-	m_caption << JSP_NAME " Configuration {" << pfc::print_guid(m_parent->get_config_guid()) << "}";
+	m_caption << JSP_NAME " Configuration (id:" << m_parent->m_script_info.id << ")";
 }
 
 CDialogConf::~CDialogConf()

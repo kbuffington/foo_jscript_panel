@@ -213,11 +213,6 @@ js_panel_vars::js_panel_vars()
 	reset_config();
 }
 
-GUID& js_panel_vars::get_config_guid()
-{
-	return m_config_guid;
-}
-
 WINDOWPLACEMENT& js_panel_vars::get_windowplacement()
 {
 	return m_wndpl;
@@ -281,7 +276,7 @@ void js_panel_vars::load_config(stream_reader* reader, t_size size, abort_callba
 		{
 			reader->read_object_t(ver, abort);
 			reader->skip_object(sizeof(false), abort); // HACK: skip over "delay load"
-			reader->read_object_t(m_config_guid, abort);
+			reader->skip_object(sizeof(GUID), abort); // HACK: skip over "GUID"
 			reader->read_object(&m_edge_style, sizeof(m_edge_style), abort);
 			m_config_prop.load(reader, abort);
 			reader->skip_object(sizeof(false), abort); // HACK: skip over "disable before"
@@ -307,7 +302,6 @@ void js_panel_vars::reset_config()
 	m_wndpl.length = 0;
 	m_grab_focus = true;
 	m_edge_style = NO_EDGE;
-	CoCreateGuid(&m_config_guid);
 }
 
 void js_panel_vars::save_config(stream_writer* writer, abort_callback& abort) const
@@ -318,7 +312,7 @@ void js_panel_vars::save_config(stream_writer* writer, abort_callback& abort) co
 	{
 		writer->write_object_t(ver, abort);
 		writer->write_object_t(false, abort); // HACK: write this in place of "delay load"
-		writer->write_object_t(m_config_guid, abort);
+		writer->write_object_t(pfc::guid_null, abort); // HACK: write this in place of "GUID"
 		writer->write_object(&m_edge_style, sizeof(m_edge_style), abort);
 		m_config_prop.save(writer, abort);
 		writer->write_object_t(false, abort); // HACK: write this in place of "disable before"

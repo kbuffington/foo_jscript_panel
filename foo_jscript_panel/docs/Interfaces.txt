@@ -1255,7 +1255,7 @@ interface IFbWindow {
 		window.Name; (string) (read)
 		/*
 		Returns the @name set in the preprocessor section. See Preprocessors.txt
-		If that isn't present, the GUID of the panel is returned.
+		If that isn't present, the window.ID of the panel is returned prefixed with "id:".
 		*/
 
 		window.Width; (int) (read)

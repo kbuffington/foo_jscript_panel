@@ -43,7 +43,6 @@ class js_panel_vars
 public:
 	js_panel_vars();
 
-	GUID& get_config_guid();
 	WINDOWPLACEMENT& get_windowplacement();
 	bool& get_grab_focus();
 	bool& get_pseudo_transparent();
@@ -59,7 +58,6 @@ public:
 	void save_config(stream_writer* writer, abort_callback& abort) const;
 
 private:
-	GUID m_config_guid;
 	WINDOWPLACEMENT m_wndpl;
 	bool m_grab_focus;
 	bool m_pseudo_transparent;

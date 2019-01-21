@@ -5,7 +5,7 @@
 
 struct t_script_info
 {
-	t_script_info(GUID& guid_ref) : m_guid_ref(guid_ref) {}
+	t_script_info() {}
 
 	struct
 	{
@@ -27,7 +27,7 @@ struct t_script_info
 		}
 		else
 		{
-			ret << "{" << pfc::print_guid(m_guid_ref) << "}";
+			ret << "id:" << id;
 		}
 		if (version.get_length())
 		{
@@ -62,6 +62,7 @@ struct t_script_info
 		name = "";
 		version = "";
 		author = "";
+		id = 0;
 	}
 
 	bool dragdrop;
@@ -69,9 +70,7 @@ struct t_script_info
 	pfc::string8_fast name;
 	pfc::string8_fast version;
 	pfc::string8_fast author;
-
-private:
-	GUID& m_guid_ref;
+	t_size id;
 };
 
 class host_comm : public js_panel_vars
