@@ -2841,13 +2841,13 @@ STDMETHODIMP FbWindow::GetProperty(BSTR name, VARIANT defaultval, VARIANT* p)
 	_variant_t var;
 	string_utf8_from_wide uname(name);
 
-	if (m_host->get_config_prop().get_config_item(uname, var))
+	if (m_host->m_config_prop.get_config_item(uname, var))
 	{
 		hr = VariantCopy(p, &var);
 	}
 	else
 	{
-		m_host->get_config_prop().set_config_item(uname, defaultval);
+		m_host->m_config_prop.set_config_item(uname, defaultval);
 		hr = VariantCopy(p, &defaultval);
 	}
 
@@ -2904,7 +2904,7 @@ STDMETHODIMP FbWindow::SetInterval(IDispatch* func, int delay, UINT* p)
 
 STDMETHODIMP FbWindow::SetProperty(BSTR name, VARIANT val)
 {
-	m_host->get_config_prop().set_config_item(string_utf8_from_wide(name), val);
+	m_host->m_config_prop.set_config_item(string_utf8_from_wide(name), val);
 	return S_OK;
 }
 
@@ -2956,7 +2956,7 @@ STDMETHODIMP FbWindow::get_IsTransparent(VARIANT_BOOL* p)
 {
 	if (!p) return E_POINTER;
 
-	*p = TO_VARIANT_BOOL(m_host->get_pseudo_transparent());
+	*p = TO_VARIANT_BOOL(m_host->m_pseudo_transparent);
 	return S_OK;
 }
 

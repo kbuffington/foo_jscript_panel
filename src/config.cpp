@@ -213,56 +213,11 @@ js_panel_vars::js_panel_vars()
 	reset_config();
 }
 
-WINDOWPLACEMENT& js_panel_vars::get_windowplacement()
+pfc::string8_fast js_panel_vars::get_default_script_code()
 {
-	return m_wndpl;
-}
-
-bool& js_panel_vars::get_grab_focus()
-{
-	return m_grab_focus;
-}
-
-bool& js_panel_vars::get_pseudo_transparent()
-{
-	return m_pseudo_transparent;
-}
-
-const bool& js_panel_vars::get_pseudo_transparent() const
-{
-	return m_pseudo_transparent;
-}
-
-const t_edge_style& js_panel_vars::get_edge_style() const
-{
-	return m_edge_style;
-}
-
-pfc::string_base& js_panel_vars::get_script_code()
-{
-	return m_script_code;
-}
-
-pfc::string_base& js_panel_vars::get_script_engine()
-{
-	return m_script_engine_str;
-}
-
-prop_kv_config& js_panel_vars::get_config_prop()
-{
-	return m_config_prop;
-}
-
-void js_panel_vars::get_default_script_code(pfc::string_base& out)
-{
-	out.reset();
 	puResource pures = uLoadResource(core_api::get_my_instance(), uMAKEINTRESOURCE(IDR_SCRIPT), "TEXT");
-	out.set_string(reinterpret_cast<const char*>(pures->GetPointer()), pures->GetSize());
-}
-
-t_edge_style& js_panel_vars::get_edge_style()
-{
-	return m_edge_style;
+	pfc::string8_fast content(static_cast<const char*>(pures->GetPointer()), pures->GetSize());
+	return content;
 }
 
 void js_panel_vars::load_config(stream_reader* reader, t_size size, abort_callback& abort)
@@ -297,7 +252,7 @@ void js_panel_vars::load_config(stream_reader* reader, t_size size, abort_callba
 void js_panel_vars::reset_config()
 {
 	m_script_engine_str = "Chakra";
-	get_default_script_code(m_script_code);
+	m_script_code = get_default_script_code();
 	m_pseudo_transparent = false;
 	m_wndpl.length = 0;
 	m_grab_focus = true;

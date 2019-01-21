@@ -48,7 +48,7 @@ LRESULT js_panel_window::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 		return 0;
 
 	case WM_ERASEBKGND:
-		if (get_pseudo_transparent())
+		if (m_pseudo_transparent)
 		{
 			PostMessage(m_hwnd, UWM_REFRESHBK, 0, 0);
 		}
@@ -59,7 +59,7 @@ LRESULT js_panel_window::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 			if (m_suppress_drawing)
 				break;
 
-			if (get_pseudo_transparent() && !m_paint_pending)
+			if (m_pseudo_transparent && !m_paint_pending)
 			{
 				RECT rc;
 				GetUpdateRect(m_hwnd, &rc, FALSE);
@@ -80,7 +80,7 @@ LRESULT js_panel_window::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 			RECT rc;
 			GetClientRect(m_hwnd, &rc);
 			on_size(rc.right - rc.left, rc.bottom - rc.top);
-			if (get_pseudo_transparent())
+			if (m_pseudo_transparent)
 				PostMessage(m_hwnd, UWM_REFRESHBK, 0, 0);
 			else
 				Repaint();
@@ -382,7 +382,7 @@ LRESULT js_panel_window::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 
 	case UWM_SIZE:
 		on_size(m_width, m_height);
-		if (get_pseudo_transparent())
+		if (m_pseudo_transparent)
 		{
 			PostMessage(m_hwnd, UWM_REFRESHBK, 0, 0);
 		}
@@ -483,7 +483,7 @@ ui_helpers::container_window::class_data& js_panel_window::get_class_data() cons
 		false,
 		0,
 		WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN,
-		edge_style_from_config(get_edge_style()),
+		edge_style_from_config(m_edge_style),
 		CS_DBLCLKS,
 		true, true, true, IDC_ARROW
 	};
@@ -508,7 +508,7 @@ void js_panel_window::create_context()
 
 	m_gr_bmp = CreateCompatibleBitmap(m_hdc, m_width, m_height);
 
-	if (get_pseudo_transparent())
+	if (m_pseudo_transparent)
 	{
 		m_gr_bmp_bk = CreateCompatibleBitmap(m_hdc, m_width, m_height);
 	}
@@ -738,7 +738,7 @@ void js_panel_window::on_mouse_button_dblclk(UINT msg, WPARAM wp, LPARAM lp)
 
 void js_panel_window::on_mouse_button_down(UINT msg, WPARAM wp, LPARAM lp)
 {
-	if (get_grab_focus())
+	if (m_grab_focus)
 		SetFocus(m_hwnd);
 
 	SetCapture(m_hwnd);
@@ -851,7 +851,7 @@ void js_panel_window::on_paint(HDC dc, LPRECT lpUpdateRect)
 	}
 	else
 	{
-		if (get_pseudo_transparent())
+		if (m_pseudo_transparent)
 		{
 			HDC bkdc = CreateCompatibleDC(dc);
 			HBITMAP bkoldbmp = SelectBitmap(bkdc, m_gr_bmp_bk);
@@ -1160,7 +1160,7 @@ void js_panel_window::script_load()
 
 	DWORD extstyle = GetWindowLongPtr(m_hwnd, GWL_EXSTYLE);
 	extstyle &= ~WS_EX_CLIENTEDGE & ~WS_EX_STATICEDGE;
-	extstyle |= edge_style_from_config(get_edge_style());
+	extstyle |= edge_style_from_config(m_edge_style);
 	SetWindowLongPtr(m_hwnd, GWL_EXSTYLE, extstyle);
 	SetWindowPos(m_hwnd, NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
 
@@ -1204,8 +1204,8 @@ void js_panel_window::update_script(const char* name, const char* code)
 {
 	if (name && code)
 	{
-		get_script_engine() = name;
-		get_script_code() = code;
+		m_script_engine_str = name;
+		m_script_code = code;
 	}
 
 	script_unload();

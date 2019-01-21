@@ -52,7 +52,7 @@ private:
 class panel_manager
 {
 public:
-	panel_manager() {}
+	panel_manager();
 
 	static panel_manager& instance();
 	t_size get_count();

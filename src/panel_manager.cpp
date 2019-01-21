@@ -14,6 +14,8 @@ namespace
 	service_factory_single_t<my_playlist_callback_static> g_my_playlist_callback_static;
 }
 
+panel_manager::panel_manager() {}
+
 panel_manager panel_manager::instance_;
 
 panel_manager& panel_manager::instance()

@@ -82,25 +82,21 @@ BOOL CDialogConf::OnInitDialog(HWND hwndFocus, LPARAM lParam)
 	DlgResize_Init();
 
 	// Apply window placement
-	if (m_parent->get_windowplacement().length == 0)
+	if (m_parent->m_wndpl.length == 0)
 	{
-		m_parent->get_windowplacement().length = sizeof(WINDOWPLACEMENT);
-
-		if (!GetWindowPlacement(&m_parent->get_windowplacement()))
-		{
-			memset(&m_parent->get_windowplacement(), 0, sizeof(WINDOWPLACEMENT));
-		}
+		m_parent->m_wndpl.length = sizeof(WINDOWPLACEMENT);
+		memset(&m_parent->m_wndpl, 0, sizeof(WINDOWPLACEMENT));
 	}
 	else
 	{
-		SetWindowPlacement(&m_parent->get_windowplacement());
+		SetWindowPlacement(&m_parent->m_wndpl);
 	}
 
 	// Edit Control
 	m_editorctrl.SubclassWindow(GetDlgItem(IDC_EDIT));
 	m_editorctrl.SetJScript();
 	m_editorctrl.ReadAPI();
-	m_editorctrl.SetContent(m_parent->get_script_code(), true);
+	m_editorctrl.SetContent(m_parent->m_script_code, true);
 	m_editorctrl.SetSavePoint();
 
 	// Script Engine
@@ -110,7 +106,7 @@ BOOL CDialogConf::OnInitDialog(HWND hwndFocus, LPARAM lParam)
 
 	if (helpers::supports_chakra())
 	{
-		uComboBox_SelectString(combo_engine, m_parent->get_script_engine());
+		uComboBox_SelectString(combo_engine, m_parent->m_script_engine_str);
 	}
 	else
 	{
@@ -132,13 +128,13 @@ BOOL CDialogConf::OnInitDialog(HWND hwndFocus, LPARAM lParam)
 	}
 	else
 	{
-		ComboBox_SetCurSel(combo_edge, m_parent->get_edge_style());
+		ComboBox_SetCurSel(combo_edge, m_parent->m_edge_style);
 	}
 
 	// Pseudo Transparent
 	if (m_parent->GetInstanceType() == host_comm::KInstanceTypeCUI)
 	{
-		uButton_SetCheck(m_hWnd, IDC_CHECK_PSEUDO_TRANSPARENT, m_parent->get_pseudo_transparent());
+		uButton_SetCheck(m_hWnd, IDC_CHECK_PSEUDO_TRANSPARENT, m_parent->m_pseudo_transparent);
 	}
 	else
 	{
@@ -147,7 +143,7 @@ BOOL CDialogConf::OnInitDialog(HWND hwndFocus, LPARAM lParam)
 	}
 
 	// Grab Focus
-	uButton_SetCheck(m_hWnd, IDC_CHECK_GRABFOCUS, m_parent->get_grab_focus());
+	uButton_SetCheck(m_hWnd, IDC_CHECK_GRABFOCUS, m_parent->m_grab_focus);
 
 	return FALSE;
 }
@@ -198,9 +194,7 @@ LRESULT CDialogConf::OnEditReset(WORD wNotifyCode, WORD wID, HWND hWndCtl)
 {
 	HWND combo = GetDlgItem(IDC_COMBO_ENGINE);
 	uComboBox_SelectString(combo, "Chakra");
-	pfc::string8 code;
-	js_panel_vars::get_default_script_code(code);
-	m_editorctrl.SetContent(code);
+	m_editorctrl.SetContent(js_panel_vars::get_default_script_code());
 	return 0;
 }
 
@@ -403,12 +397,12 @@ void CDialogConf::Apply()
 	m_editorctrl.GetText(code.get_ptr(), len);
 	m_parent->update_script(name, code.get_ptr());
 
-	m_parent->get_edge_style() = static_cast<t_edge_style>(ComboBox_GetCurSel(GetDlgItem(IDC_COMBO_EDGE)));
-	m_parent->get_grab_focus() = uButton_GetCheck(m_hWnd, IDC_CHECK_GRABFOCUS);
-	m_parent->get_pseudo_transparent() = uButton_GetCheck(m_hWnd, IDC_CHECK_PSEUDO_TRANSPARENT);
+	m_parent->m_edge_style = static_cast<t_edge_style>(ComboBox_GetCurSel(GetDlgItem(IDC_COMBO_EDGE)));
+	m_parent->m_grab_focus = uButton_GetCheck(m_hWnd, IDC_CHECK_GRABFOCUS);
+	m_parent->m_pseudo_transparent = uButton_GetCheck(m_hWnd, IDC_CHECK_PSEUDO_TRANSPARENT);
 
 	// Window position
-	GetWindowPlacement(&m_parent->get_windowplacement());
+	GetWindowPlacement(&m_parent->m_wndpl);
 
 	// Save point
 	m_editorctrl.SetSavePoint();

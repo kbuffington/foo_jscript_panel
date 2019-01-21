@@ -121,7 +121,7 @@ LRESULT CDialogProperty::OnPinItemChanged(LPNMHDR pnmh)
 void CDialogProperty::Apply()
 {
 	// Copy back
-	m_parent->get_config_prop().m_map = m_dup_prop_map;
+	m_parent->m_config_prop.m_map = m_dup_prop_map;
 	m_parent->update_script();
 	LoadProperties();
 }
@@ -132,7 +132,7 @@ void CDialogProperty::LoadProperties(bool reload)
 
 	if (reload)
 	{
-		m_dup_prop_map = m_parent->get_config_prop().m_map;
+		m_dup_prop_map = m_parent->m_config_prop.m_map;
 	}
 
 	for (prop_kv_config::t_map::const_iterator iter = m_dup_prop_map.first(); iter.is_valid(); ++iter)

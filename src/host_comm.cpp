@@ -121,7 +121,7 @@ void host_comm::RefreshBackground(LPRECT lprcUpdate)
 	DeleteRgn(rgn_child);
 	SetWindowRgn(m_hwnd, NULL, FALSE);
 	m_suppress_drawing = false;
-	if (get_edge_style()) SendMessage(m_hwnd, WM_NCPAINT, 1, 0);
+	if (m_edge_style) SendMessage(m_hwnd, WM_NCPAINT, 1, 0);
 	Repaint(true);
 }
 
