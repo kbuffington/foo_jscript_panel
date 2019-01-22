@@ -1,4 +1,5 @@
-v2.2.0 Beta 5
+v2.2.0-Beta6
+- FIX: (Beta6) Fix a bug where "Configuration Window" settings were not applied immediately.
 - FIX: (Beta5) Restore Windows XP support which was broken in Beta1 to Beta4.
 - CHG: Remove window.DlgCode. The docs were wrong, behaviour was inconsistent between
        Default UI and Columns UI and it's just not needed. Support for all keys will be
