@@ -1200,14 +1200,8 @@ void js_panel_window::script_unload()
 	m_selection_holder.release();
 }
 
-void js_panel_window::update_script(const char* name, const char* code)
+void js_panel_window::update_script()
 {
-	if (name && code)
-	{
-		m_script_engine_str = name;
-		m_script_code = code;
-	}
-
 	script_unload();
 	script_load();
 }

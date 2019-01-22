@@ -386,10 +386,7 @@ bool CDialogConf::FindResult(HWND hWnd, HWND hWndEdit, int pos, const char* whic
 
 void CDialogConf::Apply()
 {
-	// Get engine name
-	pfc::string8 name;
-	uGetWindowText(GetDlgItem(IDC_COMBO_ENGINE), name);
-
+	uGetWindowText(GetDlgItem(IDC_COMBO_ENGINE), m_parent->m_script_engine_str);
 	m_parent->m_edge_style = static_cast<t_edge_style>(ComboBox_GetCurSel(GetDlgItem(IDC_COMBO_EDGE)));
 	m_parent->m_grab_focus = uButton_GetCheck(m_hWnd, IDC_CHECK_GRABFOCUS);
 	m_parent->m_pseudo_transparent = uButton_GetCheck(m_hWnd, IDC_CHECK_PSEUDO_TRANSPARENT);
@@ -399,7 +396,8 @@ void CDialogConf::Apply()
 	int len = m_editorctrl.GetTextLength() + 1;
 	code.set_size(len);
 	m_editorctrl.GetText(code.get_ptr(), len);
-	m_parent->update_script(name, code.get_ptr());
+	m_parent->m_script_code = code.get_ptr();
+	m_parent->update_script();
 
 	// Window position
 	GetWindowPlacement(&m_parent->m_wndpl);

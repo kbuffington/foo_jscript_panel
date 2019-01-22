@@ -12,7 +12,7 @@ public:
 	virtual ~js_panel_window();
 
 	HRESULT script_invoke_v(int callbackId, VARIANTARG* argv = NULL, UINT argc = 0, VARIANT* ret = NULL);
-	void update_script(const char* name = NULL, const char* code = NULL);
+	void update_script();
 
 protected:
 	LRESULT on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp);
