@@ -390,16 +390,16 @@ void CDialogConf::Apply()
 	pfc::string8 name;
 	uGetWindowText(GetDlgItem(IDC_COMBO_ENGINE), name);
 
+	m_parent->m_edge_style = static_cast<t_edge_style>(ComboBox_GetCurSel(GetDlgItem(IDC_COMBO_EDGE)));
+	m_parent->m_grab_focus = uButton_GetCheck(m_hWnd, IDC_CHECK_GRABFOCUS);
+	m_parent->m_pseudo_transparent = uButton_GetCheck(m_hWnd, IDC_CHECK_PSEUDO_TRANSPARENT);
+
 	// Get script text
 	pfc::array_t<char> code;
 	int len = m_editorctrl.GetTextLength() + 1;
 	code.set_size(len);
 	m_editorctrl.GetText(code.get_ptr(), len);
 	m_parent->update_script(name, code.get_ptr());
-
-	m_parent->m_edge_style = static_cast<t_edge_style>(ComboBox_GetCurSel(GetDlgItem(IDC_COMBO_EDGE)));
-	m_parent->m_grab_focus = uButton_GetCheck(m_hWnd, IDC_CHECK_GRABFOCUS);
-	m_parent->m_pseudo_transparent = uButton_GetCheck(m_hWnd, IDC_CHECK_PSEUDO_TRANSPARENT);
 
 	// Window position
 	GetWindowPlacement(&m_parent->m_wndpl);
