@@ -4039,13 +4039,10 @@ STDMETHODIMP JSConsole::Log(SAFEARRAY* p)
 {
 	pfc::string8_fast str;
 	LONG nLBound = 0, nUBound = -1;
-	HRESULT hr;
 
-	if (FAILED(hr = SafeArrayGetLBound(p, 1, &nLBound)))
-		return hr;
-
-	if (FAILED(hr = SafeArrayGetUBound(p, 1, &nUBound)))
-		return hr;
+	HRESULT hr = SafeArrayGetLBound(p, 1, &nLBound);
+	if (SUCCEEDED(hr)) hr = SafeArrayGetUBound(p, 1, &nUBound);
+	if (FAILED(hr)) return hr;
 
 	for (LONG i = nLBound; i <= nUBound; ++i)
 	{
@@ -4055,7 +4052,7 @@ STDMETHODIMP JSConsole::Log(SAFEARRAY* p)
 		if (FAILED(SafeArrayGetElement(p, &n, &var)))
 			continue;
 
-		if (FAILED(hr = VariantChangeType(&var, &var, VARIANT_ALPHABOOL, VT_BSTR)))
+		if (FAILED(VariantChangeType(&var, &var, VARIANT_ALPHABOOL, VT_BSTR)))
 			continue;
 
 		str.add_string(string_utf8_from_wide(var.bstrVal));
@@ -4065,8 +4062,7 @@ STDMETHODIMP JSConsole::Log(SAFEARRAY* p)
 			str.add_byte(' ');
 		}
 	}
-
-	console::info(str);
+	FB2K_console_formatter() << str;
 	return S_OK;
 }
 
@@ -4514,7 +4510,7 @@ STDMETHODIMP JSUtils::ReadTextFile(BSTR filename, UINT codepage, BSTR* p)
 	}
 	else
 	{
-		*p = SysAllocString(std::wstring().c_str());
+		*p = SysAllocString(L"");
 	}
 	return S_OK;
 }
@@ -4524,8 +4520,7 @@ STDMETHODIMP JSUtils::WriteINI(BSTR filename, BSTR section, BSTR key, VARIANT va
 	if (!p) return E_POINTER;
 
 	_variant_t var;
-	HRESULT hr;
-	if (FAILED(hr = VariantChangeType(&var, &val, 0, VT_BSTR))) return hr;
+	if (FAILED(VariantChangeType(&var, &val, 0, VT_BSTR))) return E_INVALIDARG;
 	*p = TO_VARIANT_BOOL(WritePrivateProfileString(section, key, var.bstrVal, filename));
 	return S_OK;
 }

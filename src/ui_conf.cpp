@@ -386,6 +386,7 @@ bool CDialogConf::FindResult(HWND hWnd, HWND hWndEdit, int pos, const char* whic
 
 void CDialogConf::Apply()
 {
+	// Save panel settings
 	uGetWindowText(GetDlgItem(IDC_COMBO_ENGINE), m_parent->m_script_engine_str);
 	m_parent->m_edge_style = static_cast<t_edge_style>(ComboBox_GetCurSel(GetDlgItem(IDC_COMBO_EDGE)));
 	m_parent->m_grab_focus = uButton_GetCheck(m_hWnd, IDC_CHECK_GRABFOCUS);
