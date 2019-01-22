@@ -54,23 +54,23 @@ namespace
 
 			if (g_load_status != E_OK)
 			{
-				err_msg += "This error message indicates that this component will not function properly:\n\n";
+				err_msg << "This error message indicates that this component will not function properly:\n\n";
 
 				if (g_load_status & E_OLE)
 				{
-					err_msg += "OLE: Initialize OLE Failed.\n\n";
+					err_msg << "OLE: Initialize OLE Failed.\n\n";
 				}
 				if (g_load_status & E_TYPELIB)
 				{
-					err_msg += "Type Library: Load TypeLib Failed.\n\n";
+					err_msg << "Type Library: Load TypeLib Failed.\n\n";
 				}
 				if (g_load_status & E_SCINTILLA)
 				{
-					err_msg += "Scintilla: Load Scintilla Failed.\n\n";
+					err_msg << "Scintilla: Load Scintilla Failed.\n\n";
 				}
 				if (g_load_status & E_GDIPLUS)
 				{
-					err_msg += "Gdiplus: Load Gdiplus Failed.\n\n";
+					err_msg << "Gdiplus: Load Gdiplus Failed.\n\n";
 				}
 			}
 

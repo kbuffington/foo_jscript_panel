@@ -190,14 +190,6 @@ LRESULT CDialogConf::OnDocs(WORD wNotifyCode, WORD wID, HWND hWndCtl)
 	return 0;
 }
 
-LRESULT CDialogConf::OnEditReset(WORD wNotifyCode, WORD wID, HWND hWndCtl)
-{
-	HWND combo = GetDlgItem(IDC_COMBO_ENGINE);
-	uComboBox_SelectString(combo, "Chakra");
-	m_editorctrl.SetContent(js_panel_vars::get_default_script_code());
-	return 0;
-}
-
 LRESULT CDialogConf::OnFileSave(WORD wNotifyCode, WORD wID, HWND hWndCtl)
 {
 	Apply();
@@ -260,6 +252,14 @@ LRESULT CDialogConf::OnNotify(int idCtrl, LPNMHDR pnmh)
 	}
 
 	SetMsgHandled(FALSE);
+	return 0;
+}
+
+LRESULT CDialogConf::OnReset(WORD wNotifyCode, WORD wID, HWND hWndCtl)
+{
+	HWND combo = GetDlgItem(IDC_COMBO_ENGINE);
+	uComboBox_SelectString(combo, "Chakra");
+	m_editorctrl.SetContent(js_panel_vars::get_default_script_code());
 	return 0;
 }
 
@@ -377,10 +377,9 @@ bool CDialogConf::FindResult(HWND hWnd, HWND hWndEdit, int pos, const char* whic
 		return true;
 	}
 
-	pfc::string8_fast buff = "Cannot find \"";
-	buff += which;
-	buff += "\"";
-	uMessageBox(hWnd, buff.get_ptr(), JSP_NAME, MB_ICONINFORMATION | MB_SETFOREGROUND);
+	pfc::string8_fast msg;
+	msg << "Cannot find \"" << which << "\"";
+	uMessageBox(hWnd, msg, JSP_NAME, MB_ICONINFORMATION | MB_SETFOREGROUND);
 	return false;
 }
 

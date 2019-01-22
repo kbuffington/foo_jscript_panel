@@ -65,10 +65,6 @@ BEGIN
         MENUITEM "Import...", ID_FILE_IMPORT
         MENUITEM "Export...", ID_FILE_EXPORT
     END
-    POPUP "Edit"
-    BEGIN
-        MENUITEM "Reset", ID_EDIT_RESET
-    END
 END
 
 /////////////////////////////////////////////////////////////////////////////
@@ -83,12 +79,13 @@ MENU IDR_MENU
 FONT 8, "Tahoma", 400, 0, 0x0
 BEGIN
     CONTROL         "", IDC_EDIT, "ScintillaJSP2", WS_CLIPCHILDREN, 3, 0, 617, 354
-    RTEXT           "Script Engine:", IDC_STATIC_ENGINE, 7, 362, 45, 8
-    COMBOBOX        IDC_COMBO_ENGINE, 57, 360, 55, 31, CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
-    RTEXT           "Edge Style:", IDC_STATIC_EDGE, 117, 362, 45, 8
-    COMBOBOX        IDC_COMBO_EDGE 167, 360, 55, 31, CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
-    CONTROL         "Pseudo Transparent", IDC_CHECK_PSEUDO_TRANSPARENT, "Button", BS_AUTOCHECKBOX | WS_TABSTOP, 237, 362, 81, 10
-    CONTROL         "&Grab Focus", IDC_CHECK_GRABFOCUS, "Button", BS_AUTOCHECKBOX | WS_TABSTOP, 322, 362, 52, 10
+    PUSHBUTTON      "&Reset", IDC_RESET, 7, 360, 50, 14
+    RTEXT           "Script Engine:", IDC_STATIC_ENGINE, 64, 362, 45, 8
+    COMBOBOX        IDC_COMBO_ENGINE, 114, 360, 55, 31, CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    RTEXT           "Edge Style:", IDC_STATIC_EDGE, 171, 362, 45, 8
+    COMBOBOX        IDC_COMBO_EDGE 224, 360, 55, 31, CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "Pseudo Transparent", IDC_CHECK_PSEUDO_TRANSPARENT, "Button", BS_AUTOCHECKBOX | WS_TABSTOP, 294, 362, 81, 10
+    CONTROL         "&Grab Focus", IDC_CHECK_GRABFOCUS, "Button", BS_AUTOCHECKBOX | WS_TABSTOP, 379, 362, 52, 10
     DEFPUSHBUTTON   "&OK", IDOK, 455, 360, 50, 14
     PUSHBUTTON      "&Apply", IDC_APPLY, 509, 360, 50, 14
     PUSHBUTTON      "&Cancel", IDCANCEL, 563, 360, 50, 14

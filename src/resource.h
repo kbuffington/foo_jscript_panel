@@ -18,6 +18,7 @@
 //ui_conf
 #define IDD_DIALOG_CONF                 110
 #define IDC_EDIT                        112
+#define IDC_RESET                       113
 #define IDC_STATIC_ENGINE               114
 #define IDC_COMBO_ENGINE                115
 #define IDC_STATIC_EDGE                 116
@@ -72,7 +73,6 @@
 #define ID_FILE_APPLY                   201
 #define ID_FILE_IMPORT                  203
 #define ID_FILE_EXPORT                  204
-#define ID_EDIT_RESET                   205
 
 #define ID_SAMPLES_BEGIN                300
 #define ID_SAMPLES_END                  399
