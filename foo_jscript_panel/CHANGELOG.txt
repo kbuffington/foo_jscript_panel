@@ -14,7 +14,7 @@ v2.2.0-Beta6
        Case is not important. You should use forward slashes with no spaces. eg:
        fb.RunMainMenuCommand("Library/Search");
 - NEW: Add menu to "Configuration Window" which provides quick access to all included samples
-       and docs. All previous "Tools" button commands are now on this menu. Idea shamelessly
+       and docs. You can now Import/Export scripts via the File menu. Idea shamelessly
        stolen from TheQwertiest!! 
 - NEW: The preset colour schemes previously bundled inside the "Colour Schemes" folder can
        now be loaded directly from the main preferences under "Tools>JScript Panel".
