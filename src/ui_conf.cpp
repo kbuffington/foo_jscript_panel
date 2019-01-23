@@ -257,7 +257,10 @@ LRESULT CDialogConf::OnNotify(int idCtrl, LPNMHDR pnmh)
 
 LRESULT CDialogConf::OnReset(WORD wNotifyCode, WORD wID, HWND hWndCtl)
 {
-	uComboBox_SelectString(GetDlgItem(IDC_COMBO_ENGINE), "Chakra");
+	if (helpers::supports_chakra())
+	{
+		uComboBox_SelectString(GetDlgItem(IDC_COMBO_ENGINE), "Chakra");
+	}
 	ComboBox_SetCurSel(GetDlgItem(IDC_COMBO_EDGE), 0);
 	uButton_SetCheck(m_hWnd, IDC_CHECK_PSEUDO_TRANSPARENT, false);
 	uButton_SetCheck(m_hWnd, IDC_CHECK_GRABFOCUS, true);
