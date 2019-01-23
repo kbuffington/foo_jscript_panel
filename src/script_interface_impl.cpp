@@ -878,7 +878,7 @@ STDMETHODIMP FbMetadbHandleList::UpdateFileInfoFromJSON(BSTR str)
 
 	metadb_io_v2::get()->update_info_async_simple(
 		m_handles,
-		pfc::ptr_list_const_array_t<const file_info, file_info_impl *>(info.get_ptr(), info.get_count()),
+		pfc::ptr_list_const_array_t<const file_info, file_info_impl*>(info.get_ptr(), info.get_count()),
 		core_api::get_main_window(),
 		metadb_io_v2::op_flag_delay_ui,
 		NULL
@@ -1381,7 +1381,7 @@ STDMETHODIMP FbPlaylistManager::RemoveItemsFromPlaybackQueue(VARIANT affectedIte
 	helpers::com_array helper;
 
 	if (!helper.convert_to_bit_array(affectedItems, affected)) return E_INVALIDARG;
-	if (helper.get_count() > 0)
+	if (helper.get_count())
 	{
 		api->queue_remove_mask(affected);
 	}
@@ -1447,7 +1447,7 @@ STDMETHODIMP FbPlaylistManager::SetPlaylistSelection(UINT playlistIndex, VARIANT
 	pfc::bit_array_bittable affected(api->playlist_get_item_count(playlistIndex));
 	helpers::com_array helper;
 	if (!helper.convert_to_bit_array(affectedItems, affected)) return E_INVALIDARG;
-	if (helper.get_count() > 0)
+	if (helper.get_count())
 	{
 		pfc::bit_array_val status(state != VARIANT_FALSE);
 		api->playlist_set_selection(playlistIndex, affected, status);
@@ -1639,7 +1639,7 @@ STDMETHODIMP FbPlaylistRecyclerManager::Purge(VARIANT affectedItems)
 	pfc::bit_array_bittable affected(api->recycler_get_count());
 	helpers::com_array helper;
 	if (!helper.convert_to_bit_array(affectedItems, affected)) return E_INVALIDARG;
-	if (helper.get_count() > 0)
+	if (helper.get_count())
 	{
 		api->recycler_purge(affected);
 	}
@@ -2057,7 +2057,7 @@ STDMETHODIMP FbUtils::CreateHandleList(VARIANT handle, IFbMetadbHandleList** pp)
 	{
 		IDispatchPtr handle_s = temp;
 		void* ptr = NULL;
-		reinterpret_cast<IFbMetadbHandle *>(handle_s.GetInterfacePtr())->get__ptr(&ptr);
+		reinterpret_cast<IFbMetadbHandle*>(handle_s.GetInterfacePtr())->get__ptr(&ptr);
 		if (!ptr) return E_INVALIDARG;
 
 		items.add_item(reinterpret_cast<metadb_handle*>(ptr));
@@ -2287,7 +2287,7 @@ STDMETHODIMP FbUtils::GetSelection(IFbMetadbHandle** pp)
 	metadb_handle_list items;
 	ui_selection_manager::get()->get_selection(items);
 
-	if (items.get_count() > 0)
+	if (items.get_count())
 	{
 		*pp = new com_object_impl_t<FbMetadbHandle>(items[0]);
 	}
@@ -2417,16 +2417,16 @@ STDMETHODIMP FbUtils::RunContextCommandWithMetadb(BSTR command, VARIANT handle, 
 	if (SUCCEEDED(handle.pdispVal->QueryInterface(__uuidof(IFbMetadbHandle), (void**)&temp)))
 	{
 		handle_s = temp;
-		reinterpret_cast<IFbMetadbHandle *>(handle_s.GetInterfacePtr())->get__ptr(&ptr);
+		reinterpret_cast<IFbMetadbHandle*>(handle_s.GetInterfacePtr())->get__ptr(&ptr);
 		if (!ptr) return E_INVALIDARG;
-		handle_list = pfc::list_single_ref_t<metadb_handle_ptr>(reinterpret_cast<metadb_handle *>(ptr));
+		handle_list = pfc::list_single_ref_t<metadb_handle_ptr>(reinterpret_cast<metadb_handle*>(ptr));
 	}
 	else if (SUCCEEDED(handle.pdispVal->QueryInterface(__uuidof(IFbMetadbHandleList), (void**)&temp)))
 	{
 		handle_s = temp;
-		reinterpret_cast<IFbMetadbHandleList *>(handle_s.GetInterfacePtr())->get__ptr(&ptr);
+		reinterpret_cast<IFbMetadbHandleList*>(handle_s.GetInterfacePtr())->get__ptr(&ptr);
 		if (!ptr) return E_INVALIDARG;
-		handle_list = *reinterpret_cast<metadb_handle_list *>(ptr);
+		handle_list = *reinterpret_cast<metadb_handle_list*>(ptr);
 	}
 	else
 	{
@@ -4707,7 +4707,7 @@ STDMETHODIMP MenuObj::AppendTo(IMenuObj* parent, UINT flags, BSTR text)
 {
 	if (!m_hMenu) return E_POINTER;
 
-	MenuObj* pMenuParent = static_cast<MenuObj *>(parent);
+	MenuObj* pMenuParent = static_cast<MenuObj*>(parent);
 	if (::AppendMenu(pMenuParent->m_hMenu, flags | MF_STRING | MF_POPUP, UINT_PTR(m_hMenu), text))
 	{
 		m_has_detached = true;

@@ -9,7 +9,7 @@
 // C2594: ambiguous conversions
 #define COM_QI_ENTRY_MULTI(Ibase, Iimpl) \
 		if (riid == __uuidof(Ibase)) { \
-			*ppv = static_cast<Ibase *>(static_cast<Iimpl *>(this)); \
+			*ppv = static_cast<Ibase*>(static_cast<Iimpl*>(this)); \
 			goto qi_entry_done; \
 		}
 
@@ -243,7 +243,7 @@ public:
 			}
 		}
 
-		return reinterpret_cast<T *>(_instance.GetInterfacePtr());
+		return reinterpret_cast<T*>(_instance.GetInterfacePtr());
 	}
 
 private:

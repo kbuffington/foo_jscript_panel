@@ -26,13 +26,13 @@ public:
 	template <class TParam>
 	callback_data_scope_releaser(TParam p_data)
 	{
-		m_data = reinterpret_cast<T *>(p_data);
+		m_data = reinterpret_cast<T*>(p_data);
 	}
 
 	template <class TParam>
 	callback_data_scope_releaser(TParam* p_data)
 	{
-		m_data = reinterpret_cast<T *>(p_data);
+		m_data = reinterpret_cast<T*>(p_data);
 	}
 
 	~callback_data_scope_releaser()

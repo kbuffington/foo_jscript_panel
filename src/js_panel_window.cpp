@@ -589,7 +589,7 @@ void js_panel_window::on_font_changed()
 void js_panel_window::on_get_album_art_done(WPARAM wp)
 {
 	using namespace helpers;
-	album_art_async::t_param* param = reinterpret_cast<album_art_async::t_param *>(wp);
+	album_art_async::t_param* param = reinterpret_cast<album_art_async::t_param*>(wp);
 
 	VARIANTARG args[4];
 	args[0].vt = VT_BSTR;
@@ -634,7 +634,7 @@ void js_panel_window::on_item_played(WPARAM wp)
 void js_panel_window::on_load_image_done(WPARAM wp)
 {
 	using namespace helpers;
-	load_image_async::t_param* param = reinterpret_cast<load_image_async::t_param *>(wp);
+	load_image_async::t_param* param = reinterpret_cast<load_image_async::t_param*>(wp);
 
 	VARIANTARG args[3];
 	args[0].vt = VT_BSTR;

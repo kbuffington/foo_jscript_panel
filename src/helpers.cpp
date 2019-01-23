@@ -135,9 +135,9 @@ namespace helpers
 	{
 		contextmenu_manager::ptr cm;
 		contextmenu_manager::g_create(cm);
-		pfc::string8_fast dummy("");
+		pfc::string8_fast path;
 
-		if (p_handles.get_count() > 0)
+		if (p_handles.get_count())
 		{
 			cm->init_context(p_handles, flags);
 		}
@@ -149,7 +149,7 @@ namespace helpers
 			}
 		}
 
-		return execute_context_command_recur(p_command, dummy, cm->get_root());
+		return execute_context_command_recur(p_command, path, cm->get_root());
 	}
 
 	bool execute_context_command_recur(const char* p_command, pfc::string_base& p_path, contextmenu_node* p_parent)

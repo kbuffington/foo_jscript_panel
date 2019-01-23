@@ -37,7 +37,7 @@ private:
 	void add_worker_(simple_thread_worker* worker);
 	void remove_worker_(simple_thread_worker* worker);
 
-	using t_task_list = pfc::chain_list_v2_t<simple_thread_task *>;
+	using t_task_list = pfc::chain_list_v2_t<simple_thread_task*>;
 
 	HANDLE empty_worker_;
 	HANDLE exiting_;
