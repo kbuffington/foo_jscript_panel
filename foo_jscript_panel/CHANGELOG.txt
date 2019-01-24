@@ -1,4 +1,4 @@
-v2.2.0-Beta6
+v2.2.0
 - FIX: (Beta6) Fix a bug introduced in Beta3 where "Configuration Window" settings were
        not applied immediately.
 - FIX: (Beta5) Restore Windows XP support which was broken in Beta1 to Beta4.
@@ -13,9 +13,18 @@ v2.2.0-Beta6
        have all been rewritten and must be supplied with the full path to their commands.
        Case is not important. You should use forward slashes with no spaces. eg:
        fb.RunMainMenuCommand("Library/Search");
-- NEW: Add menu to "Configuration Window" which provides quick access to all included samples
-       and docs. You can now Import/Export scripts via the File menu. Idea shamelessly
-       stolen from TheQwertiest!! 
+- CHG: All files imported to the Configuration Window, Preferences>Tools or
+       included in a script via the "import" preprocessor directive must be
+       UTF8 encoded (with or without BOM). utils.ReadTextFile is unaffected although
+       it should have better UTF8 detection than before.
+- CHG: The code that parses the preprocessor section has been rewritten from scratch.
+       The only difference is that double quotes in the name/author no longer need to be
+       escaped so they will be duplicated if you did this previously.
+- CHG: window.GetColourCUI and window.GetFontCUI no longer accept the previously optional
+       "client_guid" argument.
+- NEW: Add menu toolbar to "Configuration Window" which provides quick access to all
+       included samples and docs. You can now Import/Export scripts via the File menu.
+       The "Reset" option now properly resets all settings.
 - NEW: The preset colour schemes previously bundled inside the "Colour Schemes" folder can
        now be loaded directly from the main preferences under "Tools>JScript Panel".
 - NEW: Add utils.ListFiles and utils.ListFolders. See docs\interfaces.txt.
@@ -27,15 +36,6 @@ v2.2.0-Beta6
 - FIX: utils.FileTest can now query files over 4GB in size when in "s" mode.
        See docs\interfaces.txt
 - FIX: Various sample fixes.
-- CHG: The code that parses the preprocessor section has been rewritten from scratch.
-       The only difference is that double quotes in the name/author no longer need to be
-       escaped so they will be duplicated if you did this previously.
-- CHG: All files imported to the Configuration Window, Preferences>Tools or
-       included in a script via the "import" preprocessor directive must be
-       UTF8 encoded (with or without BOM). utils.ReadTextFile is unaffected although
-       it should have better UTF8 detection than before.
-- CHG: window.GetColourCUI and window.GetFontCUI no longer accept the previously optional
-       "client_guid" argument.
 - CHG: Lots of internal code refactoring and external dependency updates.
 - CHG: If you browse the component folder and notice the "jscript.api" and
        "interface.api" files are missing, it's intentional. The contents are now
