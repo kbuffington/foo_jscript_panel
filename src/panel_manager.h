@@ -1,4 +1,5 @@
 #pragma once
+#include "thread_pool.h"
 
 template <typename T1, typename T2 = char, typename T3 = char>
 struct callback_data : public pfc::refcounted_object_root
@@ -103,6 +104,9 @@ public:
 			output_manager_v2::get()->removeCallback(this);
 		}
 		ui_selection_manager_v2::get()->unregister_callback(this);
+
+		panel_manager::instance().send_msg_to_all(UWM_SCRIPT_TERM, 0, 0);
+		simple_thread_pool::instance().exit();
 	}
 
 	virtual void on_changed(const t_replaygain_config& cfg);
