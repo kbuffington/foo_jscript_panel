@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "panel_manager.h"
+#include "thread_pool.h"
 
 namespace
 {
@@ -97,14 +98,42 @@ void my_dsp_config_callback::on_core_settings_change(const dsp_chain_config& p_n
 	panel_manager::instance().post_msg_to_all(CALLBACK_UWM_ON_DSP_PRESET_CHANGED);
 }
 
-void my_initquit::on_selection_changed(metadb_handle_list_cref p_selection)
-{
-	panel_manager::instance().post_msg_to_all(CALLBACK_UWM_ON_SELECTION_CHANGED);
-}
-
 void my_initquit::on_changed(const t_replaygain_config& cfg)
 {
 	panel_manager::instance().post_msg_to_all(CALLBACK_UWM_ON_REPLAYGAIN_MODE_CHANGED, (WPARAM)cfg.m_source_mode);
+}
+
+void my_initquit::on_init()
+{
+	if (static_api_test_t<replaygain_manager_v2>())
+	{
+		replaygain_manager_v2::get()->add_notify(this);
+	}
+	if (static_api_test_t<output_manager_v2>())
+	{
+		output_manager_v2::get()->addCallback(this);
+	}
+	ui_selection_manager_v2::get()->register_callback(this, 0);
+}
+
+void my_initquit::on_quit()
+{
+	if (static_api_test_t<replaygain_manager_v2>())
+	{
+		replaygain_manager_v2::get()->remove_notify(this);
+	}
+	if (static_api_test_t<output_manager_v2>())
+	{
+		output_manager_v2::get()->removeCallback(this);
+	}
+	ui_selection_manager_v2::get()->unregister_callback(this);
+	panel_manager::instance().send_msg_to_all(UWM_SCRIPT_TERM, 0, 0);
+	simple_thread_pool::instance().exit();
+}
+
+void my_initquit::on_selection_changed(metadb_handle_list_cref p_selection)
+{
+	panel_manager::instance().post_msg_to_all(CALLBACK_UWM_ON_SELECTION_CHANGED);
 }
 
 void my_initquit::outputConfigChanged()

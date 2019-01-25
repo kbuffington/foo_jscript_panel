@@ -1,5 +1,4 @@
 #pragma once
-#include "thread_pool.h"
 
 template <typename T1, typename T2 = char, typename T3 = char>
 struct callback_data : public pfc::refcounted_object_root
@@ -80,36 +79,9 @@ public:
 class my_initquit : public initquit, public ui_selection_callback, public replaygain_core_settings_notify, public output_config_change_callback
 {
 public:
-	virtual void on_init()
-	{
-		if (static_api_test_t<replaygain_manager_v2>())
-		{
-			replaygain_manager_v2::get()->add_notify(this);
-		}
-		if (static_api_test_t<output_manager_v2>())
-		{
-			output_manager_v2::get()->addCallback(this);
-		}
-		ui_selection_manager_v2::get()->register_callback(this, 0);
-	}
-
-	virtual void on_quit()
-	{
-		if (static_api_test_t<replaygain_manager_v2>())
-		{
-			replaygain_manager_v2::get()->remove_notify(this);
-		}
-		if (static_api_test_t<output_manager_v2>())
-		{
-			output_manager_v2::get()->removeCallback(this);
-		}
-		ui_selection_manager_v2::get()->unregister_callback(this);
-
-		panel_manager::instance().send_msg_to_all(UWM_SCRIPT_TERM, 0, 0);
-		simple_thread_pool::instance().exit();
-	}
-
 	virtual void on_changed(const t_replaygain_config& cfg);
+	virtual void on_init();
+	virtual void on_quit();
 	virtual void on_selection_changed(metadb_handle_list_cref p_selection);
 	virtual void outputConfigChanged();
 };
