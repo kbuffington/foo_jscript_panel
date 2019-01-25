@@ -22,6 +22,7 @@ class ContextMenuManager : public IDisposableImpl4<IContextMenuManager>
 protected:
 	ContextMenuManager();
 	virtual ~ContextMenuManager();
+
 	virtual void FinalRelease();
 
 	contextmenu_manager::ptr m_cm;
@@ -39,6 +40,7 @@ class DropSourceAction : public IDisposableImpl4<IDropSourceAction>
 protected:
 	DropSourceAction();
 	virtual ~DropSourceAction();
+
 	virtual void FinalRelease();
 
 public:
@@ -67,6 +69,7 @@ class FbFileInfo : public IDisposableImpl4<IFbFileInfo>
 protected:
 	FbFileInfo(file_info_impl* p_info_ptr);
 	virtual ~FbFileInfo();
+
 	virtual void FinalRelease();
 
 	file_info_impl* m_info_ptr;
@@ -90,6 +93,7 @@ protected:
 	FbMetadbHandle(const metadb_handle_ptr& src);
 	FbMetadbHandle(metadb_handle* src);
 	virtual ~FbMetadbHandle();
+
 	virtual void FinalRelease();
 
 	metadb_handle_ptr m_handle;
@@ -118,6 +122,7 @@ class FbMetadbHandleList : public IDisposableImpl4<IFbMetadbHandleList>
 protected:
 	FbMetadbHandleList(metadb_handle_list_cref handles);
 	virtual ~FbMetadbHandleList();
+
 	virtual void FinalRelease();
 
 	metadb_handle_list m_handles;
@@ -162,6 +167,7 @@ protected:
 	FbPlaybackQueueItem();
 	FbPlaybackQueueItem(const t_playback_queue_item& playbackQueueItem);
 	virtual ~FbPlaybackQueueItem();
+
 	virtual void FinalRelease();
 
 	t_playback_queue_item m_playback_queue_item;
@@ -283,6 +289,7 @@ class FbTitleFormat : public IDisposableImpl4<IFbTitleFormat>
 protected:
 	FbTitleFormat(BSTR expr);
 	virtual ~FbTitleFormat();
+
 	virtual void FinalRelease();
 
 	titleformat_object::ptr m_obj;
@@ -299,6 +306,7 @@ class FbTooltip : public IDisposableImpl4<IFbTooltip>
 protected:
 	FbTooltip(HWND p_wndparent, const panel_tooltip_param_ptr& p_param_ptr);
 	virtual ~FbTooltip();
+
 	virtual void FinalRelease();
 
 	BSTR m_tip_buffer;
@@ -324,6 +332,7 @@ class FbUiSelectionHolder : public IDisposableImpl4<IFbUiSelectionHolder>
 protected:
 	FbUiSelectionHolder(const ui_selection_holder::ptr& holder);
 	virtual ~FbUiSelectionHolder();
+
 	virtual void FinalRelease();
 
 	ui_selection_holder::ptr m_holder;
@@ -486,6 +495,7 @@ class GdiFont : public GdiObj<IGdiFont, Gdiplus::Font>
 protected:
 	GdiFont(Gdiplus::Font* p, HFONT hFont, bool managed = true);
 	virtual ~GdiFont();
+
 	virtual void FinalRelease();
 
 	HFONT m_hFont;
@@ -503,6 +513,7 @@ class GdiGraphics : public GdiObj<IGdiGraphics, Gdiplus::Graphics>
 {
 protected:
 	GdiGraphics();
+
 	static void GetRoundRectPath(Gdiplus::GraphicsPath& gp, Gdiplus::RectF& rect, float arc_width, float arc_height);
 
 public:
@@ -541,6 +552,7 @@ class GdiRawBitmap : public IDisposableImpl4<IGdiRawBitmap>
 protected:
 	GdiRawBitmap(Gdiplus::Bitmap* p_bmp);
 	virtual ~GdiRawBitmap();
+
 	virtual void FinalRelease();
 
 	HBITMAP m_hbmp, m_hbmpold;
@@ -613,6 +625,7 @@ class MainMenuManager : public IDisposableImpl4<IMainMenuManager>
 protected:
 	MainMenuManager();
 	virtual ~MainMenuManager();
+
 	virtual void FinalRelease();
 
 	mainmenu_manager::ptr m_mm;
@@ -646,6 +659,7 @@ class MenuObj : public IDisposableImpl4<IMenuObj>
 protected:
 	MenuObj(HWND wnd_parent);
 	virtual ~MenuObj();
+
 	virtual void FinalRelease();
 
 	HMENU m_hMenu;
@@ -667,6 +681,7 @@ class ThemeManager : public IDisposableImpl4<IThemeManager>
 protected:
 	ThemeManager(HWND hwnd, BSTR classlist);
 	virtual ~ThemeManager();
+
 	virtual void FinalRelease();
 
 	HTHEME m_theme;
