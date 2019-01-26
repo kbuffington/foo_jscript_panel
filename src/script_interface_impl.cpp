@@ -1715,7 +1715,7 @@ STDMETHODIMP FbProfiler::Reset()
 	return S_OK;
 }
 
-STDMETHODIMP FbProfiler::get_Time(INT* p)
+STDMETHODIMP FbProfiler::get_Time(int* p)
 {
 	if (!p) return E_POINTER;
 
@@ -1832,7 +1832,7 @@ FbTooltip::FbTooltip(HWND p_wndparent, const panel_tooltip_param_ptr& p_param_pt
 	m_ti.lpszText = m_tip_buffer;
 
 	HFONT font = CreateFont(
-		-(INT)m_panel_tooltip_param_ptr->font_size,
+		-(int)m_panel_tooltip_param_ptr->font_size,
 		0,
 		0,
 		0,
@@ -2928,7 +2928,7 @@ STDMETHODIMP FbWindow::ShowProperties()
 	return S_OK;
 }
 
-STDMETHODIMP FbWindow::get_Height(INT* p)
+STDMETHODIMP FbWindow::get_Height(int* p)
 {
 	if (!p) return E_POINTER;
 
@@ -3014,7 +3014,7 @@ STDMETHODIMP FbWindow::get_Name(BSTR* p)
 	return S_OK;
 }
 
-STDMETHODIMP FbWindow::get_Width(INT* p)
+STDMETHODIMP FbWindow::get_Width(int* p)
 {
 	if (!p) return E_POINTER;
 

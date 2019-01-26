@@ -281,7 +281,7 @@ protected:
 public:
 	STDMETHODIMP Print();
 	STDMETHODIMP Reset();
-	STDMETHODIMP get_Time(INT* p);
+	STDMETHODIMP get_Time(int* p);
 };
 
 class FbTitleFormat : public IDisposableImpl4<IFbTitleFormat>
@@ -448,7 +448,7 @@ public:
 	STDMETHODIMP SetTimeout(IDispatch* func, int delay, UINT* p);
 	STDMETHODIMP ShowConfigure();
 	STDMETHODIMP ShowProperties();
-	STDMETHODIMP get_Height(INT* p);
+	STDMETHODIMP get_Height(int* p);
 	STDMETHODIMP get_ID(UINT* p);
 	STDMETHODIMP get_InstanceType(UINT* p);
 	STDMETHODIMP get_IsTransparent(VARIANT_BOOL* p);
@@ -458,7 +458,7 @@ public:
 	STDMETHODIMP get_MinHeight(UINT* p);
 	STDMETHODIMP get_MinWidth(UINT* p);
 	STDMETHODIMP get_Name(BSTR* p);
-	STDMETHODIMP get_Width(INT* p);
+	STDMETHODIMP get_Width(int* p);
 	STDMETHODIMP put_MaxHeight(UINT height);
 	STDMETHODIMP put_MaxWidth(UINT width);
 	STDMETHODIMP put_MinHeight(UINT height);
