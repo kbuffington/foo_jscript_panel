@@ -182,7 +182,6 @@ copy /Y "$(TargetDir)$(TargetName).pdb" "%component_path%\"</Command>
     <ClInclude Include="scintilla_prop_sets.h" />
     <ClInclude Include="script_callback_invoker.h" />
     <ClInclude Include="script_host.h" />
-    <ClInclude Include="script_interface.h" />
     <ClInclude Include="script_interface_impl.h" />
     <ClInclude Include="stats.h" />
     <ClInclude Include="stdafx.h" />
@@ -200,6 +199,7 @@ copy /Y "$(TargetDir)$(TargetName).pdb" "%component_path%\"</Command>
   <ItemGroup>
     <None Include="foo_jscript_panel.api" />
     <None Include="foo_jscript_panel.js" />
+    <None Include="tlb\foo_jscript_panel.tlb" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="foo_jscript_panel.rc" />
@@ -228,6 +228,9 @@ copy /Y "$(TargetDir)$(TargetName).pdb" "%component_path%\"</Command>
       <LinkLibraryDependencies>true</LinkLibraryDependencies>
       <UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Midl Include="script_interface.idl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

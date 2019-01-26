@@ -1,0 +1,642 @@
+import "docobj.idl";
+import "C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\MLang.idl";
+
+
+[ version(1.8), uuid(68a66280-20a9-3fba-afab-df2f94de3ac3) ]
+library foo_jscript_panel
+{
+	importlib("stdole2.tlb");
+	importlib("olepro32.dll");
+
+	[
+		dual,
+		object,
+		pointer_default(unique),
+		custom(8AFCDA7F-33B7-3120-86A8-754D2C0C0578, "library_block"),
+		uuid(2e0bae19-3afe-473a-a703-0feb2d714655)
+	]
+	interface IDisposable : IDispatch {
+		HRESULT  Dispose();
+	};
+
+	[
+		object,
+		dual,
+		pointer_default(unique),
+		custom(8AFCDA7F-33B7-3120-86A8-754D2C0C0578, "library_block"),
+		uuid(4ff021ab-17bc-43de-9dbe-2d0edec1e095)
+	] 
+	interface IFbTooltip : IDisposable {
+		HRESULT  Activate();
+		HRESULT  Deactivate();
+		HRESULT  GetDelayTime([in]int type, [out,retval] int *p);
+		HRESULT  SetDelayTime([in]int type, [in]int time);
+		HRESULT  SetMaxWidth([in]int width);
+		HRESULT  TrackPosition([in]int x, [in]int y);
+		[propget] HRESULT  Text([out,retval] BSTR *p);
+		[propput] HRESULT  Text([in]BSTR text);
+		[propput] HRESULT  TrackActivate([in]VARIANT_BOOL activate);
+	};
+
+	[
+		object,
+		dual,
+		pointer_default(unique),
+		custom(8AFCDA7F-33B7-3120-86A8-754D2C0C0578, "library_block"),
+		uuid(77e72064-1fb6-4754-a076-1dc517a6787b)
+	]
+	interface IGdiObj : IDisposable {
+		HRESULT  get__ptr([out,retval] void **pp);
+	};
+
+	[
+		object,
+		dual,
+		pointer_default(unique),
+		custom(8AFCDA7F-33B7-3120-86A8-754D2C0C0578, "library_block"),
+		uuid(6fa87441-9f53-4a3f-999a-19509e3c92d7)
+	]
+	interface IGdiFont : IGdiObj {
+		HRESULT  get__HFont([out,retval] UINT *p);
+		[propget] HRESULT  Height([out,retval] UINT *p);
+		[propget] HRESULT  Name([out,retval] BSTR *p);
+		[propget] HRESULT  Size([out,retval] float *p);
+		[propget] HRESULT  Style([out,retval] int *p);
+	};
+
+	[
+		object,
+		dual,
+		pointer_default(unique),
+		custom(8AFCDA7F-33B7-3120-86A8-754D2C0C0578, "library_block"),
+		uuid(22d1f519-5d6e-4d5c-80e3-8fde0d1b946b)
+	]
+	interface IGdiRawBitmap : IDisposable {
+		HRESULT  get__Handle([out,retval] HDC *p);
+		[propget] HRESULT  Height([out,retval] UINT *p);
+		[propget] HRESULT  Width([out,retval] UINT *p);
+	};
+
+interface IGdiGraphics;
+	[
+		object,
+		dual,
+		pointer_default(unique),
+		custom(8AFCDA7F-33B7-3120-86A8-754D2C0C0578, "library_block"),
+		uuid(7efbd443-4f6f-4cb2-9eee-882b9b19cbf6)
+	]
+	interface IGdiBitmap : IGdiObj {
+		HRESULT  ApplyAlpha([in]BYTE alpha, [out,retval] IGdiBitmap **pp);
+		HRESULT  ApplyMask([in]IGdiBitmap *mask, [out,retval] VARIANT_BOOL *p);
+		HRESULT  Clone([in]float x, [in]float y, [in]float w, [in]float h, [out,retval] IGdiBitmap **pp);
+		HRESULT  CreateRawBitmap([out,retval] IGdiRawBitmap **pp);
+		HRESULT  GetColourScheme([in]UINT count, [out,retval] VARIANT *p);
+		HRESULT  GetColourSchemeJSON([in]UINT count, [out,retval] BSTR *p);
+		HRESULT  GetGraphics([out,retval] IGdiGraphics **pp);
+		HRESULT  ReleaseGraphics([in]IGdiGraphics *p);
+		HRESULT  Resize([in]UINT w, [in]UINT h, [defaultvalue(0)] int interpolationMode, [out,retval] IGdiBitmap **pp);
+		HRESULT  RotateFlip([in]UINT mode);
+		HRESULT  SaveAs([in]BSTR path, [defaultvalue("image/png")] BSTR format, [out,retval] VARIANT_BOOL *p);
+		HRESULT  StackBlur([in]BYTE radius);
+		[propget] HRESULT  Height([out,retval] UINT *p);
+		[propget] HRESULT  Width([out,retval] UINT *p);
+	};
+
+	[
+		object,
+		dual,
+		pointer_default(unique),
+		custom(8AFCDA7F-33B7-3120-86A8-754D2C0C0578, "library_block"),
+		uuid(452682d2-feef-4351-b642-e8949435086b)
+	]
+	interface IMeasureStringInfo : IDispatch {
+		[propget] HRESULT  chars([out,retval] int *p);
+		[propget] HRESULT  height([out,retval] float *p);
+		[propget] HRESULT  lines([out,retval] int *p);
+		[propget] HRESULT  width([out,retval] float *p);
+		[propget] HRESULT  x([out,retval] float *p);
+		[propget] HRESULT  y([out,retval] float *p);
+	};
+
+	[
+		object,
+		dual,
+		pointer_default(unique),
+		custom(8AFCDA7F-33B7-3120-86A8-754D2C0C0578, "library_block"),
+		uuid(9d6e404f-5ba7-4470-88d5-eb5980dffc07)
+	]
+	interface IGdiGraphics : IGdiObj {
+		HRESULT  put__ptr([in]void *p);
+		HRESULT  CalcTextHeight([in]BSTR str, [in]IGdiFont *font, [out,retval] UINT *p);
+		HRESULT  CalcTextWidth([in]BSTR str, [in]IGdiFont *font, [out,retval] UINT *p);
+		HRESULT  DrawEllipse([in]float x, [in]float y, [in]float w, [in]float h, [in]float line_width, [in]VARIANT colour);
+		HRESULT  DrawImage([in]IGdiBitmap *image, [in]float dstX, [in]float dstY, [in]float dstW, [in]float dstH, [in]float srcX, [in]float srcY, [in]float srcW, [in]float srcH, [defaultvalue(0)] float angle, [defaultvalue(255)] BYTE alpha);
+		HRESULT  DrawLine([in]float x1, [in]float y1, [in]float x2, [in]float y2, [in]float line_width, [in]VARIANT colour);
+		HRESULT  DrawPolygon([in]VARIANT colour, [in]float line_width, [in]VARIANT points);
+		HRESULT  DrawRect([in]float x, [in]float y, [in]float w, [in]float h, [in]float line_width, [in]VARIANT colour);
+		HRESULT  DrawRoundRect([in]float x, [in]float y, [in]float w, [in]float h, [in]float arc_width, [in]float arc_height, [in]float line_width, [in]VARIANT colour);
+		HRESULT  DrawString([in]BSTR str, [in]IGdiFont *font, [in]VARIANT colour, [in]float x, [in]float y, [in]float w, [in]float h, [defaultvalue(0)] int flags);
+		HRESULT  EstimateLineWrap([in]BSTR str, [in]IGdiFont *font, [in]int max_width, [out,retval] VARIANT *p);
+		HRESULT  FillEllipse([in]float x, [in]float y, [in]float w, [in]float h, [in]VARIANT colour);
+		HRESULT  FillGradRect([in]float x, [in]float y, [in]float w, [in]float h, [in]float angle, [in]VARIANT colour1, [in]VARIANT colour2, [defaultvalue(1)] float focus);
+		HRESULT  FillPolygon([in]VARIANT colour, [in]int fillmode, [in]VARIANT points);
+		HRESULT  FillRoundRect([in]float x, [in]float y, [in]float w, [in]float h, [in]float arc_width, [in]float arc_height, [in]VARIANT colour);
+		HRESULT  FillSolidRect([in]float x, [in]float y, [in]float w, [in]float h, [in]VARIANT colour);
+		HRESULT  GdiAlphaBlend([in]IGdiRawBitmap *bitmap, [in]int dstX, [in]int dstY, [in]int dstW, [in]int dstH, [in]int srcX, [in]int srcY, [in]int srcW, [in]int srcH, [defaultvalue(255)] BYTE alpha);
+		HRESULT  GdiDrawBitmap([in]IGdiRawBitmap *bitmap, [in]int dstX, [in]int dstY, [in]int dstW, [in]int dstH, [in]int srcX, [in]int srcY, [in]int srcW, [in]int srcH);
+		HRESULT  GdiDrawText([in]BSTR str, [in]IGdiFont *font, [in]VARIANT colour, [in]int x, [in]int y, [in]int w, [in]int h, [defaultvalue(0)] int format);
+		HRESULT  MeasureString([in]BSTR str, [in]IGdiFont *font, [in]float x, [in]float y, [in]float w, [in]float h, [defaultvalue(0)] int flags, [out,retval] IMeasureStringInfo **pp);
+		HRESULT  SetInterpolationMode([in]int mode);
+		HRESULT  SetSmoothingMode([in]int mode);
+		HRESULT  SetTextRenderingHint([in]UINT mode);
+	};
+
+	[
+		object,
+		dual,
+		pointer_default(unique),
+		custom(8AFCDA7F-33B7-3120-86A8-754D2C0C0578, "library_block"),
+		uuid(351e3e75-8f27-4afd-b7e0-5409cf8f4947)
+	]
+	interface IGdiUtils : IDispatch {
+		HRESULT  CreateImage([in]int w, [in]int h, [out,retval] IGdiBitmap **pp);
+		HRESULT  Font([in]BSTR name, [in]float pxSize, [defaultvalue(0)] int style, [out,retval] IGdiFont **pp);
+		HRESULT  Image([in]BSTR path, [out,retval] IGdiBitmap **pp);
+		HRESULT  LoadImageAsync([in]UINT window_id, [in]BSTR path, [out,retval] UINT *p);
+	};
+
+	[
+		object,
+		dual,
+		pointer_default(unique),
+		custom(8AFCDA7F-33B7-3120-86A8-754D2C0C0578, "library_block"),
+		uuid(7c39dcf1-4e41-4a61-b06b-fb52107e4409)
+	]
+	interface IFbFileInfo : IDisposable {
+		HRESULT  get__ptr([out,retval] void **pp);
+		HRESULT  InfoFind([in]BSTR name, [out,retval] int *p);
+		HRESULT  InfoName([in]UINT idx, [out,retval] BSTR *p);
+		HRESULT  InfoValue([in]UINT idx, [out,retval] BSTR *p);
+		HRESULT  MetaFind([in]BSTR name, [out,retval] int *p);
+		HRESULT  MetaName([in]UINT idx, [out,retval] BSTR *p);
+		HRESULT  MetaValue([in]UINT idx, [in]UINT vidx, [out,retval] BSTR *p);
+		HRESULT  MetaValueCount([in]UINT idx, [out,retval] UINT *p);
+		[propget] HRESULT  InfoCount([out,retval] UINT *p);
+		[propget] HRESULT  MetaCount([out,retval] UINT *p);
+	};
+
+	[
+		object,
+		dual,
+		pointer_default(unique),
+		custom(8AFCDA7F-33B7-3120-86A8-754D2C0C0578, "library_block"),
+		uuid(0e1980d3-916a-482e-af87-578bcb1a4a25)
+	]
+	interface IFbMetadbHandle : IDisposable {
+		HRESULT  get__ptr([out,retval] void **pp);
+		HRESULT  ClearStats();
+		HRESULT  Compare([in]IFbMetadbHandle *handle, [out,retval] VARIANT_BOOL *p);
+		HRESULT  GetAlbumArt([defaultvalue(0)] UINT art_id, [defaultvalue(-1)] VARIANT_BOOL need_stub, [out,retval] VARIANT *p);
+		HRESULT  GetFileInfo([out,retval] IFbFileInfo **pp);
+		HRESULT  RefreshStats();
+		HRESULT  SetFirstPlayed([in]BSTR first_played);
+		HRESULT  SetLastPlayed([in]BSTR last_played);
+		HRESULT  SetLoved([in]UINT loved);
+		HRESULT  SetPlaycount([in]UINT playcount);
+		HRESULT  SetRating([in]UINT rating);
+		[propget] HRESULT  FileSize([out,retval] LONGLONG *p);
+		[propget] HRESULT  Length([out,retval] double *p);
+		[propget] HRESULT  Path([out,retval] BSTR *p);
+		[propget] HRESULT  RawPath([out,retval] BSTR *p);
+		[propget] HRESULT  SubSong([out,retval] UINT *p);
+	};
+
+interface IFbTitleFormat;
+	[
+		object,
+		dual,
+		pointer_default(unique),
+		custom(8AFCDA7F-33B7-3120-86A8-754D2C0C0578, "library_block"),
+		uuid(64528708-ae09-49dd-8e8d-1417fe9a9f09)
+	]
+	interface IFbMetadbHandleList : IDisposable {
+		HRESULT  get__ptr([out,retval] void **pp);
+		HRESULT  Add([in]IFbMetadbHandle *handle);
+		HRESULT  AddRange([in]IFbMetadbHandleList *handles);
+		HRESULT  AttachImage([in]BSTR image_path, [defaultvalue(0)] UINT art_id);
+		HRESULT  BSearch([in]IFbMetadbHandle *handle, [out,retval] int *p);
+		HRESULT  CalcTotalDuration([out,retval] double *p);
+		HRESULT  CalcTotalSize([out,retval] LONGLONG *p);
+		HRESULT  Clone([out,retval] IFbMetadbHandleList **pp);
+		HRESULT  Convert([out,retval] VARIANT *p);
+		HRESULT  Find([in]IFbMetadbHandle *handle, [out,retval] int *p);
+		HRESULT  GetLibraryRelativePaths([out,retval] VARIANT *p);
+		HRESULT  Insert([in]UINT index, [in]IFbMetadbHandle *handle);
+		HRESULT  InsertRange([in]UINT index, [in]IFbMetadbHandleList *handles);
+		HRESULT  MakeDifference([in]IFbMetadbHandleList *handles);
+		HRESULT  MakeIntersection([in]IFbMetadbHandleList *handles);
+		HRESULT  MakeUnion([in]IFbMetadbHandleList *handles);
+		HRESULT  OrderByFormat([in]IFbTitleFormat *script, [in]int direction);
+		HRESULT  OrderByPath();
+		HRESULT  OrderByRelativePath();
+		HRESULT  RefreshStats();
+		HRESULT  Remove([in]IFbMetadbHandle *handle);
+		HRESULT  RemoveAll();
+		HRESULT  RemoveAttachedImage([defaultvalue(0)] UINT art_id);
+		HRESULT  RemoveAttachedImages();
+		HRESULT  RemoveById([in]UINT index);
+		HRESULT  RemoveRange([in]UINT from, [in]UINT count);
+		HRESULT  Sort();
+		HRESULT  UpdateFileInfoFromJSON([in]BSTR str);
+		[propget] HRESULT  Count([out,retval] UINT *p);
+		[propget] HRESULT  Item([in]UINT index, [out,retval] IFbMetadbHandle **pp);
+		[propput] HRESULT  Item([in]UINT index, [in]IFbMetadbHandle *handle);
+	};
+
+	[
+		object,
+		dual,
+		pointer_default(unique),
+		custom(8AFCDA7F-33B7-3120-86A8-754D2C0C0578, "library_block"),
+		uuid(998d8666-b446-4e92-8e8f-797d3cce4b7e)
+	]
+	interface IFbTitleFormat : IDisposable {
+		HRESULT  get__ptr([out,retval] void **pp);
+		HRESULT  Eval([defaultvalue(0)] VARIANT_BOOL force, [out,retval] BSTR *p);
+		HRESULT  EvalWithMetadb([in]IFbMetadbHandle *handle, [out,retval] BSTR *p);
+		HRESULT  EvalWithMetadbs([in]IFbMetadbHandleList *handles, [out,retval] VARIANT *p);
+	};
+
+	[
+		object,
+		dual,
+		pointer_default(unique),
+		custom(8AFCDA7F-33B7-3120-86A8-754D2C0C0578, "library_block"),
+		uuid(1e9f95ae-63be-49dc-a395-ee386e8eb202)
+	]
+	interface IMenuObj : IDisposable {
+		HRESULT  get__ID([out,retval] HMENU *p);
+		HRESULT  AppendMenuItem([in]UINT flags, [in]UINT item_id, [in]BSTR text);
+		HRESULT  AppendMenuSeparator();
+		HRESULT  AppendTo([in]IMenuObj *parent, [in]UINT flags, [in]BSTR text);
+		HRESULT  CheckMenuItem([in]UINT item_id, [in]VARIANT_BOOL check);
+		HRESULT  CheckMenuRadioItem([in]UINT first, [in]UINT last, [in]UINT selected);
+		HRESULT  TrackPopupMenu([in]int x, [in]int y, [defaultvalue(0)] UINT flags, [out,retval] UINT *p);
+	};
+
+	[
+		object,
+		dual,
+		pointer_default(unique),
+		custom(8AFCDA7F-33B7-3120-86A8-754D2C0C0578, "library_block"),
+		uuid(0e1bc833-b9f8-44b1-8240-57fff04602ad)
+	]
+	interface IContextMenuManager : IDisposable {
+		HRESULT  BuildMenu([in]IMenuObj *p, [in]int base_id, [defaultvalue(-1)] int max_id);
+		HRESULT  ExecuteByID([in]UINT id, [out,retval] VARIANT_BOOL *p);
+		HRESULT  InitContext([in]IFbMetadbHandleList *handles);
+		HRESULT  InitContextPlaylist();
+		HRESULT  InitNowPlaying();
+	};
+
+	[
+		object,
+		dual,
+		pointer_default(unique),
+		custom(8AFCDA7F-33B7-3120-86A8-754D2C0C0578, "library_block"),
+		uuid(4a357221-1b75-4379-8de7-6a865bbfad10)
+	]
+	interface IMainMenuManager : IDisposable {
+		HRESULT  BuildMenu([in]IMenuObj *p, [in]int base_id, [in]int count);
+		HRESULT  ExecuteByID([in]UINT id, [out,retval] VARIANT_BOOL *p);
+		HRESULT  Init([in]BSTR root_name);
+	};
+
+	[
+		object,
+		dual,
+		pointer_default(unique),
+		custom(8AFCDA7F-33B7-3120-86A8-754D2C0C0578, "library_block"),
+		uuid(2d7436ad-6527-4154-a3c7-361ab8b88f5c)
+	]
+	interface IFbProfiler : IDispatch {
+		HRESULT  Reset();
+		HRESULT  Print();
+		[propget] HRESULT  Time([out,retval] int *p);
+	};
+
+	[
+		object,
+		dual,
+		pointer_default(unique),
+		custom(8AFCDA7F-33B7-3120-86A8-754D2C0C0578, "library_block"),
+		uuid(1f40f9e1-c0fb-4021-80de-37c4d0a26f45)
+	]
+	interface IFbUiSelectionHolder : IDisposable {
+		HRESULT  SetPlaylistSelectionTracking();
+		HRESULT  SetPlaylistTracking();
+		HRESULT  SetSelection([in]IFbMetadbHandleList *handles);
+	};
+
+	[
+		object,
+		dual,
+		pointer_default(unique),
+		custom(8AFCDA7F-33B7-3120-86A8-754D2C0C0578, "library_block"),
+		uuid(bae2e084-6545-4a17-9795-1496a4ee2741)
+	]
+	interface IFbUtils : IDispatch {
+		HRESULT  AcquireUiSelectionHolder([out,retval] IFbUiSelectionHolder **pp);
+		HRESULT  AddDirectory();
+		HRESULT  AddFiles();
+		HRESULT  CheckClipboardContents([in]UINT window_id, [out,retval] VARIANT_BOOL *p);
+		HRESULT  ClearPlaylist();
+		HRESULT  CopyHandleListToClipboard([in]IFbMetadbHandleList *handles, [out,retval] VARIANT_BOOL *p);
+		HRESULT  CreateContextMenuManager([out,retval] IContextMenuManager **pp);
+		HRESULT  CreateHandleList([optional] VARIANT handle, [out,retval] IFbMetadbHandleList **pp);
+		HRESULT  CreateMainMenuManager([out,retval] IMainMenuManager **pp);
+		HRESULT  CreateProfiler([defaultvalue("")] BSTR name, [out,retval] IFbProfiler **pp);
+		HRESULT  DoDragDrop([in]IFbMetadbHandleList *handles, [in]UINT okEffects, [out,retval] UINT *p);
+		HRESULT  Exit();
+		HRESULT  GetClipboardContents([in]UINT window_id, [out,retval] IFbMetadbHandleList **pp);
+		HRESULT  GetDSPPresets([out,retval] BSTR *p);
+		HRESULT  GetFocusItem([defaultvalue(-1)] VARIANT_BOOL force, [out,retval] IFbMetadbHandle **pp);
+		HRESULT  GetLibraryItems([out,retval] IFbMetadbHandleList **pp);
+		HRESULT  GetLibraryRelativePath([in]IFbMetadbHandle *handle, [out,retval] BSTR *p);
+		HRESULT  GetNowPlaying([out,retval] IFbMetadbHandle **pp);
+		HRESULT  GetOutputDevices([out,retval] BSTR *p);
+		HRESULT  GetQueryItems([in]IFbMetadbHandleList *handles, [in]BSTR query, [out,retval] IFbMetadbHandleList **pp);
+		HRESULT  GetSelection([out,retval] IFbMetadbHandle **pp);
+		HRESULT  GetSelections([defaultvalue(0)] UINT flags, [out,retval] IFbMetadbHandleList **pp);
+		HRESULT  GetSelectionType([out,retval] UINT *p);
+		HRESULT  IsLibraryEnabled([out,retval] VARIANT_BOOL *p);
+		HRESULT  IsMetadbInMediaLibrary([in]IFbMetadbHandle *handle, [out,retval] VARIANT_BOOL *p);
+		HRESULT  LoadPlaylist();
+		HRESULT  Next();
+		HRESULT  Pause();
+		HRESULT  Play();
+		HRESULT  PlayOrPause();
+		HRESULT  Prev();
+		HRESULT  Random();
+		HRESULT  RunContextCommand([in]BSTR command, [defaultvalue(0)] UINT flags, [out,retval] VARIANT_BOOL *p);
+		HRESULT  RunContextCommandWithMetadb([in]BSTR command, [in]VARIANT handle, [defaultvalue(0)] UINT flags, [out,retval] VARIANT_BOOL *p);
+		HRESULT  RunMainMenuCommand([in]BSTR command, [out,retval] VARIANT_BOOL *p);
+		HRESULT  SavePlaylist();
+		HRESULT  SetDSPPreset([in]UINT idx);
+		HRESULT  SetOutputDevice([in]BSTR output, [in]BSTR device);
+		HRESULT  ShowConsole();
+		HRESULT  ShowLibrarySearchUI([in]BSTR query);
+		HRESULT  ShowPopupMessage([in]BSTR msg, [defaultvalue("JScript Panel")] BSTR title);
+		HRESULT  ShowPreferences();
+		HRESULT  Stop();
+		HRESULT  TitleFormat([in]BSTR expression, [out,retval] IFbTitleFormat **pp);
+		HRESULT  VolumeDown();
+		HRESULT  VolumeMute();
+		HRESULT  VolumeUp();
+		[propget] HRESULT  AlwaysOnTop([out,retval] VARIANT_BOOL *p);
+		[propget] HRESULT  ComponentPath([out,retval] BSTR *p);
+		[propget] HRESULT  CursorFollowPlayback([out,retval] VARIANT_BOOL *p);
+		[propget] HRESULT  FoobarPath([out,retval] BSTR *p);
+		[propget] HRESULT  IsPaused([out,retval] VARIANT_BOOL *p);
+		[propget] HRESULT  IsPlaying([out,retval] VARIANT_BOOL *p);
+		[propget] HRESULT  PlaybackFollowCursor([out,retval] VARIANT_BOOL *p);
+		[propget] HRESULT  PlaybackLength([out,retval] double *p);
+		[propget] HRESULT  PlaybackTime([out,retval] double *p);
+		[propget] HRESULT  ProfilePath([out,retval] BSTR *p);
+		[propget] HRESULT  ReplaygainMode([out,retval] UINT *p);
+		[propget] HRESULT  StopAfterCurrent([out,retval] VARIANT_BOOL *p);
+		[propget] HRESULT  Volume([out,retval] float *p);
+		[propput] HRESULT  AlwaysOnTop([in]VARIANT_BOOL p);
+		[propput] HRESULT  CursorFollowPlayback([in]VARIANT_BOOL p);
+		[propput] HRESULT  PlaybackFollowCursor([in]VARIANT_BOOL p);
+		[propput] HRESULT  PlaybackTime([in]double time);
+		[propput] HRESULT  ReplaygainMode([in]UINT p);
+		[propput] HRESULT  StopAfterCurrent([in]VARIANT_BOOL p);
+		[propput] HRESULT  Volume([in]float value);
+	};
+
+	[
+		object,
+		dual,
+		pointer_default(unique),
+		custom(8AFCDA7F-33B7-3120-86A8-754D2C0C0578, "library_block"),
+		uuid(8a14d6a2-4582-4398-a6af-2206f2dabbbe)
+	]
+	interface IThemeManager : IDisposable {
+		HRESULT  DrawThemeBackground([in]IGdiGraphics *gr, [in]int x, [in]int y, [in]int w, [in]int h, [defaultvalue(0)] int clip_x, [defaultvalue(0)] int clip_y, [defaultvalue(0)] int clip_w, [defaultvalue(0)] int clip_h);
+		HRESULT  IsThemePartDefined([in]int partid, [defaultvalue(0)] int stateid, [out,retval] VARIANT_BOOL *p);
+		HRESULT  SetPartAndStateID([in]int partid, [in]int stateid);
+	};
+
+	[
+		object,
+		dual,
+		pointer_default(unique),
+		custom(8AFCDA7F-33B7-3120-86A8-754D2C0C0578, "library_block"),
+		uuid(91830eda-b5f2-4061-9923-7880192a2734)
+	]
+	interface IDropSourceAction : IDisposable {
+		[propget] HRESULT  Effect([out,retval] UINT *effect);
+		[propput] HRESULT  Base([in]UINT base);
+		[propput] HRESULT  Effect([in]UINT effect);
+		[propput] HRESULT  Playlist([in]UINT id);
+		[propput] HRESULT  ToSelect([in]VARIANT_BOOL to_select);
+	};
+
+	[
+		object,
+		dual,
+		pointer_default(unique),
+		custom(8AFCDA7F-33B7-3120-86A8-754D2C0C0578, "library_block"),
+		uuid(81e1f0c0-1dfe-4996-abd9-ba98dff69e4c)
+	]
+	interface IFbWindow : IDispatch {
+		HRESULT  ClearInterval([in]UINT intervalID);
+		HRESULT  ClearTimeout([in]UINT timeoutID);
+		HRESULT  CreatePopupMenu([out,retval] IMenuObj **pp);
+		HRESULT  CreateThemeManager([in]BSTR classid, [out,retval] IThemeManager **pp);
+		HRESULT  CreateTooltip([defaultvalue("Segoe UI")] BSTR name, [defaultvalue(12)] float pxSize, [defaultvalue(0)] int style, [out,retval] IFbTooltip **pp);
+		HRESULT  GetColourCUI([in]UINT type, [out,retval] int *p);
+		HRESULT  GetColourDUI([in]UINT type, [out,retval] int *p);
+		HRESULT  GetFontCUI([in]UINT type, [out,retval] IGdiFont **pp);
+		HRESULT  GetFontDUI([in]UINT type, [out,retval] IGdiFont **pp);
+		HRESULT  GetProperty([in]BSTR name, [optional] VARIANT defaultval, [out,retval] VARIANT *p);
+		HRESULT  NotifyOthers([in]BSTR name, [in]VARIANT info);
+		HRESULT  Reload();
+		HRESULT  Repaint([defaultvalue(0)] VARIANT_BOOL force);
+		HRESULT  RepaintRect([in]LONG x, [in]LONG y, [in]LONG w, [in]LONG h, [defaultvalue(0)] VARIANT_BOOL force);
+		HRESULT  SetCursor([in]UINT id);
+		HRESULT  SetInterval([in]IDispatch *func, [in]int delay, [out,retval] UINT *p);
+		HRESULT  SetProperty([in]BSTR name, [in]VARIANT val);
+		HRESULT  SetTimeout([in]IDispatch *func, [in]int delay, [out,retval] UINT *p);
+		HRESULT  ShowConfigure();
+		HRESULT  ShowProperties();
+		[propget] HRESULT  Height([out,retval] int *p);
+		[propget] HRESULT  ID([out,retval] UINT *p);
+		[propget] HRESULT  InstanceType([out,retval] UINT *p);
+		[propget] HRESULT  IsTransparent([out,retval] VARIANT_BOOL *p);
+		[propget] HRESULT  IsVisible([out,retval] VARIANT_BOOL *p);
+		[propget] HRESULT  MaxHeight([out,retval] UINT *p);
+		[propget] HRESULT  MaxWidth([out,retval] UINT *p);
+		[propget] HRESULT  MinHeight([out,retval] UINT *p);
+		[propget] HRESULT  MinWidth([out,retval] UINT *p);
+		[propget] HRESULT  Name([out,retval] BSTR *p);
+		[propget] HRESULT  Width([out,retval] int *p);
+		[propput] HRESULT  MaxHeight([in]UINT height);
+		[propput] HRESULT  MaxWidth([in]UINT width);
+		[propput] HRESULT  MinHeight([in]UINT height);
+		[propput] HRESULT  MinWidth([in]UINT width);
+	};
+
+	[
+		object,
+		dual,
+		pointer_default(unique),
+		custom(8AFCDA7F-33B7-3120-86A8-754D2C0C0578, "library_block"),
+		uuid(690a35f6-ba53-46f9-91f8-4327204c6c62)
+	]
+	interface IJSConsole : IDispatch {
+		[vararg] HRESULT  Log([in]SAFEARRAY(VARIANT) p);
+	};
+
+	[
+		object,
+		dual,
+		pointer_default(unique),
+		custom(8AFCDA7F-33B7-3120-86A8-754D2C0C0578, "library_block"),
+		uuid(d53e81cd-0157-4cfe-a618-1F88d48dc0b7)
+	]
+	interface IJSUtils : IDispatch {
+		HRESULT  CheckComponent([in]BSTR name, [defaultvalue(-1)] VARIANT_BOOL is_dll, [out,retval] VARIANT_BOOL *p);
+		HRESULT  CheckFont([in]BSTR name, [out,retval] VARIANT_BOOL *p);
+		HRESULT  ColourPicker([in]UINT window_id, [in]int default_colour, [out,retval] int *p);
+		HRESULT  FileTest([in]BSTR path, [in]BSTR mode, [out,retval] VARIANT *p);
+		HRESULT  FormatDuration([in]double seconds, [out,retval] BSTR *p);
+		HRESULT  FormatFileSize([in]LONGLONG bytes, [out,retval] BSTR *p);
+		HRESULT  GetAlbumArtAsync([in]UINT window_id, [in]IFbMetadbHandle *handle, [defaultvalue(0)] UINT art_id, [defaultvalue(-1)] VARIANT_BOOL need_stub, [defaultvalue(0)] VARIANT_BOOL only_embed, [defaultvalue(0)] VARIANT_BOOL no_load, [out,retval] UINT *p);
+		HRESULT  GetAlbumArtEmbedded([in]BSTR rawpath, [defaultvalue(0)] UINT art_id, [out,retval] IGdiBitmap **pp);
+		HRESULT  GetAlbumArtV2([in]IFbMetadbHandle *handle, [defaultvalue(0)] UINT art_id, [defaultvalue(-1)] VARIANT_BOOL need_stub, [out,retval] IGdiBitmap **pp);
+		HRESULT  GetSysColour([in]UINT index, [out,retval] int *p);
+		HRESULT  GetSystemMetrics([in]UINT index, [out,retval] int *p);
+		HRESULT  Glob([in]BSTR pattern, [defaultvalue(0x00000010)] UINT exc_mask, [defaultvalue(0xffffffff)] UINT inc_mask, [out,retval] VARIANT *p);
+		HRESULT  InputBox([in]UINT window_id, [in]BSTR prompt, [in]BSTR caption, [defaultvalue("")] BSTR def, [defaultvalue(0)] VARIANT_BOOL error_on_cancel, [out,retval] BSTR *p);
+		HRESULT  IsKeyPressed([in]UINT vkey, [out,retval] VARIANT_BOOL *p);
+		HRESULT  ListFiles([in]BSTR folder, [defaultvalue(0)] VARIANT_BOOL recur, [out,retval] VARIANT *p);
+		HRESULT  ListFolders([in]BSTR folder, [out,retval] VARIANT *p);
+		HRESULT  MapString([in]BSTR str, [in]UINT lcid, [in]UINT flags, [out,retval] BSTR *p);
+		HRESULT  PathWildcardMatch([in]BSTR pattern, [in]BSTR str, [out,retval] VARIANT_BOOL *p);
+		HRESULT  ReadINI([in]BSTR filename, [in]BSTR section, [in]BSTR key, [optional] VARIANT defaultval, [out,retval] BSTR *p);
+		HRESULT  ReadTextFile([in]BSTR filename, [defaultvalue(0)] UINT codepage, [out,retval] BSTR *p);
+		HRESULT  WriteINI([in]BSTR filename, [in]BSTR section, [in]BSTR key, [in]VARIANT val, [out,retval] VARIANT_BOOL *p);
+		HRESULT  WriteTextFile([in]BSTR filename, [in]BSTR content, [defaultvalue(-1)] VARIANT_BOOL write_bom, [out,retval] VARIANT_BOOL *p);
+		[propget] HRESULT  Version([out,retval] UINT *v);
+	};
+
+	[
+		object,
+		dual,
+		pointer_default(unique),
+		custom(8AFCDA7F-33B7-3120-86A8-754D2C0C0578, "library_block"),
+		uuid(e6d4354c-9a79-4062-b4d7-714b13539500)
+	]
+	interface IFbPlaybackQueueItem : IDisposable {
+		HRESULT  get__ptr([out,retval] void **pp);
+		[propget] HRESULT  Handle([out,retval] IFbMetadbHandle **pp);
+		[propget] HRESULT  PlaylistIndex([out,retval] int *p);
+		[propget] HRESULT  PlaylistItemIndex([out,retval] int *p);
+	};
+
+interface IFbPlayingItemLocation;
+interface IFbPlaylistRecyclerManager;
+	[
+		object,
+		dual,
+		pointer_default(unique),
+		custom(8AFCDA7F-33B7-3120-86A8-754D2C0C0578, "library_block"),
+		uuid(84212840-c0c5-4625-8fc4-2cc20e4bbcc8)
+	]
+	interface IFbPlaylistManager : IDispatch {
+		HRESULT  AddItemToPlaybackQueue([in]IFbMetadbHandle *handle);
+		HRESULT  AddLocations([in]UINT playlistIndex, [in]VARIANT locations, [defaultvalue(0)] VARIANT_BOOL select);
+		HRESULT  AddPlaylistItemToPlaybackQueue([in]UINT playlistIndex, [in]UINT playlistItemIndex);
+		HRESULT  ClearPlaylist([in]UINT playlistIndex);
+		HRESULT  ClearPlaylistSelection([in]UINT playlistIndex);
+		HRESULT  CreateAutoPlaylist([in]UINT playlistIndex, [in]BSTR name, [in]BSTR query, [defaultvalue("")] BSTR sort, [defaultvalue(0)] UINT flags, [out,retval] int *p);
+		HRESULT  CreatePlaylist([in]UINT playlistIndex, [in]BSTR name, [out,retval] UINT *p);
+		HRESULT  DuplicatePlaylist([in]UINT from, [in]BSTR name, [out,retval] UINT *p);
+		HRESULT  EnsurePlaylistItemVisible([in]UINT playlistIndex, [in]UINT playlistItemIndex);
+		HRESULT  ExecutePlaylistDefaultAction([in]UINT playlistIndex, [in]UINT playlistItemIndex, [out,retval] VARIANT_BOOL *p);
+		HRESULT  FindOrCreatePlaylist([in]BSTR name, [in]VARIANT_BOOL unlocked, [out,retval] UINT *p);
+		HRESULT  FindPlaybackQueueItemIndex([in]IFbMetadbHandle *handle, [in]UINT playlistIndex, [in]UINT playlistItemIndex, [out,retval] int *p);
+		HRESULT  FindPlaylist([in]BSTR name, [out,retval] int *p);
+		HRESULT  FlushPlaybackQueue();
+		HRESULT  GetPlaybackQueueContents([out,retval] VARIANT *p);
+		HRESULT  GetPlaybackQueueHandles([out,retval] IFbMetadbHandleList **pp);
+		HRESULT  GetPlayingItemLocation([out,retval] IFbPlayingItemLocation **pp);
+		HRESULT  GetPlaylistFocusItemIndex([in]UINT playlistIndex, [out,retval] int *p);
+		HRESULT  GetPlaylistItems([in]UINT playlistIndex, [out,retval] IFbMetadbHandleList **pp);
+		HRESULT  GetPlaylistName([in]UINT playlistIndex, [out,retval] BSTR *p);
+		HRESULT  GetPlaylistSelectedItems([in]UINT playlistIndex, [out,retval] IFbMetadbHandleList **pp);
+		HRESULT  InsertPlaylistItems([in]UINT playlistIndex, [in]UINT base, [in]IFbMetadbHandleList *handles, [defaultvalue(0)] VARIANT_BOOL select);
+		HRESULT  InsertPlaylistItemsFilter([in]UINT playlistIndex, [in]UINT base, [in]IFbMetadbHandleList *handles, [defaultvalue(0)] VARIANT_BOOL select);
+		HRESULT  IsAutoPlaylist([in]UINT playlistIndex, [out,retval] VARIANT_BOOL *p);
+		HRESULT  IsPlaylistItemSelected([in]UINT playlistIndex, [in]UINT playlistItemIndex, [out,retval] VARIANT_BOOL *p);
+		HRESULT  IsPlaylistLocked([in]UINT playlistIndex, [out,retval] VARIANT_BOOL *p);
+		HRESULT  MovePlaylist([in]UINT from, [in]UINT to, [out,retval] VARIANT_BOOL *p);
+		HRESULT  MovePlaylistSelection([in]UINT playlistIndex, [in]int delta, [out,retval] VARIANT_BOOL *p);
+		HRESULT  PlaylistItemCount([in]UINT playlistIndex, [out,retval] UINT *p);
+		HRESULT  RemoveItemFromPlaybackQueue([in]UINT index);
+		HRESULT  RemoveItemsFromPlaybackQueue([in]VARIANT affectedItems);
+		HRESULT  RemovePlaylist([in]UINT playlistIndex, [out,retval] VARIANT_BOOL *p);
+		HRESULT  RemovePlaylistSelection([in]UINT playlistIndex, [defaultvalue(0)] VARIANT_BOOL crop);
+		HRESULT  RemovePlaylistSwitch([in]UINT playlistIndex, [out,retval] VARIANT_BOOL *p);
+		HRESULT  RenamePlaylist([in]UINT playlistIndex, [in]BSTR name, [out,retval] VARIANT_BOOL *p);
+		HRESULT  SetActivePlaylistContext();
+		HRESULT  SetPlaylistFocusItem([in]UINT playlistIndex, [in]UINT playlistItemIndex);
+		HRESULT  SetPlaylistFocusItemByHandle([in]UINT playlistIndex, [in]IFbMetadbHandle *handle);
+		HRESULT  SetPlaylistSelection([in]UINT playlistIndex, [in]VARIANT affectedItems, [in]VARIANT_BOOL state);
+		HRESULT  SetPlaylistSelectionSingle([in]UINT playlistIndex, [in]UINT playlistItemIndex, [in]VARIANT_BOOL state);
+		HRESULT  ShowAutoPlaylistUI([in]UINT playlistIndex, [out,retval] VARIANT_BOOL *p);
+		HRESULT  SortByFormat([in]UINT playlistIndex, [in]BSTR pattern, [defaultvalue(0)] VARIANT_BOOL selOnly, [out,retval] VARIANT_BOOL *pp);
+		HRESULT  SortByFormatV2([in]UINT playlistIndex, [in]BSTR pattern, [defaultvalue(1)] int direction, [out,retval] VARIANT_BOOL *p);
+		HRESULT  SortPlaylistsByName([defaultvalue(1)] int direction);
+		HRESULT  UndoBackup([in]UINT playlistIndex);
+		[propget] HRESULT  ActivePlaylist([out,retval] int *p);
+		[propget] HRESULT  PlaybackOrder([out,retval] UINT *p);
+		[propget] HRESULT  PlayingPlaylist([out,retval] int *p);
+		[propget] HRESULT  PlaylistCount([out,retval] UINT *p);
+		[propget] HRESULT  PlaylistRecyclerManager([out,retval] IFbPlaylistRecyclerManager **pp);
+		[propput] HRESULT  ActivePlaylist([in]UINT playlistIndex);
+		[propput] HRESULT  PlaybackOrder([in]UINT order);
+		[propput] HRESULT  PlayingPlaylist([in]UINT playlistIndex);
+	};
+
+	[
+		object,
+		dual,
+		pointer_default(unique),
+		custom(8AFCDA7F-33B7-3120-86A8-754D2C0C0578, "library_block"),
+		uuid(0f54464f-0b86-4419-83c0-b6f612d85fb0)
+	]
+	interface IFbPlayingItemLocation : IDispatch {
+		[propget] HRESULT  IsValid([out,retval] VARIANT_BOOL *p);
+		[propget] HRESULT  PlaylistIndex([out,retval] int *p);
+		[propget] HRESULT  PlaylistItemIndex([out,retval] int *p);
+	};
+
+	[
+		object,
+		dual,
+		pointer_default(unique),
+		custom(8AFCDA7F-33B7-3120-86A8-754D2C0C0578, "library_block"),
+		uuid(0bc36d7f-3fcb-4157-8b90-db1281423e81)
+	]
+	interface IFbPlaylistRecyclerManager : IDispatch {
+		HRESULT  Purge([in]VARIANT affectedItems);
+		HRESULT  Restore([in]UINT index);
+		[propget] HRESULT  Content([in]UINT index, [out,retval] IFbMetadbHandleList **pp);
+		[propget] HRESULT  Count([out,retval] UINT *p);
+		[propget] HRESULT  Name([in]UINT index, [out,retval] BSTR *p);
+	};
+
+}

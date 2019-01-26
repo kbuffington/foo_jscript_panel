@@ -1,8 +1,17 @@
 #pragma once
 #include "com_tools.h"
-#include "script_interface.h"
+#include "script_interface_h.h"
 
 #include <memory>
+
+_COM_SMARTPTR_TYPEDEF(IFbWindow, __uuidof(IFbWindow));
+_COM_SMARTPTR_TYPEDEF(IFbPlaylistRecyclerManager, __uuidof(IFbPlaylistRecyclerManager));
+_COM_SMARTPTR_TYPEDEF(IFbPlaylistManager, __uuidof(IFbPlaylistManager));
+_COM_SMARTPTR_TYPEDEF(IJSUtils, __uuidof(IJSUtils));
+_COM_SMARTPTR_TYPEDEF(IFbUtils, __uuidof(IFbUtils));
+_COM_SMARTPTR_TYPEDEF(IGdiUtils, __uuidof(IGdiUtils));
+_COM_SMARTPTR_TYPEDEF(IGdiGraphics, __uuidof(IGdiGraphics));
+_COM_SMARTPTR_TYPEDEF(IJSConsole, __uuidof(IJSConsole));
 
 struct panel_tooltip_param
 {
