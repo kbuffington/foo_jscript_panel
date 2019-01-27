@@ -211,7 +211,7 @@
     <None Include="foo_jscript_panel.js">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="tlb\foo_jscript_panel.tlb">
+    <None Include="foo_jscript_panel.tlb">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

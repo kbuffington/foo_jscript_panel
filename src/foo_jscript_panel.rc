@@ -206,6 +206,6 @@ IDR_API                 TEXT                  "foo_jscript_panel.api"
 IDR_BRIGHT              TEXT                  "cfgBright.cfg"
 IDR_DARK                TEXT                  "cfgDark.cfg"
 IDR_RUBY                TEXT                  "cfgRubyBlue.cfg"
-1                       TYPELIB               "tlb\\foo_jscript_panel.tlb"
+1                       TYPELIB               "foo_jscript_panel.tlb"
 #endif    // English (United States) resources
 /////////////////////////////////////////////////////////////////////////////
