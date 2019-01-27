@@ -1,5 +1,5 @@
 #pragma once
-#include "script_interface_impl.h"
+#include "script_interface.h"
 #include "thread_pool.h"
 
 #include <json.hpp>
@@ -144,7 +144,7 @@ namespace helpers
 
 		struct t_param
 		{
-			t_param(IFbMetadbHandle* p_handle, t_size p_art_id, IGdiBitmap* p_bitmap, const char* p_image_path) : handle(p_handle), art_id(p_art_id), bitmap(p_bitmap), image_path(p_image_path) {}
+			t_param(IMetadbHandle* p_handle, t_size p_art_id, IGdiBitmap* p_bitmap, const char* p_image_path) : handle(p_handle), art_id(p_art_id), bitmap(p_bitmap), image_path(p_image_path) {}
 
 			~t_param()
 			{
@@ -159,8 +159,8 @@ namespace helpers
 				}
 			}
 
-			IFbMetadbHandle* handle;
 			IGdiBitmap* bitmap;
+			IMetadbHandle* handle;
 			string_wide_from_utf8_fast image_path;
 			t_size art_id;
 		};
@@ -168,8 +168,8 @@ namespace helpers
 	private:
 		virtual void run()
 		{
-			FbMetadbHandle* handle = NULL;
 			IGdiBitmap* bitmap = NULL;
+			MetadbHandle* handle = NULL;
 			pfc::string8_fast image_path;
 
 			if (m_handle.is_valid())
@@ -188,7 +188,7 @@ namespace helpers
 					bitmap = get_album_art(m_handle, m_art_id, m_need_stub, image_path, m_no_load);
 				}
 
-				handle = new com_object_impl_t<FbMetadbHandle>(m_handle);
+				handle = new com_object_impl_t<MetadbHandle>(m_handle);
 			}
 
 			t_param param(handle, m_art_id, bitmap, image_path);

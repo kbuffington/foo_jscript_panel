@@ -1,5 +1,5 @@
 #pragma once
-#include "script_interface_impl.h"
+#include "script_interface.h"
 
 #include <OleIdl.h>
 #include <ShlObj.h>

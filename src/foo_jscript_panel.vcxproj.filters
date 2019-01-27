@@ -22,12 +22,15 @@
     <Filter Include="IDL">
       <UniqueIdentifier>{061b40b2-717d-4f77-9443-6663af573d22}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\script_interface">
+      <UniqueIdentifier>{ebff20e6-84a9-41a9-8507-e19d053296d4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\script_interface">
+      <UniqueIdentifier>{2655d36a-e5d8-4c9a-8ee8-b431419f6c28}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="foo_jscript_panel.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="script_interface_impl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="stdafx.cpp">
@@ -69,9 +72,6 @@
     <ClCompile Include="script_callback_invoker.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="com_tools.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="mainmenu.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -108,12 +108,33 @@
     <ClCompile Include="script_host.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="script_interface\com_tools.cpp">
+      <Filter>Source Files\script_interface</Filter>
+    </ClCompile>
+    <ClCompile Include="script_interface\console.cpp">
+      <Filter>Source Files\script_interface</Filter>
+    </ClCompile>
+    <ClCompile Include="script_interface\fb.cpp">
+      <Filter>Source Files\script_interface</Filter>
+    </ClCompile>
+    <ClCompile Include="script_interface\gdi.cpp">
+      <Filter>Source Files\script_interface</Filter>
+    </ClCompile>
+    <ClCompile Include="script_interface\plman.cpp">
+      <Filter>Source Files\script_interface</Filter>
+    </ClCompile>
+    <ClCompile Include="script_interface\utils.cpp">
+      <Filter>Source Files\script_interface</Filter>
+    </ClCompile>
+    <ClCompile Include="script_interface\window.cpp">
+      <Filter>Source Files\script_interface</Filter>
+    </ClCompile>
+    <ClCompile Include="script_interface\script_interface.cpp">
+      <Filter>Source Files\script_interface</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="script_interface_impl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="stdafx.h">
@@ -136,9 +157,6 @@
     </ClInclude>
     <ClInclude Include="ui_replace.h">
       <Filter>Header Files\UI</Filter>
-    </ClInclude>
-    <ClInclude Include="com_tools.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="thread_pool.h">
       <Filter>Header Files</Filter>
@@ -203,6 +221,30 @@
     <ClInclude Include="script_host.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="script_interface\com_tools.h">
+      <Filter>Header Files\script_interface</Filter>
+    </ClInclude>
+    <ClInclude Include="script_interface\console.h">
+      <Filter>Header Files\script_interface</Filter>
+    </ClInclude>
+    <ClInclude Include="script_interface\fb.h">
+      <Filter>Header Files\script_interface</Filter>
+    </ClInclude>
+    <ClInclude Include="script_interface\gdi.h">
+      <Filter>Header Files\script_interface</Filter>
+    </ClInclude>
+    <ClInclude Include="script_interface\plman.h">
+      <Filter>Header Files\script_interface</Filter>
+    </ClInclude>
+    <ClInclude Include="script_interface\utils.h">
+      <Filter>Header Files\script_interface</Filter>
+    </ClInclude>
+    <ClInclude Include="script_interface\window.h">
+      <Filter>Header Files\script_interface</Filter>
+    </ClInclude>
+    <ClInclude Include="script_interface\script_interface.h">
+      <Filter>Header Files\script_interface</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="foo_jscript_panel.api">
@@ -221,7 +263,7 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <Midl Include="script_interface.idl">
+    <Midl Include="script_interface\script_interface.idl">
       <Filter>IDL</Filter>
     </Midl>
   </ItemGroup>

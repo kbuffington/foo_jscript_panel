@@ -620,7 +620,7 @@ void js_panel_window::on_item_focus_change(WPARAM wp)
 void js_panel_window::on_item_played(WPARAM wp)
 {
 	callback_data_scope_releaser<callback_data<metadb_handle_ptr>> data(wp);
-	FbMetadbHandle* handle = new com_object_impl_t<FbMetadbHandle>(data->m_item1);
+	MetadbHandle* handle = new com_object_impl_t<MetadbHandle>(data->m_item1);
 
 	VARIANTARG args[1];
 	args[0].vt = VT_DISPATCH;
@@ -649,7 +649,7 @@ void js_panel_window::on_load_image_done(WPARAM wp)
 void js_panel_window::on_library_items_added(WPARAM wp)
 {
 	callback_data_scope_releaser<metadb_callback_data> data(wp);
-	FbMetadbHandleList* handles = new com_object_impl_t<FbMetadbHandleList>(data->m_items);
+	MetadbHandleList* handles = new com_object_impl_t<MetadbHandleList>(data->m_items);
 
 	VARIANTARG args[1];
 	args[0].vt = VT_DISPATCH;
@@ -663,7 +663,7 @@ void js_panel_window::on_library_items_added(WPARAM wp)
 void js_panel_window::on_library_items_changed(WPARAM wp)
 {
 	callback_data_scope_releaser<metadb_callback_data> data(wp);
-	FbMetadbHandleList* handles = new com_object_impl_t<FbMetadbHandleList>(data->m_items);
+	MetadbHandleList* handles = new com_object_impl_t<MetadbHandleList>(data->m_items);
 
 	VARIANTARG args[1];
 	args[0].vt = VT_DISPATCH;
@@ -677,7 +677,7 @@ void js_panel_window::on_library_items_changed(WPARAM wp)
 void js_panel_window::on_library_items_removed(WPARAM wp)
 {
 	callback_data_scope_releaser<metadb_callback_data> data(wp);
-	FbMetadbHandleList* handles = new com_object_impl_t<FbMetadbHandleList>(data->m_items);
+	MetadbHandleList* handles = new com_object_impl_t<MetadbHandleList>(data->m_items);
 
 	VARIANTARG args[1];
 	args[0].vt = VT_DISPATCH;
@@ -699,7 +699,7 @@ void js_panel_window::on_main_menu(WPARAM wp)
 void js_panel_window::on_metadb_changed(WPARAM wp)
 {
 	callback_data_scope_releaser<metadb_callback_data> data(wp);
-	FbMetadbHandleList* handles = new com_object_impl_t<FbMetadbHandleList>(data->m_items);
+	MetadbHandleList* handles = new com_object_impl_t<MetadbHandleList>(data->m_items);
 
 	VARIANTARG args[1];
 	args[0].vt = VT_DISPATCH;
@@ -965,7 +965,7 @@ void js_panel_window::on_playback_dynamic_info_track()
 void js_panel_window::on_playback_edited(WPARAM wp)
 {
 	callback_data_scope_releaser<callback_data<metadb_handle_ptr>> data(wp);
-	FbMetadbHandle* handle = new com_object_impl_t<FbMetadbHandle>(data->m_item1);
+	MetadbHandle* handle = new com_object_impl_t<MetadbHandle>(data->m_item1);
 
 	VARIANTARG args[1];
 	args[0].vt = VT_DISPATCH;
@@ -987,7 +987,7 @@ void js_panel_window::on_playback_follow_cursor_changed(WPARAM wp)
 void js_panel_window::on_playback_new_track(WPARAM wp)
 {
 	callback_data_scope_releaser<callback_data<metadb_handle_ptr>> data(wp);
-	FbMetadbHandle* handle = new com_object_impl_t<FbMetadbHandle>(data->m_item1);
+	MetadbHandle* handle = new com_object_impl_t<MetadbHandle>(data->m_item1);
 
 	VARIANTARG args[1];
 	args[0].vt = VT_DISPATCH;

@@ -1,7 +1,7 @@
 #pragma once
 #include "config.h"
 #include "helpers.h"
-#include "script_interface_impl.h"
+#include "script_interface.h"
 
 struct t_script_info
 {

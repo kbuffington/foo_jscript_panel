@@ -2,15 +2,21 @@
 #include "helpers.h"
 #include "host_comm.h"
 #include "script_host.h"
+#include "console.h"
+#include "fb.h"
+#include "gdi.h"
+#include "plman.h"
+#include "utils.h"
+#include "window.h"
 
 script_host::script_host(host_comm* host)
 	: m_host(host)
-	, m_window(new com_object_impl_t<FbWindow, false>(host))
-	, m_gdi(com_object_singleton_t<GdiUtils>::instance())
-	, m_fb2k(com_object_singleton_t<FbUtils>::instance())
-	, m_utils(com_object_singleton_t<JSUtils>::instance())
-	, m_playlistman(com_object_singleton_t<FbPlaylistManager>::instance())
-	, m_console(com_object_singleton_t<JSConsole>::instance())
+	, m_window(new com_object_impl_t<Window, false>(host))
+	, m_gdi(com_object_singleton_t<Gdi>::instance())
+	, m_fb(com_object_singleton_t<Fb>::instance())
+	, m_utils(com_object_singleton_t<Utils>::instance())
+	, m_plman(com_object_singleton_t<Plman>::instance())
+	, m_console(com_object_singleton_t<Console>::instance())
 	, m_dwStartTime(0)
 	, m_dwRef(1)
 	, m_engine_inited(false)
@@ -170,7 +176,7 @@ STDMETHODIMP script_host::GetItemInfo(LPCOLESTR name, DWORD mask, IUnknown** ppu
 		}
 		else if (wcscmp(name, L"fb") == 0)
 		{
-			(*ppunk) = m_fb2k;
+			(*ppunk) = m_fb;
 			(*ppunk)->AddRef();
 			return S_OK;
 		}
@@ -182,7 +188,7 @@ STDMETHODIMP script_host::GetItemInfo(LPCOLESTR name, DWORD mask, IUnknown** ppu
 		}
 		else if (wcscmp(name, L"plman") == 0)
 		{
-			(*ppunk) = m_playlistman;
+			(*ppunk) = m_plman;
 			(*ppunk)->AddRef();
 			return S_OK;
 		}

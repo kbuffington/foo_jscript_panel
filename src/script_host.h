@@ -38,12 +38,12 @@ private:
 	DWORD m_lastSourceContext;
 	IActiveScriptPtr m_script_engine;
 	IDispatchPtr m_script_root;
-	IFbPlaylistManagerPtr m_playlistman;
-	IFbUtilsPtr m_fb2k;
-	IFbWindowPtr m_window;
-	IGdiUtilsPtr m_gdi;
-	IJSUtilsPtr m_utils;
-	IJSConsolePtr m_console;
+	IPlmanPtr m_plman;
+	IFbPtr m_fb;
+	IWindowPtr m_window;
+	IGdiPtr m_gdi;
+	IUtilsPtr m_utils;
+	IConsolePtr m_console;
 	bool m_engine_inited;
 	bool m_has_error;
 	host_comm* m_host;

@@ -8,9 +8,9 @@ library foo_jscript_panel
 	importlib("olepro32.dll");
 
 	interface IDisposable;
-	interface IFbTitleFormat;
-	interface IFbPlayingItemLocation;
-	interface IFbPlaylistRecyclerManager;
+	interface ITitleFormat;
+	interface IPlayingItemLocation;
+	interface IPlaylistRecyclerManager;
 	interface IGdiObj;
 	interface IGdiGraphics;
 
@@ -32,7 +32,7 @@ library foo_jscript_panel
 		custom(8AFCDA7F-33B7-3120-86A8-754D2C0C0578, "library_block"),
 		uuid(4ff021ab-17bc-43de-9dbe-2d0edec1e095)
 	]
-	interface IFbTooltip : IDisposable {
+	interface ITooltip : IDisposable {
 		HRESULT Activate();
 		HRESULT Deactivate();
 		HRESULT GetDelayTime([in] int type, [out, retval] int* p);
@@ -163,7 +163,7 @@ library foo_jscript_panel
 		custom(8AFCDA7F-33B7-3120-86A8-754D2C0C0578, "library_block"),
 		uuid(351e3e75-8f27-4afd-b7e0-5409cf8f4947)
 	]
-	interface IGdiUtils : IDispatch {
+	interface IGdi : IDispatch {
 		HRESULT CreateImage([in] int w, [in] int h, [out, retval] IGdiBitmap** pp);
 		HRESULT Font([in] BSTR name, [in] float pxSize, [defaultvalue(0)] int style, [out, retval] IGdiFont** pp);
 		HRESULT Image([in] BSTR path, [out, retval] IGdiBitmap** pp);
@@ -177,7 +177,7 @@ library foo_jscript_panel
 		custom(8AFCDA7F-33B7-3120-86A8-754D2C0C0578, "library_block"),
 		uuid(7c39dcf1-4e41-4a61-b06b-fb52107e4409)
 	]
-	interface IFbFileInfo : IDisposable {
+	interface IFileInfo : IDisposable {
 		HRESULT get__ptr([out, retval] void** pp);
 		HRESULT InfoFind([in] BSTR name, [out, retval] int* p);
 		HRESULT InfoName([in] UINT idx, [out, retval] BSTR* p);
@@ -197,12 +197,12 @@ library foo_jscript_panel
 		custom(8AFCDA7F-33B7-3120-86A8-754D2C0C0578, "library_block"),
 		uuid(0e1980d3-916a-482e-af87-578bcb1a4a25)
 	]
-	interface IFbMetadbHandle : IDisposable {
+	interface IMetadbHandle : IDisposable {
 		HRESULT get__ptr([out, retval] void** pp);
 		HRESULT ClearStats();
-		HRESULT Compare([in] IFbMetadbHandle* handle, [out, retval] VARIANT_BOOL* p);
+		HRESULT Compare([in] IMetadbHandle* handle, [out, retval] VARIANT_BOOL* p);
 		HRESULT GetAlbumArt([defaultvalue(0)] UINT art_id, [defaultvalue(-1)] VARIANT_BOOL need_stub, [out, retval] VARIANT* p);
-		HRESULT GetFileInfo([out, retval] IFbFileInfo** pp);
+		HRESULT GetFileInfo([out, retval] IFileInfo** pp);
 		HRESULT RefreshStats();
 		HRESULT SetFirstPlayed([in] BSTR first_played);
 		HRESULT SetLastPlayed([in] BSTR last_played);
@@ -223,28 +223,28 @@ library foo_jscript_panel
 		custom(8AFCDA7F-33B7-3120-86A8-754D2C0C0578, "library_block"),
 		uuid(64528708-ae09-49dd-8e8d-1417fe9a9f09)
 	]
-	interface IFbMetadbHandleList : IDisposable {
+	interface IMetadbHandleList : IDisposable {
 		HRESULT get__ptr([out, retval] void** pp);
-		HRESULT Add([in] IFbMetadbHandle* handle);
-		HRESULT AddRange([in] IFbMetadbHandleList* handles);
+		HRESULT Add([in] IMetadbHandle* handle);
+		HRESULT AddRange([in] IMetadbHandleList* handles);
 		HRESULT AttachImage([in] BSTR image_path, [defaultvalue(0)] UINT art_id);
-		HRESULT BSearch([in] IFbMetadbHandle* handle, [out, retval] int* p);
+		HRESULT BSearch([in] IMetadbHandle* handle, [out, retval] int* p);
 		HRESULT CalcTotalDuration([out, retval] double* p);
 		HRESULT CalcTotalSize([out, retval] LONGLONG* p);
-		HRESULT Clone([out, retval] IFbMetadbHandleList** pp);
+		HRESULT Clone([out, retval] IMetadbHandleList** pp);
 		HRESULT Convert([out, retval] VARIANT* p);
-		HRESULT Find([in] IFbMetadbHandle* handle, [out, retval] int* p);
+		HRESULT Find([in] IMetadbHandle* handle, [out, retval] int* p);
 		HRESULT GetLibraryRelativePaths([out, retval] VARIANT* p);
-		HRESULT Insert([in] UINT index, [in] IFbMetadbHandle* handle);
-		HRESULT InsertRange([in] UINT index, [in] IFbMetadbHandleList* handles);
-		HRESULT MakeDifference([in] IFbMetadbHandleList* handles);
-		HRESULT MakeIntersection([in] IFbMetadbHandleList* handles);
-		HRESULT MakeUnion([in] IFbMetadbHandleList* handles);
-		HRESULT OrderByFormat([in] IFbTitleFormat* script, [in] int direction);
+		HRESULT Insert([in] UINT index, [in] IMetadbHandle* handle);
+		HRESULT InsertRange([in] UINT index, [in] IMetadbHandleList* handles);
+		HRESULT MakeDifference([in] IMetadbHandleList* handles);
+		HRESULT MakeIntersection([in] IMetadbHandleList* handles);
+		HRESULT MakeUnion([in] IMetadbHandleList* handles);
+		HRESULT OrderByFormat([in] ITitleFormat* script, [in] int direction);
 		HRESULT OrderByPath();
 		HRESULT OrderByRelativePath();
 		HRESULT RefreshStats();
-		HRESULT Remove([in] IFbMetadbHandle* handle);
+		HRESULT Remove([in] IMetadbHandle* handle);
 		HRESULT RemoveAll();
 		HRESULT RemoveAttachedImage([defaultvalue(0)] UINT art_id);
 		HRESULT RemoveAttachedImages();
@@ -253,8 +253,8 @@ library foo_jscript_panel
 		HRESULT Sort();
 		HRESULT UpdateFileInfoFromJSON([in] BSTR str);
 		[propget] HRESULT Count([out, retval] UINT* p);
-		[propget] HRESULT Item([in] UINT index, [out, retval] IFbMetadbHandle** pp);
-		[propput] HRESULT Item([in] UINT index, [in] IFbMetadbHandle* handle);
+		[propget] HRESULT Item([in] UINT index, [out, retval] IMetadbHandle** pp);
+		[propput] HRESULT Item([in] UINT index, [in] IMetadbHandle* handle);
 	};
 
 	[
@@ -264,11 +264,11 @@ library foo_jscript_panel
 		custom(8AFCDA7F-33B7-3120-86A8-754D2C0C0578, "library_block"),
 		uuid(998d8666-b446-4e92-8e8f-797d3cce4b7e)
 	]
-	interface IFbTitleFormat : IDisposable {
+	interface ITitleFormat : IDisposable {
 		HRESULT get__ptr([out, retval] void** pp);
 		HRESULT Eval([defaultvalue(0)] VARIANT_BOOL force, [out, retval] BSTR* p);
-		HRESULT EvalWithMetadb([in] IFbMetadbHandle* handle, [out, retval] BSTR* p);
-		HRESULT EvalWithMetadbs([in] IFbMetadbHandleList* handles, [out, retval] VARIANT* p);
+		HRESULT EvalWithMetadb([in] IMetadbHandle* handle, [out, retval] BSTR* p);
+		HRESULT EvalWithMetadbs([in] IMetadbHandleList* handles, [out, retval] VARIANT* p);
 	};
 
 	[
@@ -298,7 +298,7 @@ library foo_jscript_panel
 	interface IContextMenuManager : IDisposable {
 		HRESULT BuildMenu([in] IMenuObj* p, [in] int base_id, [defaultvalue(-1)] int max_id);
 		HRESULT ExecuteByID([in] UINT id, [out, retval] VARIANT_BOOL* p);
-		HRESULT InitContext([in] IFbMetadbHandleList* handles);
+		HRESULT InitContext([in] IMetadbHandleList* handles);
 		HRESULT InitContextPlaylist();
 		HRESULT InitNowPlaying();
 	};
@@ -323,7 +323,7 @@ library foo_jscript_panel
 		custom(8AFCDA7F-33B7-3120-86A8-754D2C0C0578, "library_block"),
 		uuid(2d7436ad-6527-4154-a3c7-361ab8b88f5c)
 	]
-	interface IFbProfiler : IDispatch {
+	interface IProfiler : IDispatch {
 		HRESULT Reset();
 		HRESULT Print();
 		[propget] HRESULT Time([out, retval] int* p);
@@ -336,10 +336,10 @@ library foo_jscript_panel
 		custom(8AFCDA7F-33B7-3120-86A8-754D2C0C0578, "library_block"),
 		uuid(1f40f9e1-c0fb-4021-80de-37c4d0a26f45)
 	]
-	interface IFbUiSelectionHolder : IDisposable {
+	interface IUiSelectionHolder : IDisposable {
 		HRESULT SetPlaylistSelectionTracking();
 		HRESULT SetPlaylistTracking();
-		HRESULT SetSelection([in] IFbMetadbHandleList* handles);
+		HRESULT SetSelection([in] IMetadbHandleList* handles);
 	};
 
 	[
@@ -349,32 +349,32 @@ library foo_jscript_panel
 		custom(8AFCDA7F-33B7-3120-86A8-754D2C0C0578, "library_block"),
 		uuid(bae2e084-6545-4a17-9795-1496a4ee2741)
 	]
-	interface IFbUtils : IDispatch {
-		HRESULT AcquireUiSelectionHolder([out, retval] IFbUiSelectionHolder** pp);
+	interface IFb : IDispatch {
+		HRESULT AcquireUiSelectionHolder([out, retval] IUiSelectionHolder** pp);
 		HRESULT AddDirectory();
 		HRESULT AddFiles();
 		HRESULT CheckClipboardContents([in] UINT window_id, [out, retval] VARIANT_BOOL* p);
 		HRESULT ClearPlaylist();
-		HRESULT CopyHandleListToClipboard([in] IFbMetadbHandleList* handles, [out, retval] VARIANT_BOOL* p);
+		HRESULT CopyHandleListToClipboard([in] IMetadbHandleList* handles, [out, retval] VARIANT_BOOL* p);
 		HRESULT CreateContextMenuManager([out, retval] IContextMenuManager** pp);
-		HRESULT CreateHandleList([optional] VARIANT handle, [out, retval] IFbMetadbHandleList** pp);
+		HRESULT CreateHandleList([optional] VARIANT handle, [out, retval] IMetadbHandleList** pp);
 		HRESULT CreateMainMenuManager([out, retval] IMainMenuManager** pp);
-		HRESULT CreateProfiler([defaultvalue("")] BSTR name, [out, retval] IFbProfiler** pp);
-		HRESULT DoDragDrop([in] IFbMetadbHandleList* handles, [in] UINT okEffects, [out, retval] UINT* p);
+		HRESULT CreateProfiler([defaultvalue("")] BSTR name, [out, retval] IProfiler** pp);
+		HRESULT DoDragDrop([in] IMetadbHandleList* handles, [in] UINT okEffects, [out, retval] UINT* p);
 		HRESULT Exit();
-		HRESULT GetClipboardContents([in] UINT window_id, [out, retval] IFbMetadbHandleList** pp);
+		HRESULT GetClipboardContents([in] UINT window_id, [out, retval] IMetadbHandleList** pp);
 		HRESULT GetDSPPresets([out, retval] BSTR* p);
-		HRESULT GetFocusItem([defaultvalue(-1)] VARIANT_BOOL force, [out, retval] IFbMetadbHandle** pp);
-		HRESULT GetLibraryItems([out, retval] IFbMetadbHandleList** pp);
-		HRESULT GetLibraryRelativePath([in] IFbMetadbHandle* handle, [out, retval] BSTR* p);
-		HRESULT GetNowPlaying([out, retval] IFbMetadbHandle** pp);
+		HRESULT GetFocusItem([defaultvalue(-1)] VARIANT_BOOL force, [out, retval] IMetadbHandle** pp);
+		HRESULT GetLibraryItems([out, retval] IMetadbHandleList** pp);
+		HRESULT GetLibraryRelativePath([in] IMetadbHandle* handle, [out, retval] BSTR* p);
+		HRESULT GetNowPlaying([out, retval] IMetadbHandle** pp);
 		HRESULT GetOutputDevices([out, retval] BSTR* p);
-		HRESULT GetQueryItems([in] IFbMetadbHandleList* handles, [in] BSTR query, [out, retval] IFbMetadbHandleList** pp);
-		HRESULT GetSelection([out, retval] IFbMetadbHandle** pp);
-		HRESULT GetSelections([defaultvalue(0)] UINT flags, [out, retval] IFbMetadbHandleList** pp);
+		HRESULT GetQueryItems([in] IMetadbHandleList* handles, [in] BSTR query, [out, retval] IMetadbHandleList** pp);
+		HRESULT GetSelection([out, retval] IMetadbHandle** pp);
+		HRESULT GetSelections([defaultvalue(0)] UINT flags, [out, retval] IMetadbHandleList** pp);
 		HRESULT GetSelectionType([out, retval] UINT* p);
 		HRESULT IsLibraryEnabled([out, retval] VARIANT_BOOL* p);
-		HRESULT IsMetadbInMediaLibrary([in] IFbMetadbHandle* handle, [out, retval] VARIANT_BOOL* p);
+		HRESULT IsMetadbInMediaLibrary([in] IMetadbHandle* handle, [out, retval] VARIANT_BOOL* p);
 		HRESULT LoadPlaylist();
 		HRESULT Next();
 		HRESULT Pause();
@@ -393,7 +393,7 @@ library foo_jscript_panel
 		HRESULT ShowPopupMessage([in] BSTR msg, [defaultvalue("JScript Panel")] BSTR title);
 		HRESULT ShowPreferences();
 		HRESULT Stop();
-		HRESULT TitleFormat([in] BSTR expression, [out, retval] IFbTitleFormat** pp);
+		HRESULT TitleFormat([in] BSTR expression, [out, retval] ITitleFormat** pp);
 		HRESULT VolumeDown();
 		HRESULT VolumeMute();
 		HRESULT VolumeUp();
@@ -454,12 +454,12 @@ library foo_jscript_panel
 		custom(8AFCDA7F-33B7-3120-86A8-754D2C0C0578, "library_block"),
 		uuid(81e1f0c0-1dfe-4996-abd9-ba98dff69e4c)
 	]
-	interface IFbWindow : IDispatch {
+	interface IWindow : IDispatch {
 		HRESULT ClearInterval([in] UINT intervalID);
 		HRESULT ClearTimeout([in] UINT timeoutID);
 		HRESULT CreatePopupMenu([out, retval] IMenuObj** pp);
 		HRESULT CreateThemeManager([in] BSTR classid, [out, retval] IThemeManager** pp);
-		HRESULT CreateTooltip([defaultvalue("Segoe UI")] BSTR name, [defaultvalue(12)] float pxSize, [defaultvalue(0)] int style, [out, retval] IFbTooltip** pp);
+		HRESULT CreateTooltip([defaultvalue("Segoe UI")] BSTR name, [defaultvalue(12)] float pxSize, [defaultvalue(0)] int style, [out, retval] ITooltip** pp);
 		HRESULT GetColourCUI([in] UINT type, [out, retval] int* p);
 		HRESULT GetColourDUI([in] UINT type, [out, retval] int* p);
 		HRESULT GetFontCUI([in] UINT type, [out, retval] IGdiFont** pp);
@@ -499,7 +499,7 @@ library foo_jscript_panel
 		custom(8AFCDA7F-33B7-3120-86A8-754D2C0C0578, "library_block"),
 		uuid(690a35f6-ba53-46f9-91f8-4327204c6c62)
 	]
-	interface IJSConsole : IDispatch {
+	interface IConsole : IDispatch {
 		[vararg] HRESULT Log([in] SAFEARRAY(VARIANT) p);
 	};
 
@@ -510,16 +510,16 @@ library foo_jscript_panel
 		custom(8AFCDA7F-33B7-3120-86A8-754D2C0C0578, "library_block"),
 		uuid(d53e81cd-0157-4cfe-a618-1F88d48dc0b7)
 	]
-	interface IJSUtils : IDispatch {
+	interface IUtils : IDispatch {
 		HRESULT CheckComponent([in] BSTR name, [defaultvalue(-1)] VARIANT_BOOL is_dll, [out, retval] VARIANT_BOOL* p);
 		HRESULT CheckFont([in] BSTR name, [out, retval] VARIANT_BOOL* p);
 		HRESULT ColourPicker([in] UINT window_id, [in] int default_colour, [out, retval] int* p);
 		HRESULT FileTest([in] BSTR path, [in] BSTR mode, [out, retval] VARIANT* p);
 		HRESULT FormatDuration([in] double seconds, [out, retval] BSTR* p);
 		HRESULT FormatFileSize([in] LONGLONG bytes, [out, retval] BSTR* p);
-		HRESULT GetAlbumArtAsync([in] UINT window_id, [in] IFbMetadbHandle* handle, [defaultvalue(0)] UINT art_id, [defaultvalue(-1)] VARIANT_BOOL need_stub, [defaultvalue(0)] VARIANT_BOOL only_embed, [defaultvalue(0)] VARIANT_BOOL no_load, [out, retval] UINT* p);
+		HRESULT GetAlbumArtAsync([in] UINT window_id, [in] IMetadbHandle* handle, [defaultvalue(0)] UINT art_id, [defaultvalue(-1)] VARIANT_BOOL need_stub, [defaultvalue(0)] VARIANT_BOOL only_embed, [defaultvalue(0)] VARIANT_BOOL no_load, [out, retval] UINT* p);
 		HRESULT GetAlbumArtEmbedded([in] BSTR rawpath, [defaultvalue(0)] UINT art_id, [out, retval] IGdiBitmap** pp);
-		HRESULT GetAlbumArtV2([in] IFbMetadbHandle* handle, [defaultvalue(0)] UINT art_id, [defaultvalue(-1)] VARIANT_BOOL need_stub, [out, retval] IGdiBitmap** pp);
+		HRESULT GetAlbumArtV2([in] IMetadbHandle* handle, [defaultvalue(0)] UINT art_id, [defaultvalue(-1)] VARIANT_BOOL need_stub, [out, retval] IGdiBitmap** pp);
 		HRESULT GetSysColour([in] UINT index, [out, retval] int* p);
 		HRESULT GetSystemMetrics([in] UINT index, [out, retval] int* p);
 		HRESULT Glob([in] BSTR pattern, [defaultvalue(0x00000010)] UINT exc_mask, [defaultvalue(0xffffffff)] UINT inc_mask, [out, retval] VARIANT* p);
@@ -543,9 +543,9 @@ library foo_jscript_panel
 		custom(8AFCDA7F-33B7-3120-86A8-754D2C0C0578, "library_block"),
 		uuid(e6d4354c-9a79-4062-b4d7-714b13539500)
 	]
-	interface IFbPlaybackQueueItem : IDisposable {
+	interface IPlaybackQueueItem : IDisposable {
 		HRESULT get__ptr([out, retval] void** pp);
-		[propget] HRESULT Handle([out, retval] IFbMetadbHandle** pp);
+		[propget] HRESULT Handle([out, retval] IMetadbHandle** pp);
 		[propget] HRESULT PlaylistIndex([out, retval] int* p);
 		[propget] HRESULT PlaylistItemIndex([out, retval] int* p);
 	};
@@ -557,8 +557,8 @@ library foo_jscript_panel
 		custom(8AFCDA7F-33B7-3120-86A8-754D2C0C0578, "library_block"),
 		uuid(84212840-c0c5-4625-8fc4-2cc20e4bbcc8)
 	]
-	interface IFbPlaylistManager : IDispatch {
-		HRESULT AddItemToPlaybackQueue([in] IFbMetadbHandle* handle);
+	interface IPlman : IDispatch {
+		HRESULT AddItemToPlaybackQueue([in] IMetadbHandle* handle);
 		HRESULT AddLocations([in] UINT playlistIndex, [in] VARIANT locations, [defaultvalue(0)] VARIANT_BOOL select);
 		HRESULT AddPlaylistItemToPlaybackQueue([in] UINT playlistIndex, [in] UINT playlistItemIndex);
 		HRESULT ClearPlaylist([in] UINT playlistIndex);
@@ -569,18 +569,18 @@ library foo_jscript_panel
 		HRESULT EnsurePlaylistItemVisible([in] UINT playlistIndex, [in] UINT playlistItemIndex);
 		HRESULT ExecutePlaylistDefaultAction([in] UINT playlistIndex, [in] UINT playlistItemIndex, [out, retval] VARIANT_BOOL* p);
 		HRESULT FindOrCreatePlaylist([in] BSTR name, [in] VARIANT_BOOL unlocked, [out, retval] UINT* p);
-		HRESULT FindPlaybackQueueItemIndex([in] IFbMetadbHandle* handle, [in] UINT playlistIndex, [in] UINT playlistItemIndex, [out, retval] int* p);
+		HRESULT FindPlaybackQueueItemIndex([in] IMetadbHandle* handle, [in] UINT playlistIndex, [in] UINT playlistItemIndex, [out, retval] int* p);
 		HRESULT FindPlaylist([in] BSTR name, [out, retval] int* p);
 		HRESULT FlushPlaybackQueue();
 		HRESULT GetPlaybackQueueContents([out, retval] VARIANT* p);
-		HRESULT GetPlaybackQueueHandles([out, retval] IFbMetadbHandleList** pp);
-		HRESULT GetPlayingItemLocation([out, retval] IFbPlayingItemLocation** pp);
+		HRESULT GetPlaybackQueueHandles([out, retval] IMetadbHandleList** pp);
+		HRESULT GetPlayingItemLocation([out, retval] IPlayingItemLocation** pp);
 		HRESULT GetPlaylistFocusItemIndex([in] UINT playlistIndex, [out, retval] int* p);
-		HRESULT GetPlaylistItems([in] UINT playlistIndex, [out, retval] IFbMetadbHandleList** pp);
+		HRESULT GetPlaylistItems([in] UINT playlistIndex, [out, retval] IMetadbHandleList** pp);
 		HRESULT GetPlaylistName([in] UINT playlistIndex, [out, retval] BSTR* p);
-		HRESULT GetPlaylistSelectedItems([in] UINT playlistIndex, [out, retval] IFbMetadbHandleList** pp);
-		HRESULT InsertPlaylistItems([in] UINT playlistIndex, [in] UINT base, [in] IFbMetadbHandleList* handles, [defaultvalue(0)] VARIANT_BOOL select);
-		HRESULT InsertPlaylistItemsFilter([in] UINT playlistIndex, [in] UINT base, [in] IFbMetadbHandleList* handles, [defaultvalue(0)] VARIANT_BOOL select);
+		HRESULT GetPlaylistSelectedItems([in] UINT playlistIndex, [out, retval] IMetadbHandleList** pp);
+		HRESULT InsertPlaylistItems([in] UINT playlistIndex, [in] UINT base, [in] IMetadbHandleList* handles, [defaultvalue(0)] VARIANT_BOOL select);
+		HRESULT InsertPlaylistItemsFilter([in] UINT playlistIndex, [in] UINT base, [in] IMetadbHandleList* handles, [defaultvalue(0)] VARIANT_BOOL select);
 		HRESULT IsAutoPlaylist([in] UINT playlistIndex, [out, retval] VARIANT_BOOL* p);
 		HRESULT IsPlaylistItemSelected([in] UINT playlistIndex, [in] UINT playlistItemIndex, [out, retval] VARIANT_BOOL* p);
 		HRESULT IsPlaylistLocked([in] UINT playlistIndex, [out, retval] VARIANT_BOOL* p);
@@ -595,7 +595,7 @@ library foo_jscript_panel
 		HRESULT RenamePlaylist([in] UINT playlistIndex, [in] BSTR name, [out, retval] VARIANT_BOOL* p);
 		HRESULT SetActivePlaylistContext();
 		HRESULT SetPlaylistFocusItem([in] UINT playlistIndex, [in] UINT playlistItemIndex);
-		HRESULT SetPlaylistFocusItemByHandle([in] UINT playlistIndex, [in] IFbMetadbHandle* handle);
+		HRESULT SetPlaylistFocusItemByHandle([in] UINT playlistIndex, [in] IMetadbHandle* handle);
 		HRESULT SetPlaylistSelection([in] UINT playlistIndex, [in] VARIANT affectedItems, [in] VARIANT_BOOL state);
 		HRESULT SetPlaylistSelectionSingle([in] UINT playlistIndex, [in] UINT playlistItemIndex, [in] VARIANT_BOOL state);
 		HRESULT ShowAutoPlaylistUI([in] UINT playlistIndex, [out, retval] VARIANT_BOOL* p);
@@ -607,7 +607,7 @@ library foo_jscript_panel
 		[propget] HRESULT PlaybackOrder([out, retval] UINT* p);
 		[propget] HRESULT PlayingPlaylist([out, retval] int* p);
 		[propget] HRESULT PlaylistCount([out, retval] UINT* p);
-		[propget] HRESULT PlaylistRecyclerManager([out, retval] IFbPlaylistRecyclerManager** pp);
+		[propget] HRESULT PlaylistRecyclerManager([out, retval] IPlaylistRecyclerManager** pp);
 		[propput] HRESULT ActivePlaylist([in] UINT playlistIndex);
 		[propput] HRESULT PlaybackOrder([in] UINT order);
 		[propput] HRESULT PlayingPlaylist([in] UINT playlistIndex);
@@ -620,7 +620,7 @@ library foo_jscript_panel
 		custom(8AFCDA7F-33B7-3120-86A8-754D2C0C0578, "library_block"),
 		uuid(0f54464f-0b86-4419-83c0-b6f612d85fb0)
 	]
-	interface IFbPlayingItemLocation : IDispatch {
+	interface IPlayingItemLocation : IDispatch {
 		[propget] HRESULT IsValid([out, retval] VARIANT_BOOL* p);
 		[propget] HRESULT PlaylistIndex([out, retval] int* p);
 		[propget] HRESULT PlaylistItemIndex([out, retval] int* p);
@@ -633,10 +633,10 @@ library foo_jscript_panel
 		custom(8AFCDA7F-33B7-3120-86A8-754D2C0C0578, "library_block"),
 		uuid(0bc36d7f-3fcb-4157-8b90-db1281423e81)
 	]
-	interface IFbPlaylistRecyclerManager : IDispatch {
+	interface IPlaylistRecyclerManager : IDispatch {
 		HRESULT Purge([in] VARIANT affectedItems);
 		HRESULT Restore([in] UINT index);
-		[propget] HRESULT Content([in] UINT index, [out, retval] IFbMetadbHandleList** pp);
+		[propget] HRESULT Content([in] UINT index, [out, retval] IMetadbHandleList** pp);
 		[propget] HRESULT Count([out, retval] UINT* p);
 		[propget] HRESULT Name([in] UINT index, [out, retval] BSTR* p);
 	};
