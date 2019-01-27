@@ -54,8 +54,8 @@
     <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
     <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
     <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
-    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\src;..\src\script_interface;..\includes;..\includes\PropertyList;..\includes\wtl;..\scintilla\include;$(IncludePath)</IncludePath>
-    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\src;..\src\script_interface;..\includes;..\includes\PropertyList;..\includes\wtl;..\scintilla\include;$(IncludePath)</IncludePath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\src;..\src\script_interface;..\src\ui;..\includes;..\includes\PropertyList;..\includes\wtl;..\scintilla\include;$(IncludePath)</IncludePath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\src;..\src\script_interface;..\src\ui;..\includes;..\includes\PropertyList;..\includes\wtl;..\scintilla\include;$(IncludePath)</IncludePath>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectName)</TargetName>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectName)</TargetName>
   </PropertyGroup>
@@ -139,8 +139,6 @@ copy /Y "$(TargetDir)$(TargetName).pdb" "%component_path%\"</Command>
     </Midl>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="config.cpp" />
-    <ClCompile Include="editorctrl.cpp" />
     <ClCompile Include="foo_jscript_panel.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
     </ClCompile>
@@ -153,7 +151,6 @@ copy /Y "$(TargetDir)$(TargetName).pdb" "%component_path%\"</Command>
     <ClCompile Include="js_panel_window_dui.cpp" />
     <ClCompile Include="mainmenu.cpp" />
     <ClCompile Include="panel_manager.cpp" />
-    <ClCompile Include="scintilla_prop_sets.cpp" />
     <ClCompile Include="script_callback_invoker.cpp" />
     <ClCompile Include="script_host.cpp" />
     <ClCompile Include="script_interface\com_tools.cpp" />
@@ -170,20 +167,21 @@ copy /Y "$(TargetDir)$(TargetName).pdb" "%component_path%\"</Command>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="thread_pool.cpp" />
-    <ClCompile Include="ui_conf.cpp" />
-    <ClCompile Include="ui_find.cpp" />
-    <ClCompile Include="ui_goto.cpp" />
-    <ClCompile Include="ui_input_box.cpp" />
-    <ClCompile Include="ui_name_value_edit.cpp" />
-    <ClCompile Include="ui_pref.cpp" />
-    <ClCompile Include="ui_property.cpp" />
-    <ClCompile Include="ui_replace.cpp" />
+    <ClCompile Include="ui\config.cpp" />
+    <ClCompile Include="ui\editorctrl.cpp" />
+    <ClCompile Include="ui\scintilla_prop_sets.cpp" />
+    <ClCompile Include="ui\ui_conf.cpp" />
+    <ClCompile Include="ui\ui_find.cpp" />
+    <ClCompile Include="ui\ui_goto.cpp" />
+    <ClCompile Include="ui\ui_input_box.cpp" />
+    <ClCompile Include="ui\ui_name_value_edit.cpp" />
+    <ClCompile Include="ui\ui_pref.cpp" />
+    <ClCompile Include="ui\ui_property.cpp" />
+    <ClCompile Include="ui\ui_replace.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="drop_impl.h" />
     <ClInclude Include="component_defines.h" />
-    <ClInclude Include="config.h" />
-    <ClInclude Include="editorctrl.h" />
     <ClInclude Include="helpers.h" />
     <ClInclude Include="host_comm.h" />
     <ClInclude Include="host_drop_target.h" />
@@ -194,7 +192,6 @@ copy /Y "$(TargetDir)$(TargetName).pdb" "%component_path%\"</Command>
     <ClInclude Include="mainmenu.h" />
     <ClInclude Include="panel_manager.h" />
     <ClInclude Include="resource.h" />
-    <ClInclude Include="scintilla_prop_sets.h" />
     <ClInclude Include="script_callback_invoker.h" />
     <ClInclude Include="script_host.h" />
     <ClInclude Include="script_interface\com_tools.h" />
@@ -208,14 +205,17 @@ copy /Y "$(TargetDir)$(TargetName).pdb" "%component_path%\"</Command>
     <ClInclude Include="stats.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="thread_pool.h" />
-    <ClInclude Include="ui_conf.h" />
-    <ClInclude Include="ui_find.h" />
-    <ClInclude Include="ui_goto.h" />
-    <ClInclude Include="ui_input_box.h" />
-    <ClInclude Include="ui_name_value_edit.h" />
-    <ClInclude Include="ui_pref.h" />
-    <ClInclude Include="ui_property.h" />
-    <ClInclude Include="ui_replace.h" />
+    <ClInclude Include="ui\config.h" />
+    <ClInclude Include="ui\editorctrl.h" />
+    <ClInclude Include="ui\scintilla_prop_sets.h" />
+    <ClInclude Include="ui\ui_conf.h" />
+    <ClInclude Include="ui\ui_find.h" />
+    <ClInclude Include="ui\ui_goto.h" />
+    <ClInclude Include="ui\ui_input_box.h" />
+    <ClInclude Include="ui\ui_name_value_edit.h" />
+    <ClInclude Include="ui\ui_pref.h" />
+    <ClInclude Include="ui\ui_property.h" />
+    <ClInclude Include="ui\ui_replace.h" />
     <ClInclude Include="user_message.h" />
   </ItemGroup>
   <ItemGroup>
