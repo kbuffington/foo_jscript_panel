@@ -1,0 +1,279 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
+    </Filter>
+    <Filter Include="IDL">
+      <UniqueIdentifier>{061b40b2-717d-4f77-9443-6663af573d22}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\script_interface">
+      <UniqueIdentifier>{ebff20e6-84a9-41a9-8507-e19d053296d4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\script_interface">
+      <UniqueIdentifier>{2655d36a-e5d8-4c9a-8ee8-b431419f6c28}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\ui">
+      <UniqueIdentifier>{cddfe437-10aa-4017-a1ca-50c923482b49}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ui">
+      <UniqueIdentifier>{2ea70bb1-6756-4f53-953b-1cbcce8a0c9b}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\src\script_interface\com_tools.h">
+      <Filter>Header Files\script_interface</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\script_interface\console.h">
+      <Filter>Header Files\script_interface</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\script_interface\fb.h">
+      <Filter>Header Files\script_interface</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\script_interface\gdi.h">
+      <Filter>Header Files\script_interface</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\script_interface\plman.h">
+      <Filter>Header Files\script_interface</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\script_interface\script_interface.h">
+      <Filter>Header Files\script_interface</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\script_interface\utils.h">
+      <Filter>Header Files\script_interface</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\script_interface\window.h">
+      <Filter>Header Files\script_interface</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ui\config.h">
+      <Filter>Header Files\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ui\editorctrl.h">
+      <Filter>Header Files\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ui\scintilla_prop_sets.h">
+      <Filter>Header Files\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ui\ui_conf.h">
+      <Filter>Header Files\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ui\ui_find.h">
+      <Filter>Header Files\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ui\ui_goto.h">
+      <Filter>Header Files\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ui\ui_input_box.h">
+      <Filter>Header Files\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ui\ui_name_value_edit.h">
+      <Filter>Header Files\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ui\ui_pref.h">
+      <Filter>Header Files\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ui\ui_property.h">
+      <Filter>Header Files\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ui\ui_replace.h">
+      <Filter>Header Files\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\component_defines.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\drop_impl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\helpers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\host_comm.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\host_drop_target.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\host_timer_dispatcher.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\js_panel_window.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\js_panel_window_cui.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\js_panel_window_dui.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\mainmenu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\panel_manager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\script_callback_invoker.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\script_host.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\stats.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\stdafx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\thread_pool.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\user_message.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\script_interface\com_tools.cpp">
+      <Filter>Source Files\script_interface</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\script_interface\console.cpp">
+      <Filter>Source Files\script_interface</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\script_interface\fb.cpp">
+      <Filter>Source Files\script_interface</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\script_interface\gdi.cpp">
+      <Filter>Source Files\script_interface</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\script_interface\plman.cpp">
+      <Filter>Source Files\script_interface</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\script_interface\script_interface.cpp">
+      <Filter>Source Files\script_interface</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\script_interface\utils.cpp">
+      <Filter>Source Files\script_interface</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\script_interface\window.cpp">
+      <Filter>Source Files\script_interface</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ui\config.cpp">
+      <Filter>Source Files\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ui\editorctrl.cpp">
+      <Filter>Source Files\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ui\scintilla_prop_sets.cpp">
+      <Filter>Source Files\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ui\ui_conf.cpp">
+      <Filter>Source Files\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ui\ui_find.cpp">
+      <Filter>Source Files\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ui\ui_goto.cpp">
+      <Filter>Source Files\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ui\ui_input_box.cpp">
+      <Filter>Source Files\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ui\ui_name_value_edit.cpp">
+      <Filter>Source Files\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ui\ui_pref.cpp">
+      <Filter>Source Files\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ui\ui_property.cpp">
+      <Filter>Source Files\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ui\ui_replace.cpp">
+      <Filter>Source Files\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\helpers.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\host_comm.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\host_drop_target.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\host_timer_dispatcher.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\js_panel_window.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\js_panel_window_cui.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\js_panel_window_dui.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\mainmenu.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\panel_manager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\script_callback_invoker.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\script_host.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\stats.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\thread_pool.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\stdafx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\foo_jscript_panel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Midl Include="..\src\script_interface\script_interface.idl">
+      <Filter>IDL</Filter>
+    </Midl>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\src\resource\cfgBright.cfg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\src\resource\cfgDark.cfg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\src\resource\cfgRubyBlue.cfg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\src\resource\foo_jscript_panel.api">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\src\resource\foo_jscript_panel.js">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\src\resource\foo_jscript_panel.tlb">
+      <Filter>Resource Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\src\resource\foo_jscript_panel.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>
