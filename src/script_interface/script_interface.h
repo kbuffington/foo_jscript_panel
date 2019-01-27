@@ -96,197 +96,6 @@ public:
 	STDMETHODIMP get_MetaCount(UINT* p);
 };
 
-class MetadbHandle : public IDisposableImpl4<IMetadbHandle>
-{
-protected:
-	MetadbHandle(const metadb_handle_ptr& src);
-	MetadbHandle(metadb_handle* src);
-	virtual ~MetadbHandle();
-
-	virtual void FinalRelease();
-
-	metadb_handle_ptr m_handle;
-
-public:
-	STDMETHODIMP get__ptr(void** pp);
-	STDMETHODIMP ClearStats();
-	STDMETHODIMP Compare(IMetadbHandle* handle, VARIANT_BOOL* p);
-	STDMETHODIMP GetAlbumArt(UINT art_id, VARIANT_BOOL need_stub, VARIANT* p);
-	STDMETHODIMP GetFileInfo(IFileInfo** pp);
-	STDMETHODIMP RefreshStats();
-	STDMETHODIMP SetFirstPlayed(BSTR first_played);
-	STDMETHODIMP SetLastPlayed(BSTR last_played);
-	STDMETHODIMP SetLoved(UINT loved);
-	STDMETHODIMP SetPlaycount(UINT playcount);
-	STDMETHODIMP SetRating(UINT rating);
-	STDMETHODIMP get_FileSize(LONGLONG* p);
-	STDMETHODIMP get_Length(double* p);
-	STDMETHODIMP get_Path(BSTR* p);
-	STDMETHODIMP get_RawPath(BSTR* p);
-	STDMETHODIMP get_SubSong(UINT* p);
-};
-
-class MetadbHandleList : public IDisposableImpl4<IMetadbHandleList>
-{
-protected:
-	MetadbHandleList(metadb_handle_list_cref handles);
-	virtual ~MetadbHandleList();
-
-	virtual void FinalRelease();
-
-	metadb_handle_list m_handles;
-
-public:
-	STDMETHODIMP get__ptr(void** pp);
-	STDMETHODIMP Add(IMetadbHandle* handle);
-	STDMETHODIMP AddRange(IMetadbHandleList* handles);
-	STDMETHODIMP AttachImage(BSTR image_path, UINT art_id);
-	STDMETHODIMP BSearch(IMetadbHandle* handle, int* p);
-	STDMETHODIMP CalcTotalDuration(double* p);
-	STDMETHODIMP CalcTotalSize(LONGLONG* p);
-	STDMETHODIMP Clone(IMetadbHandleList** pp);
-	STDMETHODIMP Convert(VARIANT* p);
-	STDMETHODIMP Find(IMetadbHandle* handle, int* p);
-	STDMETHODIMP GetLibraryRelativePaths(VARIANT* p);
-	STDMETHODIMP Insert(UINT index, IMetadbHandle* handle);
-	STDMETHODIMP InsertRange(UINT index, IMetadbHandleList* handles);
-	STDMETHODIMP MakeDifference(IMetadbHandleList* handles);
-	STDMETHODIMP MakeIntersection(IMetadbHandleList* handles);
-	STDMETHODIMP MakeUnion(IMetadbHandleList* handles);
-	STDMETHODIMP OrderByFormat(__interface ITitleFormat* script, int direction);
-	STDMETHODIMP OrderByPath();
-	STDMETHODIMP OrderByRelativePath();
-	STDMETHODIMP RefreshStats();
-	STDMETHODIMP Remove(IMetadbHandle* handle);
-	STDMETHODIMP RemoveAll();
-	STDMETHODIMP RemoveAttachedImage(UINT art_id);
-	STDMETHODIMP RemoveAttachedImages();
-	STDMETHODIMP RemoveById(UINT index);
-	STDMETHODIMP RemoveRange(UINT from, UINT count);
-	STDMETHODIMP Sort();
-	STDMETHODIMP UpdateFileInfoFromJSON(BSTR str);
-	STDMETHODIMP get_Count(UINT* p);
-	STDMETHODIMP get_Item(UINT index, IMetadbHandle** pp);
-	STDMETHODIMP put_Item(UINT index, IMetadbHandle* handle);
-};
-
-class PlaybackQueueItem : public IDisposableImpl4<IPlaybackQueueItem>
-{
-protected:
-	PlaybackQueueItem();
-	PlaybackQueueItem(const t_playback_queue_item& playbackQueueItem);
-	virtual ~PlaybackQueueItem();
-
-	virtual void FinalRelease();
-
-	t_playback_queue_item m_playback_queue_item;
-
-public:
-	STDMETHODIMP get__ptr(void** pp);
-	STDMETHODIMP get_Handle(IMetadbHandle** pp);
-	STDMETHODIMP get_PlaylistIndex(int* p);
-	STDMETHODIMP get_PlaylistItemIndex(int* p);
-};
-
-class PlayingItemLocation : public IDispatchImpl3<IPlayingItemLocation>
-{
-protected:
-	PlayingItemLocation(bool isValid, t_size playlistIndex, t_size playlistItemIndex);
-
-	bool m_isValid;
-	t_size m_playlistIndex;
-	t_size m_playlistItemIndex;
-
-public:
-	STDMETHODIMP get_IsValid(VARIANT_BOOL* p);
-	STDMETHODIMP get_PlaylistIndex(int* p);
-	STDMETHODIMP get_PlaylistItemIndex(int* p);
-};
-
-class PlaylistRecyclerManager : public IDispatchImpl3<IPlaylistRecyclerManager>
-{
-public:
-	STDMETHODIMP Purge(VARIANT affectedItems);
-	STDMETHODIMP Restore(UINT index);
-	STDMETHODIMP get_Content(UINT index, IMetadbHandleList** pp);
-	STDMETHODIMP get_Count(UINT* p);
-	STDMETHODIMP get_Name(UINT index, BSTR* p);
-};
-
-class Profiler : public IDispatchImpl3<IProfiler>
-{
-protected:
-	Profiler(const char* p_name);
-	virtual ~Profiler();
-
-	pfc::hires_timer m_timer;
-	pfc::string_simple m_name;
-
-public:
-	STDMETHODIMP Print();
-	STDMETHODIMP Reset();
-	STDMETHODIMP get_Time(int* p);
-};
-
-class TitleFormat : public IDisposableImpl4<ITitleFormat>
-{
-protected:
-	TitleFormat(BSTR expr);
-	virtual ~TitleFormat();
-
-	virtual void FinalRelease();
-
-	titleformat_object::ptr m_obj;
-
-public:
-	STDMETHODIMP get__ptr(void** pp);
-	STDMETHODIMP Eval(VARIANT_BOOL force, BSTR* p);
-	STDMETHODIMP EvalWithMetadb(IMetadbHandle* handle, BSTR* p);
-	STDMETHODIMP EvalWithMetadbs(IMetadbHandleList* handles, VARIANT* p);
-};
-
-class Tooltip : public IDisposableImpl4<ITooltip>
-{
-protected:
-	Tooltip(HWND p_wndparent, const panel_tooltip_param_ptr& p_param_ptr);
-	virtual ~Tooltip();
-
-	virtual void FinalRelease();
-
-	BSTR m_tip_buffer;
-	HWND m_wndtooltip;
-	HWND m_wndparent;
-	TOOLINFO m_ti;
-	panel_tooltip_param_ptr m_panel_tooltip_param_ptr;
-
-public:
-	STDMETHODIMP Activate();
-	STDMETHODIMP Deactivate();
-	STDMETHODIMP GetDelayTime(int type, int* p);
-	STDMETHODIMP SetDelayTime(int type, int time);
-	STDMETHODIMP SetMaxWidth(int width);
-	STDMETHODIMP TrackPosition(int x, int y);
-	STDMETHODIMP get_Text(BSTR* p);
-	STDMETHODIMP put_Text(BSTR text);
-	STDMETHODIMP put_TrackActivate(VARIANT_BOOL activate);
-};
-
-class UiSelectionHolder : public IDisposableImpl4<IUiSelectionHolder>
-{
-protected:
-	UiSelectionHolder(const ui_selection_holder::ptr& holder);
-	virtual ~UiSelectionHolder();
-
-	virtual void FinalRelease();
-
-	ui_selection_holder::ptr m_holder;
-
-public:
-	STDMETHODIMP SetPlaylistSelectionTracking();
-	STDMETHODIMP SetPlaylistTracking();
-	STDMETHODIMP SetSelection(IMetadbHandleList* handles);
-};
-
 class GdiBitmap : public GdiObj<IGdiBitmap, Gdiplus::Bitmap>
 {
 protected:
@@ -440,6 +249,138 @@ public:
 	STDMETHODIMP TrackPopupMenu(int x, int y, UINT flags, UINT* item_id);
 };
 
+class MetadbHandle : public IDisposableImpl4<IMetadbHandle>
+{
+protected:
+	MetadbHandle(const metadb_handle_ptr& src);
+	MetadbHandle(metadb_handle* src);
+	virtual ~MetadbHandle();
+
+	virtual void FinalRelease();
+
+	metadb_handle_ptr m_handle;
+
+public:
+	STDMETHODIMP get__ptr(void** pp);
+	STDMETHODIMP ClearStats();
+	STDMETHODIMP Compare(IMetadbHandle* handle, VARIANT_BOOL* p);
+	STDMETHODIMP GetAlbumArt(UINT art_id, VARIANT_BOOL need_stub, VARIANT* p);
+	STDMETHODIMP GetFileInfo(IFileInfo** pp);
+	STDMETHODIMP RefreshStats();
+	STDMETHODIMP SetFirstPlayed(BSTR first_played);
+	STDMETHODIMP SetLastPlayed(BSTR last_played);
+	STDMETHODIMP SetLoved(UINT loved);
+	STDMETHODIMP SetPlaycount(UINT playcount);
+	STDMETHODIMP SetRating(UINT rating);
+	STDMETHODIMP get_FileSize(LONGLONG* p);
+	STDMETHODIMP get_Length(double* p);
+	STDMETHODIMP get_Path(BSTR* p);
+	STDMETHODIMP get_RawPath(BSTR* p);
+	STDMETHODIMP get_SubSong(UINT* p);
+};
+
+class MetadbHandleList : public IDisposableImpl4<IMetadbHandleList>
+{
+protected:
+	MetadbHandleList(metadb_handle_list_cref handles);
+	virtual ~MetadbHandleList();
+
+	virtual void FinalRelease();
+
+	metadb_handle_list m_handles;
+
+public:
+	STDMETHODIMP get__ptr(void** pp);
+	STDMETHODIMP Add(IMetadbHandle* handle);
+	STDMETHODIMP AddRange(IMetadbHandleList* handles);
+	STDMETHODIMP AttachImage(BSTR image_path, UINT art_id);
+	STDMETHODIMP BSearch(IMetadbHandle* handle, int* p);
+	STDMETHODIMP CalcTotalDuration(double* p);
+	STDMETHODIMP CalcTotalSize(LONGLONG* p);
+	STDMETHODIMP Clone(IMetadbHandleList** pp);
+	STDMETHODIMP Convert(VARIANT* p);
+	STDMETHODIMP Find(IMetadbHandle* handle, int* p);
+	STDMETHODIMP GetLibraryRelativePaths(VARIANT* p);
+	STDMETHODIMP Insert(UINT index, IMetadbHandle* handle);
+	STDMETHODIMP InsertRange(UINT index, IMetadbHandleList* handles);
+	STDMETHODIMP MakeDifference(IMetadbHandleList* handles);
+	STDMETHODIMP MakeIntersection(IMetadbHandleList* handles);
+	STDMETHODIMP MakeUnion(IMetadbHandleList* handles);
+	STDMETHODIMP OrderByFormat(__interface ITitleFormat* script, int direction);
+	STDMETHODIMP OrderByPath();
+	STDMETHODIMP OrderByRelativePath();
+	STDMETHODIMP RefreshStats();
+	STDMETHODIMP Remove(IMetadbHandle* handle);
+	STDMETHODIMP RemoveAll();
+	STDMETHODIMP RemoveAttachedImage(UINT art_id);
+	STDMETHODIMP RemoveAttachedImages();
+	STDMETHODIMP RemoveById(UINT index);
+	STDMETHODIMP RemoveRange(UINT from, UINT count);
+	STDMETHODIMP Sort();
+	STDMETHODIMP UpdateFileInfoFromJSON(BSTR str);
+	STDMETHODIMP get_Count(UINT* p);
+	STDMETHODIMP get_Item(UINT index, IMetadbHandle** pp);
+	STDMETHODIMP put_Item(UINT index, IMetadbHandle* handle);
+};
+
+class PlaybackQueueItem : public IDisposableImpl4<IPlaybackQueueItem>
+{
+protected:
+	PlaybackQueueItem();
+	PlaybackQueueItem(const t_playback_queue_item& playbackQueueItem);
+	virtual ~PlaybackQueueItem();
+
+	virtual void FinalRelease();
+
+	t_playback_queue_item m_playback_queue_item;
+
+public:
+	STDMETHODIMP get__ptr(void** pp);
+	STDMETHODIMP get_Handle(IMetadbHandle** pp);
+	STDMETHODIMP get_PlaylistIndex(int* p);
+	STDMETHODIMP get_PlaylistItemIndex(int* p);
+};
+
+class PlayingItemLocation : public IDispatchImpl3<IPlayingItemLocation>
+{
+protected:
+	PlayingItemLocation(bool isValid, t_size playlistIndex, t_size playlistItemIndex);
+
+	bool m_isValid;
+	t_size m_playlistIndex;
+	t_size m_playlistItemIndex;
+
+public:
+	STDMETHODIMP get_IsValid(VARIANT_BOOL* p);
+	STDMETHODIMP get_PlaylistIndex(int* p);
+	STDMETHODIMP get_PlaylistItemIndex(int* p);
+};
+
+class PlaylistRecyclerManager : public IDispatchImpl3<IPlaylistRecyclerManager>
+{
+public:
+	STDMETHODIMP Purge(VARIANT affectedItems);
+	STDMETHODIMP Restore(UINT index);
+	STDMETHODIMP get_Content(UINT index, IMetadbHandleList** pp);
+	STDMETHODIMP get_Count(UINT* p);
+	STDMETHODIMP get_Name(UINT index, BSTR* p);
+};
+
+class Profiler : public IDispatchImpl3<IProfiler>
+{
+protected:
+	Profiler(const char* p_name);
+	virtual ~Profiler();
+
+	pfc::hires_timer m_timer;
+	pfc::string_simple m_name;
+
+public:
+	STDMETHODIMP Print();
+	STDMETHODIMP Reset();
+	STDMETHODIMP get_Time(int* p);
+};
+
 class ThemeManager : public IDisposableImpl4<IThemeManager>
 {
 protected:
@@ -456,4 +397,63 @@ public:
 	STDMETHODIMP DrawThemeBackground(IGdiGraphics* gr, int x, int y, int w, int h, int clip_x, int clip_y, int clip_w, int clip_h);
 	STDMETHODIMP IsThemePartDefined(int partid, int stateid, VARIANT_BOOL* p);
 	STDMETHODIMP SetPartAndStateID(int partid, int stateid);
+};
+
+class TitleFormat : public IDisposableImpl4<ITitleFormat>
+{
+protected:
+	TitleFormat(BSTR expr);
+	virtual ~TitleFormat();
+
+	virtual void FinalRelease();
+
+	titleformat_object::ptr m_obj;
+
+public:
+	STDMETHODIMP get__ptr(void** pp);
+	STDMETHODIMP Eval(VARIANT_BOOL force, BSTR* p);
+	STDMETHODIMP EvalWithMetadb(IMetadbHandle* handle, BSTR* p);
+	STDMETHODIMP EvalWithMetadbs(IMetadbHandleList* handles, VARIANT* p);
+};
+
+class Tooltip : public IDisposableImpl4<ITooltip>
+{
+protected:
+	Tooltip(HWND p_wndparent, const panel_tooltip_param_ptr& p_param_ptr);
+	virtual ~Tooltip();
+
+	virtual void FinalRelease();
+
+	BSTR m_tip_buffer;
+	HWND m_wndtooltip;
+	HWND m_wndparent;
+	TOOLINFO m_ti;
+	panel_tooltip_param_ptr m_panel_tooltip_param_ptr;
+
+public:
+	STDMETHODIMP Activate();
+	STDMETHODIMP Deactivate();
+	STDMETHODIMP GetDelayTime(int type, int* p);
+	STDMETHODIMP SetDelayTime(int type, int time);
+	STDMETHODIMP SetMaxWidth(int width);
+	STDMETHODIMP TrackPosition(int x, int y);
+	STDMETHODIMP get_Text(BSTR* p);
+	STDMETHODIMP put_Text(BSTR text);
+	STDMETHODIMP put_TrackActivate(VARIANT_BOOL activate);
+};
+
+class UiSelectionHolder : public IDisposableImpl4<IUiSelectionHolder>
+{
+protected:
+	UiSelectionHolder(const ui_selection_holder::ptr& holder);
+	virtual ~UiSelectionHolder();
+
+	virtual void FinalRelease();
+
+	ui_selection_holder::ptr m_holder;
+
+public:
+	STDMETHODIMP SetPlaylistSelectionTracking();
+	STDMETHODIMP SetPlaylistTracking();
+	STDMETHODIMP SetSelection(IMetadbHandleList* handles);
 };

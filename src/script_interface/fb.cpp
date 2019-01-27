@@ -56,7 +56,7 @@ STDMETHODIMP Fb::CopyHandleListToClipboard(IMetadbHandleList* handles, VARIANT_B
 
 	*p = VARIANT_FALSE;
 	metadb_handle_list* handles_ptr = NULL;
-	handles->get__ptr((void**)& handles_ptr);
+	handles->get__ptr((void**)&handles_ptr);
 
 	pfc::com_ptr_t<IDataObject> pDO = ole_interaction::get()->create_dataobject(*handles_ptr);
 	if (SUCCEEDED(OleSetClipboard(pDO.get_ptr())))
@@ -81,7 +81,7 @@ STDMETHODIMP Fb::CreateHandleList(VARIANT handle, IMetadbHandleList** pp)
 	metadb_handle_list items;
 	IDispatch* temp = NULL;
 
-	if (handle.vt == VT_DISPATCH && handle.pdispVal && SUCCEEDED(handle.pdispVal->QueryInterface(__uuidof(IMetadbHandle), (void**)& temp)))
+	if (handle.vt == VT_DISPATCH && handle.pdispVal && SUCCEEDED(handle.pdispVal->QueryInterface(__uuidof(IMetadbHandle), (void**)&temp)))
 	{
 		IDispatchPtr handle_s = temp;
 		void* ptr = NULL;
@@ -115,7 +115,7 @@ STDMETHODIMP Fb::DoDragDrop(IMetadbHandleList* handles, UINT okEffects, UINT* p)
 	if (!p) return E_POINTER;
 
 	metadb_handle_list* handles_ptr = NULL;
-	handles->get__ptr((void**)& handles_ptr);
+	handles->get__ptr((void**)&handles_ptr);
 
 	if (!handles_ptr->get_count() || okEffects == DROPEFFECT_NONE)
 	{
@@ -225,7 +225,7 @@ STDMETHODIMP Fb::GetLibraryRelativePath(IMetadbHandle* handle, BSTR* p)
 	if (!p) return E_POINTER;
 
 	metadb_handle* ptr = NULL;
-	handle->get__ptr((void**)& ptr);
+	handle->get__ptr((void**)&ptr);
 	if (!ptr) return E_INVALIDARG;
 
 	pfc::string8_fast temp;
@@ -286,7 +286,7 @@ STDMETHODIMP Fb::GetQueryItems(IMetadbHandleList* handles, BSTR query, IMetadbHa
 	metadb_handle_list* handles_ptr, dst_list;
 	search_filter_v2::ptr filter;
 
-	handles->get__ptr((void**)& handles_ptr);
+	handles->get__ptr((void**)&handles_ptr);
 	dst_list = *handles_ptr;
 	string_utf8_from_wide uquery(query);
 
@@ -374,7 +374,7 @@ STDMETHODIMP Fb::IsMetadbInMediaLibrary(IMetadbHandle* handle, VARIANT_BOOL* p)
 	if (!p) return E_POINTER;
 
 	metadb_handle* ptr = NULL;
-	handle->get__ptr((void**)& ptr);
+	handle->get__ptr((void**)&ptr);
 	if (!ptr) return E_INVALIDARG;
 
 	*p = TO_VARIANT_BOOL(library_manager::get()->is_item_in_library(ptr));
@@ -442,14 +442,14 @@ STDMETHODIMP Fb::RunContextCommandWithMetadb(BSTR command, VARIANT handle, UINT 
 	IDispatchPtr handle_s = NULL;
 	void* ptr = NULL;
 
-	if (SUCCEEDED(handle.pdispVal->QueryInterface(__uuidof(IMetadbHandle), (void**)& temp)))
+	if (SUCCEEDED(handle.pdispVal->QueryInterface(__uuidof(IMetadbHandle), (void**)&temp)))
 	{
 		handle_s = temp;
 		reinterpret_cast<IMetadbHandle*>(handle_s.GetInterfacePtr())->get__ptr(&ptr);
 		if (!ptr) return E_INVALIDARG;
 		handle_list = pfc::list_single_ref_t<metadb_handle_ptr>(reinterpret_cast<metadb_handle*>(ptr));
 	}
-	else if (SUCCEEDED(handle.pdispVal->QueryInterface(__uuidof(IMetadbHandleList), (void**)& temp)))
+	else if (SUCCEEDED(handle.pdispVal->QueryInterface(__uuidof(IMetadbHandleList), (void**)&temp)))
 	{
 		handle_s = temp;
 		reinterpret_cast<IMetadbHandleList*>(handle_s.GetInterfacePtr())->get__ptr(&ptr);

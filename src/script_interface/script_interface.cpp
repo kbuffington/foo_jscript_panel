@@ -35,7 +35,7 @@ STDMETHODIMP ContextMenuManager::ExecuteByID(UINT id, VARIANT_BOOL* p)
 STDMETHODIMP ContextMenuManager::InitContext(IMetadbHandleList* handles)
 {
 	metadb_handle_list* handles_ptr = NULL;
-	handles->get__ptr((void**)& handles_ptr);
+	handles->get__ptr((void**)&handles_ptr);
 	contextmenu_manager::g_create(m_cm);
 	m_cm->init_context(*handles_ptr, contextmenu_manager::flag_show_shortcuts);
 	return S_OK;
@@ -208,1129 +208,6 @@ STDMETHODIMP FileInfo::get_MetaCount(UINT* p)
 	return S_OK;
 }
 
-MetadbHandle::MetadbHandle(const metadb_handle_ptr & src) : m_handle(src) {}
-MetadbHandle::MetadbHandle(metadb_handle* src) : m_handle(src) {}
-MetadbHandle::~MetadbHandle() {}
-
-void MetadbHandle::FinalRelease()
-{
-	m_handle.release();
-}
-
-STDMETHODIMP MetadbHandle::get__ptr(void** pp)
-{
-	if (!pp) return E_POINTER;
-
-	*pp = m_handle.get_ptr();
-	return S_OK;
-}
-
-STDMETHODIMP MetadbHandle::ClearStats()
-{
-	if (m_handle.is_empty()) return E_POINTER;
-
-	metadb_index_hash hash;
-	if (stats::hashHandle(m_handle, hash))
-	{
-		stats::set(hash, stats::fields());
-	}
-	return S_OK;
-}
-
-STDMETHODIMP MetadbHandle::Compare(IMetadbHandle* handle, VARIANT_BOOL* p)
-{
-	if (m_handle.is_empty() || !p) return E_POINTER;
-
-	metadb_handle* ptr = NULL;
-	handle->get__ptr((void**)& ptr);
-	if (!ptr) return E_INVALIDARG;
-
-	*p = TO_VARIANT_BOOL(ptr == m_handle.get_ptr());
-	return S_OK;
-}
-
-STDMETHODIMP MetadbHandle::GetAlbumArt(UINT art_id, VARIANT_BOOL need_stub, VARIANT* p)
-{
-	if (m_handle.is_empty() || !p) return E_POINTER;
-
-	pfc::string8_fast image_path;
-	IGdiBitmap* bitmap = helpers::get_album_art(m_handle, art_id, need_stub != VARIANT_FALSE, image_path);
-
-	_variant_t var1, var2;
-	var1.vt = VT_DISPATCH;
-	var1.pdispVal = bitmap;
-	var2.vt = VT_BSTR;
-	var2.bstrVal = SysAllocString(string_wide_from_utf8_fast(image_path));
-
-	helpers::com_array helper;
-	if (!helper.create(2)) return E_OUTOFMEMORY;
-	if (!helper.put_item(0, var1)) return E_OUTOFMEMORY;
-	if (!helper.put_item(1, var2)) return E_OUTOFMEMORY;
-
-	p->vt = VT_ARRAY | VT_VARIANT;
-	p->parray = helper.get_ptr();
-	return S_OK;
-}
-
-STDMETHODIMP MetadbHandle::GetFileInfo(IFileInfo** pp)
-{
-	if (m_handle.is_empty() || !pp) return E_POINTER;
-
-	file_info_impl* info_ptr = new file_info_impl;
-	m_handle->get_info(*info_ptr);
-	*pp = new com_object_impl_t<FileInfo>(info_ptr);
-	return S_OK;
-}
-
-STDMETHODIMP MetadbHandle::RefreshStats()
-{
-	if (m_handle.is_empty()) return E_POINTER;
-
-	metadb_index_hash hash;
-	if (stats::hashHandle(m_handle, hash))
-	{
-		stats::theAPI()->dispatch_refresh(g_guid_jsp_metadb_index, hash);
-	}
-	return S_OK;
-}
-
-STDMETHODIMP MetadbHandle::SetFirstPlayed(BSTR first_played)
-{
-	if (m_handle.is_empty()) return E_POINTER;
-
-	metadb_index_hash hash;
-	if (stats::hashHandle(m_handle, hash))
-	{
-		stats::fields tmp = stats::get(hash);
-		string_utf8_from_wide fp(first_played);
-		if (!tmp.first_played.equals(fp))
-		{
-			tmp.first_played = fp;
-			stats::set(hash, tmp);
-		}
-	}
-	return S_OK;
-}
-
-STDMETHODIMP MetadbHandle::SetLastPlayed(BSTR last_played)
-{
-	if (m_handle.is_empty()) return E_POINTER;
-
-	metadb_index_hash hash;
-	if (stats::hashHandle(m_handle, hash))
-	{
-		stats::fields tmp = stats::get(hash);
-		string_utf8_from_wide lp(last_played);
-		if (!tmp.last_played.equals(lp))
-		{
-			tmp.last_played = lp;
-			stats::set(hash, tmp);
-		}
-	}
-	return S_OK;
-}
-
-STDMETHODIMP MetadbHandle::SetLoved(UINT loved)
-{
-	if (m_handle.is_empty()) return E_POINTER;
-
-	metadb_index_hash hash;
-	if (stats::hashHandle(m_handle, hash))
-	{
-		stats::fields tmp = stats::get(hash);
-		if (tmp.loved != loved)
-		{
-			tmp.loved = loved;
-			stats::set(hash, tmp);
-		}
-	}
-	return S_OK;
-}
-
-STDMETHODIMP MetadbHandle::SetPlaycount(UINT playcount)
-{
-	if (m_handle.is_empty()) return E_POINTER;
-
-	metadb_index_hash hash;
-	if (stats::hashHandle(m_handle, hash))
-	{
-		stats::fields tmp = stats::get(hash);
-		if (tmp.playcount != playcount)
-		{
-			tmp.playcount = playcount;
-			stats::set(hash, tmp);
-		}
-	}
-	return S_OK;
-}
-
-STDMETHODIMP MetadbHandle::SetRating(UINT rating)
-{
-	if (m_handle.is_empty()) return E_POINTER;
-
-	metadb_index_hash hash;
-	if (stats::hashHandle(m_handle, hash))
-	{
-		stats::fields tmp = stats::get(hash);
-		if (tmp.rating != rating)
-		{
-			tmp.rating = rating;
-			stats::set(hash, tmp);
-		}
-	}
-	return S_OK;
-}
-
-STDMETHODIMP MetadbHandle::get_FileSize(LONGLONG* p)
-{
-	if (m_handle.is_empty() || !p) return E_POINTER;
-
-	*p = m_handle->get_filesize();
-	return S_OK;
-}
-
-STDMETHODIMP MetadbHandle::get_Length(double* p)
-{
-	if (m_handle.is_empty() || !p) return E_POINTER;
-
-	*p = m_handle->get_length();
-	return S_OK;
-}
-
-STDMETHODIMP MetadbHandle::get_Path(BSTR* p)
-{
-	if (m_handle.is_empty() || !p) return E_POINTER;
-
-	*p = SysAllocString(string_wide_from_utf8_fast(file_path_display(m_handle->get_path())));
-	return S_OK;
-}
-
-STDMETHODIMP MetadbHandle::get_RawPath(BSTR* p)
-{
-	if (m_handle.is_empty() || !p) return E_POINTER;
-
-	*p = SysAllocString(string_wide_from_utf8_fast(m_handle->get_path()));
-	return S_OK;
-}
-
-STDMETHODIMP MetadbHandle::get_SubSong(UINT* p)
-{
-	if (m_handle.is_empty() || !p) return E_POINTER;
-
-	*p = m_handle->get_subsong_index();
-	return S_OK;
-}
-
-MetadbHandleList::MetadbHandleList(metadb_handle_list_cref handles) : m_handles(handles) {}
-MetadbHandleList::~MetadbHandleList() {}
-
-void MetadbHandleList::FinalRelease()
-{
-	m_handles.remove_all();
-}
-
-STDMETHODIMP MetadbHandleList::get__ptr(void** pp)
-{
-	if (!pp) return E_POINTER;
-
-	*pp = &m_handles;
-	return S_OK;
-}
-
-STDMETHODIMP MetadbHandleList::Add(IMetadbHandle* handle)
-{
-	metadb_handle* ptr = NULL;
-	handle->get__ptr((void**)& ptr);
-	if (!ptr) return E_INVALIDARG;
-
-	m_handles.add_item(ptr);
-	return S_OK;
-}
-
-STDMETHODIMP MetadbHandleList::AddRange(IMetadbHandleList* handles)
-{
-	metadb_handle_list* handles_ptr = NULL;
-	handles->get__ptr((void**)& handles_ptr);
-	m_handles.add_items(*handles_ptr);
-	return S_OK;
-}
-
-STDMETHODIMP MetadbHandleList::AttachImage(BSTR image_path, UINT art_id)
-{
-	if (m_handles.get_count() == 0) return E_POINTER;
-
-	album_art_data_ptr data;
-
-	try
-	{
-		string_utf8_from_wide path(image_path);
-		if (!filesystem::g_is_remote_or_unrecognized(path))
-		{
-			file::ptr file;
-			abort_callback_dummy abort;
-			filesystem::g_open(file, path, filesystem::open_mode_read, abort);
-			if (file.is_valid())
-			{
-				auto tmp = fb2k::service_new<album_art_data_impl>();
-				tmp->from_stream(file.get_ptr(), t_size(file->get_size_ex(abort)), abort);
-				data = tmp;
-			}
-		}
-	}
-	catch (...) {}
-
-	if (data.is_valid())
-	{
-		auto cb = fb2k::service_new<helpers::embed_thread>(helpers::embed_thread::attach, data, m_handles, art_id);
-		threaded_process::get()->run_modeless(cb, threaded_process::flag_show_progress | threaded_process::flag_show_delayed | threaded_process::flag_show_item, core_api::get_main_window(), "Embedding image...");
-	}
-	return S_OK;
-}
-
-STDMETHODIMP MetadbHandleList::BSearch(IMetadbHandle* handle, int* p)
-{
-	if (!p) return E_POINTER;
-
-	metadb_handle* ptr = NULL;
-	handle->get__ptr((void**)& ptr);
-	if (!ptr) return E_INVALIDARG;
-
-	*p = m_handles.bsearch_by_pointer(ptr);
-	return S_OK;
-}
-
-STDMETHODIMP MetadbHandleList::CalcTotalDuration(double* p)
-{
-	if (!p) return E_POINTER;
-
-	*p = m_handles.calc_total_duration();
-	return S_OK;
-}
-
-STDMETHODIMP MetadbHandleList::CalcTotalSize(LONGLONG* p)
-{
-	if (!p) return E_POINTER;
-
-	*p = metadb_handle_list_helper::calc_total_size(m_handles, true);
-	return S_OK;
-}
-
-STDMETHODIMP MetadbHandleList::Clone(IMetadbHandleList** pp)
-{
-	if (!pp) return E_POINTER;
-
-	*pp = new com_object_impl_t<MetadbHandleList>(m_handles);
-	return S_OK;
-}
-
-STDMETHODIMP MetadbHandleList::Convert(VARIANT* p)
-{
-	if (!p) return E_POINTER;
-
-	LONG count = m_handles.get_count();
-	helpers::com_array helper;
-	if (!helper.create(count)) return E_OUTOFMEMORY;
-
-	for (LONG i = 0; i < count; ++i)
-	{
-		_variant_t var;
-		var.vt = VT_DISPATCH;
-		var.pdispVal = new com_object_impl_t<MetadbHandle>(m_handles[i]);
-		if (!helper.put_item(i, var)) return E_OUTOFMEMORY;
-	}
-	p->vt = VT_ARRAY | VT_VARIANT;
-	p->parray = helper.get_ptr();
-	return S_OK;
-}
-
-STDMETHODIMP MetadbHandleList::Find(IMetadbHandle* handle, int* p)
-{
-	if (!p) return E_POINTER;
-
-	metadb_handle* ptr = NULL;
-	handle->get__ptr((void**)& ptr);
-	if (!ptr) return E_INVALIDARG;
-
-	*p = m_handles.find_item(ptr);
-	return S_OK;
-}
-
-STDMETHODIMP MetadbHandleList::GetLibraryRelativePaths(VARIANT* p)
-{
-	if (!p) return E_POINTER;
-
-	LONG count = m_handles.get_count();
-	helpers::com_array helper;
-	if (!helper.create(count)) return E_OUTOFMEMORY;
-
-	pfc::string8_fastalloc temp;
-	temp.prealloc(512);
-
-	auto api = library_manager::get();
-
-	for (LONG i = 0; i < count; ++i)
-	{
-		metadb_handle_ptr item = m_handles[i];
-		if (!api->get_relative_path(item, temp)) temp = "";
-		_variant_t var;
-		var.vt = VT_BSTR;
-		var.bstrVal = SysAllocString(string_wide_from_utf8_fast(temp));
-		if (!helper.put_item(i, var)) return E_OUTOFMEMORY;
-	}
-	p->vt = VT_ARRAY | VT_VARIANT;
-	p->parray = helper.get_ptr();
-	return S_OK;
-}
-
-STDMETHODIMP MetadbHandleList::Insert(UINT index, IMetadbHandle* handle)
-{
-	metadb_handle* ptr = NULL;
-	handle->get__ptr((void**)& ptr);
-	if (!ptr) return E_INVALIDARG;
-
-	m_handles.insert_item(ptr, index);
-	return S_OK;
-}
-
-STDMETHODIMP MetadbHandleList::InsertRange(UINT index, IMetadbHandleList* handles)
-{
-	metadb_handle_list* handles_ptr = NULL;
-	handles->get__ptr((void**)& handles_ptr);
-	m_handles.insert_items(*handles_ptr, index);
-	return S_OK;
-}
-
-STDMETHODIMP MetadbHandleList::MakeDifference(IMetadbHandleList* handles)
-{
-	metadb_handle_list* handles_ptr = NULL;
-	handles->get__ptr((void**)& handles_ptr);
-
-	metadb_handle_list_ref handles_ref = *handles_ptr;
-	metadb_handle_list result;
-	t_size walk1 = 0;
-	t_size walk2 = 0;
-	t_size last1 = m_handles.get_count();
-	t_size last2 = handles_ptr->get_count();
-
-	while (walk1 != last1 && walk2 != last2)
-	{
-		if (m_handles[walk1] < handles_ref[walk2])
-		{
-			result.add_item(m_handles[walk1]);
-			++walk1;
-		}
-		else if (handles_ref[walk2] < m_handles[walk1])
-		{
-			++walk2;
-		}
-		else
-		{
-			++walk1;
-			++walk2;
-		}
-	}
-
-	m_handles = result;
-	return S_OK;
-}
-
-STDMETHODIMP MetadbHandleList::MakeIntersection(IMetadbHandleList* handles)
-{
-	metadb_handle_list* handles_ptr = NULL;
-	handles->get__ptr((void**)& handles_ptr);
-
-	metadb_handle_list_ref handles_ref = *handles_ptr;
-	metadb_handle_list result;
-	t_size walk1 = 0;
-	t_size walk2 = 0;
-	t_size last1 = m_handles.get_count();
-	t_size last2 = handles_ptr->get_count();
-
-	while (walk1 != last1 && walk2 != last2)
-	{
-		if (m_handles[walk1] < handles_ref[walk2])
-			++walk1;
-		else if (handles_ref[walk2] < m_handles[walk1])
-			++walk2;
-		else
-		{
-			result.add_item(m_handles[walk1]);
-			++walk1;
-			++walk2;
-		}
-	}
-
-	m_handles = result;
-	return S_OK;
-}
-
-STDMETHODIMP MetadbHandleList::MakeUnion(IMetadbHandleList* handles)
-{
-	metadb_handle_list* handles_ptr = NULL;
-	handles->get__ptr((void**)& handles_ptr);
-
-	m_handles.add_items(*handles_ptr);
-	m_handles.sort_by_pointer_remove_duplicates();
-	return S_OK;
-}
-
-STDMETHODIMP MetadbHandleList::OrderByFormat(__interface ITitleFormat* script, int direction)
-{
-	titleformat_object* obj = NULL;
-	script->get__ptr((void**)& obj);
-	m_handles.sort_by_format(obj, NULL, direction);
-	return S_OK;
-}
-
-STDMETHODIMP MetadbHandleList::OrderByPath()
-{
-	m_handles.sort_by_path();
-	return S_OK;
-}
-
-STDMETHODIMP MetadbHandleList::OrderByRelativePath()
-{
-	// lifted from metadb_handle_list.cpp - adds subsong index for better sorting. github issue #16
-	auto api = library_manager::get();
-	t_size i, count = m_handles.get_count();
-
-	pfc::array_t<helpers::custom_sort_data> data;
-	data.set_size(count);
-
-	pfc::string8_fastalloc temp;
-	temp.prealloc(512);
-
-	for (i = 0; i < count; ++i)
-	{
-		metadb_handle_ptr item;
-		m_handles.get_item_ex(item, i);
-		if (!api->get_relative_path(item, temp)) temp = "";
-		temp << item->get_subsong_index();
-		data[i].index = i;
-		data[i].text = helpers::make_sort_string(temp);
-	}
-
-	pfc::sort_t(data, helpers::custom_sort_compare<1>, count);
-	order_helper order(count);
-
-	for (i = 0; i < count; ++i)
-	{
-		order[i] = data[i].index;
-		delete[] data[i].text;
-	}
-
-	m_handles.reorder(order.get_ptr());
-	return S_OK;
-}
-
-STDMETHODIMP MetadbHandleList::RefreshStats()
-{
-	const t_size count = m_handles.get_count();
-	pfc::avltree_t<metadb_index_hash> tmp;
-	for (t_size i = 0; i < count; ++i)
-	{
-		metadb_index_hash hash;
-		if (stats::hashHandle(m_handles[i], hash))
-		{
-			tmp += hash;
-		}
-	}
-	pfc::list_t<metadb_index_hash> hashes;
-	for (auto iter = tmp.first(); iter.is_valid(); ++iter)
-	{
-		const metadb_index_hash hash = *iter;
-		hashes += hash;
-	}
-	stats::theAPI()->dispatch_refresh(g_guid_jsp_metadb_index, hashes);
-	return S_OK;
-}
-
-STDMETHODIMP MetadbHandleList::Remove(IMetadbHandle* handle)
-{
-	metadb_handle* ptr = NULL;
-	handle->get__ptr((void**)& ptr);
-	if (!ptr) return E_INVALIDARG;
-
-	m_handles.remove_item(ptr);
-	return S_OK;
-}
-
-STDMETHODIMP MetadbHandleList::RemoveAll()
-{
-	m_handles.remove_all();
-	return S_OK;
-}
-
-STDMETHODIMP MetadbHandleList::RemoveAttachedImage(UINT art_id)
-{
-	if (m_handles.get_count() == 0) return E_POINTER;
-
-	auto cb = fb2k::service_new<helpers::embed_thread>(helpers::embed_thread::remove, album_art_data_ptr(), m_handles, art_id);
-	threaded_process::get()->run_modeless(cb, threaded_process::flag_show_progress | threaded_process::flag_show_delayed | threaded_process::flag_show_item, core_api::get_main_window(), "Removing images...");
-	return S_OK;
-}
-
-STDMETHODIMP MetadbHandleList::RemoveAttachedImages()
-{
-	if (m_handles.get_count() == 0) return E_POINTER;
-
-	auto cb = fb2k::service_new<helpers::embed_thread>(helpers::embed_thread::remove_all, album_art_data_ptr(), m_handles, 0);
-	threaded_process::get()->run_modeless(cb, threaded_process::flag_show_progress | threaded_process::flag_show_delayed | threaded_process::flag_show_item, core_api::get_main_window(), "Removing images...");
-	return S_OK;
-}
-
-STDMETHODIMP MetadbHandleList::RemoveById(UINT index)
-{
-	if (index < m_handles.get_count())
-	{
-		m_handles.remove_by_idx(index);
-		return S_OK;
-	}
-	return E_INVALIDARG;
-}
-
-STDMETHODIMP MetadbHandleList::RemoveRange(UINT from, UINT count)
-{
-	m_handles.remove_from_idx(from, count);
-	return S_OK;
-}
-
-STDMETHODIMP MetadbHandleList::Sort()
-{
-	m_handles.sort_by_pointer_remove_duplicates();
-	return S_OK;
-}
-
-STDMETHODIMP MetadbHandleList::UpdateFileInfoFromJSON(BSTR str)
-{
-	t_size count = m_handles.get_count();
-	if (count == 0) return E_POINTER;
-
-	json j;
-	bool is_array;
-
-	try
-	{
-		string_utf8_from_wide ustr(str);
-		j = json::parse(ustr.get_ptr());
-	}
-	catch (...)
-	{
-		return E_INVALIDARG;
-	}
-
-	if (j.is_array() && j.size() == count)
-	{
-		is_array = true;
-	}
-	else if (j.is_object() && j.size() > 0)
-	{
-		is_array = false;
-	}
-	else
-	{
-		return E_INVALIDARG;
-	}
-
-	pfc::list_t<file_info_impl> info;
-	info.set_size(count);
-
-	for (t_size i = 0; i < count; ++i)
-	{
-		json obj = is_array ? j[i] : j;
-		if (!obj.is_object() || obj.size() == 0) return E_INVALIDARG;
-
-		metadb_handle_ptr item = m_handles.get_item(i);
-		item->get_info(info[i]);
-
-		for (json::iterator it = obj.begin(); it != obj.end(); ++it)
-		{
-			pfc::string8 key = (it.key()).c_str();
-			if (key.is_empty()) return E_INVALIDARG;
-
-			info[i].meta_remove_field(key);
-
-			if (it.value().is_array())
-			{
-				for (json::iterator ita = it.value().begin(); ita != it.value().end(); ++ita)
-				{
-					pfc::string8 value = helpers::iterator_to_string(ita);
-					if (value.get_length())
-						info[i].meta_add(key, value);
-				}
-			}
-			else
-			{
-				pfc::string8 value = helpers::iterator_to_string(it);
-				if (value.get_length())
-					info[i].meta_set(key, value);
-			}
-		}
-	}
-
-	metadb_io_v2::get()->update_info_async_simple(
-		m_handles,
-		pfc::ptr_list_const_array_t<const file_info, file_info_impl*>(info.get_ptr(), info.get_count()),
-		core_api::get_main_window(),
-		metadb_io_v2::op_flag_delay_ui,
-		NULL
-	);
-
-	return S_OK;
-}
-
-STDMETHODIMP MetadbHandleList::get_Count(UINT* p)
-{
-	if (!p) return E_POINTER;
-
-	*p = m_handles.get_count();
-	return S_OK;
-}
-
-STDMETHODIMP MetadbHandleList::get_Item(UINT index, IMetadbHandle** pp)
-{
-	if (!pp) return E_POINTER;
-
-	if (index < m_handles.get_count())
-	{
-		*pp = new com_object_impl_t<MetadbHandle>(m_handles.get_item_ref(index));
-		return S_OK;
-	}
-	return E_INVALIDARG;
-}
-
-STDMETHODIMP MetadbHandleList::put_Item(UINT index, IMetadbHandle* handle)
-{
-	if (index < m_handles.get_count())
-	{
-		metadb_handle* ptr = NULL;
-		handle->get__ptr((void**)& ptr);
-		if (!ptr) return E_INVALIDARG;
-
-		m_handles.replace_item(index, ptr);
-		return S_OK;
-	}
-	return E_INVALIDARG;
-}
-
-PlaybackQueueItem::PlaybackQueueItem() {}
-
-PlaybackQueueItem::PlaybackQueueItem(const t_playback_queue_item & playbackQueueItem)
-{
-	m_playback_queue_item.m_handle = playbackQueueItem.m_handle;
-	m_playback_queue_item.m_playlist = playbackQueueItem.m_playlist;
-	m_playback_queue_item.m_item = playbackQueueItem.m_item;
-}
-
-PlaybackQueueItem::~PlaybackQueueItem() {}
-
-void PlaybackQueueItem::FinalRelease()
-{
-	m_playback_queue_item.m_handle.release();
-	m_playback_queue_item.m_playlist = 0;
-	m_playback_queue_item.m_item = 0;
-}
-
-STDMETHODIMP PlaybackQueueItem::get__ptr(void** pp)
-{
-	if (!pp) return E_POINTER;
-
-	*pp = &m_playback_queue_item;
-	return S_OK;
-}
-
-STDMETHODIMP PlaybackQueueItem::get_Handle(IMetadbHandle** pp)
-{
-	if (!pp) return E_POINTER;
-
-	*pp = new com_object_impl_t<MetadbHandle>(m_playback_queue_item.m_handle);
-	return S_OK;
-}
-
-STDMETHODIMP PlaybackQueueItem::get_PlaylistIndex(int* p)
-{
-	if (!p) return E_POINTER;
-
-	*p = m_playback_queue_item.m_playlist;
-	return S_OK;
-}
-
-STDMETHODIMP PlaybackQueueItem::get_PlaylistItemIndex(int* p)
-{
-	if (!p) return E_POINTER;
-
-	*p = m_playback_queue_item.m_item;
-	return S_OK;
-}
-
-PlayingItemLocation::PlayingItemLocation(bool isValid, t_size playlistIndex, t_size playlistItemIndex) : m_isValid(isValid), m_playlistIndex(playlistIndex), m_playlistItemIndex(playlistItemIndex) {}
-
-STDMETHODIMP PlayingItemLocation::get_IsValid(VARIANT_BOOL* p)
-{
-	if (!p) return E_POINTER;
-
-	*p = TO_VARIANT_BOOL(m_isValid);
-	return S_OK;
-}
-
-STDMETHODIMP PlayingItemLocation::get_PlaylistIndex(int* p)
-{
-	if (!p) return E_POINTER;
-
-	*p = m_isValid ? m_playlistIndex : -1;
-	return S_OK;
-}
-
-STDMETHODIMP PlayingItemLocation::get_PlaylistItemIndex(int* p)
-{
-	if (!p) return E_POINTER;
-
-	*p = m_isValid ? m_playlistItemIndex : -1;
-	return S_OK;
-}
-
-STDMETHODIMP PlaylistRecyclerManager::Purge(VARIANT affectedItems)
-{
-	auto api = playlist_manager_v3::get();
-	pfc::bit_array_bittable affected(api->recycler_get_count());
-	helpers::com_array helper;
-	if (!helper.convert_to_bit_array(affectedItems, affected)) return E_INVALIDARG;
-	if (helper.get_count())
-	{
-		api->recycler_purge(affected);
-	}
-	return S_OK;
-}
-
-STDMETHODIMP PlaylistRecyclerManager::Restore(UINT index)
-{
-	auto api = playlist_manager_v3::get();
-	if (index < api->recycler_get_count())
-	{
-		api->recycler_restore(index);
-		return S_OK;
-	}
-	return E_INVALIDARG;
-}
-
-STDMETHODIMP PlaylistRecyclerManager::get_Content(UINT index, IMetadbHandleList** pp)
-{
-	if (!pp) return E_POINTER;
-
-	auto api = playlist_manager_v3::get();
-	if (index < api->recycler_get_count())
-	{
-		metadb_handle_list handles;
-		api->recycler_get_content(index, handles);
-		*pp = new com_object_impl_t<MetadbHandleList>(handles);
-		return S_OK;
-	}
-	return E_INVALIDARG;
-}
-
-STDMETHODIMP PlaylistRecyclerManager::get_Count(UINT* p)
-{
-	if (!p) return E_POINTER;
-
-	*p = playlist_manager_v3::get()->recycler_get_count();
-	return S_OK;
-}
-
-STDMETHODIMP PlaylistRecyclerManager::get_Name(UINT index, BSTR* p)
-{
-	if (!p) return E_POINTER;
-
-	auto api = playlist_manager_v3::get();
-	t_size count = api->recycler_get_count();
-	if (index < count)
-	{
-		pfc::string8_fast name;
-		api->recycler_get_name(index, name);
-		*p = SysAllocString(string_wide_from_utf8_fast(name));
-		return S_OK;
-	}
-	return E_INVALIDARG;
-}
-
-Profiler::Profiler(const char* p_name) : m_name(p_name)
-{
-	m_timer.start();
-}
-
-Profiler::~Profiler() {}
-
-STDMETHODIMP Profiler::Print()
-{
-	FB2K_console_formatter() << JSP_NAME_VERSION ": FbProfiler (" << m_name << "): " << (int)(m_timer.query() * 1000) << " ms";
-	return S_OK;
-}
-
-STDMETHODIMP Profiler::Reset()
-{
-	m_timer.start();
-	return S_OK;
-}
-
-STDMETHODIMP Profiler::get_Time(int* p)
-{
-	if (!p) return E_POINTER;
-
-	*p = (int)(m_timer.query() * 1000);
-	return S_OK;
-}
-
-TitleFormat::TitleFormat(BSTR expr)
-{
-	string_utf8_from_wide uexpr(expr);
-	titleformat_compiler::get()->compile_safe(m_obj, uexpr);
-}
-
-TitleFormat::~TitleFormat() {}
-
-void TitleFormat::FinalRelease()
-{
-	m_obj.release();
-}
-
-STDMETHODIMP TitleFormat::get__ptr(void** pp)
-{
-	if (!pp) return E_POINTER;
-
-	*pp = m_obj.get_ptr();
-	return S_OK;
-}
-
-STDMETHODIMP TitleFormat::Eval(VARIANT_BOOL force, BSTR* p)
-{
-	if (m_obj.is_empty() || !p) return E_POINTER;
-
-	pfc::string8_fast text;
-
-	if (!playback_control::get()->playback_format_title(NULL, text, m_obj, NULL, playback_control::display_level_all) && force != VARIANT_FALSE)
-	{
-		metadb_handle_ptr handle;
-		metadb::get()->handle_create(handle, make_playable_location("file://C:\\________.ogg", 0));
-		handle->format_title(NULL, text, m_obj, NULL);
-	}
-
-	*p = SysAllocString(string_wide_from_utf8_fast(text));
-	return S_OK;
-}
-
-STDMETHODIMP TitleFormat::EvalWithMetadb(IMetadbHandle* handle, BSTR* p)
-{
-	if (m_obj.is_empty() || !p) return E_POINTER;
-
-	metadb_handle* ptr = NULL;
-	handle->get__ptr((void**)& ptr);
-	if (!ptr) return E_INVALIDARG;
-
-	pfc::string8_fast text;
-	ptr->format_title(NULL, text, m_obj, NULL);
-
-	*p = SysAllocString(string_wide_from_utf8_fast(text));
-	return S_OK;
-}
-
-STDMETHODIMP TitleFormat::EvalWithMetadbs(IMetadbHandleList* handles, VARIANT* p)
-{
-	if (m_obj.is_empty() || !p) return E_POINTER;
-
-	metadb_handle_list* handles_ptr = NULL;
-	handles->get__ptr((void**)& handles_ptr);
-
-	metadb_handle_list_ref handles_ref = *handles_ptr;
-	LONG count = handles_ref.get_count();
-	helpers::com_array helper;
-	if (!helper.create(count)) return E_OUTOFMEMORY;
-
-	for (LONG i = 0; i < count; ++i)
-	{
-		pfc::string8_fast text;
-		handles_ref[i]->format_title(NULL, text, m_obj, NULL);
-		_variant_t var;
-		var.vt = VT_BSTR;
-		var.bstrVal = SysAllocString(string_wide_from_utf8_fast(text));
-		if (!helper.put_item(i, var)) return E_OUTOFMEMORY;
-	}
-	p->vt = VT_ARRAY | VT_VARIANT;
-	p->parray = helper.get_ptr();
-	return S_OK;
-}
-
-Tooltip::Tooltip(HWND p_wndparent, const panel_tooltip_param_ptr & p_param_ptr) : m_wndparent(p_wndparent), m_panel_tooltip_param_ptr(p_param_ptr), m_tip_buffer(SysAllocString(PFC_WIDESTRING(JSP_NAME)))
-{
-	m_wndtooltip = CreateWindowEx(
-		WS_EX_TOPMOST,
-		TOOLTIPS_CLASS,
-		NULL,
-		WS_POPUP | TTS_ALWAYSTIP | TTS_NOPREFIX,
-		CW_USEDEFAULT,
-		CW_USEDEFAULT,
-		CW_USEDEFAULT,
-		CW_USEDEFAULT,
-		p_wndparent,
-		NULL,
-		core_api::get_my_instance(),
-		NULL);
-
-	// Original position
-	SetWindowPos(m_wndtooltip, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
-
-	// Set up tooltip information.
-	memset(&m_ti, 0, sizeof(m_ti));
-
-	m_ti.cbSize = sizeof(m_ti);
-	m_ti.uFlags = TTF_IDISHWND | TTF_SUBCLASS | TTF_TRANSPARENT;
-	m_ti.hinst = core_api::get_my_instance();
-	m_ti.hwnd = p_wndparent;
-	m_ti.uId = (UINT_PTR)p_wndparent;
-	m_ti.lpszText = m_tip_buffer;
-
-	HFONT font = CreateFont(
-		-(int)m_panel_tooltip_param_ptr->font_size,
-		0,
-		0,
-		0,
-		(m_panel_tooltip_param_ptr->font_style & Gdiplus::FontStyleBold) ? FW_BOLD : FW_NORMAL,
-		(m_panel_tooltip_param_ptr->font_style & Gdiplus::FontStyleItalic) ? TRUE : FALSE,
-		(m_panel_tooltip_param_ptr->font_style & Gdiplus::FontStyleUnderline) ? TRUE : FALSE,
-		(m_panel_tooltip_param_ptr->font_style & Gdiplus::FontStyleStrikeout) ? TRUE : FALSE,
-		DEFAULT_CHARSET,
-		OUT_DEFAULT_PRECIS,
-		CLIP_DEFAULT_PRECIS,
-		DEFAULT_QUALITY,
-		DEFAULT_PITCH | FF_DONTCARE,
-		m_panel_tooltip_param_ptr->font_name);
-
-	SendMessage(m_wndtooltip, TTM_ADDTOOL, 0, (LPARAM)& m_ti);
-	SendMessage(m_wndtooltip, TTM_ACTIVATE, FALSE, 0);
-	SendMessage(m_wndtooltip, WM_SETFONT, (WPARAM)font, MAKELPARAM(FALSE, 0));
-
-	m_panel_tooltip_param_ptr->tooltip_hwnd = m_wndtooltip;
-	m_panel_tooltip_param_ptr->tooltip_size.cx = -1;
-	m_panel_tooltip_param_ptr->tooltip_size.cy = -1;
-}
-
-Tooltip::~Tooltip() {}
-
-void Tooltip::FinalRelease()
-{
-	if (m_wndtooltip && IsWindow(m_wndtooltip))
-	{
-		DestroyWindow(m_wndtooltip);
-		m_wndtooltip = NULL;
-	}
-
-	if (m_tip_buffer)
-	{
-		SysFreeString(m_tip_buffer);
-		m_tip_buffer = NULL;
-	}
-}
-
-STDMETHODIMP Tooltip::get_Text(BSTR* p)
-{
-	if (!p) return E_POINTER;
-
-	*p = SysAllocString(m_tip_buffer);
-	return S_OK;
-}
-
-STDMETHODIMP Tooltip::put_Text(BSTR text)
-{
-	SysReAllocString(&m_tip_buffer, text);
-	m_ti.lpszText = m_tip_buffer;
-	SendMessage(m_wndtooltip, TTM_SETTOOLINFO, 0, (LPARAM)& m_ti);
-	return S_OK;
-}
-
-STDMETHODIMP Tooltip::put_TrackActivate(VARIANT_BOOL activate)
-{
-	if (activate)
-	{
-		m_ti.uFlags |= TTF_TRACK | TTF_ABSOLUTE;
-	}
-	else
-	{
-		m_ti.uFlags &= ~(TTF_TRACK | TTF_ABSOLUTE);
-	}
-
-	SendMessage(m_wndtooltip, TTM_TRACKACTIVATE, activate != VARIANT_FALSE ? TRUE : FALSE, (LPARAM)& m_ti);
-	return S_OK;
-}
-
-STDMETHODIMP Tooltip::Activate()
-{
-	SendMessage(m_wndtooltip, TTM_ACTIVATE, TRUE, 0);
-	return S_OK;
-}
-
-STDMETHODIMP Tooltip::Deactivate()
-{
-	SendMessage(m_wndtooltip, TTM_ACTIVATE, FALSE, 0);
-	return S_OK;
-}
-
-STDMETHODIMP Tooltip::SetMaxWidth(int width)
-{
-	SendMessage(m_wndtooltip, TTM_SETMAXTIPWIDTH, 0, width);
-	return S_OK;
-}
-
-STDMETHODIMP Tooltip::GetDelayTime(int type, int* p)
-{
-	if (!p) return E_POINTER;
-	if (type < TTDT_AUTOMATIC || type > TTDT_INITIAL) return E_INVALIDARG;
-
-	*p = SendMessage(m_wndtooltip, TTM_GETDELAYTIME, type, 0);
-	return S_OK;
-}
-
-STDMETHODIMP Tooltip::SetDelayTime(int type, int time)
-{
-	if (type < TTDT_AUTOMATIC || type > TTDT_INITIAL) return E_INVALIDARG;
-
-	SendMessage(m_wndtooltip, TTM_SETDELAYTIME, type, time);
-	return S_OK;
-}
-
-STDMETHODIMP Tooltip::TrackPosition(int x, int y)
-{
-	POINT pt = { x, y };
-	ClientToScreen(m_wndparent, &pt);
-	SendMessage(m_wndtooltip, TTM_TRACKPOSITION, 0, MAKELONG(pt.x, pt.y));
-	return S_OK;
-}
-
-UiSelectionHolder::UiSelectionHolder(const ui_selection_holder::ptr & holder) : m_holder(holder) {}
-UiSelectionHolder::~UiSelectionHolder() {}
-
-void UiSelectionHolder::FinalRelease()
-{
-	m_holder.release();
-}
-
-STDMETHODIMP UiSelectionHolder::SetPlaylistSelectionTracking()
-{
-	m_holder->set_playlist_selection_tracking();
-	return S_OK;
-}
-
-STDMETHODIMP UiSelectionHolder::SetPlaylistTracking()
-{
-	m_holder->set_playlist_tracking();
-	return S_OK;
-}
-
-STDMETHODIMP UiSelectionHolder::SetSelection(IMetadbHandleList* handles)
-{
-	metadb_handle_list* handles_ptr = NULL;
-	handles->get__ptr((void**)& handles_ptr);
-	m_holder->set_selection(*handles_ptr);
-	return S_OK;
-}
-
 GdiBitmap::GdiBitmap(Gdiplus::Bitmap* p) : GdiObj<IGdiBitmap, Gdiplus::Bitmap>(p) {}
 
 STDMETHODIMP GdiBitmap::ApplyAlpha(BYTE alpha, IGdiBitmap** pp)
@@ -1361,7 +238,7 @@ STDMETHODIMP GdiBitmap::ApplyMask(IGdiBitmap* mask, VARIANT_BOOL* p)
 
 	*p = VARIANT_FALSE;
 	Gdiplus::Bitmap* bitmap_mask = NULL;
-	mask->get__ptr((void**)& bitmap_mask);
+	mask->get__ptr((void**)&bitmap_mask);
 
 	if (!bitmap_mask || bitmap_mask->GetHeight() != m_ptr->GetHeight() || bitmap_mask->GetWidth() != m_ptr->GetWidth())
 	{
@@ -1600,7 +477,7 @@ STDMETHODIMP GdiBitmap::ReleaseGraphics(IGdiGraphics* p)
 	if (p)
 	{
 		Gdiplus::Graphics* g = NULL;
-		p->get__ptr((void**)& g);
+		p->get__ptr((void**)&g);
 		p->put__ptr(NULL);
 		if (g) delete g;
 	}
@@ -1766,7 +643,7 @@ STDMETHODIMP GdiGraphics::CalcTextHeight(BSTR str, IGdiFont* font, UINT* p)
 	if (!m_ptr || !p) return E_POINTER;
 
 	HFONT hFont = NULL;
-	font->get__HFont((UINT*)& hFont);
+	font->get__HFont((UINT*)&hFont);
 	HFONT oldfont;
 	HDC dc = m_ptr->GetHDC();
 	oldfont = SelectFont(dc, hFont);
@@ -1781,7 +658,7 @@ STDMETHODIMP GdiGraphics::CalcTextWidth(BSTR str, IGdiFont* font, UINT* p)
 	if (!m_ptr || !p) return E_POINTER;
 
 	HFONT hFont = NULL;
-	font->get__HFont((UINT*)& hFont);
+	font->get__HFont((UINT*)&hFont);
 	HFONT oldfont;
 	HDC dc = m_ptr->GetHDC();
 	oldfont = SelectFont(dc, hFont);
@@ -1805,7 +682,7 @@ STDMETHODIMP GdiGraphics::DrawImage(IGdiBitmap* image, float dstX, float dstY, f
 	if (!m_ptr) return E_POINTER;
 
 	Gdiplus::Bitmap* img = NULL;
-	image->get__ptr((void**)& img);
+	image->get__ptr((void**)&img);
 	Gdiplus::Matrix old_m;
 
 	if (angle != 0.0)
@@ -1912,7 +789,7 @@ STDMETHODIMP GdiGraphics::DrawString(BSTR str, IGdiFont* font, VARIANT colour, f
 	if (!m_ptr) return E_POINTER;
 
 	Gdiplus::Font* fn = NULL;
-	font->get__ptr((void**)& fn);
+	font->get__ptr((void**)&fn);
 	Gdiplus::SolidBrush br(helpers::get_colour_from_variant(colour));
 	Gdiplus::StringFormat fmt(Gdiplus::StringFormat::GenericTypographic());
 
@@ -1933,7 +810,7 @@ STDMETHODIMP GdiGraphics::EstimateLineWrap(BSTR str, IGdiFont* font, int max_wid
 	if (!m_ptr || !p) return E_POINTER;
 
 	HFONT hFont = NULL;
-	font->get__HFont((UINT*)& hFont);
+	font->get__HFont((UINT*)&hFont);
 	HDC dc = m_ptr->GetHDC();
 	HFONT oldfont = SelectFont(dc, hFont);
 
@@ -2072,7 +949,7 @@ STDMETHODIMP GdiGraphics::GdiDrawText(BSTR str, IGdiFont* font, VARIANT colour, 
 	if (!m_ptr) return E_POINTER;
 
 	HFONT hFont = NULL;
-	font->get__HFont((UINT*)& hFont);
+	font->get__HFont((UINT*)&hFont);
 	HFONT oldfont;
 	HDC dc = m_ptr->GetHDC();
 	RECT rc = { x, y, x + w, y + h };
@@ -2122,7 +999,7 @@ STDMETHODIMP GdiGraphics::MeasureString(BSTR str, IGdiFont* font, float x, float
 	if (!m_ptr || !pp) return E_POINTER;
 
 	Gdiplus::Font* fn = NULL;
-	font->get__ptr((void**)& fn);
+	font->get__ptr((void**)&fn);
 
 	Gdiplus::StringFormat fmt = Gdiplus::StringFormat::GenericTypographic();
 
@@ -2429,6 +1306,877 @@ STDMETHODIMP MenuObj::get__ID(HMENU* p)
 	return S_OK;
 }
 
+MetadbHandle::MetadbHandle(const metadb_handle_ptr & src) : m_handle(src) {}
+MetadbHandle::MetadbHandle(metadb_handle* src) : m_handle(src) {}
+MetadbHandle::~MetadbHandle() {}
+
+void MetadbHandle::FinalRelease()
+{
+	m_handle.release();
+}
+
+STDMETHODIMP MetadbHandle::get__ptr(void** pp)
+{
+	if (!pp) return E_POINTER;
+
+	*pp = m_handle.get_ptr();
+	return S_OK;
+}
+
+STDMETHODIMP MetadbHandle::ClearStats()
+{
+	if (m_handle.is_empty()) return E_POINTER;
+
+	metadb_index_hash hash;
+	if (stats::hashHandle(m_handle, hash))
+	{
+		stats::set(hash, stats::fields());
+	}
+	return S_OK;
+}
+
+STDMETHODIMP MetadbHandle::Compare(IMetadbHandle* handle, VARIANT_BOOL* p)
+{
+	if (m_handle.is_empty() || !p) return E_POINTER;
+
+	metadb_handle* ptr = NULL;
+	handle->get__ptr((void**)&ptr);
+	if (!ptr) return E_INVALIDARG;
+
+	*p = TO_VARIANT_BOOL(ptr == m_handle.get_ptr());
+	return S_OK;
+}
+
+STDMETHODIMP MetadbHandle::GetAlbumArt(UINT art_id, VARIANT_BOOL need_stub, VARIANT* p)
+{
+	if (m_handle.is_empty() || !p) return E_POINTER;
+
+	pfc::string8_fast image_path;
+	IGdiBitmap* bitmap = helpers::get_album_art(m_handle, art_id, need_stub != VARIANT_FALSE, image_path);
+
+	_variant_t var1, var2;
+	var1.vt = VT_DISPATCH;
+	var1.pdispVal = bitmap;
+	var2.vt = VT_BSTR;
+	var2.bstrVal = SysAllocString(string_wide_from_utf8_fast(image_path));
+
+	helpers::com_array helper;
+	if (!helper.create(2)) return E_OUTOFMEMORY;
+	if (!helper.put_item(0, var1)) return E_OUTOFMEMORY;
+	if (!helper.put_item(1, var2)) return E_OUTOFMEMORY;
+
+	p->vt = VT_ARRAY | VT_VARIANT;
+	p->parray = helper.get_ptr();
+	return S_OK;
+}
+
+STDMETHODIMP MetadbHandle::GetFileInfo(IFileInfo** pp)
+{
+	if (m_handle.is_empty() || !pp) return E_POINTER;
+
+	file_info_impl* info_ptr = new file_info_impl;
+	m_handle->get_info(*info_ptr);
+	*pp = new com_object_impl_t<FileInfo>(info_ptr);
+	return S_OK;
+}
+
+STDMETHODIMP MetadbHandle::RefreshStats()
+{
+	if (m_handle.is_empty()) return E_POINTER;
+
+	metadb_index_hash hash;
+	if (stats::hashHandle(m_handle, hash))
+	{
+		stats::theAPI()->dispatch_refresh(g_guid_jsp_metadb_index, hash);
+	}
+	return S_OK;
+}
+
+STDMETHODIMP MetadbHandle::SetFirstPlayed(BSTR first_played)
+{
+	if (m_handle.is_empty()) return E_POINTER;
+
+	metadb_index_hash hash;
+	if (stats::hashHandle(m_handle, hash))
+	{
+		stats::fields tmp = stats::get(hash);
+		string_utf8_from_wide fp(first_played);
+		if (!tmp.first_played.equals(fp))
+		{
+			tmp.first_played = fp;
+			stats::set(hash, tmp);
+		}
+	}
+	return S_OK;
+}
+
+STDMETHODIMP MetadbHandle::SetLastPlayed(BSTR last_played)
+{
+	if (m_handle.is_empty()) return E_POINTER;
+
+	metadb_index_hash hash;
+	if (stats::hashHandle(m_handle, hash))
+	{
+		stats::fields tmp = stats::get(hash);
+		string_utf8_from_wide lp(last_played);
+		if (!tmp.last_played.equals(lp))
+		{
+			tmp.last_played = lp;
+			stats::set(hash, tmp);
+		}
+	}
+	return S_OK;
+}
+
+STDMETHODIMP MetadbHandle::SetLoved(UINT loved)
+{
+	if (m_handle.is_empty()) return E_POINTER;
+
+	metadb_index_hash hash;
+	if (stats::hashHandle(m_handle, hash))
+	{
+		stats::fields tmp = stats::get(hash);
+		if (tmp.loved != loved)
+		{
+			tmp.loved = loved;
+			stats::set(hash, tmp);
+		}
+	}
+	return S_OK;
+}
+
+STDMETHODIMP MetadbHandle::SetPlaycount(UINT playcount)
+{
+	if (m_handle.is_empty()) return E_POINTER;
+
+	metadb_index_hash hash;
+	if (stats::hashHandle(m_handle, hash))
+	{
+		stats::fields tmp = stats::get(hash);
+		if (tmp.playcount != playcount)
+		{
+			tmp.playcount = playcount;
+			stats::set(hash, tmp);
+		}
+	}
+	return S_OK;
+}
+
+STDMETHODIMP MetadbHandle::SetRating(UINT rating)
+{
+	if (m_handle.is_empty()) return E_POINTER;
+
+	metadb_index_hash hash;
+	if (stats::hashHandle(m_handle, hash))
+	{
+		stats::fields tmp = stats::get(hash);
+		if (tmp.rating != rating)
+		{
+			tmp.rating = rating;
+			stats::set(hash, tmp);
+		}
+	}
+	return S_OK;
+}
+
+STDMETHODIMP MetadbHandle::get_FileSize(LONGLONG* p)
+{
+	if (m_handle.is_empty() || !p) return E_POINTER;
+
+	*p = m_handle->get_filesize();
+	return S_OK;
+}
+
+STDMETHODIMP MetadbHandle::get_Length(double* p)
+{
+	if (m_handle.is_empty() || !p) return E_POINTER;
+
+	*p = m_handle->get_length();
+	return S_OK;
+}
+
+STDMETHODIMP MetadbHandle::get_Path(BSTR* p)
+{
+	if (m_handle.is_empty() || !p) return E_POINTER;
+
+	*p = SysAllocString(string_wide_from_utf8_fast(file_path_display(m_handle->get_path())));
+	return S_OK;
+}
+
+STDMETHODIMP MetadbHandle::get_RawPath(BSTR* p)
+{
+	if (m_handle.is_empty() || !p) return E_POINTER;
+
+	*p = SysAllocString(string_wide_from_utf8_fast(m_handle->get_path()));
+	return S_OK;
+}
+
+STDMETHODIMP MetadbHandle::get_SubSong(UINT* p)
+{
+	if (m_handle.is_empty() || !p) return E_POINTER;
+
+	*p = m_handle->get_subsong_index();
+	return S_OK;
+}
+
+MetadbHandleList::MetadbHandleList(metadb_handle_list_cref handles) : m_handles(handles) {}
+MetadbHandleList::~MetadbHandleList() {}
+
+void MetadbHandleList::FinalRelease()
+{
+	m_handles.remove_all();
+}
+
+STDMETHODIMP MetadbHandleList::get__ptr(void** pp)
+{
+	if (!pp) return E_POINTER;
+
+	*pp = &m_handles;
+	return S_OK;
+}
+
+STDMETHODIMP MetadbHandleList::Add(IMetadbHandle* handle)
+{
+	metadb_handle* ptr = NULL;
+	handle->get__ptr((void**)&ptr);
+	if (!ptr) return E_INVALIDARG;
+
+	m_handles.add_item(ptr);
+	return S_OK;
+}
+
+STDMETHODIMP MetadbHandleList::AddRange(IMetadbHandleList* handles)
+{
+	metadb_handle_list* handles_ptr = NULL;
+	handles->get__ptr((void**)&handles_ptr);
+	m_handles.add_items(*handles_ptr);
+	return S_OK;
+}
+
+STDMETHODIMP MetadbHandleList::AttachImage(BSTR image_path, UINT art_id)
+{
+	if (m_handles.get_count() == 0) return E_POINTER;
+
+	album_art_data_ptr data;
+
+	try
+	{
+		string_utf8_from_wide path(image_path);
+		if (!filesystem::g_is_remote_or_unrecognized(path))
+		{
+			file::ptr file;
+			abort_callback_dummy abort;
+			filesystem::g_open(file, path, filesystem::open_mode_read, abort);
+			if (file.is_valid())
+			{
+				auto tmp = fb2k::service_new<album_art_data_impl>();
+				tmp->from_stream(file.get_ptr(), t_size(file->get_size_ex(abort)), abort);
+				data = tmp;
+			}
+		}
+	}
+	catch (...) {}
+
+	if (data.is_valid())
+	{
+		auto cb = fb2k::service_new<helpers::embed_thread>(helpers::embed_thread::attach, data, m_handles, art_id);
+		threaded_process::get()->run_modeless(cb, threaded_process::flag_show_progress | threaded_process::flag_show_delayed | threaded_process::flag_show_item, core_api::get_main_window(), "Embedding image...");
+	}
+	return S_OK;
+}
+
+STDMETHODIMP MetadbHandleList::BSearch(IMetadbHandle* handle, int* p)
+{
+	if (!p) return E_POINTER;
+
+	metadb_handle* ptr = NULL;
+	handle->get__ptr((void**)&ptr);
+	if (!ptr) return E_INVALIDARG;
+
+	*p = m_handles.bsearch_by_pointer(ptr);
+	return S_OK;
+}
+
+STDMETHODIMP MetadbHandleList::CalcTotalDuration(double* p)
+{
+	if (!p) return E_POINTER;
+
+	*p = m_handles.calc_total_duration();
+	return S_OK;
+}
+
+STDMETHODIMP MetadbHandleList::CalcTotalSize(LONGLONG* p)
+{
+	if (!p) return E_POINTER;
+
+	*p = metadb_handle_list_helper::calc_total_size(m_handles, true);
+	return S_OK;
+}
+
+STDMETHODIMP MetadbHandleList::Clone(IMetadbHandleList** pp)
+{
+	if (!pp) return E_POINTER;
+
+	*pp = new com_object_impl_t<MetadbHandleList>(m_handles);
+	return S_OK;
+}
+
+STDMETHODIMP MetadbHandleList::Convert(VARIANT* p)
+{
+	if (!p) return E_POINTER;
+
+	LONG count = m_handles.get_count();
+	helpers::com_array helper;
+	if (!helper.create(count)) return E_OUTOFMEMORY;
+
+	for (LONG i = 0; i < count; ++i)
+	{
+		_variant_t var;
+		var.vt = VT_DISPATCH;
+		var.pdispVal = new com_object_impl_t<MetadbHandle>(m_handles[i]);
+		if (!helper.put_item(i, var)) return E_OUTOFMEMORY;
+	}
+	p->vt = VT_ARRAY | VT_VARIANT;
+	p->parray = helper.get_ptr();
+	return S_OK;
+}
+
+STDMETHODIMP MetadbHandleList::Find(IMetadbHandle* handle, int* p)
+{
+	if (!p) return E_POINTER;
+
+	metadb_handle* ptr = NULL;
+	handle->get__ptr((void**)&ptr);
+	if (!ptr) return E_INVALIDARG;
+
+	*p = m_handles.find_item(ptr);
+	return S_OK;
+}
+
+STDMETHODIMP MetadbHandleList::GetLibraryRelativePaths(VARIANT* p)
+{
+	if (!p) return E_POINTER;
+
+	LONG count = m_handles.get_count();
+	helpers::com_array helper;
+	if (!helper.create(count)) return E_OUTOFMEMORY;
+
+	pfc::string8_fastalloc temp;
+	temp.prealloc(512);
+
+	auto api = library_manager::get();
+
+	for (LONG i = 0; i < count; ++i)
+	{
+		metadb_handle_ptr item = m_handles[i];
+		if (!api->get_relative_path(item, temp)) temp = "";
+		_variant_t var;
+		var.vt = VT_BSTR;
+		var.bstrVal = SysAllocString(string_wide_from_utf8_fast(temp));
+		if (!helper.put_item(i, var)) return E_OUTOFMEMORY;
+	}
+	p->vt = VT_ARRAY | VT_VARIANT;
+	p->parray = helper.get_ptr();
+	return S_OK;
+}
+
+STDMETHODIMP MetadbHandleList::Insert(UINT index, IMetadbHandle* handle)
+{
+	metadb_handle* ptr = NULL;
+	handle->get__ptr((void**)&ptr);
+	if (!ptr) return E_INVALIDARG;
+
+	m_handles.insert_item(ptr, index);
+	return S_OK;
+}
+
+STDMETHODIMP MetadbHandleList::InsertRange(UINT index, IMetadbHandleList* handles)
+{
+	metadb_handle_list* handles_ptr = NULL;
+	handles->get__ptr((void**)&handles_ptr);
+	m_handles.insert_items(*handles_ptr, index);
+	return S_OK;
+}
+
+STDMETHODIMP MetadbHandleList::MakeDifference(IMetadbHandleList* handles)
+{
+	metadb_handle_list* handles_ptr = NULL;
+	handles->get__ptr((void**)&handles_ptr);
+
+	metadb_handle_list_ref handles_ref = *handles_ptr;
+	metadb_handle_list result;
+	t_size walk1 = 0;
+	t_size walk2 = 0;
+	t_size last1 = m_handles.get_count();
+	t_size last2 = handles_ptr->get_count();
+
+	while (walk1 != last1 && walk2 != last2)
+	{
+		if (m_handles[walk1] < handles_ref[walk2])
+		{
+			result.add_item(m_handles[walk1]);
+			++walk1;
+		}
+		else if (handles_ref[walk2] < m_handles[walk1])
+		{
+			++walk2;
+		}
+		else
+		{
+			++walk1;
+			++walk2;
+		}
+	}
+
+	m_handles = result;
+	return S_OK;
+}
+
+STDMETHODIMP MetadbHandleList::MakeIntersection(IMetadbHandleList* handles)
+{
+	metadb_handle_list* handles_ptr = NULL;
+	handles->get__ptr((void**)&handles_ptr);
+
+	metadb_handle_list_ref handles_ref = *handles_ptr;
+	metadb_handle_list result;
+	t_size walk1 = 0;
+	t_size walk2 = 0;
+	t_size last1 = m_handles.get_count();
+	t_size last2 = handles_ptr->get_count();
+
+	while (walk1 != last1 && walk2 != last2)
+	{
+		if (m_handles[walk1] < handles_ref[walk2])
+			++walk1;
+		else if (handles_ref[walk2] < m_handles[walk1])
+			++walk2;
+		else
+		{
+			result.add_item(m_handles[walk1]);
+			++walk1;
+			++walk2;
+		}
+	}
+
+	m_handles = result;
+	return S_OK;
+}
+
+STDMETHODIMP MetadbHandleList::MakeUnion(IMetadbHandleList* handles)
+{
+	metadb_handle_list* handles_ptr = NULL;
+	handles->get__ptr((void**)&handles_ptr);
+
+	m_handles.add_items(*handles_ptr);
+	m_handles.sort_by_pointer_remove_duplicates();
+	return S_OK;
+}
+
+STDMETHODIMP MetadbHandleList::OrderByFormat(__interface ITitleFormat* script, int direction)
+{
+	titleformat_object* obj = NULL;
+	script->get__ptr((void**)&obj);
+	m_handles.sort_by_format(obj, NULL, direction);
+	return S_OK;
+}
+
+STDMETHODIMP MetadbHandleList::OrderByPath()
+{
+	m_handles.sort_by_path();
+	return S_OK;
+}
+
+STDMETHODIMP MetadbHandleList::OrderByRelativePath()
+{
+	// lifted from metadb_handle_list.cpp - adds subsong index for better sorting. github issue #16
+	auto api = library_manager::get();
+	t_size i, count = m_handles.get_count();
+
+	pfc::array_t<helpers::custom_sort_data> data;
+	data.set_size(count);
+
+	pfc::string8_fastalloc temp;
+	temp.prealloc(512);
+
+	for (i = 0; i < count; ++i)
+	{
+		metadb_handle_ptr item;
+		m_handles.get_item_ex(item, i);
+		if (!api->get_relative_path(item, temp)) temp = "";
+		temp << item->get_subsong_index();
+		data[i].index = i;
+		data[i].text = helpers::make_sort_string(temp);
+	}
+
+	pfc::sort_t(data, helpers::custom_sort_compare<1>, count);
+	order_helper order(count);
+
+	for (i = 0; i < count; ++i)
+	{
+		order[i] = data[i].index;
+		delete[] data[i].text;
+	}
+
+	m_handles.reorder(order.get_ptr());
+	return S_OK;
+}
+
+STDMETHODIMP MetadbHandleList::RefreshStats()
+{
+	const t_size count = m_handles.get_count();
+	pfc::avltree_t<metadb_index_hash> tmp;
+	for (t_size i = 0; i < count; ++i)
+	{
+		metadb_index_hash hash;
+		if (stats::hashHandle(m_handles[i], hash))
+		{
+			tmp += hash;
+		}
+	}
+	pfc::list_t<metadb_index_hash> hashes;
+	for (auto iter = tmp.first(); iter.is_valid(); ++iter)
+	{
+		const metadb_index_hash hash = *iter;
+		hashes += hash;
+	}
+	stats::theAPI()->dispatch_refresh(g_guid_jsp_metadb_index, hashes);
+	return S_OK;
+}
+
+STDMETHODIMP MetadbHandleList::Remove(IMetadbHandle* handle)
+{
+	metadb_handle* ptr = NULL;
+	handle->get__ptr((void**)&ptr);
+	if (!ptr) return E_INVALIDARG;
+
+	m_handles.remove_item(ptr);
+	return S_OK;
+}
+
+STDMETHODIMP MetadbHandleList::RemoveAll()
+{
+	m_handles.remove_all();
+	return S_OK;
+}
+
+STDMETHODIMP MetadbHandleList::RemoveAttachedImage(UINT art_id)
+{
+	if (m_handles.get_count() == 0) return E_POINTER;
+
+	auto cb = fb2k::service_new<helpers::embed_thread>(helpers::embed_thread::remove, album_art_data_ptr(), m_handles, art_id);
+	threaded_process::get()->run_modeless(cb, threaded_process::flag_show_progress | threaded_process::flag_show_delayed | threaded_process::flag_show_item, core_api::get_main_window(), "Removing images...");
+	return S_OK;
+}
+
+STDMETHODIMP MetadbHandleList::RemoveAttachedImages()
+{
+	if (m_handles.get_count() == 0) return E_POINTER;
+
+	auto cb = fb2k::service_new<helpers::embed_thread>(helpers::embed_thread::remove_all, album_art_data_ptr(), m_handles, 0);
+	threaded_process::get()->run_modeless(cb, threaded_process::flag_show_progress | threaded_process::flag_show_delayed | threaded_process::flag_show_item, core_api::get_main_window(), "Removing images...");
+	return S_OK;
+}
+
+STDMETHODIMP MetadbHandleList::RemoveById(UINT index)
+{
+	if (index < m_handles.get_count())
+	{
+		m_handles.remove_by_idx(index);
+		return S_OK;
+	}
+	return E_INVALIDARG;
+}
+
+STDMETHODIMP MetadbHandleList::RemoveRange(UINT from, UINT count)
+{
+	m_handles.remove_from_idx(from, count);
+	return S_OK;
+}
+
+STDMETHODIMP MetadbHandleList::Sort()
+{
+	m_handles.sort_by_pointer_remove_duplicates();
+	return S_OK;
+}
+
+STDMETHODIMP MetadbHandleList::UpdateFileInfoFromJSON(BSTR str)
+{
+	t_size count = m_handles.get_count();
+	if (count == 0) return E_POINTER;
+
+	json j;
+	bool is_array;
+
+	try
+	{
+		string_utf8_from_wide ustr(str);
+		j = json::parse(ustr.get_ptr());
+	}
+	catch (...)
+	{
+		return E_INVALIDARG;
+	}
+
+	if (j.is_array() && j.size() == count)
+	{
+		is_array = true;
+	}
+	else if (j.is_object() && j.size() > 0)
+	{
+		is_array = false;
+	}
+	else
+	{
+		return E_INVALIDARG;
+	}
+
+	pfc::list_t<file_info_impl> info;
+	info.set_size(count);
+
+	for (t_size i = 0; i < count; ++i)
+	{
+		json obj = is_array ? j[i] : j;
+		if (!obj.is_object() || obj.size() == 0) return E_INVALIDARG;
+
+		metadb_handle_ptr item = m_handles.get_item(i);
+		item->get_info(info[i]);
+
+		for (json::iterator it = obj.begin(); it != obj.end(); ++it)
+		{
+			pfc::string8 key = (it.key()).c_str();
+			if (key.is_empty()) return E_INVALIDARG;
+
+			info[i].meta_remove_field(key);
+
+			if (it.value().is_array())
+			{
+				for (json::iterator ita = it.value().begin(); ita != it.value().end(); ++ita)
+				{
+					pfc::string8 value = helpers::iterator_to_string(ita);
+					if (value.get_length())
+						info[i].meta_add(key, value);
+				}
+			}
+			else
+			{
+				pfc::string8 value = helpers::iterator_to_string(it);
+				if (value.get_length())
+					info[i].meta_set(key, value);
+			}
+		}
+	}
+
+	metadb_io_v2::get()->update_info_async_simple(
+		m_handles,
+		pfc::ptr_list_const_array_t<const file_info, file_info_impl*>(info.get_ptr(), info.get_count()),
+		core_api::get_main_window(),
+		metadb_io_v2::op_flag_delay_ui,
+		NULL
+	);
+
+	return S_OK;
+}
+
+STDMETHODIMP MetadbHandleList::get_Count(UINT* p)
+{
+	if (!p) return E_POINTER;
+
+	*p = m_handles.get_count();
+	return S_OK;
+}
+
+STDMETHODIMP MetadbHandleList::get_Item(UINT index, IMetadbHandle** pp)
+{
+	if (!pp) return E_POINTER;
+
+	if (index < m_handles.get_count())
+	{
+		*pp = new com_object_impl_t<MetadbHandle>(m_handles.get_item_ref(index));
+		return S_OK;
+	}
+	return E_INVALIDARG;
+}
+
+STDMETHODIMP MetadbHandleList::put_Item(UINT index, IMetadbHandle* handle)
+{
+	if (index < m_handles.get_count())
+	{
+		metadb_handle* ptr = NULL;
+		handle->get__ptr((void**)&ptr);
+		if (!ptr) return E_INVALIDARG;
+
+		m_handles.replace_item(index, ptr);
+		return S_OK;
+	}
+	return E_INVALIDARG;
+}
+
+PlaybackQueueItem::PlaybackQueueItem() {}
+
+PlaybackQueueItem::PlaybackQueueItem(const t_playback_queue_item & playbackQueueItem)
+{
+	m_playback_queue_item.m_handle = playbackQueueItem.m_handle;
+	m_playback_queue_item.m_playlist = playbackQueueItem.m_playlist;
+	m_playback_queue_item.m_item = playbackQueueItem.m_item;
+}
+
+PlaybackQueueItem::~PlaybackQueueItem() {}
+
+void PlaybackQueueItem::FinalRelease()
+{
+	m_playback_queue_item.m_handle.release();
+	m_playback_queue_item.m_playlist = 0;
+	m_playback_queue_item.m_item = 0;
+}
+
+STDMETHODIMP PlaybackQueueItem::get__ptr(void** pp)
+{
+	if (!pp) return E_POINTER;
+
+	*pp = &m_playback_queue_item;
+	return S_OK;
+}
+
+STDMETHODIMP PlaybackQueueItem::get_Handle(IMetadbHandle** pp)
+{
+	if (!pp) return E_POINTER;
+
+	*pp = new com_object_impl_t<MetadbHandle>(m_playback_queue_item.m_handle);
+	return S_OK;
+}
+
+STDMETHODIMP PlaybackQueueItem::get_PlaylistIndex(int* p)
+{
+	if (!p) return E_POINTER;
+
+	*p = m_playback_queue_item.m_playlist;
+	return S_OK;
+}
+
+STDMETHODIMP PlaybackQueueItem::get_PlaylistItemIndex(int* p)
+{
+	if (!p) return E_POINTER;
+
+	*p = m_playback_queue_item.m_item;
+	return S_OK;
+}
+
+PlayingItemLocation::PlayingItemLocation(bool isValid, t_size playlistIndex, t_size playlistItemIndex) : m_isValid(isValid), m_playlistIndex(playlistIndex), m_playlistItemIndex(playlistItemIndex) {}
+
+STDMETHODIMP PlayingItemLocation::get_IsValid(VARIANT_BOOL* p)
+{
+	if (!p) return E_POINTER;
+
+	*p = TO_VARIANT_BOOL(m_isValid);
+	return S_OK;
+}
+
+STDMETHODIMP PlayingItemLocation::get_PlaylistIndex(int* p)
+{
+	if (!p) return E_POINTER;
+
+	*p = m_isValid ? m_playlistIndex : -1;
+	return S_OK;
+}
+
+STDMETHODIMP PlayingItemLocation::get_PlaylistItemIndex(int* p)
+{
+	if (!p) return E_POINTER;
+
+	*p = m_isValid ? m_playlistItemIndex : -1;
+	return S_OK;
+}
+
+STDMETHODIMP PlaylistRecyclerManager::Purge(VARIANT affectedItems)
+{
+	auto api = playlist_manager_v3::get();
+	pfc::bit_array_bittable affected(api->recycler_get_count());
+	helpers::com_array helper;
+	if (!helper.convert_to_bit_array(affectedItems, affected)) return E_INVALIDARG;
+	if (helper.get_count())
+	{
+		api->recycler_purge(affected);
+	}
+	return S_OK;
+}
+
+STDMETHODIMP PlaylistRecyclerManager::Restore(UINT index)
+{
+	auto api = playlist_manager_v3::get();
+	if (index < api->recycler_get_count())
+	{
+		api->recycler_restore(index);
+		return S_OK;
+	}
+	return E_INVALIDARG;
+}
+
+STDMETHODIMP PlaylistRecyclerManager::get_Content(UINT index, IMetadbHandleList** pp)
+{
+	if (!pp) return E_POINTER;
+
+	auto api = playlist_manager_v3::get();
+	if (index < api->recycler_get_count())
+	{
+		metadb_handle_list handles;
+		api->recycler_get_content(index, handles);
+		*pp = new com_object_impl_t<MetadbHandleList>(handles);
+		return S_OK;
+	}
+	return E_INVALIDARG;
+}
+
+STDMETHODIMP PlaylistRecyclerManager::get_Count(UINT* p)
+{
+	if (!p) return E_POINTER;
+
+	*p = playlist_manager_v3::get()->recycler_get_count();
+	return S_OK;
+}
+
+STDMETHODIMP PlaylistRecyclerManager::get_Name(UINT index, BSTR* p)
+{
+	if (!p) return E_POINTER;
+
+	auto api = playlist_manager_v3::get();
+	t_size count = api->recycler_get_count();
+	if (index < count)
+	{
+		pfc::string8_fast name;
+		api->recycler_get_name(index, name);
+		*p = SysAllocString(string_wide_from_utf8_fast(name));
+		return S_OK;
+	}
+	return E_INVALIDARG;
+}
+
+Profiler::Profiler(const char* p_name) : m_name(p_name)
+{
+	m_timer.start();
+}
+
+Profiler::~Profiler() {}
+
+STDMETHODIMP Profiler::Print()
+{
+	FB2K_console_formatter() << JSP_NAME_VERSION ": FbProfiler (" << m_name << "): " << (int)(m_timer.query() * 1000) << " ms";
+	return S_OK;
+}
+
+STDMETHODIMP Profiler::Reset()
+{
+	m_timer.start();
+	return S_OK;
+}
+
+STDMETHODIMP Profiler::get_Time(int* p)
+{
+	if (!p) return E_POINTER;
+
+	*p = (int)(m_timer.query() * 1000);
+	return S_OK;
+}
+
 ThemeManager::ThemeManager(HWND hwnd, BSTR classlist) : m_theme(NULL), m_partid(0), m_stateid(0)
 {
 	m_theme = OpenThemeData(hwnd, classlist);
@@ -2452,7 +2200,7 @@ STDMETHODIMP ThemeManager::DrawThemeBackground(IGdiGraphics* gr, int x, int y, i
 	if (!m_theme) return E_POINTER;
 
 	Gdiplus::Graphics* graphics = NULL;
-	gr->get__ptr((void**)& graphics);
+	gr->get__ptr((void**)&graphics);
 
 	RECT rc = { x, y, x + w, y + h };
 	RECT clip_rc = { clip_x, clip_y, clip_x + clip_w, clip_y + clip_h };
@@ -2484,5 +2232,257 @@ STDMETHODIMP ThemeManager::SetPartAndStateID(int partid, int stateid)
 
 	m_partid = partid;
 	m_stateid = stateid;
+	return S_OK;
+}
+
+TitleFormat::TitleFormat(BSTR expr)
+{
+	string_utf8_from_wide uexpr(expr);
+	titleformat_compiler::get()->compile_safe(m_obj, uexpr);
+}
+
+TitleFormat::~TitleFormat() {}
+
+void TitleFormat::FinalRelease()
+{
+	m_obj.release();
+}
+
+STDMETHODIMP TitleFormat::get__ptr(void** pp)
+{
+	if (!pp) return E_POINTER;
+
+	*pp = m_obj.get_ptr();
+	return S_OK;
+}
+
+STDMETHODIMP TitleFormat::Eval(VARIANT_BOOL force, BSTR* p)
+{
+	if (m_obj.is_empty() || !p) return E_POINTER;
+
+	pfc::string8_fast text;
+
+	if (!playback_control::get()->playback_format_title(NULL, text, m_obj, NULL, playback_control::display_level_all) && force != VARIANT_FALSE)
+	{
+		metadb_handle_ptr handle;
+		metadb::get()->handle_create(handle, make_playable_location("file://C:\\________.ogg", 0));
+		handle->format_title(NULL, text, m_obj, NULL);
+	}
+
+	*p = SysAllocString(string_wide_from_utf8_fast(text));
+	return S_OK;
+}
+
+STDMETHODIMP TitleFormat::EvalWithMetadb(IMetadbHandle* handle, BSTR* p)
+{
+	if (m_obj.is_empty() || !p) return E_POINTER;
+
+	metadb_handle* ptr = NULL;
+	handle->get__ptr((void**)&ptr);
+	if (!ptr) return E_INVALIDARG;
+
+	pfc::string8_fast text;
+	ptr->format_title(NULL, text, m_obj, NULL);
+
+	*p = SysAllocString(string_wide_from_utf8_fast(text));
+	return S_OK;
+}
+
+STDMETHODIMP TitleFormat::EvalWithMetadbs(IMetadbHandleList* handles, VARIANT* p)
+{
+	if (m_obj.is_empty() || !p) return E_POINTER;
+
+	metadb_handle_list* handles_ptr = NULL;
+	handles->get__ptr((void**)&handles_ptr);
+
+	metadb_handle_list_ref handles_ref = *handles_ptr;
+	LONG count = handles_ref.get_count();
+	helpers::com_array helper;
+	if (!helper.create(count)) return E_OUTOFMEMORY;
+
+	for (LONG i = 0; i < count; ++i)
+	{
+		pfc::string8_fast text;
+		handles_ref[i]->format_title(NULL, text, m_obj, NULL);
+		_variant_t var;
+		var.vt = VT_BSTR;
+		var.bstrVal = SysAllocString(string_wide_from_utf8_fast(text));
+		if (!helper.put_item(i, var)) return E_OUTOFMEMORY;
+	}
+	p->vt = VT_ARRAY | VT_VARIANT;
+	p->parray = helper.get_ptr();
+	return S_OK;
+}
+
+Tooltip::Tooltip(HWND p_wndparent, const panel_tooltip_param_ptr & p_param_ptr) : m_wndparent(p_wndparent), m_panel_tooltip_param_ptr(p_param_ptr), m_tip_buffer(SysAllocString(PFC_WIDESTRING(JSP_NAME)))
+{
+	m_wndtooltip = CreateWindowEx(
+		WS_EX_TOPMOST,
+		TOOLTIPS_CLASS,
+		NULL,
+		WS_POPUP | TTS_ALWAYSTIP | TTS_NOPREFIX,
+		CW_USEDEFAULT,
+		CW_USEDEFAULT,
+		CW_USEDEFAULT,
+		CW_USEDEFAULT,
+		p_wndparent,
+		NULL,
+		core_api::get_my_instance(),
+		NULL);
+
+	// Original position
+	SetWindowPos(m_wndtooltip, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+
+	// Set up tooltip information.
+	memset(&m_ti, 0, sizeof(m_ti));
+
+	m_ti.cbSize = sizeof(m_ti);
+	m_ti.uFlags = TTF_IDISHWND | TTF_SUBCLASS | TTF_TRANSPARENT;
+	m_ti.hinst = core_api::get_my_instance();
+	m_ti.hwnd = p_wndparent;
+	m_ti.uId = (UINT_PTR)p_wndparent;
+	m_ti.lpszText = m_tip_buffer;
+
+	HFONT font = CreateFont(
+		-(int)m_panel_tooltip_param_ptr->font_size,
+		0,
+		0,
+		0,
+		(m_panel_tooltip_param_ptr->font_style & Gdiplus::FontStyleBold) ? FW_BOLD : FW_NORMAL,
+		(m_panel_tooltip_param_ptr->font_style & Gdiplus::FontStyleItalic) ? TRUE : FALSE,
+		(m_panel_tooltip_param_ptr->font_style & Gdiplus::FontStyleUnderline) ? TRUE : FALSE,
+		(m_panel_tooltip_param_ptr->font_style & Gdiplus::FontStyleStrikeout) ? TRUE : FALSE,
+		DEFAULT_CHARSET,
+		OUT_DEFAULT_PRECIS,
+		CLIP_DEFAULT_PRECIS,
+		DEFAULT_QUALITY,
+		DEFAULT_PITCH | FF_DONTCARE,
+		m_panel_tooltip_param_ptr->font_name);
+
+	SendMessage(m_wndtooltip, TTM_ADDTOOL, 0, (LPARAM)&m_ti);
+	SendMessage(m_wndtooltip, TTM_ACTIVATE, FALSE, 0);
+	SendMessage(m_wndtooltip, WM_SETFONT, (WPARAM)font, MAKELPARAM(FALSE, 0));
+
+	m_panel_tooltip_param_ptr->tooltip_hwnd = m_wndtooltip;
+	m_panel_tooltip_param_ptr->tooltip_size.cx = -1;
+	m_panel_tooltip_param_ptr->tooltip_size.cy = -1;
+}
+
+Tooltip::~Tooltip() {}
+
+void Tooltip::FinalRelease()
+{
+	if (m_wndtooltip && IsWindow(m_wndtooltip))
+	{
+		DestroyWindow(m_wndtooltip);
+		m_wndtooltip = NULL;
+	}
+
+	if (m_tip_buffer)
+	{
+		SysFreeString(m_tip_buffer);
+		m_tip_buffer = NULL;
+	}
+}
+
+STDMETHODIMP Tooltip::get_Text(BSTR* p)
+{
+	if (!p) return E_POINTER;
+
+	*p = SysAllocString(m_tip_buffer);
+	return S_OK;
+}
+
+STDMETHODIMP Tooltip::put_Text(BSTR text)
+{
+	SysReAllocString(&m_tip_buffer, text);
+	m_ti.lpszText = m_tip_buffer;
+	SendMessage(m_wndtooltip, TTM_SETTOOLINFO, 0, (LPARAM)&m_ti);
+	return S_OK;
+}
+
+STDMETHODIMP Tooltip::put_TrackActivate(VARIANT_BOOL activate)
+{
+	if (activate)
+	{
+		m_ti.uFlags |= TTF_TRACK | TTF_ABSOLUTE;
+	}
+	else
+	{
+		m_ti.uFlags &= ~(TTF_TRACK | TTF_ABSOLUTE);
+	}
+
+	SendMessage(m_wndtooltip, TTM_TRACKACTIVATE, activate != VARIANT_FALSE ? TRUE : FALSE, (LPARAM)&m_ti);
+	return S_OK;
+}
+
+STDMETHODIMP Tooltip::Activate()
+{
+	SendMessage(m_wndtooltip, TTM_ACTIVATE, TRUE, 0);
+	return S_OK;
+}
+
+STDMETHODIMP Tooltip::Deactivate()
+{
+	SendMessage(m_wndtooltip, TTM_ACTIVATE, FALSE, 0);
+	return S_OK;
+}
+
+STDMETHODIMP Tooltip::SetMaxWidth(int width)
+{
+	SendMessage(m_wndtooltip, TTM_SETMAXTIPWIDTH, 0, width);
+	return S_OK;
+}
+
+STDMETHODIMP Tooltip::GetDelayTime(int type, int* p)
+{
+	if (!p) return E_POINTER;
+	if (type < TTDT_AUTOMATIC || type > TTDT_INITIAL) return E_INVALIDARG;
+
+	*p = SendMessage(m_wndtooltip, TTM_GETDELAYTIME, type, 0);
+	return S_OK;
+}
+
+STDMETHODIMP Tooltip::SetDelayTime(int type, int time)
+{
+	if (type < TTDT_AUTOMATIC || type > TTDT_INITIAL) return E_INVALIDARG;
+
+	SendMessage(m_wndtooltip, TTM_SETDELAYTIME, type, time);
+	return S_OK;
+}
+
+STDMETHODIMP Tooltip::TrackPosition(int x, int y)
+{
+	POINT pt = { x, y };
+	ClientToScreen(m_wndparent, &pt);
+	SendMessage(m_wndtooltip, TTM_TRACKPOSITION, 0, MAKELONG(pt.x, pt.y));
+	return S_OK;
+}
+
+UiSelectionHolder::UiSelectionHolder(const ui_selection_holder::ptr & holder) : m_holder(holder) {}
+UiSelectionHolder::~UiSelectionHolder() {}
+
+void UiSelectionHolder::FinalRelease()
+{
+	m_holder.release();
+}
+
+STDMETHODIMP UiSelectionHolder::SetPlaylistSelectionTracking()
+{
+	m_holder->set_playlist_selection_tracking();
+	return S_OK;
+}
+
+STDMETHODIMP UiSelectionHolder::SetPlaylistTracking()
+{
+	m_holder->set_playlist_tracking();
+	return S_OK;
+}
+
+STDMETHODIMP UiSelectionHolder::SetSelection(IMetadbHandleList* handles)
+{
+	metadb_handle_list* handles_ptr = NULL;
+	handles->get__ptr((void**)&handles_ptr);
+	m_holder->set_selection(*handles_ptr);
 	return S_OK;
 }
