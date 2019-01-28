@@ -230,7 +230,7 @@ interface IFbUtils {
 				console.log(test.Time);
 				>> 789
 				test.Print();
-				>> JScript Panel v2.0.2: FbProfiler (test): 789 ms
+				>> FbProfiler (test): 789 ms
 				*/
 
 		fb.DoDragDrop(handle_list, effect); (uint);

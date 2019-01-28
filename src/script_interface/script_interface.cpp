@@ -2184,7 +2184,7 @@ Profiler::~Profiler() {}
 
 STDMETHODIMP Profiler::Print()
 {
-	FB2K_console_formatter() << JSP_NAME_VERSION ": FbProfiler (" << m_name << "): " << (int)(m_timer.query() * 1000) << " ms";
+	FB2K_console_formatter() << "FbProfiler (" << m_name << "): " << (int)(m_timer.query() * 1000) << " ms";
 	return S_OK;
 }
 
