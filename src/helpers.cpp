@@ -15,31 +15,6 @@ namespace helpers
 		return GetRValue(color) << RED_SHIFT | GetGValue(color) << GREEN_SHIFT | GetBValue(color) << BLUE_SHIFT | 0xff000000;
 	}
 
-	HBITMAP create_hbitmap_from_gdiplus_bitmap(Gdiplus::Bitmap* bitmap_ptr)
-	{
-		Gdiplus::Rect rect(0, 0, bitmap_ptr->GetWidth(), bitmap_ptr->GetHeight());
-		Gdiplus::BitmapData bmpdata;
-
-		if (bitmap_ptr->LockBits(&rect, Gdiplus::ImageLockModeRead, PixelFormat32bppPARGB, &bmpdata) != Gdiplus::Ok)
-		{
-			// Error
-			return NULL;
-		}
-
-		BITMAP bm;
-		bm.bmType = 0;
-		bm.bmWidth = bmpdata.Width;
-		bm.bmHeight = bmpdata.Height;
-		bm.bmWidthBytes = bmpdata.Stride;
-		bm.bmPlanes = 1;
-		bm.bmBitsPixel = 32;
-		bm.bmBits = bmpdata.Scan0;
-
-		HBITMAP hBitmap = CreateBitmapIndirect(&bm);
-		bitmap_ptr->UnlockBits(&bmpdata);
-		return hBitmap;
-	}
-
 	IGdiBitmap* get_album_art(const metadb_handle_ptr& handle, t_size art_id, bool need_stub, pfc::string_base& image_path, bool no_load)
 	{
 		GUID what = convert_artid_to_guid(art_id);

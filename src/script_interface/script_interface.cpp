@@ -1057,11 +1057,36 @@ GdiRawBitmap::GdiRawBitmap(Gdiplus::Bitmap* p_bmp)
 	m_height = p_bmp->GetHeight();
 
 	m_hdc = CreateCompatibleDC(NULL);
-	m_hbmp = helpers::create_hbitmap_from_gdiplus_bitmap(p_bmp);
+	m_hbmp = CreateHBITMAP(p_bmp);
 	m_hbmpold = SelectBitmap(m_hdc, m_hbmp);
 }
 
 GdiRawBitmap::~GdiRawBitmap() {}
+
+HBITMAP GdiRawBitmap::CreateHBITMAP(Gdiplus::Bitmap* bitmap_ptr)
+{
+	Gdiplus::Rect rect(0, 0, bitmap_ptr->GetWidth(), bitmap_ptr->GetHeight());
+	Gdiplus::BitmapData bmpdata;
+
+	if (bitmap_ptr->LockBits(&rect, Gdiplus::ImageLockModeRead, PixelFormat32bppPARGB, &bmpdata) != Gdiplus::Ok)
+	{
+		// Error
+		return NULL;
+	}
+
+	BITMAP bm;
+	bm.bmType = 0;
+	bm.bmWidth = bmpdata.Width;
+	bm.bmHeight = bmpdata.Height;
+	bm.bmWidthBytes = bmpdata.Stride;
+	bm.bmPlanes = 1;
+	bm.bmBitsPixel = 32;
+	bm.bmBits = bmpdata.Scan0;
+
+	HBITMAP hBitmap = CreateBitmapIndirect(&bm);
+	bitmap_ptr->UnlockBits(&bmpdata);
+	return hBitmap;
+}
 
 void GdiRawBitmap::FinalRelease()
 {

@@ -22,7 +22,6 @@ namespace helpers
 
 	COLORREF convert_argb_to_colorref(DWORD argb);
 	DWORD convert_colorref_to_argb(COLORREF color);
-	HBITMAP create_hbitmap_from_gdiplus_bitmap(Gdiplus::Bitmap* bitmap_ptr);
 	IGdiBitmap* get_album_art(const metadb_handle_ptr& handle, t_size art_id, bool need_stub, pfc::string_base& image_path, bool no_load = false);
 	IGdiBitmap* get_album_art_embedded(const pfc::string8_fast& rawpath, t_size art_id);
 	IGdiBitmap* load_image(BSTR path);

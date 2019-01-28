@@ -181,6 +181,7 @@ protected:
 	GdiRawBitmap(Gdiplus::Bitmap* p_bmp);
 	virtual ~GdiRawBitmap();
 
+	HBITMAP CreateHBITMAP(Gdiplus::Bitmap* bitmap_ptr);
 	virtual void FinalRelease();
 
 	HBITMAP m_hbmp, m_hbmpold;
