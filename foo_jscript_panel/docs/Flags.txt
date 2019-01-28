@@ -122,7 +122,7 @@ var VK_INSERT = 0x2D;
 var VK_DELETE = 0x2E;
 var VK_SPACEBAR = 0x20;
 
-// Used in IFbTooltip.GetDelayTime() and IFbTooltip.SetDelayTime()
+// Used in ITooltip.GetDelayTime() and ITooltip.SetDelayTime()
 // For more information, see: http://msdn.microsoft.com/en-us/library/bb760404(VS.85).aspx
 var TTDT_AUTOMATIC = 0;
 var TTDT_RESHOW = 1;

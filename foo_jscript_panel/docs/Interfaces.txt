@@ -4,7 +4,7 @@ Console. It will be used in some examples below. Any parameters in [] are
 optional and may be omitted.
 */
 
-interface IFbUtils {
+interface IFb {
 	Properties:
 		fb.AlwaysOnTop; (boolean) (read, write)
 		/*
@@ -73,9 +73,9 @@ interface IFbUtils {
 		*/
 
 	Methods:
-		fb.AcquireUiSelectionHolder(); (IFbUiSelectionHolder)
+		fb.AcquireUiSelectionHolder(); (IUiSelectionHolder)
 
-			interface IFbUiSelectionHolder {
+			interface IUiSelectionHolder {
 				Methods:
 					Dispose(); (void)
 					SetSelection(handle_list); (void)
@@ -189,7 +189,7 @@ interface IFbUtils {
 					InitNowPlaying(); (void)
 			}
 
-		fb.CreateHandleList([handle]); (IFbMetadbHandleList)
+		fb.CreateHandleList([handle]); (IMetadbHandleList)
 		/*
 		Returns an empty handle list or a list containing a single item if you pass the optional
 		handle argument.
@@ -211,10 +211,10 @@ interface IFbUtils {
 					Init(root_name); (void)
 			}
 
-		fb.CreateProfiler([name]); (IFbProfiler)
+		fb.CreateProfiler([name]); (IProfiler)
 		// name: optional, will be shown in console when used with Print() method below.
 
-			interface IFbProfiler {
+			interface IProfiler {
 				Properties:
 					Time; (int) // milliseconds
 
@@ -238,7 +238,7 @@ interface IFbUtils {
 
 		fb.Exit(); (void)
 
-		fb.GetClipboardContents(window_id); (IFbMetadbHandleList)
+		fb.GetClipboardContents(window_id); (IMetadbHandleList)
 		/*
 		Clipboard contents can be handles copied to the clipboard in other components, from fb.CopyHandleListToClipboard or a file selection
 		from Windows Explorer etc.
@@ -298,14 +298,14 @@ interface IFbUtils {
 		fb.SetDSPPreset(1); // changes to the 2nd entry in the example above
 		*/
 
-		fb.GetFocusItem([force]); (IFbMetadbHandle)
+		fb.GetFocusItem([force]); (IMetadbHandle)
 		/*
 		force: boolean, default true.
 		When true, it will use the first item of the active playlist if it is unable to get the focus item.
 		Returns null on failure.
 		*/
 
-		fb.GetLibraryItems(); (IFbMetadbHandleList)
+		fb.GetLibraryItems(); (IMetadbHandleList)
 		// Returns all Media Library items as a handle list.
 
 		fb.GetLibraryRelativePath(handle); (string)
@@ -320,11 +320,11 @@ interface IFbUtils {
 		console.log(fb.GetLibraryRelativePath(handle));
 		>> Albums\Artist\Some Album\Some Song.flac
 
-		NOTE: Do not use this while looping a handle list. Use IFbMetadbHandleList GetLibraryRelativePaths
+		NOTE: Do not use this while looping a handle list. Use IMetadbHandleList GetLibraryRelativePaths
 		instead.
 		*/
 
-		fb.GetNowPlaying(); (IFbMetadbHandle)
+		fb.GetNowPlaying(); (IMetadbHandle)
 		// Get handle of now playing item. Returns null on failure.
 
 		fb.GetOutputDevices(); (string)
@@ -385,7 +385,7 @@ interface IFbUtils {
 		fb.SetOutputDevice(arr[4].output_id, arr[4].device_id);
 		*/
 
-		fb.GetQueryItems(handle_list, query); (IFbMetadbHandleList)
+		fb.GetQueryItems(handle_list, query); (IMetadbHandleList)
 		/*
 		Example1:
 		var a = fb.GetQueryItems(plman.GetPlaylistItems(plman.ActivePlaylist), "rating IS 5");
@@ -398,14 +398,14 @@ interface IFbUtils {
 		is valid but there are no results.
 		*/
 
-		fb.GetSelection(); (IFbMetadbHandle)
+		fb.GetSelection(); (IMetadbHandle)
 		/*
 		Gets now playing or selected item. What you get will depend on
 		"File>Preferences>Display>Selection viewers".
 		The return value may be null.
 		*/
 
-		fb.GetSelections([flags]); (IFbMetadbHandleList)
+		fb.GetSelections([flags]); (IMetadbHandleList)
 		/*
 		flags: 0 default, 1 no now playing
 		Works like GetSelection(), but returns a handle list.
@@ -498,9 +498,9 @@ interface IFbUtils {
 
 		fb.Stop(); (void)
 
-		fb.TitleFormat(expression); (IFbTitleFormat)
+		fb.TitleFormat(expression); (ITitleFormat)
 
-			interface IFbTitleFormat {
+			interface ITitleFormat {
 				/*
 				This will be used in the examples below:
 				var tfo = fb.TitleFormat("%artist%");
@@ -547,7 +547,7 @@ interface IFbUtils {
 		fb.VolumeUp(); (void)
 }
 
-interface IGdiUtils {
+interface IGdi {
 	Methods:
 		gdi.CreateImage(w, h); (IGdiBitmap)
 
@@ -580,7 +580,7 @@ interface IGdiUtils {
 		*/
 }
 
-interface IFbPlaylistManager {
+interface IPlman {
 	Properties:
 		plman.ActivePlaylist; (int) (read, write)
 		/*
@@ -614,13 +614,13 @@ interface IFbPlaylistManager {
 
 		plman.PlaylistCount; (uint) (read)
 
-		plman.PlaylistRecyclerManager; (IFbPlaylistRecyclerManager) (read)
+		plman.PlaylistRecyclerManager; (IPlaylistRecyclerManager) (read)
 
 			interface PlaylistRecyclerManager {
 				Properties:
 					Count; (uint) (read)
 					Name(index); (string) (read)
-					Content(index); (IFbMetadbHandleList) (read)
+					Content(index); (IMetadbHandleList) (read)
 
 				Methods:
 					Purge(affectedItems); (void)
@@ -704,10 +704,10 @@ interface IFbPlaylistManager {
 		plman.FindPlaylist(name); (int)
 		// Case insensitive. Returns playlistIndex or -1 on failure.
 
-		plman.GetPlayingItemLocation(); (IFbPlayingItemLocation)
+		plman.GetPlayingItemLocation(); (IPlayingItemLocation)
 		// Retrieves playlist/playlistIndex of the currently playing item.
 
-			interface IFbPlayingItemLocation {
+			interface IPlayingItemLocation {
 				Properties:
 					IsValid; (boolean) (read)
 					PlaylistIndex; (int) (read)
@@ -736,7 +736,7 @@ interface IFbPlaylistManager {
 		Returns -1 if nothing is selected.
 		*/
 
-		plman.GetPlaylistItems(playlistIndex); (IFbMetadbHandleList)
+		plman.GetPlaylistItems(playlistIndex); (IMetadbHandleList)
 		/*
 		Example:
 		var handle_list = plman.GetPlaylistItems(plman.PlayingPlaylist);
@@ -749,7 +749,7 @@ interface IFbPlaylistManager {
 		>> My favourites
 		*/
 
-		plman.GetPlaylistSelectedItems(playlistIndex); (IFbMetadbHandleList)
+		plman.GetPlaylistSelectedItems(playlistIndex); (IMetadbHandleList)
 		/*
 		Example:
 		var selected_items = plman.GetPlaylistSelectedItems(plman.ActivePlaylist);
@@ -928,7 +928,7 @@ interface IFbPlaylistManager {
 		plman.GetPlaybackQueueContents(); (VBArray)
 		/*
 		Returns a VBArray so you need to use .toArray() on the result.
-		Each item of the array is an instance of IFbPlaybackQueueItem.
+		Each item of the array is an instance of IPlaybackQueueItem.
 
 		Example:
 		var contents = plman.GetPlaybackQueueContents().toArray();
@@ -938,9 +938,9 @@ interface IFbPlaylistManager {
 		}
 		*/
 
-			interface IFbPlaybackQueueItem {
+			interface IPlaybackQueueItem {
 				Properties:
-					Handle; (IFbMetadbHandle) (read)
+					Handle; (IMetadbHandle) (read)
 					PlaylistIndex; (int) (read)
 					PlaylistItemIndex; (int) (read)
 					// indexes will be -1 for items not added from a playlist.
@@ -949,7 +949,7 @@ interface IFbPlaylistManager {
 					Dispose(); (void)
 			}
 
-		plman.GetPlaybackQueueHandles(); ((IFbMetadbHandleList))
+		plman.GetPlaybackQueueHandles(); ((IMetadbHandleList))
 		/*
 		Example:
 		var handles = plman.GetPlaybackQueueHandles();
@@ -964,12 +964,12 @@ interface IFbPlaylistManager {
 		// affectedItems: array like [1, 3, 5]
 }
 
-interface IJSConsole {
+interface IConsole {
 	Methods:
 		console.log(message); (void)
 }
 
-interface IJSUtils {
+interface IUtils {
 	Properties:
 		utils.Version (uint) (read)
 		/*
@@ -1222,7 +1222,7 @@ interface IJSUtils {
 		*/
 }
 
-interface IFbWindow {
+interface IWindow {
 	Properties:
 		window.ID; (read) (int)
 		/*
@@ -1313,7 +1313,7 @@ interface IFbWindow {
 					*/
 			}
 
-		window.CreateTooltip([font_name, font_size_px, font_style]); (IFbTooltip)
+		window.CreateTooltip([font_name, font_size_px, font_style]); (ITooltip)
 		/*
 		font_name: default "Segoe UI"
 		font_size_px: default 12
@@ -1327,7 +1327,7 @@ interface IFbWindow {
 		8: Strikeout
 		*/
 
-			interface IFbTooltip {
+			interface ITooltip {
 				/*
 				This will be used in the examples below.
 				var tooltip = window.CreateTooltip();
@@ -1361,7 +1361,7 @@ interface IFbWindow {
 
 					GetDelayTime(type); (int)
 					SetDelayTime(type, time); (void)
-					// type. See Flags.txt > Used in IFbTooltip.GetDelayTime() and IFbTooltip.SetDelayTime()
+					// type. See Flags.txt > Used in ITooltip.GetDelayTime() and ITooltip.SetDelayTime()
 
 					SetMaxWidth(width); (void)
 					/*
@@ -1769,7 +1769,7 @@ interface IGdiGraphics {
 		*/
 }
 
-interface IFbMetadbHandle {
+interface IMetadbHandle {
 	/*
 	This will be used in the examples below:
 	var handle = fb.GetFocusItem();
@@ -1809,7 +1809,7 @@ interface IFbMetadbHandle {
 
 		Compare(handle); (boolean)
 		/*
-		Compare two IFbMetadbHandle instances, pointer only.
+		Compare two IMetadbHandle instances, pointer only.
 
 		Example:
 		handle.Compare(handle2);
@@ -1848,9 +1848,9 @@ interface IFbMetadbHandle {
 		}
 		*/
 
-		GetFileInfo(); (IFbFileInfo)
+		GetFileInfo(); (IFileInfo)
 
-			interface IFbFileInfo {
+			interface IFileInfo {
 				/*
 				This will be used in the examples below:
 				var handle = fb.GetFocusItem();
@@ -1908,7 +1908,7 @@ interface IFbMetadbHandle {
 			}
 }
 
-interface IFbMetadbHandleList {
+interface IMetadbHandleList {
 	/*
 	This will be used in the examples below:
 	var handle_list = plman.GetPlaylistItems(plman.ActivePlaylist);
@@ -1924,7 +1924,7 @@ interface IFbMetadbHandleList {
 		>> 11
 		*/
 
-		Item(idx); (IFbMetadbHandle) (read, write)
+		Item(idx); (IMetadbHandle) (read, write)
 		/*
 		Example:
 		var path = handle_list.Item(0).Path;
@@ -1990,7 +1990,7 @@ interface IFbMetadbHandleList {
 		Returns total in bytes. For display purposes, consider using utils.FormatFileSize() on the result.
 		*/
 
-		Clone(); (IFbMetadbHandleList)
+		Clone(); (IMetadbHandleList)
 		/*
 		Example:
 		var handle_list2 = handle_list.Clone();
@@ -2093,7 +2093,7 @@ interface IFbMetadbHandleList {
 
 		OrderByFormat(tfo, direction); (void)
 		/*
-		tfo: an instance of IFbTitleFormat.
+		tfo: an instance of ITitleFormat.
 		direction: integer, ascending while > 0.
 
 		Example:
