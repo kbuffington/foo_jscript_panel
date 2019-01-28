@@ -137,7 +137,7 @@ void CDialogProperty::LoadProperties(bool reload)
 
 	for (prop_kv_config::t_map::const_iterator iter = m_dup_prop_map.first(); iter.is_valid(); ++iter)
 	{
-		string_wide_from_utf8_fast wname = iter->m_key;
+		string_wide_from_utf8_fast wname(iter->m_key);
 		HPROPERTY hProp = NULL;
 		const _variant_t& v = iter->m_value;
 		_variant_t var;

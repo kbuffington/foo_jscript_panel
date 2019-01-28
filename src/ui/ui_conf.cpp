@@ -184,7 +184,7 @@ LRESULT CDialogConf::OnCloseCmd(WORD wNotifyCode, WORD wID, HWND hWndCtl)
 
 LRESULT CDialogConf::OnDocs(WORD wNotifyCode, WORD wID, HWND hWndCtl)
 {
-	pfc::string8_fast tmp = file_path_display(m_docs[wID - ID_DOCS_BEGIN]);
+	pfc::string8_fast tmp = file_path_display(m_docs[wID - ID_DOCS_BEGIN]).get_ptr();
 	string_wide_from_utf8_fast path(tmp);
 	ShellExecute(NULL, L"open", path, NULL, NULL, SW_SHOW);
 	return 0;

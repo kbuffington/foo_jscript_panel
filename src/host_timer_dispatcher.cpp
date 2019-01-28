@@ -154,7 +154,7 @@ t_size host_timer_dispatcher::createTimer(HWND hWnd, t_size delay, bool isRepeat
 
 	m_timerMap.emplace(id, new host_timer(hWnd, id, delay, isRepeated));
 
-	auto& curTask = m_taskMap.emplace(id, new host_timer_task(pDisp, id));
+	auto curTask = m_taskMap.emplace(id, new host_timer_task(pDisp, id));
 	curTask.first->second->acquire();
 
 	if (!m_timerMap[id]->start(m_hTimerQueue))
@@ -215,7 +215,7 @@ void host_timer_dispatcher::onPanelUnload(HWND hWnd)
 
 	{
 		std::lock_guard<std::mutex> lock(m_timerMutex);
-		for each (const auto& elem in m_timerMap)
+		for (const auto& elem : m_timerMap)
 		{
 			if (elem.second->GetHwnd() == hWnd)
 			{
@@ -224,7 +224,7 @@ void host_timer_dispatcher::onPanelUnload(HWND hWnd)
 		}
 	}
 
-	for each (auto timerId in timersToDelete)
+	for (auto timerId : timersToDelete)
 	{
 		killTimer(timerId);
 	}

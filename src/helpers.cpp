@@ -157,7 +157,8 @@ namespace helpers
 		for (t_size i = 0; i < p_parent->get_num_children(); ++i)
 		{
 			contextmenu_node* child = p_parent->get_child(i);
-			pfc::string8_fast path = p_path + child->get_name();
+			pfc::string8_fast path = p_path;
+			path << child->get_name();
 
 			switch (child->get_type())
 			{
@@ -540,7 +541,7 @@ namespace helpers
 
 	pfc::string8_fast get_profile_path()
 	{
-		pfc::string8_fast path = file_path_display(core_api::get_profile_path());
+		pfc::string8_fast path = file_path_display(core_api::get_profile_path()).get_ptr();
 		path.add_char('\\');
 		return path;
 	}

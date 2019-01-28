@@ -3,6 +3,21 @@
 #include "helpers.h"
 #include "scintilla_prop_sets.h"
 
+struct StringComparePartialNC
+{
+	StringComparePartialNC(t_size len_) : len(len_) {}
+
+	int operator()(const char* s1, const char* s2) const
+	{
+		t_size len1 = pfc::strlen_max_t(s1, len);
+		t_size len2 = pfc::strlen_max_t(s2, len);
+
+		return pfc::stricmp_ascii_ex(s1, len1, s2, len2);
+	}
+
+	t_size len;
+};
+
 const t_style_to_key_table js_style_table[] =
 {
 	// Default
@@ -266,39 +281,6 @@ static t_size LengthWord(const char* word, char otherSeparator)
 
 	return endWord - word;
 }
-
-struct StringComparePartialNC
-{
-	StringComparePartialNC(t_size len_) : len(len_) {}
-
-	int operator()(const char* s1, const char* s2) const
-	{
-		t_size len1 = pfc::strlen_max_t(s1, len);
-		t_size len2 = pfc::strlen_max_t(s2, len);
-
-		return pfc::stricmp_ascii_ex(s1, len1, s2, len2);
-	}
-
-	t_size len;
-};
-
-struct StringCompareSpecial
-{
-	int operator()(const char* s1, const char* s2) const
-	{
-		int result = _stricmp(s1, s2);
-
-		if (result == 0)
-		{
-			if (isalpha(*s1) && (*s1 != *s2))
-			{
-				return islower(*s1) ? -1 : 1;
-			}
-		}
-
-		return result;
-	}
-};
 
 CScriptEditorCtrl::CScriptEditorCtrl() : m_nBraceCount(0), m_nCurrentCallTip(0), m_nStartCalltipWord(0), m_nLastPosCallTip(0), m_nStatementLookback(10) {}
 
@@ -659,7 +641,7 @@ bool CScriptEditorCtrl::StartCallTip()
 {
 	m_nCurrentCallTip = 0;
 	m_szCurrentCallTipWord = "";
-	SString line = GetCurrentLine();
+	SString line = GetCurrentLine().get_ptr();
 	int current = GetCaretInLine();
 	int pos = GetCurrentPos();
 	int braces = 0;
@@ -1125,20 +1107,36 @@ void CScriptEditorCtrl::LoadProperties(const pfc::list_t<t_sci_prop_set>& data)
 
 void CScriptEditorCtrl::ReadAPI()
 {
+	auto sc = [](const char* s1, const char* s2)
+	{
+		int result = _stricmp(s1, s2);
+
+		if (result == 0)
+		{
+			if (isalpha(*s1) && (*s1 != *s2))
+			{
+				return islower(*s1) ? -1 : 1;
+			}
+		}
+
+		return result;
+	};
+
 	m_apis.remove_all();
 	puResource pures = uLoadResource(core_api::get_my_instance(), uMAKEINTRESOURCE(IDR_API), "TEXT");
 	pfc::string8_fast content(static_cast<const char*>(pures->GetPointer()), pures->GetSize());
-	pfc::string_list_impl temp;
-	pfc::splitStringByLines(temp, content);
-
-	for (t_size i = 0; i < temp.get_count(); ++i)
+	pfc::string_list_impl list;
+	pfc::splitStringByLines(list, content);
+	
+	for (t_size i = 0; i < list.get_count(); ++i)
 	{
-		if (IsIdentifierChar(*temp[i]))
+		pfc::string8_fast tmp = list[i];
+		if (tmp.get_length())
 		{
-			m_apis.add_item(temp[i]);
+			m_apis.add_item(tmp);
 		}
 	}
-	m_apis.sort_remove_duplicates_t(StringCompareSpecial());
+	m_apis.sort_t(sc);
 }
 
 void CScriptEditorCtrl::RestoreDefaultStyle()

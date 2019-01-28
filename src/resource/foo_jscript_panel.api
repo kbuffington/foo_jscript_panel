@@ -177,7 +177,6 @@ window.SetTimeout(func, delay)
 window.ShowConfigure()
 window.ShowProperties()
 
-#Use in on_paint
 gr.CalcTextHeight(str, IGdiFont)
 gr.CalcTextWidth(str, IGdiFont)
 gr.DrawEllipse(x, y, w, h, line_width, colour)
@@ -201,7 +200,6 @@ gr.SetInterpolationMode(mode)
 gr.SetSmoothingMode(mode)
 gr.SetTextRenderingHint(mode)
 
-# Callbacks
 on_always_on_top_changed(state)
 on_char(code)
 on_colours_changed()

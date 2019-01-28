@@ -67,8 +67,8 @@ STDMETHODIMP Plman::CreateAutoPlaylist(UINT playlistIndex, BSTR name, BSTR query
 	if (!p) return E_POINTER;
 
 	search_filter_v2::ptr filter;
-	pfc::string8_fast uquery = string_utf8_from_wide(query);
-	pfc::string8_fast usort = string_utf8_from_wide(sort);
+	pfc::string8_fast uquery = string_utf8_from_wide(query).get_ptr();
+	pfc::string8_fast usort = string_utf8_from_wide(sort).get_ptr();
 
 	try
 	{
@@ -116,14 +116,15 @@ STDMETHODIMP Plman::DuplicatePlaylist(UINT from, BSTR name, UINT* p)
 		metadb_handle_list contents;
 		api->playlist_get_all_items(from, contents);
 
-		pfc::string8_fast uname = string_utf8_from_wide(name);
+		pfc::string8_fast uname = string_utf8_from_wide(name).get_ptr();
 		if (uname.is_empty())
 		{
 			api->playlist_get_name(from, uname);
 		}
 
 		stream_reader_dummy dummy_reader;
-		*p = api->create_playlist_ex(uname.get_ptr(), uname.get_length(), from + 1, contents, &dummy_reader, abort_callback_dummy());
+		abort_callback_dummy abort;
+		*p = api->create_playlist_ex(uname.get_ptr(), uname.get_length(), from + 1, contents, &dummy_reader, abort);
 		return S_OK;
 	}
 	return E_INVALIDARG;

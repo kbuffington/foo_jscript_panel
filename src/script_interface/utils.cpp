@@ -258,7 +258,7 @@ STDMETHODIMP Utils::Glob(BSTR pattern, UINT exc_mask, UINT inc_mask, VARIANT* p)
 {
 	if (!p) return E_POINTER;
 
-	pfc::string8_fast path = string_utf8_from_wide(pattern);
+	pfc::string8_fast path = string_utf8_from_wide(pattern).get_ptr();
 	const char* fn = path.get_ptr() + path.scan_filename();
 	pfc::string8_fast dir(path.get_ptr(), fn - path.get_ptr());
 	puFindFile ff = uFindFirstFile(path.get_ptr());
@@ -375,7 +375,7 @@ STDMETHODIMP Utils::ListFolders(BSTR folder, VARIANT* p)
 	if (!helper.create(count)) return E_OUTOFMEMORY;
 	for (LONG i = 0; i < count; ++i)
 	{
-		pfc::string8_fast path = file_path_display(list.get_item(i));
+		pfc::string8_fast path = file_path_display(list.get_item(i)).get_ptr();
 		path.add_char('\\');
 
 		_variant_t var;
@@ -472,8 +472,8 @@ STDMETHODIMP Utils::WriteTextFile(BSTR filename, BSTR content, VARIANT_BOOL writ
 	}
 	else
 	{
-		pfc::string8_fast filename8 = string_utf8_from_wide(filename);
-		pfc::string8_fast content8 = string_utf8_from_wide(content);
+		pfc::string8_fast filename8 = string_utf8_from_wide(filename).get_ptr();
+		pfc::string8_fast content8 = string_utf8_from_wide(content).get_ptr();
 		*p = TO_VARIANT_BOOL(helpers::write_file(filename8, content8, write_bom != VARIANT_FALSE));
 	}
 	return S_OK;

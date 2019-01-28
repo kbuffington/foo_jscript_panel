@@ -119,6 +119,9 @@ protected:
 	virtual ~IDispatchImpl3<T>() {}
 };
 
+struct IDisposable;
+struct IGdiObj;
+
 //-- IDisposable impl -- [T] [IDisposable] [IDispatch] [IUnknown]
 template <class T>
 class IDisposableImpl4 : public MyIDispatchImpl<T>
@@ -137,7 +140,7 @@ protected:
 public:
 	STDMETHODIMP Dispose()
 	{
-		FinalRelease();
+		this->FinalRelease();
 		return S_OK;
 	}
 };
@@ -198,7 +201,7 @@ public:
 		ULONG n = Release_();
 		if (n == 0)
 		{
-			FinalRelease();
+			this->FinalRelease();
 			delete this;
 		}
 		return n;
