@@ -33,13 +33,11 @@ STDMETHODIMP Fb::CheckClipboardContents(UINT window_id, VARIANT_BOOL* p)
 
 	*p = VARIANT_FALSE;
 	pfc::com_ptr_t<IDataObject> pDO;
-	HRESULT hr = OleGetClipboard(pDO.receive_ptr());
-	if (SUCCEEDED(hr))
+	if (SUCCEEDED(OleGetClipboard(pDO.receive_ptr())))
 	{
 		bool native;
 		DWORD drop_effect = DROPEFFECT_COPY;
-		hr = ole_interaction::get()->check_dataobject(pDO, drop_effect, native);
-		*p = TO_VARIANT_BOOL(SUCCEEDED(hr));
+		*p = TO_VARIANT_BOOL(SUCCEEDED(ole_interaction::get()->check_dataobject(pDO, drop_effect, native)));
 	}
 	return S_OK;
 }
@@ -54,15 +52,11 @@ STDMETHODIMP Fb::CopyHandleListToClipboard(IMetadbHandleList* handles, VARIANT_B
 {
 	if (!p) return E_POINTER;
 
-	*p = VARIANT_FALSE;
 	metadb_handle_list* handles_ptr = NULL;
 	handles->get__ptr((void**)&handles_ptr);
 
 	pfc::com_ptr_t<IDataObject> pDO = ole_interaction::get()->create_dataobject(*handles_ptr);
-	if (SUCCEEDED(OleSetClipboard(pDO.get_ptr())))
-	{
-		*p = VARIANT_TRUE;
-	}
+	*p = TO_VARIANT_BOOL(SUCCEEDED(OleSetClipboard(pDO.get_ptr())));
 	return S_OK;
 }
 
@@ -233,7 +227,6 @@ STDMETHODIMP Fb::GetLibraryRelativePath(IMetadbHandle* handle, BSTR* p)
 	{
 		temp = "";
 	}
-
 	*p = SysAllocString(string_wide_from_utf8_fast(temp));
 	return S_OK;
 }
@@ -244,12 +237,10 @@ STDMETHODIMP Fb::GetNowPlaying(IMetadbHandle** pp)
 
 	*pp = NULL;
 	metadb_handle_ptr metadb;
-
 	if (playback_control::get()->get_now_playing(metadb))
 	{
 		*pp = new com_object_impl_t<MetadbHandle>(metadb);
 	}
-
 	return S_OK;
 }
 
@@ -357,7 +348,6 @@ STDMETHODIMP Fb::GetSelectionType(UINT* p)
 			break;
 		}
 	}
-
 	return S_OK;
 }
 
@@ -427,8 +417,7 @@ STDMETHODIMP Fb::RunContextCommand(BSTR command, UINT flags, VARIANT_BOOL* p)
 {
 	if (!p) return E_POINTER;
 
-	string_utf8_from_wide ucommand(command);
-	*p = TO_VARIANT_BOOL(helpers::execute_context_command_by_name(ucommand, metadb_handle_list(), flags));
+	*p = TO_VARIANT_BOOL(helpers::execute_context_command_by_name(string_utf8_from_wide(command), metadb_handle_list(), flags));
 	return S_OK;
 }
 
@@ -470,8 +459,7 @@ STDMETHODIMP Fb::RunMainMenuCommand(BSTR command, VARIANT_BOOL* p)
 {
 	if (!p) return E_POINTER;
 
-	string_utf8_from_wide ucommand(command);
-	*p = TO_VARIANT_BOOL(helpers::execute_mainmenu_command_by_name(ucommand));
+	*p = TO_VARIANT_BOOL(helpers::execute_mainmenu_command_by_name(string_utf8_from_wide(command)));
 	return S_OK;
 }
 
@@ -518,8 +506,7 @@ STDMETHODIMP Fb::ShowLibrarySearchUI(BSTR query)
 {
 	if (!query) return E_INVALIDARG;
 
-	string_utf8_from_wide uquery(query);
-	library_search_ui::get()->show(uquery);
+	library_search_ui::get()->show(string_utf8_from_wide(query));
 	return S_OK;
 }
 
@@ -579,8 +566,7 @@ STDMETHODIMP Fb::get_ComponentPath(BSTR* p)
 {
 	if (!p) return E_POINTER;
 
-	static string_wide_from_utf8_fast path(helpers::get_fb2k_component_path());
-	*p = SysAllocString(path.get_ptr());
+	*p = SysAllocString(string_wide_from_utf8_fast(helpers::get_fb2k_component_path()));
 	return S_OK;
 }
 
@@ -596,9 +582,7 @@ STDMETHODIMP Fb::get_FoobarPath(BSTR* p)
 {
 	if (!p) return E_POINTER;
 
-	static string_wide_from_utf8_fast path(helpers::get_fb2k_path());
-
-	*p = SysAllocString(path.get_ptr());
+	*p = SysAllocString(string_wide_from_utf8_fast(helpers::get_fb2k_path()));
 	return S_OK;
 }
 
@@ -646,8 +630,7 @@ STDMETHODIMP Fb::get_ProfilePath(BSTR* p)
 {
 	if (!p) return E_POINTER;
 
-	static string_wide_from_utf8_fast path(helpers::get_profile_path());
-	*p = SysAllocString(path.get_ptr());
+	*p = SysAllocString(string_wide_from_utf8_fast(helpers::get_profile_path()));
 	return S_OK;
 }
 

@@ -42,34 +42,26 @@ STDMETHODIMP Utils::CheckFont(BSTR name, VARIANT_BOOL* p)
 {
 	if (!p) return E_POINTER;
 
-	WCHAR family_name_eng[LF_FACESIZE] = { 0 };
-	WCHAR family_name_loc[LF_FACESIZE] = { 0 };
-	Gdiplus::InstalledFontCollection font_collection;
-	Gdiplus::FontFamily* font_families;
-	int count = font_collection.GetFamilyCount();
-	int recv;
-
 	*p = VARIANT_FALSE;
-	font_families = new Gdiplus::FontFamily[count];
-	font_collection.GetFamilies(count, font_families, &recv);
 
-	if (recv == count)
+	wchar_t family_name[LF_FACESIZE] = { 0 };
+	Gdiplus::InstalledFontCollection fonts;
+	int count = fonts.GetFamilyCount();
+	Gdiplus::FontFamily* families = new Gdiplus::FontFamily[count];
+	int found;
+	if (fonts.GetFamilies(count, families, &found) == Gdiplus::Ok)
 	{
-		// Find
-		for (int i = 0; i < count; ++i)
+		for (int i = 0; i < found; i++)
 		{
-			font_families[i].GetFamilyName(family_name_eng, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US));
-			font_families[i].GetFamilyName(family_name_loc);
-
-			if (_wcsicmp(name, family_name_loc) == 0 || _wcsicmp(name, family_name_eng) == 0)
+			families[i].GetFamilyName(family_name);
+			if (_wcsicmp(name, family_name) == 0)
 			{
 				*p = VARIANT_TRUE;
 				break;
 			}
 		}
 	}
-
-	delete[] font_families;
+	delete[] families;
 	return S_OK;
 }
 
@@ -306,18 +298,19 @@ STDMETHODIMP Utils::InputBox(UINT window_id, BSTR prompt, BSTR caption, BSTR def
 	modal_dialog_scope scope;
 	if (scope.can_create())
 	{
+		scope.initialize(HWND(window_id));
+
 		string_utf8_from_wide uprompt(prompt);
 		string_utf8_from_wide ucaption(caption);
 		string_utf8_from_wide udef(def);
 
-		scope.initialize(HWND(window_id));
 		CInputBox dlg(uprompt, ucaption, udef);
 		int status = dlg.DoModal(HWND(window_id));
 		if (status == IDOK)
 		{
-			pfc::string8 val;
-			dlg.GetValue(val);
-			*p = SysAllocString(string_wide_from_utf8_fast(val));
+			pfc::string8_fast str;
+			dlg.GetValue(str);
+			*p = SysAllocString(string_wide_from_utf8_fast(str));
 		}
 		else if (status == IDCANCEL)
 		{

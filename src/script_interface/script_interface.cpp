@@ -63,12 +63,11 @@ DropSourceAction::DropSourceAction()
 DropSourceAction::~DropSourceAction() {}
 void DropSourceAction::FinalRelease() {}
 
-
-STDMETHODIMP DropSourceAction::get_Effect(UINT* effect)
+STDMETHODIMP DropSourceAction::get_Effect(UINT* p)
 {
-	if (!effect) return E_POINTER;
+	if (!p) return E_POINTER;
 
-	*effect = m_effect;
+	*p = m_effect;
 	return S_OK;
 }
 
@@ -292,6 +291,7 @@ STDMETHODIMP GdiBitmap::Clone(float x, float y, float w, float h, IGdiBitmap** p
 {
 	if (!m_ptr || !pp) return E_POINTER;
 
+	*pp = NULL;
 	Gdiplus::Bitmap* img = m_ptr->Clone(x, y, w, h, PixelFormat32bppPARGB);
 	if (helpers::ensure_gdiplus_object(img))
 	{
@@ -300,7 +300,7 @@ STDMETHODIMP GdiBitmap::Clone(float x, float y, float w, float h, IGdiBitmap** p
 	else
 	{
 		if (img) delete img;
-		*pp = NULL;
+		img = NULL;
 	}
 
 	return S_OK;
@@ -1309,9 +1309,9 @@ STDMETHODIMP MenuObj::CheckMenuRadioItem(UINT first, UINT last, UINT selected)
 	return S_OK;
 }
 
-STDMETHODIMP MenuObj::TrackPopupMenu(int x, int y, UINT flags, UINT* item_id)
+STDMETHODIMP MenuObj::TrackPopupMenu(int x, int y, UINT flags, UINT* p)
 {
-	if (!m_hMenu || !item_id) return E_POINTER;
+	if (!m_hMenu || !p) return E_POINTER;
 
 	// Only include specified flags
 	flags |= TPM_NONOTIFY | TPM_RETURNCMD | TPM_RIGHTBUTTON;
@@ -1319,7 +1319,7 @@ STDMETHODIMP MenuObj::TrackPopupMenu(int x, int y, UINT flags, UINT* item_id)
 
 	POINT pt = { x, y };
 	ClientToScreen(m_wnd_parent, &pt);
-	*item_id = ::TrackPopupMenu(m_hMenu, flags, pt.x, pt.y, 0, m_wnd_parent, 0);
+	*p = ::TrackPopupMenu(m_hMenu, flags, pt.x, pt.y, 0, m_wnd_parent, 0);
 	return S_OK;
 }
 

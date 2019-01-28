@@ -5,7 +5,6 @@
 #include "window.h"
 
 Window::Window(host_comm* p) : m_host(p) {}
-
 Window::~Window() {}
 
 STDMETHODIMP Window::ClearInterval(UINT intervalID)
@@ -56,7 +55,7 @@ STDMETHODIMP Window::CreateTooltip(BSTR name, float pxSize, int style, ITooltip*
 {
 	if (!pp) return E_POINTER;
 
-	const auto & tooltip_param = m_host->PanelTooltipParam();
+	const auto& tooltip_param = m_host->PanelTooltipParam();
 	tooltip_param->font_name = name;
 	tooltip_param->font_size = pxSize;
 	tooltip_param->font_style = style;
@@ -147,14 +146,16 @@ STDMETHODIMP Window::GetProperty(BSTR name, VARIANT defaultval, VARIANT* p)
 	}
 
 	if (FAILED(hr))
+	{
 		p = NULL;
+	}
 
 	return S_OK;
 }
 
 STDMETHODIMP Window::NotifyOthers(BSTR name, VARIANT info)
 {
-	if (info.vt& VT_BYREF) return E_INVALIDARG;
+	if (info.vt & VT_BYREF) return E_INVALIDARG;
 
 	_variant_t var;
 	if (FAILED(VariantCopy(&var, &info))) return E_INVALIDARG;
@@ -305,7 +306,6 @@ STDMETHODIMP Window::get_Name(BSTR* p)
 	{
 		name << "id:" << m_host->m_script_info.id;
 	}
-
 	*p = SysAllocString(string_wide_from_utf8_fast(name));
 	return S_OK;
 }

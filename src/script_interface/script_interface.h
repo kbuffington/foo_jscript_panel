@@ -61,7 +61,7 @@ public:
 		m_effect = DROPEFFECT_NONE;
 	}
 
-	STDMETHODIMP get_Effect(UINT* effect);
+	STDMETHODIMP get_Effect(UINT* p);
 	STDMETHODIMP put_Base(UINT base);
 	STDMETHODIMP put_Effect(UINT effect);
 	STDMETHODIMP put_Playlist(UINT id);
@@ -150,6 +150,7 @@ public:
 		return E_NOTIMPL;
 	}
 
+	STDMETHODIMP put__ptr(void* p);
 	STDMETHODIMP CalcTextHeight(BSTR str, IGdiFont* font, UINT* p);
 	STDMETHODIMP CalcTextWidth(BSTR str, IGdiFont* font, UINT* p);
 	STDMETHODIMP DrawEllipse(float x, float y, float w, float h, float line_width, VARIANT colour);
@@ -172,7 +173,6 @@ public:
 	STDMETHODIMP SetInterpolationMode(int mode);
 	STDMETHODIMP SetSmoothingMode(int mode);
 	STDMETHODIMP SetTextRenderingHint(UINT mode);
-	STDMETHODIMP put__ptr(void* p);
 };
 
 class GdiRawBitmap : public IDisposableImpl4<IGdiRawBitmap>
@@ -186,7 +186,7 @@ protected:
 
 	HBITMAP m_hbmp, m_hbmpold;
 	HDC m_hdc;
-	t_size m_width, m_height;
+	t_size m_height, m_width;
 
 public:
 	STDMETHODIMP get__Handle(HDC* p);
@@ -247,7 +247,7 @@ public:
 	STDMETHODIMP AppendTo(IMenuObj* parent, UINT flags, BSTR text);
 	STDMETHODIMP CheckMenuItem(UINT item_id, VARIANT_BOOL check);
 	STDMETHODIMP CheckMenuRadioItem(UINT first, UINT last, UINT selected);
-	STDMETHODIMP TrackPopupMenu(int x, int y, UINT flags, UINT* item_id);
+	STDMETHODIMP TrackPopupMenu(int x, int y, UINT flags, UINT* p);
 };
 
 class MetadbHandle : public IDisposableImpl4<IMetadbHandle>
@@ -426,8 +426,8 @@ protected:
 	virtual void FinalRelease();
 
 	BSTR m_tip_buffer;
-	HWND m_wndtooltip;
 	HWND m_wndparent;
+	HWND m_wndtooltip;
 	TOOLINFO m_ti;
 	panel_tooltip_param_ptr m_panel_tooltip_param_ptr;
 

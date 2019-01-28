@@ -440,7 +440,7 @@ library foo_jscript_panel
 		uuid(91830eda-b5f2-4061-9923-7880192a2734)
 	]
 	interface IDropSourceAction : IDisposable {
-		[propget] HRESULT Effect([out, retval] UINT* effect);
+		[propget] HRESULT Effect([out, retval] UINT* p);
 		[propput] HRESULT Base([in] UINT base);
 		[propput] HRESULT Effect([in] UINT effect);
 		[propput] HRESULT Playlist([in] UINT id);
