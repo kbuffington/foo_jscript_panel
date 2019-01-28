@@ -170,8 +170,7 @@ STDMETHODIMP Utils::FormatDuration(double seconds, BSTR* p)
 {
 	if (!p) return E_POINTER;
 
-	pfc::string8_fast str;
-	str = pfc::format_time_ex(seconds, 0);
+	pfc::string8_fast str = pfc::format_time_ex(seconds, 0).get_ptr();
 	*p = SysAllocString(string_wide_from_utf8_fast(str));
 	return S_OK;
 }
@@ -180,8 +179,7 @@ STDMETHODIMP Utils::FormatFileSize(LONGLONG bytes, BSTR* p)
 {
 	if (!p) return E_POINTER;
 
-	pfc::string8_fast str;
-	str = pfc::format_file_size_short(bytes);
+	pfc::string8_fast str = pfc::format_file_size_short(bytes);
 	*p = SysAllocString(string_wide_from_utf8_fast(str));
 	return S_OK;
 }
@@ -472,9 +470,7 @@ STDMETHODIMP Utils::WriteTextFile(BSTR filename, BSTR content, VARIANT_BOOL writ
 	}
 	else
 	{
-		pfc::string8_fast filename8 = string_utf8_from_wide(filename).get_ptr();
-		pfc::string8_fast content8 = string_utf8_from_wide(content).get_ptr();
-		*p = TO_VARIANT_BOOL(helpers::write_file(filename8, content8, write_bom != VARIANT_FALSE));
+		*p = TO_VARIANT_BOOL(helpers::write_file(string_utf8_from_wide(filename).get_ptr(), string_utf8_from_wide(content).get_ptr(), write_bom != VARIANT_FALSE));
 	}
 	return S_OK;
 }

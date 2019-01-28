@@ -375,9 +375,9 @@ namespace helpers
 		return RegOpenKeyExW(HKEY_CLASSES_ROOT, L"CLSID\\{16d51579-a30b-4c8b-a276-0ff4dc41e755}", 0, KEY_READ, &hKey) == ERROR_SUCCESS;
 	}
 
-	bool write_file(const char* path, const pfc::string_base& content, bool write_bom)
+	bool write_file(const pfc::string8_fast& path, const pfc::string8_fast& content, bool write_bom)
 	{
-		int offset = write_bom ? 3 : 0;
+		t_size offset = write_bom ? 3 : 0;
 		HANDLE hFile = uCreateFile(path, GENERIC_READ | GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 
 		if (hFile == INVALID_HANDLE_VALUE)
@@ -407,7 +407,7 @@ namespace helpers
 			const BYTE utf8_bom[] = { 0xef, 0xbb, 0xbf };
 			memcpy(pAddr, utf8_bom, 3);
 		}
-		memcpy(pAddr + offset, content.get_ptr(), content.get_length());
+		memcpy(pAddr + offset, content, content.get_length());
 
 		UnmapViewOfFile(pAddr);
 		CloseHandle(hFileMapping);

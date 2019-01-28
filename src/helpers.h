@@ -32,7 +32,7 @@ namespace helpers
 	bool read_album_art_into_bitmap(const album_art_data_ptr& data, Gdiplus::Bitmap** bitmap);
 	bool read_file_wide(t_size codepage, const wchar_t* path, pfc::array_t<wchar_t>& content);
 	bool supports_chakra();
-	bool write_file(const char* path, const pfc::string_base& content, bool write_bom = false);
+	bool write_file(const pfc::string8_fast& path, const pfc::string8_fast& content, bool write_bom = false);
 	const GUID convert_artid_to_guid(t_size art_id);
 	int get_encoder_clsid(const wchar_t* format, CLSID* pClsid);
 	int get_text_height(HDC hdc, const wchar_t* text, int len);

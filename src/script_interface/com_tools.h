@@ -1,6 +1,8 @@
 #pragma once
 
 extern ITypeLibPtr g_typelib;
+struct IDisposable;
+struct IGdiObj;
 
 //-- IUnknown ---
 #define BEGIN_COM_QI_IMPL() \
@@ -118,9 +120,6 @@ protected:
 	IDispatchImpl3<T>() {}
 	virtual ~IDispatchImpl3<T>() {}
 };
-
-struct IDisposable;
-struct IGdiObj;
 
 //-- IDisposable impl -- [T] [IDisposable] [IDispatch] [IUnknown]
 template <class T>

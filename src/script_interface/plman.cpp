@@ -67,8 +67,8 @@ STDMETHODIMP Plman::CreateAutoPlaylist(UINT playlistIndex, BSTR name, BSTR query
 	if (!p) return E_POINTER;
 
 	search_filter_v2::ptr filter;
-	pfc::string8_fast uquery = string_utf8_from_wide(query).get_ptr();
-	pfc::string8_fast usort = string_utf8_from_wide(sort).get_ptr();
+	string_utf8_from_wide uquery(query);
+	string_utf8_from_wide usort(sort);
 
 	try
 	{
@@ -507,11 +507,11 @@ STDMETHODIMP Plman::SortByFormatV2(UINT playlistIndex, BSTR pattern, int directi
 	pfc::array_t<t_size> order;
 	order.set_count(handles.get_count());
 
-	titleformat_object::ptr script;
-	string_utf8_from_wide upattern(pattern);
-	titleformat_compiler::get()->compile_safe(script, upattern);
+	titleformat_object::ptr obj;
+	titleformat_compiler::get()->compile_safe(obj, string_utf8_from_wide(pattern));
+	abort_callback_dummy abort;
 
-	metadb_handle_list_helper::sort_by_format_get_order(handles, order.get_ptr(), script, NULL, direction);
+	metadb_handle_list_helper::sort_by_format_get_order_v2(handles, order.get_ptr(), obj, NULL, direction, abort);
 
 	*p = TO_VARIANT_BOOL(api->playlist_reorder_items(playlistIndex, order.get_ptr(), order.get_count()));
 	return S_OK;
