@@ -625,11 +625,6 @@ namespace helpers
 		return codepage;
 	}
 
-	t_size get_colour_from_variant(VARIANT v)
-	{
-		return (v.vt == VT_R8) ? static_cast<t_size>(v.dblVal) : v.lVal;
-	}
-
 	void estimate_line_wrap(HDC hdc, const wchar_t* text, int len, int width, pfc::list_t<wrapped_item>& out)
 	{
 		for (;;)

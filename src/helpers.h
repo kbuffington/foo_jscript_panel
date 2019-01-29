@@ -44,7 +44,6 @@ namespace helpers
 	pfc::string8_fast iterator_to_string(json::iterator j);
 	pfc::string8_fast read_file(const char* path);
 	t_size detect_charset(const char* fileName);
-	t_size get_colour_from_variant(VARIANT v);
 	void estimate_line_wrap(HDC hdc, const wchar_t* text, int len, int width, pfc::list_t<wrapped_item>& out);
 	void estimate_line_wrap_recur(HDC hdc, const wchar_t* text, int len, int width, pfc::list_t<wrapped_item>& out);
 	void list(const char* path, bool files, bool recur, pfc::string_list_impl& out);

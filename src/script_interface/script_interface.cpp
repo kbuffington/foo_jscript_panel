@@ -668,11 +668,11 @@ STDMETHODIMP GdiGraphics::CalcTextWidth(BSTR str, IGdiFont* font, UINT* p)
 	return S_OK;
 }
 
-STDMETHODIMP GdiGraphics::DrawEllipse(float x, float y, float w, float h, float line_width, VARIANT colour)
+STDMETHODIMP GdiGraphics::DrawEllipse(float x, float y, float w, float h, float line_width, LONGLONG colour)
 {
 	if (!m_ptr) return E_POINTER;
 
-	Gdiplus::Pen pen(helpers::get_colour_from_variant(colour), line_width);
+	Gdiplus::Pen pen(static_cast<t_size>(colour), line_width);
 	m_ptr->DrawEllipse(&pen, x, y, w, h);
 	return S_OK;
 }
@@ -723,16 +723,16 @@ STDMETHODIMP GdiGraphics::DrawImage(IGdiBitmap* image, float dstX, float dstY, f
 	return S_OK;
 }
 
-STDMETHODIMP GdiGraphics::DrawLine(float x1, float y1, float x2, float y2, float line_width, VARIANT colour)
+STDMETHODIMP GdiGraphics::DrawLine(float x1, float y1, float x2, float y2, float line_width, LONGLONG colour)
 {
 	if (!m_ptr) return E_POINTER;
 
-	Gdiplus::Pen pen(helpers::get_colour_from_variant(colour), line_width);
+	Gdiplus::Pen pen(static_cast<t_size>(colour), line_width);
 	m_ptr->DrawLine(&pen, x1, y1, x2, y2);
 	return S_OK;
 }
 
-STDMETHODIMP GdiGraphics::DrawPolygon(VARIANT colour, float line_width, VARIANT points)
+STDMETHODIMP GdiGraphics::DrawPolygon(LONGLONG colour, float line_width, VARIANT points)
 {
 	if (!m_ptr) return E_POINTER;
 
@@ -754,27 +754,27 @@ STDMETHODIMP GdiGraphics::DrawPolygon(VARIANT colour, float line_width, VARIANT 
 		point_array[i] = { varX.fltVal, varY.fltVal };
 	}
 
-	Gdiplus::Pen pen(helpers::get_colour_from_variant(colour), line_width);
+	Gdiplus::Pen pen(static_cast<t_size>(colour), line_width);
 	m_ptr->DrawPolygon(&pen, point_array.get_ptr(), point_array.get_count());
 	return S_OK;
 }
 
-STDMETHODIMP GdiGraphics::DrawRect(float x, float y, float w, float h, float line_width, VARIANT colour)
+STDMETHODIMP GdiGraphics::DrawRect(float x, float y, float w, float h, float line_width, LONGLONG colour)
 {
 	if (!m_ptr) return E_POINTER;
 
-	Gdiplus::Pen pen(helpers::get_colour_from_variant(colour), line_width);
+	Gdiplus::Pen pen(static_cast<t_size>(colour), line_width);
 	m_ptr->DrawRectangle(&pen, x, y, w, h);
 	return S_OK;
 }
 
-STDMETHODIMP GdiGraphics::DrawRoundRect(float x, float y, float w, float h, float arc_width, float arc_height, float line_width, VARIANT colour)
+STDMETHODIMP GdiGraphics::DrawRoundRect(float x, float y, float w, float h, float arc_width, float arc_height, float line_width, LONGLONG colour)
 {
 	if (!m_ptr) return E_POINTER;
 
 	if (2 * arc_width > w || 2 * arc_height > h) return E_INVALIDARG;
 
-	Gdiplus::Pen pen(helpers::get_colour_from_variant(colour), line_width);
+	Gdiplus::Pen pen(static_cast<t_size>(colour), line_width);
 	Gdiplus::GraphicsPath gp;
 	Gdiplus::RectF rect(x, y, w, h);
 	GetRoundRectPath(gp, rect, arc_width, arc_height);
@@ -784,13 +784,13 @@ STDMETHODIMP GdiGraphics::DrawRoundRect(float x, float y, float w, float h, floa
 	return S_OK;
 }
 
-STDMETHODIMP GdiGraphics::DrawString(BSTR str, IGdiFont* font, VARIANT colour, float x, float y, float w, float h, int flags)
+STDMETHODIMP GdiGraphics::DrawString(BSTR str, IGdiFont* font, LONGLONG colour, float x, float y, float w, float h, int flags)
 {
 	if (!m_ptr) return E_POINTER;
 
 	Gdiplus::Font* fn = NULL;
 	font->get__ptr((void**)&fn);
-	Gdiplus::SolidBrush br(helpers::get_colour_from_variant(colour));
+	Gdiplus::SolidBrush br(static_cast<t_size>(colour));
 	Gdiplus::StringFormat fmt(Gdiplus::StringFormat::GenericTypographic());
 
 	if (flags != 0)
@@ -837,27 +837,27 @@ STDMETHODIMP GdiGraphics::EstimateLineWrap(BSTR str, IGdiFont* font, int max_wid
 	return S_OK;
 }
 
-STDMETHODIMP GdiGraphics::FillEllipse(float x, float y, float w, float h, VARIANT colour)
+STDMETHODIMP GdiGraphics::FillEllipse(float x, float y, float w, float h, LONGLONG colour)
 {
 	if (!m_ptr) return E_POINTER;
 
-	Gdiplus::SolidBrush br(helpers::get_colour_from_variant(colour));
+	Gdiplus::SolidBrush br(static_cast<t_size>(colour));
 	m_ptr->FillEllipse(&br, x, y, w, h);
 	return S_OK;
 }
 
-STDMETHODIMP GdiGraphics::FillGradRect(float x, float y, float w, float h, float angle, VARIANT colour1, VARIANT colour2, float focus)
+STDMETHODIMP GdiGraphics::FillGradRect(float x, float y, float w, float h, float angle, LONGLONG colour1, LONGLONG colour2, float focus)
 {
 	if (!m_ptr) return E_POINTER;
 
 	Gdiplus::RectF rect(x, y, w, h);
-	Gdiplus::LinearGradientBrush brush(rect, helpers::get_colour_from_variant(colour1), helpers::get_colour_from_variant(colour2), angle, TRUE);
+	Gdiplus::LinearGradientBrush brush(rect, static_cast<t_size>(colour1), static_cast<t_size>(colour2), angle, TRUE);
 	brush.SetBlendTriangularShape(focus);
 	m_ptr->FillRectangle(&brush, rect);
 	return S_OK;
 }
 
-STDMETHODIMP GdiGraphics::FillPolygon(VARIANT colour, int fillmode, VARIANT points)
+STDMETHODIMP GdiGraphics::FillPolygon(LONGLONG colour, int fillmode, VARIANT points)
 {
 	if (!m_ptr) return E_POINTER;
 
@@ -879,18 +879,18 @@ STDMETHODIMP GdiGraphics::FillPolygon(VARIANT colour, int fillmode, VARIANT poin
 		point_array[i] = { varX.fltVal, varY.fltVal };
 	}
 
-	Gdiplus::SolidBrush br(helpers::get_colour_from_variant(colour));
+	Gdiplus::SolidBrush br(static_cast<t_size>(colour));
 	m_ptr->FillPolygon(&br, point_array.get_ptr(), point_array.get_count(), (Gdiplus::FillMode)fillmode);
 	return S_OK;
 }
 
-STDMETHODIMP GdiGraphics::FillRoundRect(float x, float y, float w, float h, float arc_width, float arc_height, VARIANT colour)
+STDMETHODIMP GdiGraphics::FillRoundRect(float x, float y, float w, float h, float arc_width, float arc_height, LONGLONG colour)
 {
 	if (!m_ptr) return E_POINTER;
 
 	if (2 * arc_width > w || 2 * arc_height > h) return E_INVALIDARG;
 
-	Gdiplus::SolidBrush br(helpers::get_colour_from_variant(colour));
+	Gdiplus::SolidBrush br(static_cast<t_size>(colour));
 	Gdiplus::GraphicsPath gp;
 	Gdiplus::RectF rect(x, y, w, h);
 	GetRoundRectPath(gp, rect, arc_width, arc_height);
@@ -898,11 +898,11 @@ STDMETHODIMP GdiGraphics::FillRoundRect(float x, float y, float w, float h, floa
 	return S_OK;
 }
 
-STDMETHODIMP GdiGraphics::FillSolidRect(float x, float y, float w, float h, VARIANT colour)
+STDMETHODIMP GdiGraphics::FillSolidRect(float x, float y, float w, float h, LONGLONG colour)
 {
 	if (!m_ptr) return E_POINTER;
 
-	Gdiplus::SolidBrush brush(helpers::get_colour_from_variant(colour));
+	Gdiplus::SolidBrush brush(static_cast<t_size>(colour));
 	m_ptr->FillRectangle(&brush, x, y, w, h);
 	return S_OK;
 }
@@ -944,7 +944,7 @@ STDMETHODIMP GdiGraphics::GdiDrawBitmap(IGdiRawBitmap* bitmap, int dstX, int dst
 	return S_OK;
 }
 
-STDMETHODIMP GdiGraphics::GdiDrawText(BSTR str, IGdiFont* font, VARIANT colour, int x, int y, int w, int h, int format)
+STDMETHODIMP GdiGraphics::GdiDrawText(BSTR str, IGdiFont* font, LONGLONG colour, int x, int y, int w, int h, int format)
 {
 	if (!m_ptr) return E_POINTER;
 
@@ -956,7 +956,7 @@ STDMETHODIMP GdiGraphics::GdiDrawText(BSTR str, IGdiFont* font, VARIANT colour, 
 	DRAWTEXTPARAMS dpt = { sizeof(DRAWTEXTPARAMS), 4, 0, 0, 0 };
 
 	oldfont = SelectFont(dc, hFont);
-	SetTextColor(dc, helpers::convert_argb_to_colorref(helpers::get_colour_from_variant(colour)));
+	SetTextColor(dc, helpers::convert_argb_to_colorref(static_cast<t_size>(colour)));
 	SetBkMode(dc, TRANSPARENT);
 	SetTextAlign(dc, TA_LEFT | TA_TOP | TA_NOUPDATECP);
 
