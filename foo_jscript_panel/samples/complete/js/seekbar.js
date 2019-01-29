@@ -10,7 +10,7 @@ _.mixin({
 		
 		this.trace = function (x, y) {
 			var m = this.drag ? 200 : 0;
-			return x > this.x - m && x < this.x + this.w + m && y > this.y - m && y < this.y + this.h + m;
+			return x > this.x - m && x < this.x + this.w + (m * 2) && y > this.y - m && y < this.y + this.h + (m * 2);
 		}
 		
 		this.wheel = function (s) {
