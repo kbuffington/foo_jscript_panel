@@ -1,20 +1,9 @@
 #include "stdafx.h"
 #include "host_timer_dispatcher.h"
 
-host_timer::host_timer(HWND hWnd, t_size id, t_size delay, bool isRepeated)
-{
-	m_hTimer = 0;
+#include <vector>
 
-	m_hWnd = hWnd;
-	m_delay = delay;
-	m_isRepeated = isRepeated;
-	m_id = id;
-
-	m_isStopRequested = false;
-	m_isStopped = false;
-}
-
-host_timer::~host_timer() {}
+host_timer::host_timer(HWND hWnd, t_size id, t_size delay, bool isRepeated) : m_hWnd(hWnd), m_delay(delay), m_isRepeated(isRepeated), m_id(id) {}
 
 HANDLE host_timer::GetHandle() const
 {
@@ -72,63 +61,27 @@ void host_timer::stop()
 	m_isStopRequested = true;
 }
 
-host_timer_task::host_timer_task(IDispatch* pDisp, t_size timerId)
-{
-	m_pDisp = pDisp;
-	m_timerId = timerId;
-
-	m_refCount = 0;
-	m_pDisp->AddRef();
-}
-
-host_timer_task::~host_timer_task()
-{
-	m_pDisp->Release();
-}
-
-void host_timer_task::acquire()
-{
-	++m_refCount;
-}
+host_timer_task::host_timer_task(IDispatch* pDisp, t_size timerId) : m_pDisp(pDisp, true), m_timerId(timerId) {}
 
 void host_timer_task::invoke()
 {
-	acquire();
-
 	VARIANTARG args[1];
 	args[0].vt = VT_I4;
 	args[0].lVal = m_timerId;
 	DISPPARAMS dispParams = { args, NULL, _countof(args), 0 };
 	m_pDisp->Invoke(DISPID_VALUE, IID_NULL, LOCALE_USER_DEFAULT, DISPATCH_METHOD, &dispParams, NULL, NULL, NULL);
-
-	release();
-}
-
-void host_timer_task::release()
-{
-	if (!m_refCount)
-	{
-		return;
-	}
-
-	--m_refCount;
-	if (!m_refCount)
-	{
-		host_timer_dispatcher::instance().onTaskComplete(m_timerId);
-	}
 }
 
 host_timer_dispatcher::host_timer_dispatcher()
 {
 	m_curTimerId = 1;
 	m_hTimerQueue = CreateTimerQueue();
+	createThread();
 }
 
 host_timer_dispatcher::~host_timer_dispatcher()
 {
 	stopThread();
-	// Clear all references
-	m_taskMap.clear();
 }
 
 host_timer_dispatcher& host_timer_dispatcher::instance()
@@ -147,20 +100,16 @@ t_size host_timer_dispatcher::createTimer(HWND hWnd, t_size delay, bool isRepeat
 	std::lock_guard<std::mutex> lock(m_timerMutex);
 
 	t_size id = m_curTimerId++;
-	while (m_taskMap.end() != m_taskMap.find(id) && m_timerMap.end() != m_timerMap.find(id))
+	while (m_timerMap.count(id))
 	{
 		id = m_curTimerId++;
 	}
 
-	m_timerMap.emplace(id, new host_timer(hWnd, id, delay, isRepeated));
+	m_timerMap.emplace(id, std::make_unique<TimerObject>(std::make_unique<host_timer>(hWnd, id, delay, isRepeated), std::make_unique<host_timer_task>(pDisp, id)));
 
-	auto curTask = m_taskMap.emplace(id, new host_timer_task(pDisp, id));
-	curTask.first->second->acquire();
-
-	if (!m_timerMap[id]->start(m_hTimerQueue))
+	if (!m_timerMap[id]->timer->start(m_hTimerQueue))
 	{
 		m_timerMap.erase(id);
-		m_taskMap.erase(id);
 		return 0;
 	}
 
@@ -179,45 +128,48 @@ t_size host_timer_dispatcher::setTimeout(HWND hWnd, t_size delay, IDispatch* pDi
 
 void host_timer_dispatcher::createThread()
 {
-	m_thread = new std::thread(&host_timer_dispatcher::threadMain, this);
+	m_thread = std::make_unique<std::thread>(&host_timer_dispatcher::threadMain, this);
 }
 
 void host_timer_dispatcher::killTimer(t_size timerId)
 {
-	{
-		std::lock_guard<std::mutex> lock(m_timerMutex);
+	std::lock_guard<std::mutex> lock(m_timerMutex);
 
-		auto timerIter = m_timerMap.find(timerId);
-		if (m_timerMap.end() != timerIter)
-		{
-			timerIter->second->stop();
-		}
-	}
-
-	auto taskIter = m_taskMap.find(timerId);
-	if (m_taskMap.end() != taskIter)
+	auto it = m_timerMap.find(timerId);
+	if (m_timerMap.end() != it)
 	{
-		taskIter->second->release();
+		it->second->timer->stop();
 	}
 }
 
 void host_timer_dispatcher::onInvokeMessage(t_size timerId)
 {
-	if (m_taskMap.end() != m_taskMap.find(timerId))
+	std::shared_ptr<host_timer_task> task;
 	{
-		m_taskMap[timerId]->invoke();
+		std::lock_guard<std::mutex> lock(m_timerMutex);
+
+		if (m_timerMap.count(timerId))
+		{
+			task = m_timerMap[timerId]->task;
+		}
+	}
+
+	if (task)
+	{
+		task->invoke();
 	}
 }
 
 void host_timer_dispatcher::onPanelUnload(HWND hWnd)
 {
-	std::list<t_size> timersToDelete;
+	std::vector<t_size> timersToDelete;
 
 	{
 		std::lock_guard<std::mutex> lock(m_timerMutex);
+
 		for (const auto& elem : m_timerMap)
 		{
-			if (elem.second->GetHwnd() == hWnd)
+			if (elem.second->timer->GetHwnd() == hWnd)
 			{
 				timersToDelete.push_back(elem.first);
 			}
@@ -227,14 +179,6 @@ void host_timer_dispatcher::onPanelUnload(HWND hWnd)
 	for (auto timerId : timersToDelete)
 	{
 		killTimer(timerId);
-	}
-}
-
-void host_timer_dispatcher::onTaskComplete(t_size timerId)
-{
-	if (m_taskMap.end() != m_taskMap.find(timerId))
-	{
-		m_taskMap.erase(timerId);
 	}
 }
 
@@ -250,7 +194,7 @@ void host_timer_dispatcher::onTimerStopRequest(HWND hWnd, HANDLE hTimer, t_size 
 	std::unique_lock<std::mutex> lock(m_threadTaskMutex);
 
 	ThreadTask threadTask = {};
-	threadTask.taskId = killTimerTask;
+	threadTask.taskId = ThreadTaskId::killTimerTask;
 	threadTask.hWnd = hWnd;
 	threadTask.hTimer = hTimer;
 	threadTask.timerId = timerId;
@@ -269,7 +213,7 @@ void host_timer_dispatcher::stopThread()
 	{
 		std::lock_guard<std::mutex> lock(m_threadTaskMutex);
 		ThreadTask threadTask = {};
-		threadTask.taskId = shutdownTask;
+		threadTask.taskId = ThreadTaskId::shutdownTask;
 
 		m_threadTaskList.push_front(threadTask);
 		m_cv.notify_one();
@@ -280,8 +224,7 @@ void host_timer_dispatcher::stopThread()
 		m_thread->join();
 	}
 
-	delete m_thread;
-	m_thread = NULL;
+	m_thread.reset();
 }
 
 void host_timer_dispatcher::threadMain()
@@ -308,11 +251,11 @@ void host_timer_dispatcher::threadMain()
 
 		switch (threadTask.taskId)
 		{
-		case killTimerTask:
+		case ThreadTaskId::killTimerTask:
 			DeleteTimerQueueTimer(m_hTimerQueue, threadTask.hTimer, INVALID_HANDLE_VALUE);
 			onTimerExpire(threadTask.timerId);
 			break;
-		case shutdownTask:
+		case ThreadTaskId::shutdownTask:
 			DeleteTimerQueueEx(m_hTimerQueue, INVALID_HANDLE_VALUE);
 			m_hTimerQueue = NULL;
 			return;
