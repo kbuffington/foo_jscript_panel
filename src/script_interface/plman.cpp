@@ -145,7 +145,7 @@ STDMETHODIMP Plman::EnsurePlaylistItemVisible(UINT playlistIndex, UINT playlistI
 	auto api = playlist_manager::get();
 	if (playlistIndex < api->get_playlist_count() && playlistItemIndex < api->playlist_get_item_count(playlistIndex))
 	{
-		playlist_manager::get()->playlist_ensure_visible(playlistIndex, playlistItemIndex);
+		api->playlist_ensure_visible(playlistIndex, playlistItemIndex);
 		return S_OK;
 	}
 	return E_INVALIDARG;

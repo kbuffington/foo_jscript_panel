@@ -8,7 +8,7 @@ v2.2.0
 - FIX: (Beta5) Restore Windows XP support which was broken in Beta1 to Beta4.
 - CHG: Remove window.DlgCode. The docs were wrong, behaviour was inconsistent between
        Default UI and Columns UI and it's just not needed. Support for all keys will be
-       enabled if you check "Grab focus" in the Configuration Window. All instances
+       enabled if you check "Grab focus" in the "Configuration Window". All instances
        will need removing from scripts. If you want to support this and older components
        with the same script, do something like:
 
@@ -17,7 +17,7 @@ v2.2.0
        have all been rewritten and must be supplied with the full path to their commands.
        Case is not important. You should use forward slashes with no spaces. eg:
        fb.RunMainMenuCommand("Library/Search");
-- CHG: All files imported to the Configuration Window, Preferences>Tools or
+- CHG: All files imported to the "Configuration Window", Preferences>Tools or
        included in a script via the "import" preprocessor directive must be
        UTF8 encoded (with or without BOM). utils.ReadTextFile is unaffected although
        it should have better UTF8 detection than before.
@@ -261,7 +261,7 @@ v1.3.2.1
 
 v1.3.2
 - FIX: Improved handling of utf8 files without BOM. This affects files loaded
-       via the PREPROCESSOR section and the Configuration window>Tools>Import button.
+       via the PREPROCESSOR section and the "Configuration Window>Tools>Import" button.
        They should now be treated the same as files with BOM.
 
 v1.3.1
@@ -360,7 +360,7 @@ v1.2.0
        The newer Chakra engine is always used if available but will fall back to
        JScript if not.
 - NEW: utils.version reports the component version. See docs\interfaces.txt.
-- CHG: Minor tweaks to Configuration window.
+- CHG: Minor tweaks to "Configuration Window".
 - FIX: Update "JSPlaylist" so it works with Chakra engine. Thanks to zeremy
        for reporting
 - FIX: A previous window.RepaintRect bug reported by Wilb has now been fixed.
