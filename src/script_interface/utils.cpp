@@ -80,24 +80,22 @@ STDMETHODIMP Utils::FileTest(BSTR path, BSTR mode, VARIANT* p)
 {
 	if (!p) return E_POINTER;
 
-	if (wcscmp(mode, L"e") == 0) // exists
+	if (wcscmp(mode, L"e") == 0)
 	{
 		p->vt = VT_BOOL;
 		p->boolVal = TO_VARIANT_BOOL(PathFileExists(path));
 	}
 	else if (wcscmp(mode, L"s") == 0)
 	{
-		HANDLE fh = CreateFile(path, GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, 0, 0);
-		LARGE_INTEGER size = { 0 };
-
-		if (fh != INVALID_HANDLE_VALUE)
+		WIN32_FILE_ATTRIBUTE_DATA data;
+		t_filesize size = 0;
+		if (GetFileAttributesEx(path, GetFileExInfoStandard, &data) && !(data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
 		{
-			GetFileSizeEx(fh, &size);
-			CloseHandle(fh);
+			size = (t_filesize)data.nFileSizeHigh << 32 | data.nFileSizeLow;
 		}
 
 		p->vt = VT_I8;
-		p->llVal = size.QuadPart;
+		p->llVal = size;
 	}
 	else if (wcscmp(mode, L"d") == 0)
 	{
