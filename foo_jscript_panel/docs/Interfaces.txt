@@ -992,7 +992,7 @@ interface IUtils {
 		utils.CheckComponent(name[, is_dll]); (boolean)
 		/*
 		is_dll: boolean, default true.
-		If true, method checks filename as well as the internal name.
+		If true, method checks filename instead of the internal name.
 
 		Example:
 		console.log(utils.CheckComponent("foo_playcount", true));
