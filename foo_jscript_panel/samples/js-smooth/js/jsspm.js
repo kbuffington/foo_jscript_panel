@@ -1716,7 +1716,6 @@ var g_dragndrop_targetPlaylistId = -1;
 //
 var ww = 0, wh = 0;
 var g_metadb = null;
-var foo_playcount = utils.CheckComponent("foo_playcount", true);
 clipboard = {
 	selection: null
 };

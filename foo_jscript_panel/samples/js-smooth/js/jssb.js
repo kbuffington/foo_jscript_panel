@@ -3035,7 +3035,6 @@ var g_font_wingdings2_found = utils.CheckFont("wingdings 2");
 //
 var ww = 0, wh = 0;
 var g_metadb = null;
-var foo_playcount = utils.CheckComponent("foo_playcount", true);
 clipboard = {
 	selection: null
 };

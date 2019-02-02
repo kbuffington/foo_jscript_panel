@@ -75,7 +75,7 @@ var g_z16 = 0;
 var ww = 0, wh = 0;
 var mouse_x = 0, mouse_y = 0;
 var g_metadb;
-var foo_playcount = utils.CheckComponent("foo_playcount", true);
+var foo_playcount = utils.CheckComponent("foo_playcount");
 clipboard = {
 	selection: null
 };
@@ -671,7 +671,6 @@ function reset_cover_timers() {
 
 //=================================================// WSH Statistics update function
 function update_statistics() {
-	var foo_playcount = utils.CheckComponent("foo_playcount", true);
 	if (opt_stats && !foo_playcount && cStats.waiting_for_writing && cStats.handle) {
 		var d;
 		var timestamp;

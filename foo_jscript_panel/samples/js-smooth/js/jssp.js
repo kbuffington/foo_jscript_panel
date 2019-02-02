@@ -3176,7 +3176,7 @@ var ww = 0, wh = 0;
 var g_metadb = null;
 var g_selHolder = fb.AcquireUiSelectionHolder();
 g_selHolder.SetPlaylistSelectionTracking();
-var foo_playcount = utils.CheckComponent("foo_playcount", true);
+var foo_playcount = utils.CheckComponent("foo_playcount");
 // wallpaper infos
 var wpp_img_info = {
 	orient: 0,

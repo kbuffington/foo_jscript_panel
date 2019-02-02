@@ -995,7 +995,7 @@ interface IUtils {
 		If true, method checks filename instead of the internal name.
 
 		Example:
-		console.log(utils.CheckComponent("foo_playcount", true));
+		console.log(utils.CheckComponent("foo_playcount"));
 		*/
 
 		utils.CheckFont(name); (boolean)
