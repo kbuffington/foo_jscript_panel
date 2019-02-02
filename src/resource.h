@@ -80,5 +80,5 @@
 #define ID_DOCS_BEGIN                   400
 #define ID_DOCS_END                     499
 
-#define ID_HELP_BEGIN                   500
-#define ID_HELP_END                     599
+#define ID_LINKS_BEGIN                  500
+#define ID_LINKS_END                    599

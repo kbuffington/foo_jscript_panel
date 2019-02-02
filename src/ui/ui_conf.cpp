@@ -68,12 +68,12 @@ BOOL CDialogConf::OnInitDialog(HWND hwndFocus, LPARAM lParam)
 
 	m_menu.AppendMenu(MF_STRING | MF_POPUP, (UINT_PTR)docs, L"Docs");
 
-	// Generate help menu
-	HMENU help = CreateMenu();
-	uAppendMenu(help, MF_STRING, ID_HELP_BEGIN, "Wiki");
-	uAppendMenu(help, MF_STRING, ID_HELP_BEGIN + 1, "Releases");
-	uAppendMenu(help, MF_STRING, ID_HELP_BEGIN + 2, "Report an issue");
-	m_menu.AppendMenu(MF_STRING | MF_POPUP, (UINT_PTR)help , L"Help");
+	// Generate links menu
+	HMENU links = CreateMenu();
+	uAppendMenu(links, MF_STRING, ID_LINKS_BEGIN, "Wiki");
+	uAppendMenu(links, MF_STRING, ID_LINKS_BEGIN + 1, "Releases");
+	uAppendMenu(links, MF_STRING, ID_LINKS_BEGIN + 2, "Report an issue");
+	m_menu.AppendMenu(MF_STRING | MF_POPUP, (UINT_PTR)links , L"Links");
 
 	// Set caption text
 	uSetWindowText(m_hWnd, m_caption);
@@ -224,7 +224,7 @@ LRESULT CDialogConf::OnFileExport(WORD wNotifyCode, WORD wID, HWND hWndCtl)
 	return 0;
 }
 
-LRESULT CDialogConf::OnHelp(WORD wNotifyCode, WORD wID, HWND hWndCtl)
+LRESULT CDialogConf::OnLinks(WORD wNotifyCode, WORD wID, HWND hWndCtl)
 {
 	const wchar_t* links[] = {
 		L"https://github.com/marc2k3/foo_jscript_panel/wiki",
@@ -232,7 +232,7 @@ LRESULT CDialogConf::OnHelp(WORD wNotifyCode, WORD wID, HWND hWndCtl)
 		L"https://github.com/marc2k3/foo_jscript_panel/issues"
 	};
 
-	ShellExecute(NULL, L"open", links[wID - ID_HELP_BEGIN], NULL, NULL, SW_SHOW);
+	ShellExecute(NULL, L"open", links[wID - ID_LINKS_BEGIN], NULL, NULL, SW_SHOW);
 	return 0;
 }
 
