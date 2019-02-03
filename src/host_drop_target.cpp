@@ -3,6 +3,188 @@
 #include "host_drop_target.h"
 #include "js_panel_window.h"
 
+IDropSourceImpl::IDropSourceImpl() : m_refCount(0), m_dwLastEffect(DROPEFFECT_NONE) {}
+IDropSourceImpl::~IDropSourceImpl() {}
+
+STDMETHODIMP IDropSourceImpl::GiveFeedback(DWORD dwEffect)
+{
+	m_dwLastEffect = dwEffect;
+	return DRAGDROP_S_USEDEFAULTCURSORS;
+}
+
+STDMETHODIMP IDropSourceImpl::QueryContinueDrag(BOOL fEscapePressed, DWORD grfKeyState)
+{
+	if (fEscapePressed || (grfKeyState & MK_RBUTTON) || (grfKeyState & MK_MBUTTON))
+	{
+		return DRAGDROP_S_CANCEL;
+	}
+
+	if (!(grfKeyState & MK_LBUTTON))
+	{
+		return m_dwLastEffect == DROPEFFECT_NONE ? DRAGDROP_S_CANCEL : DRAGDROP_S_DROP;
+	}
+
+	return S_OK;
+}
+
+ULONG STDMETHODCALLTYPE IDropSourceImpl::AddRef()
+{
+	return InterlockedIncrement(&m_refCount);
+}
+
+ULONG STDMETHODCALLTYPE IDropSourceImpl::Release()
+{
+	LONG rv = InterlockedDecrement(&m_refCount);
+	if (!rv)
+	{
+		delete this;
+	}
+	return rv;
+}
+
+IDropTargetImpl::IDropTargetImpl(HWND hWnd) : m_hWnd(hWnd)
+{
+	CoCreateInstance(CLSID_DragDropHelper, NULL, CLSCTX_INPROC_SERVER, IID_IDropTargetHelper, (LPVOID*)&m_dropTargetHelper);
+}
+
+IDropTargetImpl::~IDropTargetImpl()
+{
+	RevokeDragDrop();
+}
+
+HRESULT IDropTargetImpl::OnDragEnter(IDataObject* pDataObj, DWORD grfKeyState, POINTL pt, DWORD* pdwEffect)
+{
+	return S_OK;
+}
+
+HRESULT IDropTargetImpl::OnDragLeave()
+{
+	return S_OK;
+}
+
+HRESULT IDropTargetImpl::OnDragOver(DWORD grfKeyState, POINTL pt, DWORD* pdwEffect)
+{
+	return S_OK;
+}
+
+HRESULT IDropTargetImpl::OnDrop(IDataObject* pDataObj, DWORD grfKeyState, POINTL pt, DWORD* pdwEffect)
+{
+	return S_OK;
+}
+
+HRESULT IDropTargetImpl::RegisterDragDrop()
+{
+	return ::RegisterDragDrop(m_hWnd, this);
+}
+
+HRESULT IDropTargetImpl::RevokeDragDrop()
+{
+	return ::RevokeDragDrop(m_hWnd);
+}
+
+HWND IDropTargetImpl::GetHWND()
+{
+	return m_hWnd;
+}
+
+STDMETHODIMP IDropTargetImpl::DragEnter(IDataObject* pDataObj, DWORD grfKeyState, POINTL pt, DWORD* pdwEffect)
+{
+	if (pDataObj == NULL) return E_FAIL;
+	if (pdwEffect == NULL) return E_POINTER;
+
+	HRESULT hr = S_OK;
+	try
+	{
+		if (m_dropTargetHelper)
+		{
+			POINT point = { pt.x, pt.y };
+			m_dropTargetHelper->DragEnter(m_hWnd, pDataObj, &point, *pdwEffect);
+		}
+
+		hr = OnDragEnter(pDataObj, grfKeyState, pt, pdwEffect);
+		if (FAILED(hr)) return hr;
+	}
+	catch (...)
+	{
+		return E_FAIL;
+	}
+	return hr;
+}
+
+STDMETHODIMP IDropTargetImpl::DragLeave()
+{
+	HRESULT hr = S_OK;
+
+	try
+	{
+		if (m_dropTargetHelper)
+		{
+			m_dropTargetHelper->DragLeave();
+		}
+
+		hr = OnDragLeave();
+		if (FAILED(hr)) return hr;
+	}
+	catch (...)
+	{
+		return E_FAIL;
+	}
+	return hr;
+}
+
+STDMETHODIMP IDropTargetImpl::DragOver(DWORD grfKeyState, POINTL pt, DWORD* pdwEffect)
+{
+	if (pdwEffect == NULL) return E_POINTER;
+
+	HRESULT hr = S_OK;
+	try
+	{
+		if (m_dropTargetHelper)
+		{
+			POINT point = { pt.x, pt.y };
+			m_dropTargetHelper->DragOver(&point, *pdwEffect);
+		}
+
+		hr = OnDragOver(grfKeyState, pt, pdwEffect);
+		if (FAILED(hr)) return hr;
+	}
+	catch (...)
+	{
+		return E_FAIL;
+	}
+	return hr;
+}
+
+STDMETHODIMP IDropTargetImpl::Drop(IDataObject* pDataObj, DWORD grfKeyState, POINTL pt, DWORD* pdwEffect)
+{
+	HRESULT hr = S_OK;
+
+	if (pDataObj == NULL) return E_FAIL;
+	if (pdwEffect == NULL) return E_POINTER;
+
+	try
+	{
+		if (m_dropTargetHelper)
+		{
+			POINT point = { pt.x, pt.y };
+			m_dropTargetHelper->Drop(pDataObj, &point, *pdwEffect);
+		}
+
+		hr = OnDrop(pDataObj, grfKeyState, pt, pdwEffect);
+		if (FAILED(hr)) return hr;
+	}
+	catch (...)
+	{
+		return E_FAIL;
+	}
+	return hr;
+}
+
+void IDropTargetImpl::SetHWND(HWND hWnd)
+{
+	m_hWnd = hWnd;
+}
+
 host_drop_target::host_drop_target(js_panel_window* host) : IDropTargetImpl(host->GetHWND()), m_host(host), m_action(new com_object_impl_t<DropSourceAction, true>()) {}
 
 host_drop_target::~host_drop_target()
