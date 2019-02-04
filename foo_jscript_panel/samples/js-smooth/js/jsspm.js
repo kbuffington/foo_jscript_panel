@@ -1620,9 +1620,9 @@ oBrowser = function (name) {
 		_menu2.AppendMenuItem(MF_STRING, 220, "Blur");
 		_menu2.CheckMenuItem(220, ppt.wallpaperblurred);
 		_menu2.AppendMenuSeparator();
-		_menu2.AppendMenuItem(MF_STRING, 210, "Default");
-		_menu2.AppendMenuItem(MF_STRING, 211, "Playing Album Cover");
-		_menu2.CheckMenuRadioItem(210, 211, ppt.wallpapermode == 0 ? 211 : 210);
+		_menu2.AppendMenuItem(MF_STRING, 210, "Playing Album Cover");
+		_menu2.AppendMenuItem(MF_STRING, 211, "Default");
+		_menu2.CheckMenuRadioItem(210, 211, ppt.wallpapermode + 210);
 
 		_menu2.AppendTo(_menu, MF_STRING, "Background Wallpaper");
 
@@ -1636,30 +1636,20 @@ oBrowser = function (name) {
 		case (idx == 200):
 			ppt.showwallpaper = !ppt.showwallpaper;
 			window.SetProperty("_DISPLAY: Show Wallpaper", ppt.showwallpaper);
-			if (ppt.showwallpaper) {
-				g_wallpaperImg = setWallpaperImg(ppt.wallpaperpath, fb.IsPlaying ? fb.GetNowPlaying() : null);
-			};
+			g_wallpaperImg = setWallpaperImg();
 			brw.repaint();
 			break;
 		case (idx == 210):
-			ppt.wallpapermode = 99;
-			window.SetProperty("_SYSTEM: Wallpaper Mode", ppt.wallpapermode);
-			if (fb.IsPlaying)
-				g_wallpaperImg = setWallpaperImg(ppt.wallpaperpath, fb.GetNowPlaying());
-			brw.repaint();
-			break;
 		case (idx == 211):
-			ppt.wallpapermode = 0;
+			ppt.wallpapermode = idx - 210;
 			window.SetProperty("_SYSTEM: Wallpaper Mode", ppt.wallpapermode);
-			if (fb.IsPlaying)
-				g_wallpaperImg = setWallpaperImg(ppt.wallpaperpath, fb.GetNowPlaying());
+			g_wallpaperImg = setWallpaperImg();
 			brw.repaint();
 			break;
 		case (idx == 220):
 			ppt.wallpaperblurred = !ppt.wallpaperblurred;
 			window.SetProperty("_DISPLAY: Wallpaper Blurred", ppt.wallpaperblurred);
-			if (fb.IsPlaying)
-				g_wallpaperImg = setWallpaperImg(ppt.wallpaperpath, fb.GetNowPlaying());
+			g_wallpaperImg = setWallpaperImg();
 			brw.repaint();
 			break;
 		case (idx == 910):
@@ -1795,13 +1785,7 @@ function on_size() {
 	window.MinWidth = 1;
 	window.MinHeight = 1;
 
-	// set wallpaper
-	if (fb.IsPlaying) {
-		g_wallpaperImg = setWallpaperImg(ppt.wallpaperpath, fb.GetNowPlaying());
-	} else {
-		//g_wallpaperImg = null;
-		g_wallpaperImg = setWallpaperImg(ppt.wallpaperpath, null);
-	};
+	g_wallpaperImg = setWallpaperImg();
 
 	get_images();
 
@@ -2486,9 +2470,7 @@ function on_playback_stop(reason) {
 	case 0: // user stop
 	case 1: // eof (e.g. end of playlist)
 		// update wallpaper
-		if (ppt.showwallpaper) {
-			g_wallpaperImg = setWallpaperImg(ppt.wallpaperpath, null);
-		};
+		g_wallpaperImg = setWallpaperImg();
 		brw.repaint();
 		break;
 	case 2: // starting_another (only called on user action, i.e. click on next button)
@@ -2498,9 +2480,7 @@ function on_playback_stop(reason) {
 
 function on_playback_new_track(metadb) {
 	g_metadb = metadb;
-	if (ppt.showwallpaper) {
-		g_wallpaperImg = setWallpaperImg(ppt.wallpaperpath, g_metadb);
-	};
+	g_wallpaperImg = setWallpaperImg();
 	brw.repaint();
 };
 

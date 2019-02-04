@@ -58,8 +58,7 @@ ppt = {
 	default_botTextRowHeight: 17,
 	botTextRowHeight: 0,
 	default_textLineHeight: 10,
-	textLineHeight: 0,
-	rawBitmap: false
+	textLineHeight: 0
 };
 
 cTouch = {
@@ -311,7 +310,7 @@ image_cache = function () {
 			// cover.type : 0 = nocover, 1 = external cover, 2 = embedded cover, 3 = stream
 			if (brw.groups[albumId].tracktype != 3) {
 				if (metadb) {
-					img = FormatCover(image, pw, ph, ppt.rawBitmap);
+					img = FormatCover(image, pw, ph);
 					cover_type = 1;
 				};
 			} else {
@@ -340,14 +339,9 @@ image_cache = function () {
 };
 var g_image_cache = new image_cache;
 
-function FormatCover(image, w, h, rawBitmap) {
-	if (!image || w <= 0 || h <= 0)
-		return image;
-	if (rawBitmap) {
-		return image.Resize(w, h, 2).CreateRawBitmap();
-	} else {
-		return image.Resize(w, h, 2);
-	};
+function FormatCover(image, w, h) {
+	if (!image || w <= 0 || h <= 0) return image;
+	return image.Resize(w, h, 2);
 };
 
 /*
@@ -2048,11 +2042,7 @@ oBrowser = function (name) {
 					if (ppt.panelMode > 0) {
 						// get cover
 						if (ppt.showAllItem && i == 0 && total > 1) {
-							if (ppt.rawBitmap) {
-								this.groups[i].cover_img = images.all.CreateRawBitmap();
-							} else {
-								this.groups[i].cover_img = images.all;
-							};
+							this.groups[i].cover_img = images.all;
 						} else {
 							if (this.groups[i].cover_type == null) {
 								if (this.groups[i].load_requested == 0) {
@@ -2121,17 +2111,9 @@ oBrowser = function (name) {
 								all_y = coverTop + coverWidth - im_h;
 								all_w = im_w;
 								all_h = im_h;
-								if (ppt.rawBitmap) {
-									gr.GdiDrawBitmap(this.groups[i].cover_img, ax + Math.round((aw - im_w) / 2), coverTop + coverWidth - im_h, im_w, im_h, 1, 1, this.groups[i].cover_img.Width - 2, this.groups[i].cover_img.Height - 2);
-								} else {
-									gr.DrawImage(this.groups[i].cover_img, ax + Math.round((aw - im_w) / 2), coverTop + coverWidth - im_h, im_w, im_h, 1, 1, this.groups[i].cover_img.Width - 2, this.groups[i].cover_img.Height - 2, 0, 190);
-								};
+								gr.DrawImage(this.groups[i].cover_img, ax + Math.round((aw - im_w) / 2), coverTop + coverWidth - im_h, im_w, im_h, 1, 1, this.groups[i].cover_img.Width - 2, this.groups[i].cover_img.Height - 2, 0, 190);
 							} else {
-								if (ppt.rawBitmap) {
-									gr.GdiDrawBitmap(this.groups[i].cover_img, ax + Math.round((aw - im_w) / 2), coverTop + coverWidth - im_h, im_w, im_h, 1, 1, this.groups[i].cover_img.Width - 2, this.groups[i].cover_img.Height - 2);
-								} else {
-									gr.DrawImage(this.groups[i].cover_img, ax + Math.round((aw - im_w) / 2), coverTop + coverWidth - im_h, im_w, im_h, 1, 1, this.groups[i].cover_img.Width - 2, this.groups[i].cover_img.Height - 2);
-								};
+								gr.DrawImage(this.groups[i].cover_img, ax + Math.round((aw - im_w) / 2), coverTop + coverWidth - im_h, im_w, im_h, 1, 1, this.groups[i].cover_img.Width - 2, this.groups[i].cover_img.Height - 2);
 								gr.DrawRect(ax + Math.round((aw - im_w) / 2), coverTop + coverWidth - im_h, im_w - 1, im_h - 1, 1.0, g_color_normal_txt & 0x25ffffff);
 
 								// grid text background rect
@@ -2261,17 +2243,9 @@ oBrowser = function (name) {
 									all_y = coverTop + deltaY;
 									all_w = im_w;
 									all_h = im_h;
-									if (ppt.rawBitmap) {
-										gr.GdiDrawBitmap(this.groups[i].cover_img, ax + this.coverMarginLeft + deltaX, coverTop + deltaY, im_w, im_h, 1, 1, this.groups[i].cover_img.Width - 2, this.groups[i].cover_img.Height - 2);
-									} else {
-										gr.DrawImage(this.groups[i].cover_img, ax + this.coverMarginLeft + deltaX, coverTop + deltaY, im_w, im_h, 1, 1, this.groups[i].cover_img.Width - 2, this.groups[i].cover_img.Height - 2, 0, 190);
-									};
+									gr.DrawImage(this.groups[i].cover_img, ax + this.coverMarginLeft + deltaX, coverTop + deltaY, im_w, im_h, 1, 1, this.groups[i].cover_img.Width - 2, this.groups[i].cover_img.Height - 2, 0, 190);
 								} else {
-									if (ppt.rawBitmap) {
-										gr.GdiDrawBitmap(this.groups[i].cover_img, ax + this.coverMarginLeft + deltaX, coverTop + deltaY, im_w, im_h, 1, 1, this.groups[i].cover_img.Width - 2, this.groups[i].cover_img.Height - 2);
-									} else {
-										gr.DrawImage(this.groups[i].cover_img, ax + this.coverMarginLeft + deltaX, coverTop + deltaY, im_w, im_h, 1, 1, this.groups[i].cover_img.Width - 2, this.groups[i].cover_img.Height - 2);
-									};
+									gr.DrawImage(this.groups[i].cover_img, ax + this.coverMarginLeft + deltaX, coverTop + deltaY, im_w, im_h, 1, 1, this.groups[i].cover_img.Width - 2, this.groups[i].cover_img.Height - 2);
 									gr.DrawRect(ax + this.coverMarginLeft + deltaX, coverTop + deltaY, im_w - 1, im_h - 1, 1.0, g_color_normal_txt & 0x25ffffff);
 								};
 							} else {
@@ -2395,32 +2369,16 @@ oBrowser = function (name) {
 						if (this.groups[ii].cover_img) {
 							switch (ii) {
 							case 1:
-								if (ppt.rawBitmap) {
-									gr.GdiDrawBitmap(this.groups[ii].cover_img, ii_x1, ii_y1, ii_w, ii_h, 1, 1, this.groups[ii].cover_img.Width - 2, this.groups[ii].cover_img.Height - 2);
-								} else {
-									gr.DrawImage(this.groups[ii].cover_img, ii_x1, ii_y1, ii_w, ii_h, 1, 1, this.groups[ii].cover_img.Width - 2, this.groups[ii].cover_img.Height - 2);
-								};
+								gr.DrawImage(this.groups[ii].cover_img, ii_x1, ii_y1, ii_w, ii_h, 1, 1, this.groups[ii].cover_img.Width - 2, this.groups[ii].cover_img.Height - 2);
 								break;
 							case 2:
-								if (ppt.rawBitmap) {
-									gr.GdiDrawBitmap(this.groups[ii].cover_img, ii_x2, ii_y1, ii_w, ii_h, 1, 1, this.groups[ii].cover_img.Width - 2, this.groups[ii].cover_img.Height - 2);
-								} else {
-									gr.DrawImage(this.groups[ii].cover_img, ii_x2, ii_y1, ii_w, ii_h, 1, 1, this.groups[ii].cover_img.Width - 2, this.groups[ii].cover_img.Height - 2);
-								};
+								gr.DrawImage(this.groups[ii].cover_img, ii_x2, ii_y1, ii_w, ii_h, 1, 1, this.groups[ii].cover_img.Width - 2, this.groups[ii].cover_img.Height - 2);
 								break;
 							case 3:
-								if (ppt.rawBitmap) {
-									gr.GdiDrawBitmap(this.groups[ii].cover_img, ii_x1, ii_y2, ii_w, ii_h, 1, 1, this.groups[ii].cover_img.Width - 2, this.groups[ii].cover_img.Height - 2);
-								} else {
-									gr.DrawImage(this.groups[ii].cover_img, ii_x1, ii_y2, ii_w, ii_h, 1, 1, this.groups[ii].cover_img.Width - 2, this.groups[ii].cover_img.Height - 2);
-								};
+								gr.DrawImage(this.groups[ii].cover_img, ii_x1, ii_y2, ii_w, ii_h, 1, 1, this.groups[ii].cover_img.Width - 2, this.groups[ii].cover_img.Height - 2);
 								break;
 							case 4:
-								if (ppt.rawBitmap) {
-									gr.GdiDrawBitmap(this.groups[ii].cover_img, ii_x2, ii_y2, ii_w, ii_h, 1, 1, this.groups[ii].cover_img.Width - 2, this.groups[ii].cover_img.Height - 2);
-								} else {
-									gr.DrawImage(this.groups[ii].cover_img, ii_x2, ii_y2, ii_w, ii_h, 1, 1, this.groups[ii].cover_img.Width - 2, this.groups[ii].cover_img.Height - 2);
-								};
+								gr.DrawImage(this.groups[ii].cover_img, ii_x2, ii_y2, ii_w, ii_h, 1, 1, this.groups[ii].cover_img.Width - 2, this.groups[ii].cover_img.Height - 2);
 								break;
 							};
 						};
@@ -2824,9 +2782,9 @@ oBrowser = function (name) {
 		_menu3.AppendMenuItem(MF_STRING, 220, "Blur");
 		_menu3.CheckMenuItem(220, ppt.wallpaperblurred);
 		_menu3.AppendMenuSeparator();
-		_menu3.AppendMenuItem(MF_STRING, 210, "Default");
-		_menu3.AppendMenuItem(MF_STRING, 211, "Playing Album Cover");
-		_menu3.CheckMenuRadioItem(210, 211, ppt.wallpapermode == 0 ? 211 : 210);
+		_menu3.AppendMenuItem(MF_STRING, 210, "Playing Album Cover");
+		_menu3.AppendMenuItem(MF_STRING, 211, "Default");
+		_menu3.CheckMenuRadioItem(210, 211, ppt.wallpapermode + 210);
 
 		_menu3.AppendTo(_menu, MF_STRING, "Background Wallpaper");
 
@@ -2858,30 +2816,20 @@ oBrowser = function (name) {
 		case (idx == 200):
 			ppt.showwallpaper = !ppt.showwallpaper;
 			window.SetProperty("_DISPLAY: Show Wallpaper", ppt.showwallpaper);
-			if (ppt.showwallpaper) {
-				g_wallpaperImg = setWallpaperImg(ppt.wallpaperpath, fb.IsPlaying ? fb.GetNowPlaying() : null);
-			};
+			g_wallpaperImg = setWallpaperImg();
 			brw.repaint();
 			break;
 		case (idx == 210):
-			ppt.wallpapermode = 99;
-			window.SetProperty("_SYSTEM: Wallpaper Mode", ppt.wallpapermode);
-			if (fb.IsPlaying)
-				g_wallpaperImg = setWallpaperImg(ppt.wallpaperpath, fb.GetNowPlaying());
-			brw.repaint();
-			break;
 		case (idx == 211):
-			ppt.wallpapermode = 0;
+			ppt.wallpapermode = idx - 210;
 			window.SetProperty("_SYSTEM: Wallpaper Mode", ppt.wallpapermode);
-			if (fb.IsPlaying)
-				g_wallpaperImg = setWallpaperImg(ppt.wallpaperpath, fb.GetNowPlaying());
+			g_wallpaperImg = setWallpaperImg();
 			brw.repaint();
 			break;
 		case (idx == 220):
 			ppt.wallpaperblurred = !ppt.wallpaperblurred;
 			window.SetProperty("_DISPLAY: Wallpaper Blurred", ppt.wallpaperblurred);
-			if (fb.IsPlaying)
-				g_wallpaperImg = setWallpaperImg(ppt.wallpaperpath, fb.GetNowPlaying());
+			g_wallpaperImg = setWallpaperImg();
 			brw.repaint();
 			break;
 		case (idx >= 900 && idx <= 903):
@@ -3117,13 +3065,7 @@ function on_size() {
 	window.MinWidth = 1;
 	window.MinHeight = 1;
 
-	// set wallpaper
-	if (fb.IsPlaying) {
-		g_wallpaperImg = setWallpaperImg(ppt.wallpaperpath, fb.GetNowPlaying());
-	} else {
-		//g_wallpaperImg = null;
-		g_wallpaperImg = setWallpaperImg(ppt.wallpaperpath, fb.GetNowPlaying());
-	};
+	g_wallpaperImg = setWallpaperImg();
 
 	// set Size of browser
 	if (cScrollBar.enabled) {
@@ -3851,9 +3793,7 @@ function on_playback_stop(reason) {
 	case 0: // user stop
 	case 1: // eof (e.g. end of playlist)
 		// update wallpaper
-		if (ppt.showwallpaper) {
-			g_wallpaperImg = setWallpaperImg(ppt.wallpaperpath, null);
-		};
+		g_wallpaperImg = setWallpaperImg();
 		brw.repaint();
 		break;
 	case 2: // starting_another (only called on user action, i.e. click on next button)
@@ -3863,9 +3803,7 @@ function on_playback_stop(reason) {
 
 function on_playback_new_track(metadb) {
 	g_metadb = metadb;
-	if (ppt.showwallpaper) {
-		g_wallpaperImg = setWallpaperImg(ppt.wallpaperpath, metadb);
-	};
+	g_wallpaperImg = setWallpaperImg();
 	brw.repaint();
 };
 

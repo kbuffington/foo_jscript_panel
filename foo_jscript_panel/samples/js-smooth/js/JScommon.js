@@ -1020,36 +1020,24 @@ function process_cachekey(str) {
 };
 
 // ===================================================== // Wallpaper
-function setWallpaperImg(path, metadb) {
+function setWallpaperImg() {
+	if (!fb.IsPlaying || !ppt.showwallpaper) return null;
 
-	var fmt_path = fb.TitleFormat(path).Eval(true);
-	var fmt_path_arr = utils.Glob(fmt_path).toArray();
-	if (fmt_path_arr.length > 0) {
-		var final_path = fmt_path_arr[0];
+	var tmp = null
+
+	if (ppt.wallpapermode == 0) {
+		tmp = utils.GetAlbumArtV2(fb.GetNowPlaying(), 0);
 	} else {
-		var final_path = null;
-	};
+		var arr = utils.Glob(fb.TitleFormat(ppt.wallpaperpath).Eval()).toArray();
+		if (arr.length) {
+			tmp = gdi.Image(arr[0]);
+		}
+	}
 
-	if (metadb && ppt.wallpapermode == 0) {
-		var tmp_img = utils.GetAlbumArtV2(metadb, ppt.wallpapermode);
-	} else {
-		if (final_path) {
-			tmp_img = gdi.Image(final_path);
-		} else {
-			tmp_img = null;
-		};
-	};
-	if (!tmp_img) {
-		if (final_path) {
-			tmp_img = gdi.Image(final_path);
-		} else {
-			tmp_img = null;
-		};
-	};
-
-	g_wallpaperImg = null;
-	var img = FormatWallpaper(tmp_img, ww, wh, 2, 0, 0, "", true);
-	return img;
+	if (tmp) {
+		return FormatWallpaper(tmp, ww, wh, 2, 0, 0, "", true);
+	}
+	return tmp;
 };
 
 function draw_blurred_image(image, ix, iy, iw, ih, bx, by, bw, bh, blur_value, overlay_color) {
