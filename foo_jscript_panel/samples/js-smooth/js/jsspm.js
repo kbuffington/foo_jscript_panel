@@ -1709,17 +1709,6 @@ var g_metadb = null;
 clipboard = {
 	selection: null
 };
-// wallpaper infos
-var wpp_img_info = {
-	orient: 0,
-	cut: 0,
-	cut_offset: 0,
-	ratio: 0,
-	x: 0,
-	y: 0,
-	w: 0,
-	h: 0
-};
 
 var m_x = 0, m_y = 0;
 var g_active_playlist = null;

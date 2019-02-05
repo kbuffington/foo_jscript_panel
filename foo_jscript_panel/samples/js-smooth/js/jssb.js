@@ -128,7 +128,6 @@ cScrollBar = {
 cover = {
 	masks: window.GetProperty("_PROPERTY: Cover art masks (for disk cache)", "*front*.*;*cover*.*;*folder*.*;*.*"),
 	draw_glass_reflect: false,
-	keepaspectratio: true,
 	max_w: 1
 };
 
@@ -292,19 +291,14 @@ image_cache = function () {
 				cover_type = 3;
 			};
 		} else {
-			if (cover.keepaspectratio) {
-				if (image.Height >= image.Width) {
-					var ratio = image.Width / image.Height;
-					var pw = cw * ratio;
-					var ph = ch;
-				} else {
-					var ratio = image.Height / image.Width;
-					var pw = cw;
-					var ph = ch * ratio;
-				};
-			} else {
-				var pw = cw;
+			if (image.Height >= image.Width) {
+				var ratio = image.Width / image.Height;
+				var pw = cw * ratio;
 				var ph = ch;
+			} else {
+				var ratio = image.Height / image.Width;
+				var pw = cw;
+				var ph = ch * ratio;
 			};
 
 			// cover.type : 0 = nocover, 1 = external cover, 2 = embedded cover, 3 = stream
@@ -2095,27 +2089,15 @@ oBrowser = function (name) {
 						coverTop = ppt.panelMode == 1 ? ay + 10 : ay;
 						// draw cover
 						if (this.groups[i].cover_img) {
-							if (cover.keepaspectratio) {
-								var max = this.groups[i].cover_img.Width > this.groups[i].cover_img.Height ? this.groups[i].cover_img.Width : this.groups[i].cover_img.Height;
-								var rw = this.groups[i].cover_img.Width / max;
-								var rh = this.groups[i].cover_img.Height / max;
-								var im_w = (rw * coverWidth) - 2;
-								var im_h = (rh * coverWidth) - 2;
-							} else {
-								var im_w = coverWidth;
-								var im_h = coverWidth;
-							};
 							// save coords ALL cover image:
 							if (ppt.showAllItem && i == 0 && total > 1) {
-								all_x = ax + Math.round((aw - im_w) / 2);
-								all_y = coverTop + coverWidth - im_h;
-								all_w = im_w;
-								all_h = im_h;
-								gr.DrawImage(this.groups[i].cover_img, ax + Math.round((aw - im_w) / 2), coverTop + coverWidth - im_h, im_w, im_h, 1, 1, this.groups[i].cover_img.Width - 2, this.groups[i].cover_img.Height - 2, 0, 190);
+								all_x = ax + Math.round((aw - coverWidth) / 2);
+								all_y = coverTop + coverWidth - coverWidth;
+								all_w = coverWidth;
+								all_h = coverWidth;
+								drawImage(gr, this.groups[i].cover_img, ax + Math.round((aw - coverWidth) / 2), coverTop, coverWidth, coverWidth, 1, null, 190)
 							} else {
-								gr.DrawImage(this.groups[i].cover_img, ax + Math.round((aw - im_w) / 2), coverTop + coverWidth - im_h, im_w, im_h, 1, 1, this.groups[i].cover_img.Width - 2, this.groups[i].cover_img.Height - 2);
-								gr.DrawRect(ax + Math.round((aw - im_w) / 2), coverTop + coverWidth - im_h, im_w - 1, im_h - 1, 1.0, g_color_normal_txt & 0x25ffffff);
-
+								drawImage(gr, this.groups[i].cover_img, ax + Math.round((aw - coverWidth) / 2), coverTop, coverWidth, coverWidth, 1, g_color_normal_txt & 0x25ffffff)
 								// grid text background rect
 								if (ppt.panelMode == 3) {
 									if (i == this.selectedIndex) {
@@ -2125,18 +2107,7 @@ oBrowser = function (name) {
 								};
 							};
 						} else {
-							var im_w = coverWidth;
-							var im_h = coverWidth;
 							gr.DrawImage(images.loading_draw, ax + Math.round((aw - images.loading_draw.Width) / 2), ay + Math.round((aw - images.loading_draw.Height) / 2), images.loading_draw.Width, images.loading_draw.Height, 0, 0, images.loading_draw.Width, images.loading_draw.Height, images.loading_angle, 160);
-						};
-
-						// in Grid mode (panelMode = 3), if cover is in portrait mode, adjust width to the stamp width
-						if (ppt.panelMode == 3 && im_h > im_w) {
-							var frame_w = coverWidth;
-							var frame_h = im_h;
-						} else {
-							var frame_w = im_w;
-							var frame_h = im_h;
 						};
 
 						if (!ppt.showAllItem || (ppt.showAllItem && i > 0) || (ppt.panelMode != 3)) {
@@ -2145,7 +2116,7 @@ oBrowser = function (name) {
 									if (this.stampDrawMode) {
 										gr.DrawRect(ax + 1, ay + 1, aw - 2, ah - 2, 2.0, g_color_selected_bg & 0xd0ffffff);
 									} else {
-										gr.DrawRect(ax + Math.round((aw - frame_w) / 2) + 1, coverTop + coverWidth - frame_h + 1, frame_w - 3, frame_h - 3, 3.0, g_color_selected_bg & 0xddffffff);
+										gr.DrawRect(ax + Math.round((aw - coverWidth) / 2) + 1, coverTop + 1, coverWidth - 3, coverWidth - 3, 3.0, g_color_selected_bg & 0xddffffff);
 									};
 								};
 							} else {
@@ -2153,7 +2124,7 @@ oBrowser = function (name) {
 									if (this.stampDrawMode) {
 										gr.DrawRect(ax + 1, ay + 1, aw - 2, ah - 2, 2.0, g_color_selected_bg & 0xd0ffffff);
 									} else {
-										gr.DrawRect(ax + Math.round((aw - frame_w) / 2) + 1, coverTop + coverWidth - frame_h + 1, frame_w - 3, frame_h - 3, 3.0, g_color_selected_bg & 0xddffffff);
+										gr.DrawRect(ax + Math.round((aw - coverWidth) / 2) + 1, coverTop + 1, coverWidth - 3, coverWidth - 3, 3.0, g_color_selected_bg & 0xddffffff);
 									};
 								};
 							};
@@ -2225,35 +2196,18 @@ oBrowser = function (name) {
 							// draw cover
 							this.coverMarginLeft = this.marginCover;
 							if (this.groups[i].cover_img) {
-								if (cover.keepaspectratio) {
-									var max = this.groups[i].cover_img.Width > this.groups[i].cover_img.Height ? this.groups[i].cover_img.Width : this.groups[i].cover_img.Height;
-									var rw = this.groups[i].cover_img.Width / max;
-									var rh = this.groups[i].cover_img.Height / max;
-									var im_w = (rw * coverWidth) - 2;
-									var im_h = (rh * coverWidth) - 2;
-								} else {
-									var im_w = coverWidth;
-									var im_h = coverWidth;
-								};
-								var deltaY = Math.floor((ah - im_h) / 2);
-								var deltaX = Math.floor((coverWidth - im_w) / 2);
 								// save coords ALL cover image:
 								if (ppt.showAllItem && i == 0 && total > 1) {
-									all_x = ax + this.coverMarginLeft + deltaX;
-									all_y = coverTop + deltaY;
-									all_w = im_w;
-									all_h = im_h;
-									gr.DrawImage(this.groups[i].cover_img, ax + this.coverMarginLeft + deltaX, coverTop + deltaY, im_w, im_h, 1, 1, this.groups[i].cover_img.Width - 2, this.groups[i].cover_img.Height - 2, 0, 190);
+									all_x = ax + this.coverMarginLeft;
+									all_y = coverTop;
+									all_w = coverWidth;
+									all_h = coverWidth;
+									drawImage(gr, this.groups[i].cover_img, ax + this.coverMarginLeft, coverTop, coverWidth, coverWidth, 1, null, 190);
 								} else {
-									gr.DrawImage(this.groups[i].cover_img, ax + this.coverMarginLeft + deltaX, coverTop + deltaY, im_w, im_h, 1, 1, this.groups[i].cover_img.Width - 2, this.groups[i].cover_img.Height - 2);
-									gr.DrawRect(ax + this.coverMarginLeft + deltaX, coverTop + deltaY, im_w - 1, im_h - 1, 1.0, g_color_normal_txt & 0x25ffffff);
+									drawImage(gr, this.groups[i].cover_img, ax + this.coverMarginLeft, coverTop, coverWidth, coverWidth, 1, g_color_normal_txt & 0x25ffffff);
 								};
 							} else {
-								var im_w = coverWidth;
-								var im_h = coverWidth;
-								var deltaY = Math.floor((ah - im_h) / 2);
-								var deltaX = Math.floor((coverWidth - im_w) / 2);
-								gr.DrawImage(images.loading_draw, ax + this.coverMarginLeft + deltaX, coverTop + deltaY, coverWidth, coverWidth, 0, 0, images.loading_draw.Width, images.loading_draw.Height, images.loading_angle, 160);
+								gr.DrawImage(images.loading_draw, ax + this.coverMarginLeft, coverTop, coverWidth, coverWidth, 0, 0, images.loading_draw.Width, images.loading_draw.Height, images.loading_angle, 160);
 							};
 						};
 
@@ -2985,17 +2939,6 @@ var ww = 0, wh = 0;
 var g_metadb = null;
 clipboard = {
 	selection: null
-};
-// wallpaper infos
-var wpp_img_info = {
-	orient: 0,
-	cut: 0,
-	cut_offset: 0,
-	ratio: 0,
-	x: 0,
-	y: 0,
-	w: 0,
-	h: 0
 };
 
 var m_x = 0, m_y = 0;
