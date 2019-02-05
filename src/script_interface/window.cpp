@@ -179,7 +179,7 @@ STDMETHODIMP Window::Repaint(VARIANT_BOOL force)
 	return S_OK;
 }
 
-STDMETHODIMP Window::RepaintRect(LONG x, LONG y, LONG w, LONG h, VARIANT_BOOL force)
+STDMETHODIMP Window::RepaintRect(int x, int y, int w, int h, VARIANT_BOOL force)
 {
 	m_host->RepaintRect(x, y, w, h, force != FALSE);
 	return S_OK;

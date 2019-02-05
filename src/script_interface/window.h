@@ -23,7 +23,7 @@ public:
 	STDMETHODIMP NotifyOthers(BSTR name, VARIANT info);
 	STDMETHODIMP Reload();
 	STDMETHODIMP Repaint(VARIANT_BOOL force);
-	STDMETHODIMP RepaintRect(LONG x, LONG y, LONG w, LONG h, VARIANT_BOOL force);
+	STDMETHODIMP RepaintRect(int x, int y, int w, int h, VARIANT_BOOL force);
 	STDMETHODIMP SetCursor(UINT id);
 	STDMETHODIMP SetInterval(IDispatch* func, int delay, UINT* p);
 	STDMETHODIMP SetProperty(BSTR name, VARIANT val);

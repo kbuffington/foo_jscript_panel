@@ -468,7 +468,7 @@ library foo_jscript_panel
 		HRESULT NotifyOthers([in] BSTR name, [in] VARIANT info);
 		HRESULT Reload();
 		HRESULT Repaint([defaultvalue(0)] VARIANT_BOOL force);
-		HRESULT RepaintRect([in] LONG x, [in] LONG y, [in] LONG w, [in] LONG h, [defaultvalue(0)] VARIANT_BOOL force);
+		HRESULT RepaintRect([in] int x, [in] int y, [in] int w, [in] int h, [defaultvalue(0)] VARIANT_BOOL force);
 		HRESULT SetCursor([in] UINT id);
 		HRESULT SetInterval([in] IDispatch* func, [in] int delay, [out, retval] UINT* p);
 		HRESULT SetProperty([in] BSTR name, [in] VARIANT val);
