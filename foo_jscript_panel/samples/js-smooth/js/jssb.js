@@ -8,6 +8,7 @@ images = {
 };
 
 ppt = {
+	autoFill : window.GetProperty("_DISPLAY: Auto-fill", true),
 	followFocusChange: window.GetProperty("_PROPERTY: Follow focus change", true), // only in source mode = Playlist
 	sourceMode: window.GetProperty("_PROPERTY: Source Mode", 0), // 0 = Library, 1 = Playlist
 	tagMode: window.GetProperty("_PROPERTY: Tag Mode", 1), // 1 = album, 2 = artist, 3 = genre
@@ -2095,9 +2096,9 @@ oBrowser = function (name) {
 								all_y = coverTop + coverWidth - coverWidth;
 								all_w = coverWidth;
 								all_h = coverWidth;
-								drawImage(gr, this.groups[i].cover_img, ax + Math.round((aw - coverWidth) / 2), coverTop, coverWidth, coverWidth, 1, null, 190)
+								drawImage(gr, this.groups[i].cover_img, ax + Math.round((aw - coverWidth) / 2), coverTop, coverWidth, coverWidth, ppt.autoFill, null, 190)
 							} else {
-								drawImage(gr, this.groups[i].cover_img, ax + Math.round((aw - coverWidth) / 2), coverTop, coverWidth, coverWidth, 1, g_color_normal_txt & 0x25ffffff)
+								drawImage(gr, this.groups[i].cover_img, ax + Math.round((aw - coverWidth) / 2), coverTop, coverWidth, coverWidth, ppt.autoFill, g_color_normal_txt & 0x25ffffff)
 								// grid text background rect
 								if (ppt.panelMode == 3) {
 									if (i == this.selectedIndex) {
@@ -2202,9 +2203,9 @@ oBrowser = function (name) {
 									all_y = coverTop;
 									all_w = coverWidth;
 									all_h = coverWidth;
-									drawImage(gr, this.groups[i].cover_img, ax + this.coverMarginLeft, coverTop, coverWidth, coverWidth, 1, null, 190);
+									drawImage(gr, this.groups[i].cover_img, ax + this.coverMarginLeft, coverTop, coverWidth, coverWidth, ppt.autoFill, null, 190);
 								} else {
-									drawImage(gr, this.groups[i].cover_img, ax + this.coverMarginLeft, coverTop, coverWidth, coverWidth, 1, g_color_normal_txt & 0x25ffffff);
+									drawImage(gr, this.groups[i].cover_img, ax + this.coverMarginLeft, coverTop, coverWidth, coverWidth, ppt.autoFill, g_color_normal_txt & 0x25ffffff);
 								};
 							} else {
 								gr.DrawImage(images.loading_draw, ax + this.coverMarginLeft, coverTop, coverWidth, coverWidth, 0, 0, images.loading_draw.Width, images.loading_draw.Height, images.loading_angle, 160);
@@ -2722,6 +2723,9 @@ oBrowser = function (name) {
 		_menu2.AppendMenuItem(MF_STRING, 903, "Album Art Grid");
 		_menu2.CheckMenuRadioItem(900, 903, 900 + ppt.panelMode);
 		_menu2.AppendMenuSeparator();
+		_menu2.AppendMenuItem(MF_STRING, 904, "Auto-fill");
+		_menu2.CheckMenuItem(904, ppt.autoFill);
+		_menu2.AppendMenuSeparator();
 		_menu2.AppendMenuItem(MF_STRING, 910, "Header Bar");
 		_menu2.CheckMenuItem(910, ppt.showHeaderBar);
 		_menu2.AppendMenuItem(MF_STRING, 911, "Aggregate Item");
@@ -2794,6 +2798,11 @@ oBrowser = function (name) {
 			get_metrics();
 			brw.setList();
 			brw.update();
+			break;
+		case (idx == 904):
+			ppt.autoFill = !ppt.autoFill;
+			window.SetProperty("_DISPLAY: Auto-fill", ppt.autoFill);
+			window.Reload();
 			break;
 		case (idx == 910):
 			ppt.showHeaderBar = !ppt.showHeaderBar;
