@@ -13,9 +13,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
     </Filter>
-    <Filter Include="IDL">
-      <UniqueIdentifier>{061b40b2-717d-4f77-9443-6663af573d22}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\script_interface">
       <UniqueIdentifier>{ebff20e6-84a9-41a9-8507-e19d053296d4}</UniqueIdentifier>
     </Filter>
@@ -244,11 +241,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Midl Include="..\src\script_interface\script_interface.idl">
-      <Filter>IDL</Filter>
-    </Midl>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="..\src\resource\cfgBright.cfg">
       <Filter>Resource Files</Filter>
     </None>
@@ -272,5 +264,10 @@
     <ResourceCompile Include="..\src\resource\foo_jscript_panel.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Midl Include="..\src\script_interface\script_interface.idl">
+      <Filter>Header Files\script_interface</Filter>
+    </Midl>
   </ItemGroup>
 </Project>
