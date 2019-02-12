@@ -45,13 +45,13 @@ HRESULT script_host::Initialize()
 	if (SUCCEEDED(hr)) hr = m_script_engine->AddNamedItem(L"plman", SCRIPTITEM_ISVISIBLE);
 	if (SUCCEEDED(hr)) hr = m_script_engine->AddNamedItem(L"console", SCRIPTITEM_ISVISIBLE);
 	if (SUCCEEDED(hr)) hr = m_script_engine->SetScriptState(SCRIPTSTATE_CONNECTED);
-	if (SUCCEEDED(hr)) hr = m_script_engine->GetScriptDispatch(NULL, &m_script_root);
+	if (SUCCEEDED(hr)) hr = m_script_engine->GetScriptDispatch(nullptr, &m_script_root);
 	if (SUCCEEDED(hr)) hr = ProcessImportedScripts(parser);
 	if (SUCCEEDED(hr))
 	{
 		DWORD source_context;
 		GenerateSourceContext("<main>", source_context);
-		hr = parser->ParseScriptText(string_wide_from_utf8_fast(m_host->m_script_code), NULL, NULL, NULL, source_context, 0, SCRIPTTEXT_HOSTMANAGESSOURCE | SCRIPTTEXT_ISVISIBLE, NULL, NULL);
+		hr = parser->ParseScriptText(string_wide_from_utf8_fast(m_host->m_script_code), nullptr, nullptr, nullptr, source_context, 0, SCRIPTTEXT_HOSTMANAGESSOURCE | SCRIPTTEXT_ISVISIBLE, nullptr, nullptr);
 	}
 
 	if (SUCCEEDED(hr))
@@ -76,22 +76,22 @@ HRESULT script_host::InitScriptEngine()
 	if (helpers::supports_chakra() && _stricmp(m_host->m_script_engine_str, "Chakra") == 0)
 	{
 		static const CLSID jscript9clsid = { 0x16d51579, 0xa30b, 0x4c8b,{ 0xa2, 0x76, 0x0f, 0xf4, 0xdc, 0x41, 0xe7, 0x55 } };
-		hr = m_script_engine.CreateInstance(jscript9clsid, NULL, classContext);
+		hr = m_script_engine.CreateInstance(jscript9clsid, nullptr, classContext);
 	}
 
 	if (FAILED(hr))
 	{
-		hr = m_script_engine.CreateInstance("jscript", NULL, classContext);
+		hr = m_script_engine.CreateInstance("jscript", nullptr, classContext);
 	}
 
 	if (SUCCEEDED(hr))
 	{
-		IActiveScriptProperty* pActScriProp = NULL;
+		IActiveScriptProperty* pActScriProp = nullptr;
 		m_script_engine->QueryInterface(IID_IActiveScriptProperty, (void**)&pActScriProp);
 		VARIANT scriptLangVersion;
 		scriptLangVersion.vt = VT_I4;
 		scriptLangVersion.lVal = SCRIPTLANGUAGEVERSION_5_8 + 1;
-		pActScriProp->SetProperty(SCRIPTPROP_INVOKEVERSIONING, NULL, &scriptLangVersion);
+		pActScriProp->SetProperty(SCRIPTPROP_INVOKEVERSIONING, nullptr, &scriptLangVersion);
 		pActScriProp->Release();
 	}
 	return hr;
@@ -125,7 +125,7 @@ HRESULT script_host::ProcessImportedScripts(IActiveScriptParsePtr& parser)
 		{
 			DWORD source_context;
 			GenerateSourceContext(path, source_context);
-			HRESULT hr = parser->ParseScriptText(string_wide_from_utf8_fast(code), NULL, NULL, NULL, source_context, 0, SCRIPTTEXT_HOSTMANAGESSOURCE | SCRIPTTEXT_ISVISIBLE, NULL, NULL);
+			HRESULT hr = parser->ParseScriptText(string_wide_from_utf8_fast(code), nullptr, nullptr, nullptr, source_context, 0, SCRIPTTEXT_HOSTMANAGESSOURCE | SCRIPTTEXT_ISVISIBLE, nullptr, nullptr);
 			if (FAILED(hr)) return hr;
 		}
 		else
@@ -153,9 +153,9 @@ STDMETHODIMP script_host::GetDocVersionString(BSTR* pstr)
 
 STDMETHODIMP script_host::GetItemInfo(LPCOLESTR name, DWORD mask, IUnknown** ppunk, ITypeInfo** ppti)
 {
-	if (ppti) *ppti = NULL;
+	if (ppti) *ppti = nullptr;
 
-	if (ppunk) *ppunk = NULL;
+	if (ppunk) *ppunk = nullptr;
 
 	if (mask & SCRIPTINFO_IUNKNOWN)
 	{
@@ -291,7 +291,7 @@ void script_host::Finalize()
 	if (Ready())
 	{
 		// Call GC explicitly
-		IActiveScriptGarbageCollector* gc = NULL;
+		IActiveScriptGarbageCollector* gc = nullptr;
 		if (SUCCEEDED(m_script_engine->QueryInterface(IID_IActiveScriptGarbageCollector, (void**)&gc)))
 		{
 			gc->CollectGarbage(SCRIPTGCTYPE_EXHAUSTIVE);
@@ -301,7 +301,7 @@ void script_host::Finalize()
 		m_script_engine->SetScriptState(SCRIPTSTATE_DISCONNECTED);
 		m_script_engine->SetScriptState(SCRIPTSTATE_CLOSED);
 		m_script_engine->Close();
-		//m_script_engine->InterruptScriptThread(SCRIPTTHREADID_ALL, NULL, 0);
+		//m_script_engine->InterruptScriptThread(SCRIPTTHREADID_ALL, nullptr, 0);
 		m_engine_inited = false;
 	}
 

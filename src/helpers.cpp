@@ -22,8 +22,8 @@ namespace helpers
 		auto api = album_art_manager_v2::get();
 		album_art_extractor_instance_v2::ptr ptr;
 		album_art_data_ptr data;
-		Gdiplus::Bitmap* bitmap = NULL;
-		IGdiBitmap* ret = NULL;
+		Gdiplus::Bitmap* bitmap = nullptr;
+		IGdiBitmap* ret = nullptr;
 
 		try
 		{
@@ -60,7 +60,7 @@ namespace helpers
 
 	IGdiBitmap* get_album_art_embedded(const pfc::string8_fast& rawpath, t_size art_id)
 	{
-		IGdiBitmap* ret = NULL;
+		IGdiBitmap* ret = nullptr;
 
 		album_art_extractor::ptr ptr;
 		if (album_art_extractor::g_get_interface(ptr, rawpath))
@@ -71,10 +71,10 @@ namespace helpers
 
 			try
 			{
-				aaep = ptr->open(NULL, rawpath, abort);
+				aaep = ptr->open(nullptr, rawpath, abort);
 
 				album_art_data_ptr data = aaep->query(what, abort);
-				Gdiplus::Bitmap* bitmap = NULL;
+				Gdiplus::Bitmap* bitmap = nullptr;
 
 				if (read_album_art_into_bitmap(data, &bitmap))
 				{
@@ -88,9 +88,9 @@ namespace helpers
 
 	IGdiBitmap* load_image(BSTR path)
 	{
-		IGdiBitmap* ret = NULL;
+		IGdiBitmap* ret = nullptr;
 		IStreamPtr pStream;
-		if (SUCCEEDED(SHCreateStreamOnFileEx(path, STGM_READ | STGM_SHARE_DENY_WRITE, GENERIC_READ, FALSE, NULL, &pStream)))
+		if (SUCCEEDED(SHCreateStreamOnFileEx(path, STGM_READ | STGM_SHARE_DENY_WRITE, GENERIC_READ, FALSE, nullptr, &pStream)))
 		{
 			auto img = new Gdiplus::Bitmap(pStream, TRUE);
 			if (helpers::ensure_gdiplus_object(img))
@@ -100,7 +100,7 @@ namespace helpers
 			else
 			{
 				if (img) delete img;
-				img = NULL;
+				img = nullptr;
 			}
 		}
 		return ret;
@@ -216,7 +216,7 @@ namespace helpers
 					path.add_string(command);
 					if (_stricmp(p_command, path) == 0)
 					{
-						ptr->execute(i, NULL);
+						ptr->execute(i, nullptr);
 						return true;
 					}
 				}
@@ -251,7 +251,7 @@ namespace helpers
 		case mainmenu_node::type_command:
 			if (_stricmp(p_command, path) == 0)
 			{
-				node->execute(NULL);
+				node->execute(nullptr);
 				return true;
 			}
 			break;
@@ -261,7 +261,7 @@ namespace helpers
 
 	bool read_album_art_into_bitmap(const album_art_data_ptr& data, Gdiplus::Bitmap** bitmap)
 	{
-		*bitmap = NULL;
+		*bitmap = nullptr;
 		bool ret = false;
 
 		if (!data.is_valid())
@@ -269,7 +269,7 @@ namespace helpers
 
 		// Using IStream
 		IStreamPtr is;
-		if (SUCCEEDED(CreateStreamOnHGlobal(NULL, TRUE, &is)) && is)
+		if (SUCCEEDED(CreateStreamOnHGlobal(nullptr, TRUE, &is)) && is)
 		{
 			ULONG bytes_written = 0;
 			if (SUCCEEDED(is->Write(data->get_ptr(), data->get_size(), &bytes_written)) && bytes_written == data->get_size())
@@ -284,7 +284,7 @@ namespace helpers
 				else
 				{
 					if (bmp) delete bmp;
-					bmp = NULL;
+					bmp = nullptr;
 				}
 			}
 		}
@@ -293,25 +293,25 @@ namespace helpers
 
 	bool read_file_wide(t_size codepage, const wchar_t* path, pfc::array_t<wchar_t>& content)
 	{
-		HANDLE hFile = CreateFile(path, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+		HANDLE hFile = CreateFile(path, GENERIC_READ, FILE_SHARE_READ, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
 
 		if (hFile == INVALID_HANDLE_VALUE)
 		{
 			return false;
 		}
 
-		HANDLE hFileMapping = CreateFileMapping(hFile, NULL, PAGE_READONLY, 0, 0, NULL);
+		HANDLE hFileMapping = CreateFileMapping(hFile, nullptr, PAGE_READONLY, 0, 0, nullptr);
 
-		if (hFileMapping == NULL)
+		if (hFileMapping == nullptr)
 		{
 			CloseHandle(hFile);
 			return false;
 		}
 
-		DWORD dwFileSize = GetFileSize(hFile, NULL);
+		DWORD dwFileSize = GetFileSize(hFile, nullptr);
 		LPCBYTE pAddr = (LPCBYTE)MapViewOfFile(hFileMapping, FILE_MAP_READ, 0, 0, 0);
 
-		if (pAddr == NULL)
+		if (pAddr == nullptr)
 		{
 			CloseHandle(hFileMapping);
 			CloseHandle(hFile);
@@ -378,16 +378,16 @@ namespace helpers
 	bool write_file(const pfc::string8_fast& path, const pfc::string8_fast& content, bool write_bom)
 	{
 		t_size offset = write_bom ? 3 : 0;
-		HANDLE hFile = uCreateFile(path, GENERIC_READ | GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+		HANDLE hFile = uCreateFile(path, GENERIC_READ | GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
 
 		if (hFile == INVALID_HANDLE_VALUE)
 		{
 			return false;
 		}
 
-		HANDLE hFileMapping = uCreateFileMapping(hFile, NULL, PAGE_READWRITE, 0, content.get_length() + offset, NULL);
+		HANDLE hFileMapping = uCreateFileMapping(hFile, nullptr, PAGE_READWRITE, 0, content.get_length() + offset, nullptr);
 
-		if (hFileMapping == NULL)
+		if (hFileMapping == nullptr)
 		{
 			CloseHandle(hFile);
 			return false;
@@ -395,7 +395,7 @@ namespace helpers
 
 		PBYTE pAddr = (PBYTE)MapViewOfFile(hFileMapping, FILE_MAP_WRITE, 0, 0, 0);
 
-		if (pAddr == NULL)
+		if (pAddr == nullptr)
 		{
 			CloseHandle(hFileMapping);
 			CloseHandle(hFile);
@@ -442,7 +442,7 @@ namespace helpers
 		if (size == 0) return ret;
 
 		auto pImageCodecInfo = new Gdiplus::ImageCodecInfo[size];
-		if (pImageCodecInfo == NULL) return ret;
+		if (pImageCodecInfo == nullptr) return ret;
 
 		Gdiplus::GetImageEncoders(num, size, pImageCodecInfo);
 
@@ -508,7 +508,7 @@ namespace helpers
 	pfc::string8_fast get_fb2k_path()
 	{
 		pfc::string8_fast path;
-		uGetModuleFileName(NULL, path);
+		uGetModuleFileName(nullptr, path);
 		path = pfc::string_directory(path);
 		path.add_char('\\');
 		return path;
@@ -530,25 +530,25 @@ namespace helpers
 	pfc::string8_fast read_file(const char* path)
 	{
 		pfc::string8_fast content;
-		HANDLE hFile = uCreateFile(path, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+		HANDLE hFile = uCreateFile(path, GENERIC_READ, FILE_SHARE_READ, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
 
 		if (hFile == INVALID_HANDLE_VALUE)
 		{
 			return content;
 		}
 
-		HANDLE hFileMapping = uCreateFileMapping(hFile, NULL, PAGE_READONLY, 0, 0, NULL);
+		HANDLE hFileMapping = uCreateFileMapping(hFile, nullptr, PAGE_READONLY, 0, 0, nullptr);
 
-		if (hFileMapping == NULL)
+		if (hFileMapping == nullptr)
 		{
 			CloseHandle(hFile);
 			return content;
 		}
 
-		DWORD dwFileSize = GetFileSize(hFile, NULL);
+		DWORD dwFileSize = GetFileSize(hFile, nullptr);
 		LPCBYTE pAddr = (LPCBYTE)MapViewOfFile(hFileMapping, FILE_MAP_READ, 0, 0, 0);
 
-		if (pAddr == NULL)
+		if (pAddr == nullptr)
 		{
 			CloseHandle(hFileMapping);
 			CloseHandle(hFile);
@@ -598,7 +598,7 @@ namespace helpers
 
 		_COM_SMARTPTR_TYPEDEF(IMultiLanguage2, IID_IMultiLanguage2);
 		IMultiLanguage2Ptr lang;
-		if (FAILED(lang.CreateInstance(CLSID_CMultiLanguage, NULL, CLSCTX_INPROC_SERVER))) return 0;
+		if (FAILED(lang.CreateInstance(CLSID_CMultiLanguage, nullptr, CLSCTX_INPROC_SERVER))) return 0;
 		if (FAILED(lang->DetectInputCodepage(MLDETECTCP_NONE, 0, const_cast<char*>(text.get_ptr()), &textSize, encodings, &encodingCount))) return 0;
 
 		t_size codepage = encodings[0].nCodePage;
@@ -630,7 +630,7 @@ namespace helpers
 		for (;;)
 		{
 			const wchar_t* next = wcschr(text, '\n');
-			if (next == NULL)
+			if (next == nullptr)
 			{
 				estimate_line_wrap_recur(hdc, text, wcslen(text), width, out);
 				break;

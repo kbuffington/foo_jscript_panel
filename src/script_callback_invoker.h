@@ -77,7 +77,7 @@ public:
 	script_callback_invoker();
 	~script_callback_invoker();
 
-	HRESULT Invoke(int callbackId, VARIANTARG* argv = NULL, UINT argc = 0, VARIANT* ret = NULL);
+	HRESULT Invoke(int callbackId, VARIANTARG* argv = nullptr, UINT argc = 0, VARIANT* ret = nullptr);
 	void Init(IDispatch* pActiveScriptRoot);
 	void Reset();
 

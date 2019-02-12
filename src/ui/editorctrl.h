@@ -44,7 +44,7 @@ public:
 	END_MSG_MAP()
 
 	BOOL SubclassWindow(HWND hWnd);
-	DWORD GetPropertyColor(const char* key, bool* key_exist = NULL);
+	DWORD GetPropertyColor(const char* key, bool* key_exist = nullptr);
 	IndentationStatus GetIndentState(int line);
 	LRESULT OnChange(UINT uNotifyCode, int nID, HWND wndCtl);
 	LRESULT OnCharAdded(LPNMHDR pnmh);
@@ -57,7 +57,7 @@ public:
 	bool RangeIsAllWhitespace(int start, int end);
 	bool StartAutoComplete();
 	bool StartCallTip();
-	const char* GetNearestWord(const char* wordStart, int searchLen, SString wordCharacters = NULL, int wordIndex = -1);
+	const char* GetNearestWord(const char* wordStart, int searchLen, SString wordCharacters = nullptr, int wordIndex = -1);
 	int GetCaretInLine();
 	int IndentOfBlock(int line);
 	pfc::string8_fast GetCurrentLine();

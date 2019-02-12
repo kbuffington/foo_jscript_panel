@@ -51,9 +51,9 @@ simple_thread_pool simple_thread_pool::instance_;
 
 simple_thread_pool::simple_thread_pool() : num_workers_(0)
 {
-	empty_worker_ = CreateEvent(NULL, TRUE, TRUE, NULL);
-	exiting_ = CreateEvent(NULL, TRUE, FALSE, NULL);
-	have_task_ = CreateEvent(NULL, TRUE, FALSE, NULL);
+	empty_worker_ = CreateEvent(nullptr, TRUE, TRUE, nullptr);
+	exiting_ = CreateEvent(nullptr, TRUE, FALSE, nullptr);
+	have_task_ = CreateEvent(nullptr, TRUE, FALSE, nullptr);
 
 	pfc::dynamic_assert(empty_worker_ != INVALID_HANDLE_VALUE);
 	pfc::dynamic_assert(exiting_ != INVALID_HANDLE_VALUE);
@@ -106,7 +106,7 @@ simple_thread_task* simple_thread_pool::acquire_task()
 	if (is_queue_empty())
 		ResetEvent(have_task_);
 
-	return iter.is_valid() ? *iter : NULL;
+	return iter.is_valid() ? *iter : nullptr;
 }
 
 simple_thread_pool& simple_thread_pool::instance()
@@ -134,7 +134,7 @@ void simple_thread_pool::exit()
 	{
 		MSG msg;
 
-		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+		if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
 		{
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);

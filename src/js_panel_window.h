@@ -11,7 +11,7 @@ public:
 	js_panel_window();
 	virtual ~js_panel_window();
 
-	HRESULT script_invoke_v(int callbackId, VARIANTARG* argv = NULL, UINT argc = 0, VARIANT* ret = NULL);
+	HRESULT script_invoke_v(int callbackId, VARIANTARG* argv = nullptr, UINT argc = 0, VARIANT* ret = nullptr);
 	void update_script();
 
 protected:

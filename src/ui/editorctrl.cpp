@@ -47,7 +47,7 @@ const t_style_to_key_table js_style_table[] =
 	// Operators
 	{ SCE_C_OPERATOR, "style.operator" },
 	//
-	{ -1, NULL },
+	{ -1, nullptr },
 };
 
 static DWORD ParseHex(const char* hex)
@@ -698,7 +698,7 @@ bool CScriptEditorCtrl::StartCallTip()
 const char* CScriptEditorCtrl::GetNearestWord(const char* wordStart, int searchLen, SString wordCharacters, int wordIndex)
 {
 	if (m_apis.get_count() == 0)
-		return NULL;
+		return nullptr;
 
 	t_size index;
 
@@ -734,9 +734,9 @@ const char* CScriptEditorCtrl::GetNearestWord(const char* wordStart, int searchL
 			}
 		}
 
-		return NULL;
+		return nullptr;
 	}
-	return NULL;
+	return nullptr;
 }
 
 int CScriptEditorCtrl::GetCaretInLine()
@@ -1193,11 +1193,11 @@ void CScriptEditorCtrl::RestoreDefaultStyle()
 
 void CScriptEditorCtrl::SetAllStylesFromTable(const t_style_to_key_table table[])
 {
-	const char* key = NULL;
+	const char* key = nullptr;
 
 	for (int i = 0; table[i].style_num != -1; ++i)
 	{
-		if ((key = table[i].key) != NULL)
+		if ((key = table[i].key) != nullptr)
 		{
 			int style_num;
 			pfc::array_t<char> definition;

@@ -21,7 +21,7 @@ struct IGdiObj;
 			COM_QI_ENTRY_MULTI(Iimpl, Iimpl);
 
 #define END_COM_QI_IMPL() \
-			*ppv = NULL; \
+			*ppv = nullptr; \
 			return E_NOINTERFACE; \
 		qi_entry_done: \
 			reinterpret_cast<IUnknown*>(*ppv)->AddRef(); \
@@ -165,7 +165,7 @@ protected:
 		if (m_ptr)
 		{
 			delete m_ptr;
-			m_ptr = NULL;
+			m_ptr = nullptr;
 		}
 	}
 

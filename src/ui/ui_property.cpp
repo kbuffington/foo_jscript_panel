@@ -63,7 +63,7 @@ LRESULT CDialogProperty::OnExportBnClicked(WORD wNotifyCode, WORD wID, HWND hWnd
 {
 	pfc::string8_fast path;
 
-	if (uGetOpenFileName(m_hWnd, "Property files|*.wsp", 0, "wsp", "Save as", NULL, path, TRUE))
+	if (uGetOpenFileName(m_hWnd, "Property files|*.wsp", 0, "wsp", "Save as", nullptr, path, TRUE))
 	{
 		file_ptr io;
 		abort_callback_dummy abort;
@@ -82,7 +82,7 @@ LRESULT CDialogProperty::OnImportBnClicked(WORD wNotifyCode, WORD wID, HWND hWnd
 {
 	pfc::string8_fast path;
 
-	if (uGetOpenFileName(m_hWnd, "Property files|*.wsp|All files|*.*", 0, "wsp", "Import from", NULL, path, FALSE))
+	if (uGetOpenFileName(m_hWnd, "Property files|*.wsp|All files|*.*", 0, "wsp", "Import from", nullptr, path, FALSE))
 	{
 		file_ptr io;
 		abort_callback_dummy abort;
@@ -138,7 +138,7 @@ void CDialogProperty::LoadProperties(bool reload)
 	for (prop_kv_config::t_map::const_iterator iter = m_dup_prop_map.first(); iter.is_valid(); ++iter)
 	{
 		string_wide_from_utf8_fast wname(iter->m_key);
-		HPROPERTY hProp = NULL;
+		HPROPERTY hProp = nullptr;
 		const _variant_t& v = iter->m_value;
 		_variant_t var;
 

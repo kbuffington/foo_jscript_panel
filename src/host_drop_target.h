@@ -32,7 +32,7 @@ _COM_SMARTPTR_TYPEDEF(IDropTargetHelper, IID_IDropTargetHelper);
 class IDropTargetImpl : public IDropTarget
 {
 public:
-	IDropTargetImpl(HWND hWnd = NULL);
+	IDropTargetImpl(HWND hWnd = nullptr);
 	virtual ~IDropTargetImpl();
 
 	HRESULT RegisterDragDrop();

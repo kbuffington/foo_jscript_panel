@@ -113,11 +113,11 @@ STDMETHODIMP Utils::FileTest(BSTR path, BSTR mode, VARIANT* p)
 		if (!helper.create(_countof(vars))) return E_OUTOFMEMORY;
 
 		vars[0].vt = VT_BSTR;
-		vars[0].bstrVal = NULL;
+		vars[0].bstrVal = nullptr;
 		vars[1].vt = VT_BSTR;
-		vars[1].bstrVal = NULL;
+		vars[1].bstrVal = nullptr;
 		vars[2].vt = VT_BSTR;
-		vars[2].bstrVal = NULL;
+		vars[2].bstrVal = nullptr;
 
 		if (PathIsFileSpec(fn))
 		{
@@ -179,7 +179,7 @@ STDMETHODIMP Utils::GetAlbumArtAsync(UINT window_id, IMetadbHandle* handle, UINT
 	if (!p) return E_POINTER;
 
 	t_size cookie = 0;
-	metadb_handle* ptr = NULL;
+	metadb_handle* ptr = nullptr;
 	handle->get__ptr((void**)&ptr);
 	if (!ptr) return E_INVALIDARG;
 
@@ -213,7 +213,7 @@ STDMETHODIMP Utils::GetAlbumArtV2(IMetadbHandle* handle, UINT art_id, VARIANT_BO
 {
 	if (!pp) return E_POINTER;
 
-	metadb_handle* ptr = NULL;
+	metadb_handle* ptr = nullptr;
 	handle->get__ptr((void**)&ptr);
 	if (!ptr) return E_INVALIDARG;
 
@@ -227,7 +227,7 @@ STDMETHODIMP Utils::GetSysColour(UINT index, int* p)
 	if (!p) return E_POINTER;
 
 	*p = 0;
-	if (::GetSysColorBrush(index) != NULL)
+	if (::GetSysColorBrush(index) != nullptr)
 	{
 		*p = helpers::convert_colorref_to_argb(::GetSysColor(index));
 	}
@@ -269,7 +269,7 @@ STDMETHODIMP Utils::Glob(BSTR pattern, UINT exc_mask, UINT inc_mask, VARIANT* p)
 	}
 
 	delete ff;
-	ff = NULL;
+	ff = nullptr;
 
 	helpers::com_array helper;
 
@@ -381,7 +381,7 @@ STDMETHODIMP Utils::MapString(BSTR str, UINT lcid, UINT flags, BSTR* p)
 {
 	if (!p) return E_POINTER;
 
-	int r = ::LCMapStringW(lcid, flags, str, wcslen(str) + 1, NULL, 0);
+	int r = ::LCMapStringW(lcid, flags, str, wcslen(str) + 1, nullptr, 0);
 	if (!r) return E_FAIL;
 	wchar_t* dst = new wchar_t[r];
 	r = ::LCMapStringW(lcid, flags, str, wcslen(str) + 1, dst, r);
@@ -408,7 +408,7 @@ STDMETHODIMP Utils::ReadINI(BSTR filename, BSTR section, BSTR key, VARIANT defau
 	};
 	TCHAR buff[BUFFER_LEN] = { 0 };
 
-	GetPrivateProfileString(section, key, NULL, buff, BUFFER_LEN, filename);
+	GetPrivateProfileString(section, key, nullptr, buff, BUFFER_LEN, filename);
 
 	if (!buff[0])
 	{
@@ -455,7 +455,7 @@ STDMETHODIMP Utils::WriteTextFile(BSTR filename, BSTR content, VARIANT_BOOL writ
 {
 	if (!p) return E_POINTER;
 
-	if (filename == NULL || content == NULL)
+	if (filename == nullptr || content == nullptr)
 	{
 		*p = VARIANT_FALSE;
 	}

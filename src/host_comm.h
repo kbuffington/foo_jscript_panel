@@ -107,7 +107,7 @@ public:
 	virtual DWORD GetColourUI(t_size type) = 0;
 	virtual HFONT GetFontUI(t_size type) = 0;
 	void Redraw();
-	void RefreshBackground(LPRECT lprcUpdate = NULL);
+	void RefreshBackground(LPRECT lprcUpdate = nullptr);
 	void Repaint(bool force = false);
 	void RepaintRect(int x, int y, int w, int h, bool force = false);
 

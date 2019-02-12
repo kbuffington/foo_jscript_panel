@@ -34,7 +34,7 @@ STDMETHODIMP ContextMenuManager::ExecuteByID(UINT id, VARIANT_BOOL* p)
 
 STDMETHODIMP ContextMenuManager::InitContext(IMetadbHandleList* handles)
 {
-	metadb_handle_list* handles_ptr = NULL;
+	metadb_handle_list* handles_ptr = nullptr;
 	handles->get__ptr((void**)&handles_ptr);
 	contextmenu_manager::g_create(m_cm);
 	m_cm->init_context(*handles_ptr, contextmenu_manager::flag_show_shortcuts);
@@ -103,7 +103,7 @@ void FileInfo::FinalRelease()
 	if (m_info_ptr)
 	{
 		delete m_info_ptr;
-		m_info_ptr = NULL;
+		m_info_ptr = nullptr;
 	}
 }
 
@@ -236,7 +236,7 @@ STDMETHODIMP GdiBitmap::ApplyMask(IGdiBitmap* mask, VARIANT_BOOL* p)
 	if (!m_ptr || !p) return E_POINTER;
 
 	*p = VARIANT_FALSE;
-	Gdiplus::Bitmap* bitmap_mask = NULL;
+	Gdiplus::Bitmap* bitmap_mask = nullptr;
 	mask->get__ptr((void**)&bitmap_mask);
 
 	if (!bitmap_mask || bitmap_mask->GetHeight() != m_ptr->GetHeight() || bitmap_mask->GetWidth() != m_ptr->GetWidth())
@@ -291,7 +291,7 @@ STDMETHODIMP GdiBitmap::Clone(float x, float y, float w, float h, IGdiBitmap** p
 {
 	if (!m_ptr || !pp) return E_POINTER;
 
-	*pp = NULL;
+	*pp = nullptr;
 	Gdiplus::Bitmap* img = m_ptr->Clone(x, y, w, h, PixelFormat32bppPARGB);
 	if (helpers::ensure_gdiplus_object(img))
 	{
@@ -300,7 +300,7 @@ STDMETHODIMP GdiBitmap::Clone(float x, float y, float w, float h, IGdiBitmap** p
 	else
 	{
 		if (img) delete img;
-		img = NULL;
+		img = nullptr;
 	}
 
 	return S_OK;
@@ -476,9 +476,9 @@ STDMETHODIMP GdiBitmap::ReleaseGraphics(IGdiGraphics* p)
 {
 	if (p)
 	{
-		Gdiplus::Graphics* g = NULL;
+		Gdiplus::Graphics* g = nullptr;
 		p->get__ptr((void**)&g);
-		p->put__ptr(NULL);
+		p->put__ptr(nullptr);
 		if (g) delete g;
 	}
 
@@ -557,7 +557,7 @@ void GdiFont::FinalRelease()
 	if (m_hFont&& m_managed)
 	{
 		DeleteFont(m_hFont);
-		m_hFont = NULL;
+		m_hFont = nullptr;
 	}
 
 	// call parent
@@ -610,7 +610,7 @@ STDMETHODIMP GdiFont::get_Style(int* p)
 	return S_OK;
 }
 
-GdiGraphics::GdiGraphics() : GdiObj<IGdiGraphics, Gdiplus::Graphics>(NULL) {}
+GdiGraphics::GdiGraphics() : GdiObj<IGdiGraphics, Gdiplus::Graphics>(nullptr) {}
 
 void GdiGraphics::GetRoundRectPath(Gdiplus::GraphicsPath & gp, Gdiplus::RectF & rect, float arc_width, float arc_height)
 {
@@ -642,7 +642,7 @@ STDMETHODIMP GdiGraphics::CalcTextHeight(BSTR str, IGdiFont* font, UINT* p)
 {
 	if (!m_ptr || !p) return E_POINTER;
 
-	HFONT hFont = NULL;
+	HFONT hFont = nullptr;
 	font->get__HFont((UINT*)&hFont);
 	HFONT oldfont;
 	HDC dc = m_ptr->GetHDC();
@@ -657,7 +657,7 @@ STDMETHODIMP GdiGraphics::CalcTextWidth(BSTR str, IGdiFont* font, UINT* p)
 {
 	if (!m_ptr || !p) return E_POINTER;
 
-	HFONT hFont = NULL;
+	HFONT hFont = nullptr;
 	font->get__HFont((UINT*)&hFont);
 	HFONT oldfont;
 	HDC dc = m_ptr->GetHDC();
@@ -681,7 +681,7 @@ STDMETHODIMP GdiGraphics::DrawImage(IGdiBitmap* image, float dstX, float dstY, f
 {
 	if (!m_ptr) return E_POINTER;
 
-	Gdiplus::Bitmap* img = NULL;
+	Gdiplus::Bitmap* img = nullptr;
 	image->get__ptr((void**)&img);
 	Gdiplus::Matrix old_m;
 
@@ -788,7 +788,7 @@ STDMETHODIMP GdiGraphics::DrawString(BSTR str, IGdiFont* font, LONGLONG colour, 
 {
 	if (!m_ptr) return E_POINTER;
 
-	Gdiplus::Font* fn = NULL;
+	Gdiplus::Font* fn = nullptr;
 	font->get__ptr((void**)&fn);
 	Gdiplus::SolidBrush br(static_cast<t_size>(colour));
 	Gdiplus::StringFormat fmt(Gdiplus::StringFormat::GenericTypographic());
@@ -809,7 +809,7 @@ STDMETHODIMP GdiGraphics::EstimateLineWrap(BSTR str, IGdiFont* font, int max_wid
 {
 	if (!m_ptr || !p) return E_POINTER;
 
-	HFONT hFont = NULL;
+	HFONT hFont = nullptr;
 	font->get__HFont((UINT*)&hFont);
 	HDC dc = m_ptr->GetHDC();
 	HFONT oldfont = SelectFont(dc, hFont);
@@ -911,7 +911,7 @@ STDMETHODIMP GdiGraphics::GdiAlphaBlend(IGdiRawBitmap* bitmap, int dstX, int dst
 {
 	if (!m_ptr) return E_POINTER;
 
-	HDC src_dc = NULL;
+	HDC src_dc = nullptr;
 	bitmap->get__Handle(&src_dc);
 	HDC dc = m_ptr->GetHDC();
 	BLENDFUNCTION bf = { AC_SRC_OVER, 0, alpha, AC_SRC_ALPHA };
@@ -925,7 +925,7 @@ STDMETHODIMP GdiGraphics::GdiDrawBitmap(IGdiRawBitmap* bitmap, int dstX, int dst
 {
 	if (!m_ptr) return E_POINTER;
 
-	HDC src_dc = NULL;
+	HDC src_dc = nullptr;
 	bitmap->get__Handle(&src_dc);
 	HDC dc = m_ptr->GetHDC();
 
@@ -936,7 +936,7 @@ STDMETHODIMP GdiGraphics::GdiDrawBitmap(IGdiRawBitmap* bitmap, int dstX, int dst
 	else
 	{
 		SetStretchBltMode(dc, HALFTONE);
-		SetBrushOrgEx(dc, 0, 0, NULL);
+		SetBrushOrgEx(dc, 0, 0, nullptr);
 		StretchBlt(dc, dstX, dstY, dstW, dstH, src_dc, srcX, srcY, srcW, srcH, SRCCOPY);
 	}
 
@@ -948,7 +948,7 @@ STDMETHODIMP GdiGraphics::GdiDrawText(BSTR str, IGdiFont* font, LONGLONG colour,
 {
 	if (!m_ptr) return E_POINTER;
 
-	HFONT hFont = NULL;
+	HFONT hFont = nullptr;
 	font->get__HFont((UINT*)&hFont);
 	HFONT oldfont;
 	HDC dc = m_ptr->GetHDC();
@@ -998,7 +998,7 @@ STDMETHODIMP GdiGraphics::MeasureString(BSTR str, IGdiFont* font, float x, float
 {
 	if (!m_ptr || !pp) return E_POINTER;
 
-	Gdiplus::Font* fn = NULL;
+	Gdiplus::Font* fn = nullptr;
 	font->get__ptr((void**)&fn);
 
 	Gdiplus::StringFormat fmt = Gdiplus::StringFormat::GenericTypographic();
@@ -1052,11 +1052,11 @@ STDMETHODIMP GdiGraphics::put__ptr(void* p)
 
 GdiRawBitmap::GdiRawBitmap(Gdiplus::Bitmap* p_bmp)
 {
-	PFC_ASSERT(p_bmp != NULL);
+	PFC_ASSERT(p_bmp != nullptr);
 	m_width = p_bmp->GetWidth();
 	m_height = p_bmp->GetHeight();
 
-	m_hdc = CreateCompatibleDC(NULL);
+	m_hdc = CreateCompatibleDC(nullptr);
 	m_hbmp = CreateHBITMAP(p_bmp);
 	m_hbmpold = SelectBitmap(m_hdc, m_hbmp);
 }
@@ -1071,7 +1071,7 @@ HBITMAP GdiRawBitmap::CreateHBITMAP(Gdiplus::Bitmap* bitmap_ptr)
 	if (bitmap_ptr->LockBits(&rect, Gdiplus::ImageLockModeRead, PixelFormat32bppPARGB, &bmpdata) != Gdiplus::Ok)
 	{
 		// Error
-		return NULL;
+		return nullptr;
 	}
 
 	BITMAP bm;
@@ -1094,13 +1094,13 @@ void GdiRawBitmap::FinalRelease()
 	{
 		SelectBitmap(m_hdc, m_hbmpold);
 		DeleteDC(m_hdc);
-		m_hdc = NULL;
+		m_hdc = nullptr;
 	}
 
 	if (m_hbmp)
 	{
 		DeleteBitmap(m_hbmp);
-		m_hbmp = NULL;
+		m_hbmp = nullptr;
 	}
 }
 
@@ -1260,7 +1260,7 @@ void MenuObj::FinalRelease()
 	if (!m_has_detached && m_hMenu && IsMenu(m_hMenu))
 	{
 		DestroyMenu(m_hMenu);
-		m_hMenu = NULL;
+		m_hMenu = nullptr;
 	}
 }
 
@@ -1364,7 +1364,7 @@ STDMETHODIMP MetadbHandle::Compare(IMetadbHandle* handle, VARIANT_BOOL* p)
 {
 	if (m_handle.is_empty() || !p) return E_POINTER;
 
-	metadb_handle* ptr = NULL;
+	metadb_handle* ptr = nullptr;
 	handle->get__ptr((void**)&ptr);
 	if (!ptr) return E_INVALIDARG;
 
@@ -1562,7 +1562,7 @@ STDMETHODIMP MetadbHandleList::get__ptr(void** pp)
 
 STDMETHODIMP MetadbHandleList::Add(IMetadbHandle* handle)
 {
-	metadb_handle* ptr = NULL;
+	metadb_handle* ptr = nullptr;
 	handle->get__ptr((void**)&ptr);
 	if (!ptr) return E_INVALIDARG;
 
@@ -1572,7 +1572,7 @@ STDMETHODIMP MetadbHandleList::Add(IMetadbHandle* handle)
 
 STDMETHODIMP MetadbHandleList::AddRange(IMetadbHandleList* handles)
 {
-	metadb_handle_list* handles_ptr = NULL;
+	metadb_handle_list* handles_ptr = nullptr;
 	handles->get__ptr((void**)&handles_ptr);
 	m_handles.add_items(*handles_ptr);
 	return S_OK;
@@ -1614,7 +1614,7 @@ STDMETHODIMP MetadbHandleList::BSearch(IMetadbHandle* handle, int* p)
 {
 	if (!p) return E_POINTER;
 
-	metadb_handle* ptr = NULL;
+	metadb_handle* ptr = nullptr;
 	handle->get__ptr((void**)&ptr);
 	if (!ptr) return E_INVALIDARG;
 
@@ -1670,7 +1670,7 @@ STDMETHODIMP MetadbHandleList::Find(IMetadbHandle* handle, int* p)
 {
 	if (!p) return E_POINTER;
 
-	metadb_handle* ptr = NULL;
+	metadb_handle* ptr = nullptr;
 	handle->get__ptr((void**)&ptr);
 	if (!ptr) return E_INVALIDARG;
 
@@ -1707,7 +1707,7 @@ STDMETHODIMP MetadbHandleList::GetLibraryRelativePaths(VARIANT* p)
 
 STDMETHODIMP MetadbHandleList::Insert(UINT index, IMetadbHandle* handle)
 {
-	metadb_handle* ptr = NULL;
+	metadb_handle* ptr = nullptr;
 	handle->get__ptr((void**)&ptr);
 	if (!ptr) return E_INVALIDARG;
 
@@ -1717,7 +1717,7 @@ STDMETHODIMP MetadbHandleList::Insert(UINT index, IMetadbHandle* handle)
 
 STDMETHODIMP MetadbHandleList::InsertRange(UINT index, IMetadbHandleList* handles)
 {
-	metadb_handle_list* handles_ptr = NULL;
+	metadb_handle_list* handles_ptr = nullptr;
 	handles->get__ptr((void**)&handles_ptr);
 	m_handles.insert_items(*handles_ptr, index);
 	return S_OK;
@@ -1725,7 +1725,7 @@ STDMETHODIMP MetadbHandleList::InsertRange(UINT index, IMetadbHandleList* handle
 
 STDMETHODIMP MetadbHandleList::MakeDifference(IMetadbHandleList* handles)
 {
-	metadb_handle_list* handles_ptr = NULL;
+	metadb_handle_list* handles_ptr = nullptr;
 	handles->get__ptr((void**)&handles_ptr);
 
 	metadb_handle_list_ref handles_ref = *handles_ptr;
@@ -1759,7 +1759,7 @@ STDMETHODIMP MetadbHandleList::MakeDifference(IMetadbHandleList* handles)
 
 STDMETHODIMP MetadbHandleList::MakeIntersection(IMetadbHandleList* handles)
 {
-	metadb_handle_list* handles_ptr = NULL;
+	metadb_handle_list* handles_ptr = nullptr;
 	handles->get__ptr((void**)&handles_ptr);
 
 	metadb_handle_list_ref handles_ref = *handles_ptr;
@@ -1789,7 +1789,7 @@ STDMETHODIMP MetadbHandleList::MakeIntersection(IMetadbHandleList* handles)
 
 STDMETHODIMP MetadbHandleList::MakeUnion(IMetadbHandleList* handles)
 {
-	metadb_handle_list* handles_ptr = NULL;
+	metadb_handle_list* handles_ptr = nullptr;
 	handles->get__ptr((void**)&handles_ptr);
 
 	m_handles.add_items(*handles_ptr);
@@ -1799,9 +1799,9 @@ STDMETHODIMP MetadbHandleList::MakeUnion(IMetadbHandleList* handles)
 
 STDMETHODIMP MetadbHandleList::OrderByFormat(__interface ITitleFormat* script, int direction)
 {
-	titleformat_object* obj = NULL;
+	titleformat_object* obj = nullptr;
 	script->get__ptr((void**)&obj);
-	m_handles.sort_by_format(obj, NULL, direction);
+	m_handles.sort_by_format(obj, nullptr, direction);
 	return S_OK;
 }
 
@@ -1870,7 +1870,7 @@ STDMETHODIMP MetadbHandleList::RefreshStats()
 
 STDMETHODIMP MetadbHandleList::Remove(IMetadbHandle* handle)
 {
-	metadb_handle* ptr = NULL;
+	metadb_handle* ptr = nullptr;
 	handle->get__ptr((void**)&ptr);
 	if (!ptr) return E_INVALIDARG;
 
@@ -1996,7 +1996,7 @@ STDMETHODIMP MetadbHandleList::UpdateFileInfoFromJSON(BSTR str)
 		pfc::ptr_list_const_array_t<const file_info, file_info_impl*>(info.get_ptr(), info.get_count()),
 		core_api::get_main_window(),
 		metadb_io_v2::op_flag_delay_ui,
-		NULL
+		nullptr
 	);
 
 	return S_OK;
@@ -2026,7 +2026,7 @@ STDMETHODIMP MetadbHandleList::put_Item(UINT index, IMetadbHandle* handle)
 {
 	if (index < m_handles.get_count())
 	{
-		metadb_handle* ptr = NULL;
+		metadb_handle* ptr = nullptr;
 		handle->get__ptr((void**)&ptr);
 		if (!ptr) return E_INVALIDARG;
 
@@ -2202,7 +2202,7 @@ STDMETHODIMP Profiler::get_Time(int* p)
 	return S_OK;
 }
 
-ThemeManager::ThemeManager(HWND hwnd, BSTR classlist) : m_theme(NULL), m_partid(0), m_stateid(0)
+ThemeManager::ThemeManager(HWND hwnd, BSTR classlist) : m_theme(nullptr), m_partid(0), m_stateid(0)
 {
 	m_theme = OpenThemeData(hwnd, classlist);
 
@@ -2216,7 +2216,7 @@ void ThemeManager::FinalRelease()
 	if (m_theme)
 	{
 		CloseThemeData(m_theme);
-		m_theme = NULL;
+		m_theme = nullptr;
 	}
 }
 
@@ -2224,7 +2224,7 @@ STDMETHODIMP ThemeManager::DrawThemeBackground(IGdiGraphics* gr, int x, int y, i
 {
 	if (!m_theme) return E_POINTER;
 
-	Gdiplus::Graphics* graphics = NULL;
+	Gdiplus::Graphics* graphics = nullptr;
 	gr->get__ptr((void**)&graphics);
 
 	RECT rc = { x, y, x + w, y + h };
@@ -2234,7 +2234,7 @@ STDMETHODIMP ThemeManager::DrawThemeBackground(IGdiGraphics* gr, int x, int y, i
 
 	if (clip_x == 0 && clip_y == 0 && clip_w == 0 && clip_h == 0)
 	{
-		pclip_rc = NULL;
+		pclip_rc = nullptr;
 	}
 
 	HRESULT hr = ::DrawThemeBackground(m_theme, dc, m_partid, m_stateid, &rc, pclip_rc);
@@ -2287,11 +2287,11 @@ STDMETHODIMP TitleFormat::Eval(VARIANT_BOOL force, BSTR* p)
 
 	pfc::string8_fast text;
 
-	if (!playback_control::get()->playback_format_title(NULL, text, m_obj, NULL, playback_control::display_level_all) && force != VARIANT_FALSE)
+	if (!playback_control::get()->playback_format_title(nullptr, text, m_obj, nullptr, playback_control::display_level_all) && force != VARIANT_FALSE)
 	{
 		metadb_handle_ptr handle;
 		metadb::get()->handle_create(handle, make_playable_location("file://C:\\________.ogg", 0));
-		handle->format_title(NULL, text, m_obj, NULL);
+		handle->format_title(nullptr, text, m_obj, nullptr);
 	}
 
 	*p = SysAllocString(string_wide_from_utf8_fast(text));
@@ -2302,12 +2302,12 @@ STDMETHODIMP TitleFormat::EvalWithMetadb(IMetadbHandle* handle, BSTR* p)
 {
 	if (m_obj.is_empty() || !p) return E_POINTER;
 
-	metadb_handle* ptr = NULL;
+	metadb_handle* ptr = nullptr;
 	handle->get__ptr((void**)&ptr);
 	if (!ptr) return E_INVALIDARG;
 
 	pfc::string8_fast text;
-	ptr->format_title(NULL, text, m_obj, NULL);
+	ptr->format_title(nullptr, text, m_obj, nullptr);
 
 	*p = SysAllocString(string_wide_from_utf8_fast(text));
 	return S_OK;
@@ -2317,7 +2317,7 @@ STDMETHODIMP TitleFormat::EvalWithMetadbs(IMetadbHandleList* handles, VARIANT* p
 {
 	if (m_obj.is_empty() || !p) return E_POINTER;
 
-	metadb_handle_list* handles_ptr = NULL;
+	metadb_handle_list* handles_ptr = nullptr;
 	handles->get__ptr((void**)&handles_ptr);
 
 	metadb_handle_list_ref handles_ref = *handles_ptr;
@@ -2328,7 +2328,7 @@ STDMETHODIMP TitleFormat::EvalWithMetadbs(IMetadbHandleList* handles, VARIANT* p
 	for (LONG i = 0; i < count; ++i)
 	{
 		pfc::string8_fast text;
-		handles_ref[i]->format_title(NULL, text, m_obj, NULL);
+		handles_ref[i]->format_title(nullptr, text, m_obj, nullptr);
 		_variant_t var;
 		var.vt = VT_BSTR;
 		var.bstrVal = SysAllocString(string_wide_from_utf8_fast(text));
@@ -2344,16 +2344,16 @@ Tooltip::Tooltip(HWND p_wndparent, const panel_tooltip_param_ptr & p_param_ptr) 
 	m_wndtooltip = CreateWindowEx(
 		WS_EX_TOPMOST,
 		TOOLTIPS_CLASS,
-		NULL,
+		nullptr,
 		WS_POPUP | TTS_ALWAYSTIP | TTS_NOPREFIX,
 		CW_USEDEFAULT,
 		CW_USEDEFAULT,
 		CW_USEDEFAULT,
 		CW_USEDEFAULT,
 		p_wndparent,
-		NULL,
+		nullptr,
 		core_api::get_my_instance(),
-		NULL);
+		nullptr);
 
 	// Original position
 	SetWindowPos(m_wndtooltip, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
@@ -2400,13 +2400,13 @@ void Tooltip::FinalRelease()
 	if (m_wndtooltip && IsWindow(m_wndtooltip))
 	{
 		DestroyWindow(m_wndtooltip);
-		m_wndtooltip = NULL;
+		m_wndtooltip = nullptr;
 	}
 
 	if (m_tip_buffer)
 	{
 		SysFreeString(m_tip_buffer);
-		m_tip_buffer = NULL;
+		m_tip_buffer = nullptr;
 	}
 }
 
@@ -2506,7 +2506,7 @@ STDMETHODIMP UiSelectionHolder::SetPlaylistTracking()
 
 STDMETHODIMP UiSelectionHolder::SetSelection(IMetadbHandleList* handles)
 {
-	metadb_handle_list* handles_ptr = NULL;
+	metadb_handle_list* handles_ptr = nullptr;
 	handles->get__ptr((void**)&handles_ptr);
 	m_holder->set_selection(*handles_ptr);
 	return S_OK;

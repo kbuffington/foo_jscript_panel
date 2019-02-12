@@ -31,7 +31,7 @@ STDMETHODIMP Window::CreateThemeManager(BSTR classid, IThemeManager** pp)
 {
 	if (!pp) return E_POINTER;
 
-	IThemeManager* ptheme = NULL;
+	IThemeManager* ptheme = nullptr;
 
 	try
 	{
@@ -43,7 +43,7 @@ STDMETHODIMP Window::CreateThemeManager(BSTR classid, IThemeManager** pp)
 		{
 			ptheme->Dispose();
 			delete ptheme;
-			ptheme = NULL;
+			ptheme = nullptr;
 		}
 	}
 
@@ -86,7 +86,7 @@ STDMETHODIMP Window::GetFontCUI(UINT type, IGdiFont** pp)
 	if (!pp) return E_POINTER;
 	if (m_host->GetInstanceType() != host_comm::KInstanceTypeCUI) return E_NOTIMPL;
 
-	*pp = NULL;
+	*pp = nullptr;
 	HFONT hFont = m_host->GetFontUI(type);
 	if (hFont)
 	{
@@ -98,7 +98,7 @@ STDMETHODIMP Window::GetFontCUI(UINT type, IGdiFont** pp)
 		else
 		{
 			if (font) delete font;
-			font = NULL;
+			font = nullptr;
 		}
 	}
 	return S_OK;
@@ -109,7 +109,7 @@ STDMETHODIMP Window::GetFontDUI(UINT type, IGdiFont** pp)
 	if (!pp) return E_POINTER;
 	if (m_host->GetInstanceType() != host_comm::KInstanceTypeDUI) return E_NOTIMPL;
 
-	*pp = NULL;
+	*pp = nullptr;
 	HFONT hFont = m_host->GetFontUI(type);
 	if (hFont)
 	{
@@ -121,7 +121,7 @@ STDMETHODIMP Window::GetFontDUI(UINT type, IGdiFont** pp)
 		else
 		{
 			if (font) delete font;
-			font = NULL;
+			font = nullptr;
 		}
 	}
 	return S_OK;
@@ -147,7 +147,7 @@ STDMETHODIMP Window::GetProperty(BSTR name, VARIANT defaultval, VARIANT* p)
 
 	if (FAILED(hr))
 	{
-		p = NULL;
+		p = nullptr;
 	}
 
 	return S_OK;
@@ -160,7 +160,7 @@ STDMETHODIMP Window::NotifyOthers(BSTR name, VARIANT info)
 	_variant_t var;
 	if (FAILED(VariantCopy(&var, &info))) return E_INVALIDARG;
 
-	auto data = new callback_data<_bstr_t, _variant_t>(name, NULL);
+	auto data = new callback_data<_bstr_t, _variant_t>(name, 0);
 	auto d = var.Detach();
 	data->m_item2.Attach(d);
 	panel_manager::instance().send_msg_to_others_pointer(m_host->GetHWND(), CALLBACK_UWM_ON_NOTIFY_DATA, data);
@@ -187,7 +187,7 @@ STDMETHODIMP Window::RepaintRect(int x, int y, int w, int h, VARIANT_BOOL force)
 
 STDMETHODIMP Window::SetCursor(UINT id)
 {
-	::SetCursor(LoadCursor(NULL, MAKEINTRESOURCE(id)));
+	::SetCursor(LoadCursor(nullptr, MAKEINTRESOURCE(id)));
 	return S_OK;
 }
 

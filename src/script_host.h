@@ -11,7 +11,7 @@ public:
 
 	HRESULT Initialize();
 	HRESULT InitScriptEngine();
-	HRESULT InvokeCallback(int callbackId, VARIANTARG* argv = NULL, UINT argc = 0, VARIANT* ret = NULL);
+	HRESULT InvokeCallback(int callbackId, VARIANTARG* argv = nullptr, UINT argc = 0, VARIANT* ret = nullptr);
 	HRESULT ProcessImportedScripts(IActiveScriptParsePtr& parser);
 	STDMETHODIMP EnableModeless(BOOL fEnable);
 	STDMETHODIMP GetDocVersionString(BSTR* pstr);

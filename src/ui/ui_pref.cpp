@@ -10,7 +10,7 @@ BOOL CDialogPref::OnInitDialog(HWND hwndFocus, LPARAM lParam)
 {
 	DoDataExchange();
 
-	SetWindowTheme(m_props.m_hWnd, L"explorer", NULL);
+	SetWindowTheme(m_props.m_hWnd, L"explorer", nullptr);
 
 	m_props.SetExtendedListViewStyle(LVS_EX_FULLROWSELECT | LVS_EX_DOUBLEBUFFER);
 	m_props.AddColumn(L"Name", 0);
@@ -30,7 +30,7 @@ HWND CDialogPref::get_wnd()
 LRESULT CDialogPref::OnExportBnClicked(WORD wNotifyCode, WORD wID, HWND hWndCtl)
 {
 	pfc::string8_fast filename;
-	if (uGetOpenFileName(m_hWnd, "Configuration files|*.cfg", 0, "cfg", "Save as", NULL, filename, TRUE))
+	if (uGetOpenFileName(m_hWnd, "Configuration files|*.cfg", 0, "cfg", "Save as", nullptr, filename, TRUE))
 	{
 		g_sci_prop_sets.export_to_file(filename);
 	}
@@ -40,7 +40,7 @@ LRESULT CDialogPref::OnExportBnClicked(WORD wNotifyCode, WORD wID, HWND hWndCtl)
 LRESULT CDialogPref::OnImportBnClicked(WORD wNotifyCode, WORD wID, HWND hWndCtl)
 {
 	pfc::string8_fast filename;
-	if (uGetOpenFileName(m_hWnd, "Configuration files|*.cfg|All files|*.*", 0, "cfg", "Import from", NULL, filename, FALSE))
+	if (uGetOpenFileName(m_hWnd, "Configuration files|*.cfg|All files|*.*", 0, "cfg", "Import from", nullptr, filename, FALSE))
 	{
 		g_sci_prop_sets.import(helpers::read_file(filename));
 		LoadProps();

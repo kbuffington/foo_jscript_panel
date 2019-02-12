@@ -519,13 +519,13 @@ void js_panel_window::delete_context()
 	if (m_gr_bmp)
 	{
 		DeleteBitmap(m_gr_bmp);
-		m_gr_bmp = NULL;
+		m_gr_bmp = nullptr;
 	}
 
 	if (m_gr_bmp_bk)
 	{
 		DeleteBitmap(m_gr_bmp_bk);
-		m_gr_bmp_bk = NULL;
+		m_gr_bmp_bk = nullptr;
 	}
 }
 
@@ -773,7 +773,7 @@ void js_panel_window::on_mouse_leave()
 
 	script_invoke_v(CallbackIds::on_mouse_leave);
 	// Restore default cursor
-	SetCursor(LoadCursor(NULL, IDC_ARROW));
+	SetCursor(LoadCursor(nullptr, IDC_ARROW));
 }
 
 void js_panel_window::on_mouse_move(WPARAM wp, LPARAM lp)
@@ -789,7 +789,7 @@ void js_panel_window::on_mouse_move(WPARAM wp, LPARAM lp)
 		m_is_mouse_tracked = true;
 
 		// Restore default cursor
-		SetCursor(LoadCursor(NULL, IDC_ARROW));
+		SetCursor(LoadCursor(nullptr, IDC_ARROW));
 	}
 
 	VARIANTARG args[3];
@@ -948,7 +948,7 @@ void js_panel_window::on_paint_user(HDC memdc, LPRECT lpUpdateRect)
 			script_invoke_v(CallbackIds::on_paint, args, _countof(args));
 		}
 
-		m_gr_wrap->put__ptr(NULL);
+		m_gr_wrap->put__ptr(nullptr);
 	}
 }
 
@@ -1162,7 +1162,7 @@ void js_panel_window::script_load()
 	extstyle &= ~WS_EX_CLIENTEDGE & ~WS_EX_STATICEDGE;
 	extstyle |= edge_style_from_config(m_edge_style);
 	SetWindowLongPtr(m_hwnd, GWL_EXSTYLE, extstyle);
-	SetWindowPos(m_hwnd, NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
+	SetWindowPos(m_hwnd, nullptr, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
 
 	m_max_size = { INT_MAX, INT_MAX };
 	m_min_size = { 0, 0 };

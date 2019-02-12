@@ -14,11 +14,11 @@ void name_to_id_cache::add(ULONG hash, DISPID dispid)
 	m_map[hash] = dispid;
 }
 
-type_info_cache_holder::type_info_cache_holder() : m_type_info(NULL) {}
+type_info_cache_holder::type_info_cache_holder() : m_type_info(nullptr) {}
 
 HRESULT type_info_cache_holder::GetIDsOfNames(LPOLESTR* rgszNames, UINT cNames, MEMBERID* pMemId)
 {
-	PFC_ASSERT(m_type_info != NULL);
+	PFC_ASSERT(m_type_info != nullptr);
 	for (t_size i = 0; i < cNames; ++i)
 	{
 		ULONG hash = LHashValOfName(LANG_NEUTRAL, rgszNames[i]);
@@ -44,7 +44,7 @@ HRESULT type_info_cache_holder::GetTypeInfo(UINT iTInfo, LCID lcid, ITypeInfo** 
 
 HRESULT type_info_cache_holder::Invoke(PVOID pvInstance, MEMBERID memid, WORD wFlags, DISPPARAMS* pDispParams, VARIANT* pVarResult, EXCEPINFO* pExcepInfo, UINT* puArgErr)
 {
-	PFC_ASSERT(m_type_info != NULL);
+	PFC_ASSERT(m_type_info != nullptr);
 	HRESULT hr = m_type_info->Invoke(pvInstance, memid, wFlags, pDispParams, pVarResult, pExcepInfo, puArgErr);
 	PFC_ASSERT(hr != RPC_E_WRONG_THREAD);
 	return hr;
@@ -57,12 +57,12 @@ ITypeInfo* type_info_cache_holder::get_ptr() throw()
 
 bool type_info_cache_holder::empty() throw()
 {
-	return m_type_info == NULL;
+	return m_type_info == nullptr;
 }
 
 bool type_info_cache_holder::valid() throw()
 {
-	return m_type_info != NULL;
+	return m_type_info != nullptr;
 }
 
 void type_info_cache_holder::init_from_typelib(ITypeLib* p_typeLib, const GUID& guid)

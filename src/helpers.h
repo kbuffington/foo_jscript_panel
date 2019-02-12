@@ -84,7 +84,7 @@ namespace helpers
 					album_art_editor_instance_ptr aaep;
 					try
 					{
-						aaep = ptr->open(NULL, path, p_abort);
+						aaep = ptr->open(nullptr, path, p_abort);
 						switch (m_action)
 						{
 						case attach:
@@ -166,8 +166,8 @@ namespace helpers
 	private:
 		virtual void run()
 		{
-			IGdiBitmap* bitmap = NULL;
-			MetadbHandle* handle = NULL;
+			IGdiBitmap* bitmap = nullptr;
+			MetadbHandle* handle = nullptr;
 			pfc::string8_fast image_path;
 
 			if (m_handle.is_valid())
@@ -281,7 +281,7 @@ namespace helpers
 	class com_array
 	{
 	public:
-		com_array() : m_psa(NULL), m_reader(true), m_count(0) {}
+		com_array() : m_psa(nullptr), m_reader(true), m_count(0) {}
 
 		~com_array()
 		{
@@ -312,7 +312,7 @@ namespace helpers
 			_variant_t ret;
 
 			HRESULT hr = pdisp->GetIDsOfNames(IID_NULL, &slength, 1, LOCALE_USER_DEFAULT, &id_length);
-			if (SUCCEEDED(hr)) hr = pdisp->Invoke(id_length, IID_NULL, LOCALE_USER_DEFAULT, DISPATCH_PROPERTYGET, &params, &ret, NULL, NULL);
+			if (SUCCEEDED(hr)) hr = pdisp->Invoke(id_length, IID_NULL, LOCALE_USER_DEFAULT, DISPATCH_PROPERTYGET, &params, &ret, nullptr, nullptr);
 			if (SUCCEEDED(hr)) hr = VariantChangeType(&ret, &ret, 0, VT_I4);
 			if (FAILED(hr))
 			{
@@ -332,7 +332,7 @@ namespace helpers
 				_itow_s(i, buf, 10);
 
 				hr = pdisp->GetIDsOfNames(IID_NULL, &name, 1, LOCALE_USER_DEFAULT, &dispid);
-				if (SUCCEEDED(hr)) hr = pdisp->Invoke(dispid, IID_NULL, LOCALE_USER_DEFAULT, DISPATCH_PROPERTYGET, &params, &element, NULL, NULL);
+				if (SUCCEEDED(hr)) hr = pdisp->Invoke(dispid, IID_NULL, LOCALE_USER_DEFAULT, DISPATCH_PROPERTYGET, &params, &element, nullptr, nullptr);
 				if (SUCCEEDED(hr)) hr = SafeArrayPutElement(psa, &i, &element);
 				if (FAILED(hr))
 				{
@@ -366,7 +366,7 @@ namespace helpers
 			m_count = count;
 			m_psa = SafeArrayCreateVector(VT_VARIANT, 0, count);
 			m_reader = false;
-			return m_psa != NULL;
+			return m_psa != nullptr;
 		}
 
 		bool get_item(LONG idx, VARIANT& var, VARTYPE vt)
@@ -394,7 +394,7 @@ namespace helpers
 			if (m_psa)
 			{
 				SafeArrayDestroy(m_psa);
-				m_psa = NULL;
+				m_psa = nullptr;
 			}
 		}
 

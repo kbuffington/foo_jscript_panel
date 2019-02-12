@@ -68,8 +68,8 @@ void host_timer_task::invoke()
 	VARIANTARG args[1];
 	args[0].vt = VT_I4;
 	args[0].lVal = m_timerId;
-	DISPPARAMS dispParams = { args, NULL, _countof(args), 0 };
-	m_pDisp->Invoke(DISPID_VALUE, IID_NULL, LOCALE_USER_DEFAULT, DISPATCH_METHOD, &dispParams, NULL, NULL, NULL);
+	DISPPARAMS dispParams = { args, nullptr, _countof(args), 0 };
+	m_pDisp->Invoke(DISPID_VALUE, IID_NULL, LOCALE_USER_DEFAULT, DISPATCH_METHOD, &dispParams, nullptr, nullptr, nullptr);
 }
 
 host_timer_dispatcher::host_timer_dispatcher()
@@ -257,7 +257,7 @@ void host_timer_dispatcher::threadMain()
 			break;
 		case ThreadTaskId::shutdownTask:
 			DeleteTimerQueueEx(m_hTimerQueue, INVALID_HANDLE_VALUE);
-			m_hTimerQueue = NULL;
+			m_hTimerQueue = nullptr;
 			return;
 		default:
 			assert(0);

@@ -30,7 +30,7 @@ namespace
 				LoadTypeLibEx(string_wide_from_utf8_fast(path), REGKIND_NONE, &g_typelib);
 
 				Scintilla_RegisterClasses(ins);
-				_Module.Init(NULL, ins);
+				_Module.Init(nullptr, ins);
 			}
 			break;
 		case DLL_PROCESS_DETACH:
@@ -49,7 +49,7 @@ namespace
 		gdiplus_init()
 		{
 			Gdiplus::GdiplusStartupInput gdip_input;
-			Gdiplus::GdiplusStartup(&m_gdip_token, &gdip_input, NULL);
+			Gdiplus::GdiplusStartup(&m_gdip_token, &gdip_input, nullptr);
 		}
 
 		~gdiplus_init()

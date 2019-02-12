@@ -25,7 +25,7 @@ public:
 
 	ui_element_children_enumerator_ptr enumerate_children(ui_element_config::ptr cfg)
 	{
-		return NULL;
+		return nullptr;
 	}
 
 	ui_element_config::ptr get_default_configuration()
@@ -114,7 +114,7 @@ HFONT js_panel_window_dui::GetFontUI(t_size type)
 		return m_callback->query_font_ex(*guids[type]);
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 HWND js_panel_window_dui::get_wnd()

@@ -9,7 +9,7 @@ STDMETHODIMP Gdi::CreateImage(int w, int h, IGdiBitmap** pp)
 {
 	if (!pp) return E_POINTER;
 
-	*pp = NULL;
+	*pp = nullptr;
 	Gdiplus::Bitmap* img = new Gdiplus::Bitmap(w, h, PixelFormat32bppPARGB);
 	if (helpers::ensure_gdiplus_object(img))
 	{
@@ -18,7 +18,7 @@ STDMETHODIMP Gdi::CreateImage(int w, int h, IGdiBitmap** pp)
 	else
 	{
 		if (img) delete img;
-		img = NULL;
+		img = nullptr;
 	}
 
 	return S_OK;
@@ -28,7 +28,7 @@ STDMETHODIMP Gdi::Font(BSTR name, float pxSize, int style, IGdiFont** pp)
 {
 	if (!pp) return E_POINTER;
 
-	*pp = NULL;
+	*pp = nullptr;
 	Gdiplus::Font* font = new Gdiplus::Font(name, pxSize, style, Gdiplus::UnitPixel);
 	if (helpers::ensure_gdiplus_object(font))
 	{
@@ -54,7 +54,7 @@ STDMETHODIMP Gdi::Font(BSTR name, float pxSize, int style, IGdiFont** pp)
 	else
 	{
 		if (font) delete font;
-		font = NULL;
+		font = nullptr;
 	}
 
 	return S_OK;

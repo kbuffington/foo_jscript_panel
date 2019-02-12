@@ -44,7 +44,7 @@ ULONG STDMETHODCALLTYPE IDropSourceImpl::Release()
 
 IDropTargetImpl::IDropTargetImpl(HWND hWnd) : m_hWnd(hWnd)
 {
-	CoCreateInstance(CLSID_DragDropHelper, NULL, CLSCTX_INPROC_SERVER, IID_IDropTargetHelper, (LPVOID*)&m_dropTargetHelper);
+	CoCreateInstance(CLSID_DragDropHelper, nullptr, CLSCTX_INPROC_SERVER, IID_IDropTargetHelper, (LPVOID*)&m_dropTargetHelper);
 }
 
 IDropTargetImpl::~IDropTargetImpl()
@@ -89,8 +89,8 @@ HWND IDropTargetImpl::GetHWND()
 
 STDMETHODIMP IDropTargetImpl::DragEnter(IDataObject* pDataObj, DWORD grfKeyState, POINTL pt, DWORD* pdwEffect)
 {
-	if (pDataObj == NULL) return E_FAIL;
-	if (pdwEffect == NULL) return E_POINTER;
+	if (pDataObj == nullptr) return E_FAIL;
+	if (pdwEffect == nullptr) return E_POINTER;
 
 	HRESULT hr = S_OK;
 	try
@@ -134,7 +134,7 @@ STDMETHODIMP IDropTargetImpl::DragLeave()
 
 STDMETHODIMP IDropTargetImpl::DragOver(DWORD grfKeyState, POINTL pt, DWORD* pdwEffect)
 {
-	if (pdwEffect == NULL) return E_POINTER;
+	if (pdwEffect == nullptr) return E_POINTER;
 
 	HRESULT hr = S_OK;
 	try
@@ -159,8 +159,8 @@ STDMETHODIMP IDropTargetImpl::Drop(IDataObject* pDataObj, DWORD grfKeyState, POI
 {
 	HRESULT hr = S_OK;
 
-	if (pDataObj == NULL) return E_FAIL;
-	if (pdwEffect == NULL) return E_POINTER;
+	if (pDataObj == nullptr) return E_FAIL;
+	if (pdwEffect == nullptr) return E_POINTER;
 
 	try
 	{

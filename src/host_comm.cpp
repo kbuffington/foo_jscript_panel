@@ -2,11 +2,11 @@
 #include "host_comm.h"
 
 host_comm::host_comm()
-	: m_hwnd(NULL)
-	, m_hdc(NULL)
+	: m_hwnd(nullptr)
+	, m_hdc(nullptr)
 	, m_width(0)
 	, m_height(0)
-	, m_gr_bmp(NULL)
+	, m_gr_bmp(nullptr)
 	, m_suppress_drawing(false)
 	, m_paint_pending(false)
 	, m_instance_type(KInstanceTypeCUI)
@@ -52,7 +52,7 @@ t_size host_comm::GetInstanceType()
 void host_comm::Redraw()
 {
 	m_paint_pending = false;
-	RedrawWindow(m_hwnd, NULL, NULL, RDW_INVALIDATE | RDW_UPDATENOW);
+	RedrawWindow(m_hwnd, nullptr, nullptr, RDW_INVALIDATE | RDW_UPDATENOW);
 }
 
 void host_comm::RefreshBackground(LPRECT lprcUpdate)
@@ -63,8 +63,8 @@ void host_comm::RefreshBackground(LPRECT lprcUpdate)
 		return;
 
 	// HACK: for Tab control
-	HWND hwnd = FindWindowEx(wnd_parent, NULL, NULL, NULL);
-	while (hwnd != NULL)
+	HWND hwnd = FindWindowEx(wnd_parent, nullptr, nullptr, nullptr);
+	while (hwnd != nullptr)
 	{
 		pfc::string8_fast name;
 		uGetClassName(hwnd, name);
@@ -73,7 +73,7 @@ void host_comm::RefreshBackground(LPRECT lprcUpdate)
 			wnd_parent = hwnd;
 			break;
 		}
-		hwnd = FindWindowEx(wnd_parent, hwnd, NULL, NULL);
+		hwnd = FindWindowEx(wnd_parent, hwnd, nullptr, nullptr);
 	}
 
 	HDC dc_parent = GetDC(wnd_parent);
@@ -81,7 +81,7 @@ void host_comm::RefreshBackground(LPRECT lprcUpdate)
 	POINT pt = { 0, 0 };
 	RECT rect_child = { 0, 0, m_width, m_height };
 	RECT rect_parent;
-	HRGN rgn_child = NULL;
+	HRGN rgn_child = nullptr;
 
 	if (lprcUpdate)
 	{
@@ -107,7 +107,7 @@ void host_comm::RefreshBackground(LPRECT lprcUpdate)
 	// Force Repaint
 	m_suppress_drawing = true;
 	SetWindowRgn(m_hwnd, rgn_child, FALSE);
-	RedrawWindow(wnd_parent, &rect_parent, NULL, RDW_INVALIDATE | RDW_ERASE | RDW_ERASENOW | RDW_UPDATENOW);
+	RedrawWindow(wnd_parent, &rect_parent, nullptr, RDW_INVALIDATE | RDW_ERASE | RDW_ERASENOW | RDW_UPDATENOW);
 
 	// Background bitmap
 	HBITMAP old_bmp = SelectBitmap(hdc_bk, m_gr_bmp_bk);
@@ -119,7 +119,7 @@ void host_comm::RefreshBackground(LPRECT lprcUpdate)
 	DeleteDC(hdc_bk);
 	ReleaseDC(wnd_parent, dc_parent);
 	DeleteRgn(rgn_child);
-	SetWindowRgn(m_hwnd, NULL, FALSE);
+	SetWindowRgn(m_hwnd, nullptr, FALSE);
 	m_suppress_drawing = false;
 	if (m_edge_style) SendMessage(m_hwnd, WM_NCPAINT, 1, 0);
 	Repaint(true);
@@ -131,11 +131,11 @@ void host_comm::Repaint(bool force)
 
 	if (force)
 	{
-		RedrawWindow(m_hwnd, NULL, NULL, RDW_INVALIDATE | RDW_UPDATENOW);
+		RedrawWindow(m_hwnd, nullptr, nullptr, RDW_INVALIDATE | RDW_UPDATENOW);
 	}
 	else
 	{
-		InvalidateRect(m_hwnd, NULL, FALSE);
+		InvalidateRect(m_hwnd, nullptr, FALSE);
 	}
 }
 
@@ -146,7 +146,7 @@ void host_comm::RepaintRect(int x, int y, int w, int h, bool force)
 
 	if (force)
 	{
-		RedrawWindow(m_hwnd, &rc, NULL, RDW_INVALIDATE | RDW_UPDATENOW);
+		RedrawWindow(m_hwnd, &rc, nullptr, RDW_INVALIDATE | RDW_UPDATENOW);
 	}
 	else
 	{

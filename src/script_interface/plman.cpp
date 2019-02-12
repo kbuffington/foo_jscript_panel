@@ -2,12 +2,12 @@
 #include "helpers.h"
 #include "plman.h"
 
-Plman::Plman() : m_fbPlaylistRecyclerManager(NULL) {}
+Plman::Plman() : m_fbPlaylistRecyclerManager(nullptr) {}
 Plman::~Plman() {}
 
 STDMETHODIMP Plman::AddItemToPlaybackQueue(IMetadbHandle* handle)
 {
-	metadb_handle* ptr = NULL;
+	metadb_handle* ptr = nullptr;
 	handle->get__ptr((void**)&ptr);
 	if (!ptr) return E_INVALIDARG;
 
@@ -34,9 +34,9 @@ STDMETHODIMP Plman::AddLocations(UINT playlistIndex, VARIANT locations, VARIANT_
 		playlist_incoming_item_filter_v2::get()->process_locations_async(
 			list,
 			playlist_incoming_item_filter_v2::op_flag_no_filter | playlist_incoming_item_filter_v2::op_flag_delay_ui,
-			NULL,
-			NULL,
-			NULL,
+			nullptr,
+			nullptr,
+			nullptr,
 			fb2k::service_new<helpers::js_process_locations>(select != VARIANT_FALSE, api->playlist_get_item_count(playlistIndex), playlistIndex));
 
 		return S_OK;
@@ -186,7 +186,7 @@ STDMETHODIMP Plman::FindPlaybackQueueItemIndex(IMetadbHandle* handle, UINT playl
 {
 	if (!p) return E_POINTER;
 
-	metadb_handle* ptr = NULL;
+	metadb_handle* ptr = nullptr;
 	handle->get__ptr((void**)&ptr);
 	if (!ptr) return E_INVALIDARG;
 
@@ -326,7 +326,7 @@ STDMETHODIMP Plman::InsertPlaylistItems(UINT playlistIndex, UINT base, IMetadbHa
 	auto api = playlist_manager::get();
 	if (playlistIndex < api->get_playlist_count())
 	{
-		metadb_handle_list* handles_ptr = NULL;
+		metadb_handle_list* handles_ptr = nullptr;
 		handles->get__ptr((void**)&handles_ptr);
 		pfc::bit_array_val selection(select != VARIANT_FALSE);
 		api->playlist_insert_items(playlistIndex, base, *handles_ptr, selection);
@@ -340,7 +340,7 @@ STDMETHODIMP Plman::InsertPlaylistItemsFilter(UINT playlistIndex, UINT base, IMe
 	auto api = playlist_manager::get();
 	if (playlistIndex < api->get_playlist_count())
 	{
-		metadb_handle_list* handles_ptr = NULL;
+		metadb_handle_list* handles_ptr = nullptr;
 		handles->get__ptr((void**)&handles_ptr);
 		api->playlist_insert_items_filter(playlistIndex, base, *handles_ptr, select != VARIANT_FALSE);
 		return S_OK;
@@ -530,7 +530,7 @@ STDMETHODIMP Plman::SetPlaylistFocusItemByHandle(UINT playlistIndex, IMetadbHand
 	auto api = playlist_manager::get();
 	if (playlistIndex < api->get_playlist_count())
 	{
-		metadb_handle* ptr = NULL;
+		metadb_handle* ptr = nullptr;
 		handle->get__ptr((void**)&ptr);
 		if (!ptr) return E_INVALIDARG;
 
@@ -599,7 +599,7 @@ STDMETHODIMP Plman::SortByFormat(UINT playlistIndex, BSTR pattern, VARIANT_BOOL 
 	if (playlistIndex < api->get_playlist_count())
 	{
 		string_utf8_from_wide upattern(pattern);
-		*p = TO_VARIANT_BOOL(api->playlist_sort_by_format(playlistIndex, upattern.length() ? upattern.get_ptr() : NULL, selOnly != VARIANT_FALSE));
+		*p = TO_VARIANT_BOOL(api->playlist_sort_by_format(playlistIndex, upattern.length() ? upattern.get_ptr() : nullptr, selOnly != VARIANT_FALSE));
 		return S_OK;
 	}
 	return E_INVALIDARG;
@@ -622,7 +622,7 @@ STDMETHODIMP Plman::SortByFormatV2(UINT playlistIndex, BSTR pattern, int directi
 		titleformat_compiler::get()->compile_safe(obj, string_utf8_from_wide(pattern));
 		abort_callback_dummy abort;
 
-		metadb_handle_list_helper::sort_by_format_get_order_v2(handles, order.get_ptr(), obj, NULL, direction, abort);
+		metadb_handle_list_helper::sort_by_format_get_order_v2(handles, order.get_ptr(), obj, nullptr, direction, abort);
 
 		*p = TO_VARIANT_BOOL(api->playlist_reorder_items(playlistIndex, order.get_ptr(), order.get_count()));
 		return S_OK;

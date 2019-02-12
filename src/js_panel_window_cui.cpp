@@ -21,7 +21,7 @@ HFONT js_panel_window_cui::GetFontUI(t_size type)
 	{
 		return static_api_ptr_t<cui::fonts::manager>()->get_font((cui::fonts::font_type_t)type);
 	}
-	return NULL;
+	return nullptr;
 }
 
 HWND js_panel_window_cui::create_or_transfer_window(HWND parent, const uie::window_host_ptr& host, const ui_helpers::window_position_t& p_position)
@@ -33,7 +33,7 @@ HWND js_panel_window_cui::create_or_transfer_window(HWND parent, const uie::wind
 		m_host->relinquish_ownership(m_hwnd);
 		m_host = host;
 
-		SetWindowPos(m_hwnd, NULL, p_position.x, p_position.y, p_position.cx, p_position.cy, SWP_NOZORDER);
+		SetWindowPos(m_hwnd, nullptr, p_position.x, p_position.y, p_position.cx, p_position.cy, SWP_NOZORDER);
 	}
 	else
 	{

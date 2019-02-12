@@ -5,14 +5,14 @@
 #include "ui_goto.h"
 #include "ui_replace.h"
 
-CDialogConf::CDialogConf(js_panel_window* p_parent) : m_parent(p_parent), m_dlgfind(NULL), m_dlgreplace(NULL), m_lastSearchText(""), m_lastFlags(0)
+CDialogConf::CDialogConf(js_panel_window* p_parent) : m_parent(p_parent), m_dlgfind(nullptr), m_dlgreplace(nullptr), m_lastSearchText(""), m_lastFlags(0)
 {
 	m_caption << JSP_NAME " Configuration (id:" << m_parent->m_script_info.id << ")";
 }
 
 CDialogConf::~CDialogConf()
 {
-	m_hWnd = NULL;
+	m_hWnd = nullptr;
 }
 
 BOOL CDialogConf::OnInitDialog(HWND hwndFocus, LPARAM lParam)
@@ -186,7 +186,7 @@ LRESULT CDialogConf::OnDocs(WORD wNotifyCode, WORD wID, HWND hWndCtl)
 {
 	pfc::string8_fast tmp = file_path_display(m_docs[wID - ID_DOCS_BEGIN]).get_ptr();
 	string_wide_from_utf8_fast path(tmp);
-	ShellExecute(NULL, L"open", path, NULL, NULL, SW_SHOW);
+	ShellExecute(nullptr, L"open", path, nullptr, nullptr, SW_SHOW);
 	return 0;
 }
 
@@ -200,7 +200,7 @@ LRESULT CDialogConf::OnFileImport(WORD wNotifyCode, WORD wID, HWND hWndCtl)
 {
 	pfc::string8 filename;
 
-	if (uGetOpenFileName(m_hWnd, "Text files|*.txt|JScript files|*.js|All files|*.*", 0, "txt", "Import from", NULL, filename, FALSE))
+	if (uGetOpenFileName(m_hWnd, "Text files|*.txt|JScript files|*.js|All files|*.*", 0, "txt", "Import from", nullptr, filename, FALSE))
 	{
 		m_editorctrl.SetContent(helpers::read_file(filename));
 	}
@@ -211,7 +211,7 @@ LRESULT CDialogConf::OnFileExport(WORD wNotifyCode, WORD wID, HWND hWndCtl)
 {
 	pfc::string8 filename;
 
-	if (uGetOpenFileName(m_hWnd, "Text files|*.txt|All files|*.*", 0, "txt", "Save as", NULL, filename, TRUE))
+	if (uGetOpenFileName(m_hWnd, "Text files|*.txt|All files|*.*", 0, "txt", "Save as", nullptr, filename, TRUE))
 	{
 		int len = m_editorctrl.GetTextLength();
 		pfc::string8_fast text;
@@ -232,7 +232,7 @@ LRESULT CDialogConf::OnLinks(WORD wNotifyCode, WORD wID, HWND hWndCtl)
 		L"https://github.com/marc2k3/foo_jscript_panel/issues"
 	};
 
-	ShellExecute(NULL, L"open", links[wID - ID_LINKS_BEGIN], NULL, NULL, SW_SHOW);
+	ShellExecute(nullptr, L"open", links[wID - ID_LINKS_BEGIN], nullptr, nullptr, SW_SHOW);
 	return 0;
 }
 

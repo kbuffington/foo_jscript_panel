@@ -52,7 +52,7 @@ STDMETHODIMP Fb::CopyHandleListToClipboard(IMetadbHandleList* handles, VARIANT_B
 {
 	if (!p) return E_POINTER;
 
-	metadb_handle_list* handles_ptr = NULL;
+	metadb_handle_list* handles_ptr = nullptr;
 	handles->get__ptr((void**)&handles_ptr);
 
 	pfc::com_ptr_t<IDataObject> pDO = ole_interaction::get()->create_dataobject(*handles_ptr);
@@ -73,12 +73,12 @@ STDMETHODIMP Fb::CreateHandleList(VARIANT handle, IMetadbHandleList** pp)
 	if (!pp) return E_POINTER;
 
 	metadb_handle_list items;
-	IDispatch* temp = NULL;
+	IDispatch* temp = nullptr;
 
 	if (handle.vt == VT_DISPATCH && handle.pdispVal && SUCCEEDED(handle.pdispVal->QueryInterface(__uuidof(IMetadbHandle), (void**)&temp)))
 	{
 		IDispatchPtr handle_s = temp;
-		void* ptr = NULL;
+		void* ptr = nullptr;
 		reinterpret_cast<IMetadbHandle*>(handle_s.GetInterfacePtr())->get__ptr(&ptr);
 		if (!ptr) return E_INVALIDARG;
 
@@ -108,7 +108,7 @@ STDMETHODIMP Fb::DoDragDrop(IMetadbHandleList* handles, UINT okEffects, UINT* p)
 {
 	if (!p) return E_POINTER;
 
-	metadb_handle_list* handles_ptr = NULL;
+	metadb_handle_list* handles_ptr = nullptr;
 	handles->get__ptr((void**)&handles_ptr);
 
 	if (!handles_ptr->get_count() || okEffects == DROPEFFECT_NONE)
@@ -121,7 +121,7 @@ STDMETHODIMP Fb::DoDragDrop(IMetadbHandleList* handles, UINT okEffects, UINT* p)
 	pfc::com_ptr_t<IDropSourceImpl> pIDropSource = new IDropSourceImpl();
 
 	DWORD returnEffect;
-	HRESULT hr = SHDoDragDrop(NULL, pDO.get_ptr(), pIDropSource.get_ptr(), okEffects, &returnEffect);
+	HRESULT hr = SHDoDragDrop(nullptr, pDO.get_ptr(), pIDropSource.get_ptr(), okEffects, &returnEffect);
 
 	*p = hr == DRAGDROP_S_CANCEL ? DROPEFFECT_NONE : returnEffect;
 	return S_OK;
@@ -189,7 +189,7 @@ STDMETHODIMP Fb::GetFocusItem(VARIANT_BOOL force, IMetadbHandle** pp)
 {
 	if (!pp) return E_POINTER;
 
-	*pp = NULL;
+	*pp = nullptr;
 	metadb_handle_ptr metadb;
 	auto api = playlist_manager::get();
 
@@ -218,7 +218,7 @@ STDMETHODIMP Fb::GetLibraryRelativePath(IMetadbHandle* handle, BSTR* p)
 {
 	if (!p) return E_POINTER;
 
-	metadb_handle* ptr = NULL;
+	metadb_handle* ptr = nullptr;
 	handle->get__ptr((void**)&ptr);
 	if (!ptr) return E_INVALIDARG;
 
@@ -235,7 +235,7 @@ STDMETHODIMP Fb::GetNowPlaying(IMetadbHandle** pp)
 {
 	if (!pp) return E_POINTER;
 
-	*pp = NULL;
+	*pp = nullptr;
 	metadb_handle_ptr metadb;
 	if (playback_control::get()->get_now_playing(metadb))
 	{
@@ -302,7 +302,7 @@ STDMETHODIMP Fb::GetSelection(IMetadbHandle** pp)
 {
 	if (!pp) return E_POINTER;
 
-	*pp = NULL;
+	*pp = nullptr;
 	metadb_handle_list items;
 	ui_selection_manager::get()->get_selection(items);
 
@@ -363,7 +363,7 @@ STDMETHODIMP Fb::IsMetadbInMediaLibrary(IMetadbHandle* handle, VARIANT_BOOL* p)
 {
 	if (!p) return E_POINTER;
 
-	metadb_handle* ptr = NULL;
+	metadb_handle* ptr = nullptr;
 	handle->get__ptr((void**)&ptr);
 	if (!ptr) return E_INVALIDARG;
 
@@ -427,9 +427,9 @@ STDMETHODIMP Fb::RunContextCommandWithMetadb(BSTR command, VARIANT handle, UINT 
 	if (handle.vt != VT_DISPATCH || !handle.pdispVal) return E_INVALIDARG;
 
 	metadb_handle_list handle_list;
-	IDispatch* temp = NULL;
-	IDispatchPtr handle_s = NULL;
-	void* ptr = NULL;
+	IDispatch* temp = nullptr;
+	IDispatchPtr handle_s = nullptr;
+	void* ptr = nullptr;
 
 	if (SUCCEEDED(handle.pdispVal->QueryInterface(__uuidof(IMetadbHandle), (void**)&temp)))
 	{
