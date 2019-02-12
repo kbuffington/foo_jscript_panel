@@ -44,11 +44,11 @@ struct t_script_info
 	pfc::string8_fast expand_import(t_size idx)
 	{
 		std::string tmp = imports[idx];
-		for (t_size i = 0; i < _countof(expand_table); ++i)
+		for (const auto& i : expand_table)
 		{
-			if (tmp.find(expand_table[i].which) == 0)
+			if (tmp.find(i.which) == 0)
 			{
-				tmp = expand_table[i].path + tmp.substr(expand_table[i].which.length());
+				tmp = i.path + tmp.substr(i.which.length());
 				break;
 			}
 		}

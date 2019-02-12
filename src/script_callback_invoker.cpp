@@ -102,15 +102,13 @@ void script_callback_invoker::Init(IDispatch* pActiveScriptRoot)
 
 	m_activeScriptRoot = pActiveScriptRoot;
 
-	for (t_size i = 0; i < _countof(g_idToNames); ++i)
+	for (const auto& i : g_idToNames)
 	{
-		int callbackId = g_idToNames[i].id;
-		LPOLESTR name = const_cast<LPOLESTR>(g_idToNames[i].name);
+		LPOLESTR name = const_cast<LPOLESTR>(i.name);
 		DISPID dispId;
-		HRESULT hr = m_activeScriptRoot->GetIDsOfNames(IID_NULL, &name, 1, LOCALE_USER_DEFAULT, &dispId);
-		if (SUCCEEDED(hr))
+		if (SUCCEEDED(m_activeScriptRoot->GetIDsOfNames(IID_NULL, &name, 1, LOCALE_USER_DEFAULT, &dispId)))
 		{
-			m_callbackInvokerMap[callbackId] = dispId;
+			m_callbackInvokerMap[i.id] = dispId;
 		}
 	}
 }

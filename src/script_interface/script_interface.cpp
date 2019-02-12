@@ -1171,8 +1171,6 @@ STDMETHODIMP MainMenuManager::Init(BSTR root_name)
 		const GUID* guid;
 	};
 
-	// In mainmenu_groups:
-	// static const GUID file,view,edit,playback,library,help;
 	const t_valid_root_name valid_root_names[] =
 	{
 		{L"file", &mainmenu_groups::file},
@@ -1183,14 +1181,12 @@ STDMETHODIMP MainMenuManager::Init(BSTR root_name)
 		{L"help", &mainmenu_groups::help},
 	};
 
-	// Find
-	for (int i = 0; i < _countof(valid_root_names); ++i)
+	for (const auto& i : valid_root_names)
 	{
-		if (_wcsicmp(root_name, valid_root_names[i].name) == 0)
+		if (_wcsicmp(root_name, i.name) == 0)
 		{
-			// found
 			m_mm = standard_api_create_t<mainmenu_manager>();
-			m_mm->instantiate(*valid_root_names[i].guid);
+			m_mm->instantiate(*i.guid);
 			return S_OK;
 		}
 	}
