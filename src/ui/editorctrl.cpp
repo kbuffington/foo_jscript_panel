@@ -698,7 +698,7 @@ bool CScriptEditorCtrl::StartCallTip()
 const char* CScriptEditorCtrl::GetNearestWord(const char* wordStart, int searchLen, SString wordCharacters, int wordIndex)
 {
 	if (m_apis.get_count() == 0)
-		return false;
+		return NULL;
 
 	t_size index;
 
@@ -707,8 +707,7 @@ const char* CScriptEditorCtrl::GetNearestWord(const char* wordStart, int searchL
 		// Find first match
 		t_size start = index;
 
-		while ((start > 0) &&
-			(StringComparePartialNC(searchLen)(m_apis[start - 1], wordStart) == 0))
+		while (start > 0 && StringComparePartialNC(searchLen)(m_apis[start - 1], wordStart) == 0)
 		{
 			--start;
 		}
@@ -716,8 +715,7 @@ const char* CScriptEditorCtrl::GetNearestWord(const char* wordStart, int searchL
 		// Find last match
 		t_size end = index;
 
-		while ((end < m_apis.get_count() - 1) &&
-			(StringComparePartialNC(searchLen)(m_apis[end + 1], wordStart) == 0))
+		while (end < m_apis.get_count() - 1 && StringComparePartialNC(searchLen)(m_apis[end + 1], wordStart) == 0)
 		{
 			++end;
 		}
@@ -738,7 +736,6 @@ const char* CScriptEditorCtrl::GetNearestWord(const char* wordStart, int searchL
 
 		return NULL;
 	}
-
 	return NULL;
 }
 
