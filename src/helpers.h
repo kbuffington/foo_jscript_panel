@@ -67,7 +67,8 @@ namespace helpers
 	{
 	public:
 		embed_thread(t_size action, album_art_data_ptr data, metadb_handle_list_cref handles, t_size art_id) : m_action(action), m_data(data), m_handles(handles), m_art_id(art_id) {}
-		void run(threaded_process_status& p_status, abort_callback& p_abort)
+
+		void run(threaded_process_status& p_status, abort_callback& p_abort) override
 		{
 			GUID what = convert_artid_to_guid(m_art_id);
 			auto api = file_lock_manager::get();
@@ -164,7 +165,7 @@ namespace helpers
 		};
 
 	private:
-		virtual void run()
+		void run() override
 		{
 			IGdiBitmap* bitmap = nullptr;
 			MetadbHandle* handle = nullptr;
@@ -224,7 +225,7 @@ namespace helpers
 		};
 
 	private:
-		virtual void run()
+		void run() override
 		{
 			IGdiBitmap* bitmap = load_image(m_path);
 			t_param param(reinterpret_cast<t_size>(this), bitmap, m_path);
@@ -241,7 +242,7 @@ namespace helpers
 		popup_msg(pfc::string8_fast msg, pfc::string8_fast title) : m_msg(msg), m_title(title) {}
 
 	private:
-		virtual void callback_run()
+		void callback_run() override
 		{
 			popup_message::g_show(m_msg, m_title);
 		}
@@ -254,9 +255,9 @@ namespace helpers
 	public:
 		js_process_locations(bool to_select, t_size base, t_size playlist) : m_to_select(to_select), m_base(base), m_playlist(playlist) {}
 
-		void on_aborted() {}
+		void on_aborted() override {}
 
-		void on_completion(metadb_handle_list_cref p_items)
+		void on_completion(metadb_handle_list_cref p_items) override
 		{
 			pfc::bit_array_val selection(m_to_select);
 			auto api = playlist_manager::get();

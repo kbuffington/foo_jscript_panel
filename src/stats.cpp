@@ -8,7 +8,7 @@ namespace stats
 	class my_metadb_index_client : public metadb_index_client
 	{
 	public:
-		metadb_index_hash transform(const file_info& info, const playable_location& location)
+		metadb_index_hash transform(const file_info& info, const playable_location& location) override
 		{
 			titleformat_object::ptr obj;
 			titleformat_compiler::get()->compile_force(obj, "$lower(%artist% - %title%)");
@@ -22,7 +22,7 @@ namespace stats
 	class my_init_stage_callback : public init_stage_callback
 	{
 	public:
-		void on_init_stage(t_size stage)
+		void on_init_stage(t_size stage) override
 		{
 			if (stage == init_stages::before_config_read)
 			{
@@ -46,7 +46,7 @@ namespace stats
 	class my_initquit : public initquit
 	{
 	public:
-		void on_quit()
+		void on_quit() override
 		{
 			g_cachedAPI.release();
 		}
@@ -55,7 +55,7 @@ namespace stats
 	class my_metadb_display_field_provider : public metadb_display_field_provider
 	{
 	public:
-		bool process_field(t_size index, metadb_handle* handle, titleformat_text_out* out)
+		bool process_field(t_size index, metadb_handle* handle, titleformat_text_out* out) override
 		{
 			metadb_index_hash hash;
 			if (!hashHandle(handle, hash)) return false;
@@ -87,12 +87,12 @@ namespace stats
 			return false;
 		}
 
-		t_size get_field_count()
+		t_size get_field_count() override
 		{
 			return 5;
 		}
 
-		void get_field_name(t_size index, pfc::string_base& out)
+		void get_field_name(t_size index, pfc::string_base& out) override
 		{
 			switch (index)
 			{
@@ -118,7 +118,7 @@ namespace stats
 	class my_track_property_provider_v2 : public track_property_provider_v2
 	{
 	public:
-		bool is_our_tech_info(const char* p_name)
+		bool is_our_tech_info(const char* p_name) override
 		{
 			return false;
 		}
@@ -165,7 +165,7 @@ namespace stats
 			}
 		}
 
-		void enumerate_properties_v2(metadb_handle_list_cref p_tracks, track_property_callback_v2& p_out)
+		void enumerate_properties_v2(metadb_handle_list_cref p_tracks, track_property_callback_v2& p_out) override
 		{
 			if (p_out.is_group_wanted(JSP_NAME))
 			{

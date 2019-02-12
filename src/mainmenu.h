@@ -18,11 +18,11 @@ public:
 		cmd_total
 	};
 
-	GUID get_command(t_size p_index);
-	GUID get_parent();
-	bool get_description(t_size p_index, pfc::string_base& p_out);
-	bool get_display(t_size p_index, pfc::string_base& p_out, t_size& p_flags);
-	t_size get_command_count();
-	void execute(t_size p_index, service_ptr_t<service_base> p_callback);
-	void get_name(t_size p_index, pfc::string_base& p_out);
+	GUID get_command(t_size p_index) override;
+	GUID get_parent() override;
+	bool get_description(t_size p_index, pfc::string_base& p_out) override;
+	bool get_display(t_size p_index, pfc::string_base& p_out, t_size& p_flags) override;
+	t_size get_command_count() override;
+	void execute(t_size p_index, service_ptr_t<service_base> p_callback) override;
+	void get_name(t_size p_index, pfc::string_base& p_out) override;
 };

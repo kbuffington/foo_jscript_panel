@@ -99,11 +99,6 @@ const GUID& js_panel_window_cui::get_extension_guid() const
 	return g_guid_jsp_window_cui;
 }
 
-const uie::window_host_ptr& js_panel_window_cui::get_host() const
-{
-	return m_host;
-}
-
 t_size js_panel_window_cui::get_type() const
 {
 	return uie::type_toolbar | uie::type_panel;
@@ -152,5 +147,5 @@ void js_panel_window_cui::set_config(stream_reader* reader, t_size size, abort_c
 
 void js_panel_window_cui::notify_size_limit_changed(WPARAM wp)
 {
-	get_host()->on_size_limit_change(m_hwnd, wp);
+	m_host->on_size_limit_change(m_hwnd, wp);
 }

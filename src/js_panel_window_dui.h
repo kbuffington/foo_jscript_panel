@@ -11,22 +11,22 @@ public:
 	static pfc::string8_fast g_get_description();
 	static ui_element_config::ptr g_get_default_configuration();
 	static void g_get_name(pfc::string_base& out);
-	virtual DWORD GetColourUI(t_size type);
-	virtual HFONT GetFontUI(t_size type);
-	virtual HWND get_wnd();
-	virtual LRESULT on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp);
-	virtual bool edit_mode_context_menu_test(const POINT& p_point, bool p_fromkeyboard);
-	virtual ui_element_config::ptr get_configuration();
-	virtual void edit_mode_context_menu_build(const POINT& p_point, bool p_fromkeyboard, HMENU p_menu, t_size p_id_base);
-	virtual void edit_mode_context_menu_command(const POINT& p_point, bool p_fromkeyboard, t_size p_id, t_size p_id_base);
-	virtual void notify(const GUID& p_what, t_size p_param1, const void* p_param2, t_size p_param2size);
-	virtual void set_configuration(ui_element_config::ptr data);
+	DWORD GetColourUI(t_size type) override;
+	HFONT GetFontUI(t_size type) override;
+	HWND get_wnd() override;
+	LRESULT on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp) override;
+	bool edit_mode_context_menu_test(const POINT& p_point, bool p_fromkeyboard) override;
+	ui_element_config::ptr get_configuration() override;
+	void edit_mode_context_menu_build(const POINT& p_point, bool p_fromkeyboard, HMENU p_menu, t_size p_id_base) override;
+	void edit_mode_context_menu_command(const POINT& p_point, bool p_fromkeyboard, t_size p_id, t_size p_id_base) override;
+	void notify(const GUID& p_what, t_size p_param1, const void* p_param2, t_size p_param2size) override;
+	void set_configuration(ui_element_config::ptr data) override;
 	void initialize_window(HWND parent);
 
 private:
 	using t_parent = js_panel_window;
 
-	virtual void notify_size_limit_changed(WPARAM wp);
+	void notify_size_limit_changed(WPARAM wp) override;
 
 	ui_element_instance_callback::ptr m_callback;
 };
