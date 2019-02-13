@@ -7,7 +7,7 @@ struct IGdiObj;
 //-- IUnknown ---
 #define BEGIN_COM_QI_IMPL() \
 	public:\
-		STDMETHOD(QueryInterface)(REFIID riid, void** ppv) { \
+		STDMETHOD(QueryInterface)(REFIID riid, void** ppv) override { \
 			if (!ppv) return E_INVALIDARG; \
 
 // C2594: ambiguous conversions

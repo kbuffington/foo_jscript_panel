@@ -8,8 +8,8 @@ protected:
 	virtual ~Gdi();
 
 public:
-	STDMETHODIMP CreateImage(int w, int h, IGdiBitmap** pp);
-	STDMETHODIMP Font(BSTR name, float pxSize, int style, IGdiFont** pp);
-	STDMETHODIMP Image(BSTR path, IGdiBitmap** pp);
-	STDMETHODIMP LoadImageAsync(UINT window_id, BSTR path, UINT* p);
+	STDMETHODIMP CreateImage(int w, int h, IGdiBitmap** pp) override;
+	STDMETHODIMP Font(BSTR name, float pxSize, int style, IGdiFont** pp) override;
+	STDMETHODIMP Image(BSTR path, IGdiBitmap** pp) override;
+	STDMETHODIMP LoadImageAsync(UINT window_id, BSTR path, UINT* p) override;
 };

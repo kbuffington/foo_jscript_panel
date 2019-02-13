@@ -37,11 +37,11 @@ protected:
 	contextmenu_manager::ptr m_cm;
 
 public:
-	STDMETHODIMP BuildMenu(IMenuObj* p, int base_id, int max_id);
-	STDMETHODIMP ExecuteByID(UINT id, VARIANT_BOOL* p);
-	STDMETHODIMP InitContext(IMetadbHandleList* handles);
-	STDMETHODIMP InitContextPlaylist();
-	STDMETHODIMP InitNowPlaying();
+	STDMETHODIMP BuildMenu(IMenuObj* p, int base_id, int max_id) override;
+	STDMETHODIMP ExecuteByID(UINT id, VARIANT_BOOL* p) override;
+	STDMETHODIMP InitContext(IMetadbHandleList* handles) override;
+	STDMETHODIMP InitContextPlaylist() override;
+	STDMETHODIMP InitNowPlaying() override;
 };
 
 class DropSourceAction : public IDisposableImpl4<IDropSourceAction>
@@ -61,11 +61,11 @@ public:
 		m_effect = DROPEFFECT_NONE;
 	}
 
-	STDMETHODIMP get_Effect(UINT* p);
-	STDMETHODIMP put_Base(UINT base);
-	STDMETHODIMP put_Effect(UINT effect);
-	STDMETHODIMP put_Playlist(UINT id);
-	STDMETHODIMP put_ToSelect(VARIANT_BOOL to_select);
+	STDMETHODIMP get_Effect(UINT* p) override;
+	STDMETHODIMP put_Base(UINT base) override;
+	STDMETHODIMP put_Effect(UINT effect) override;
+	STDMETHODIMP put_Playlist(UINT id) override;
+	STDMETHODIMP put_ToSelect(VARIANT_BOOL to_select) override;
 
 	DWORD m_effect;
 	bool m_to_select;
@@ -84,16 +84,16 @@ protected:
 	file_info_impl* m_info_ptr;
 
 public:
-	STDMETHODIMP get__ptr(void** pp);
-	STDMETHODIMP InfoFind(BSTR name, int* p);
-	STDMETHODIMP InfoName(UINT idx, BSTR* p);
-	STDMETHODIMP InfoValue(UINT idx, BSTR* p);
-	STDMETHODIMP MetaFind(BSTR name, int* p);
-	STDMETHODIMP MetaName(UINT idx, BSTR* p);
-	STDMETHODIMP MetaValue(UINT idx, UINT vidx, BSTR* p);
-	STDMETHODIMP MetaValueCount(UINT idx, UINT* p);
-	STDMETHODIMP get_InfoCount(UINT* p);
-	STDMETHODIMP get_MetaCount(UINT* p);
+	STDMETHODIMP get__ptr(void** pp) override;
+	STDMETHODIMP InfoFind(BSTR name, int* p) override;
+	STDMETHODIMP InfoName(UINT idx, BSTR* p) override;
+	STDMETHODIMP InfoValue(UINT idx, BSTR* p) override;
+	STDMETHODIMP MetaFind(BSTR name, int* p) override;
+	STDMETHODIMP MetaName(UINT idx, BSTR* p) override;
+	STDMETHODIMP MetaValue(UINT idx, UINT vidx, BSTR* p) override;
+	STDMETHODIMP MetaValueCount(UINT idx, UINT* p) override;
+	STDMETHODIMP get_InfoCount(UINT* p) override;
+	STDMETHODIMP get_MetaCount(UINT* p) override;
 };
 
 class GdiBitmap : public GdiObj<IGdiBitmap, Gdiplus::Bitmap>
@@ -102,20 +102,20 @@ protected:
 	GdiBitmap(Gdiplus::Bitmap* p);
 
 public:
-	STDMETHODIMP ApplyAlpha(BYTE alpha, IGdiBitmap** pp);
-	STDMETHODIMP ApplyMask(IGdiBitmap* mask, VARIANT_BOOL* p);
-	STDMETHODIMP Clone(float x, float y, float w, float h, IGdiBitmap** pp);
-	STDMETHODIMP CreateRawBitmap(IGdiRawBitmap** pp);
-	STDMETHODIMP GetColourScheme(UINT count, VARIANT* p);
-	STDMETHODIMP GetColourSchemeJSON(UINT count, BSTR* p);
-	STDMETHODIMP GetGraphics(IGdiGraphics** pp);
-	STDMETHODIMP ReleaseGraphics(IGdiGraphics* p);
-	STDMETHODIMP Resize(UINT w, UINT h, int interpolationMode, IGdiBitmap** pp);
-	STDMETHODIMP RotateFlip(UINT mode);
-	STDMETHODIMP SaveAs(BSTR path, BSTR format, VARIANT_BOOL* p);
-	STDMETHODIMP StackBlur(BYTE radius);
-	STDMETHODIMP get_Height(UINT* p);
-	STDMETHODIMP get_Width(UINT* p);
+	STDMETHODIMP ApplyAlpha(BYTE alpha, IGdiBitmap** pp) override;
+	STDMETHODIMP ApplyMask(IGdiBitmap* mask, VARIANT_BOOL* p) override;
+	STDMETHODIMP Clone(float x, float y, float w, float h, IGdiBitmap** pp) override;
+	STDMETHODIMP CreateRawBitmap(IGdiRawBitmap** pp) override;
+	STDMETHODIMP GetColourScheme(UINT count, VARIANT* p) override;
+	STDMETHODIMP GetColourSchemeJSON(UINT count, BSTR* p) override;
+	STDMETHODIMP GetGraphics(IGdiGraphics** pp) override;
+	STDMETHODIMP ReleaseGraphics(IGdiGraphics* p) override;
+	STDMETHODIMP Resize(UINT w, UINT h, int interpolationMode, IGdiBitmap** pp) override;
+	STDMETHODIMP RotateFlip(UINT mode) override;
+	STDMETHODIMP SaveAs(BSTR path, BSTR format, VARIANT_BOOL* p) override;
+	STDMETHODIMP StackBlur(BYTE radius) override;
+	STDMETHODIMP get_Height(UINT* p) override;
+	STDMETHODIMP get_Width(UINT* p) override;
 };
 
 class GdiFont : public GdiObj<IGdiFont, Gdiplus::Font>
@@ -130,11 +130,11 @@ protected:
 	bool m_managed;
 
 public:
-	STDMETHODIMP get__HFont(UINT* p);
-	STDMETHODIMP get_Height(UINT* p);
-	STDMETHODIMP get_Name(BSTR* p);
-	STDMETHODIMP get_Size(float* p);
-	STDMETHODIMP get_Style(int* p);
+	STDMETHODIMP get__HFont(UINT* p) override;
+	STDMETHODIMP get_Height(UINT* p) override;
+	STDMETHODIMP get_Name(BSTR* p) override;
+	STDMETHODIMP get_Size(float* p) override;
+	STDMETHODIMP get_Style(int* p) override;
 };
 
 class GdiGraphics : public GdiObj<IGdiGraphics, Gdiplus::Graphics>
@@ -145,34 +145,34 @@ protected:
 	static void GetRoundRectPath(Gdiplus::GraphicsPath& gp, Gdiplus::RectF& rect, float arc_width, float arc_height);
 
 public:
-	STDMETHODIMP Dispose()
+	STDMETHODIMP Dispose() override
 	{
 		return E_NOTIMPL;
 	}
 
-	STDMETHODIMP put__ptr(void* p);
-	STDMETHODIMP CalcTextHeight(BSTR str, IGdiFont* font, UINT* p);
-	STDMETHODIMP CalcTextWidth(BSTR str, IGdiFont* font, UINT* p);
-	STDMETHODIMP DrawEllipse(float x, float y, float w, float h, float line_width, LONGLONG colour);
-	STDMETHODIMP DrawImage(IGdiBitmap* image, float dstX, float dstY, float dstW, float dstH, float srcX, float srcY, float srcW, float srcH, float angle, BYTE alpha);
-	STDMETHODIMP DrawLine(float x1, float y1, float x2, float y2, float line_width, LONGLONG colour);
-	STDMETHODIMP DrawPolygon(LONGLONG colour, float line_width, VARIANT points);
-	STDMETHODIMP DrawRect(float x, float y, float w, float h, float line_width, LONGLONG colour);
-	STDMETHODIMP DrawRoundRect(float x, float y, float w, float h, float arc_width, float arc_height, float line_width, LONGLONG colour);
-	STDMETHODIMP DrawString(BSTR str, IGdiFont* font, LONGLONG colour, float x, float y, float w, float h, int flags);
-	STDMETHODIMP EstimateLineWrap(BSTR str, IGdiFont* font, int max_width, VARIANT* p);
-	STDMETHODIMP FillEllipse(float x, float y, float w, float h, LONGLONG colour);
-	STDMETHODIMP FillGradRect(float x, float y, float w, float h, float angle, LONGLONG colour1, LONGLONG colour2, float focus);
-	STDMETHODIMP FillPolygon(LONGLONG colour, int fillmode, VARIANT points);
-	STDMETHODIMP FillRoundRect(float x, float y, float w, float h, float arc_width, float arc_height, LONGLONG colour);
-	STDMETHODIMP FillSolidRect(float x, float y, float w, float h, LONGLONG colour);
-	STDMETHODIMP GdiAlphaBlend(IGdiRawBitmap* bitmap, int dstX, int dstY, int dstW, int dstH, int srcX, int srcY, int srcW, int srcH, BYTE alpha);
-	STDMETHODIMP GdiDrawBitmap(IGdiRawBitmap* bitmap, int dstX, int dstY, int dstW, int dstH, int srcX, int srcY, int srcW, int srcH);
-	STDMETHODIMP GdiDrawText(BSTR str, IGdiFont* font, LONGLONG colour, int x, int y, int w, int h, int format);
-	STDMETHODIMP MeasureString(BSTR str, IGdiFont* font, float x, float y, float w, float h, int flags, IMeasureStringInfo** pp);
-	STDMETHODIMP SetInterpolationMode(int mode);
-	STDMETHODIMP SetSmoothingMode(int mode);
-	STDMETHODIMP SetTextRenderingHint(UINT mode);
+	STDMETHODIMP put__ptr(void* p) override;
+	STDMETHODIMP CalcTextHeight(BSTR str, IGdiFont* font, UINT* p) override;
+	STDMETHODIMP CalcTextWidth(BSTR str, IGdiFont* font, UINT* p) override;
+	STDMETHODIMP DrawEllipse(float x, float y, float w, float h, float line_width, LONGLONG colour) override;
+	STDMETHODIMP DrawImage(IGdiBitmap* image, float dstX, float dstY, float dstW, float dstH, float srcX, float srcY, float srcW, float srcH, float angle, BYTE alpha) override;
+	STDMETHODIMP DrawLine(float x1, float y1, float x2, float y2, float line_width, LONGLONG colour) override;
+	STDMETHODIMP DrawPolygon(LONGLONG colour, float line_width, VARIANT points) override;
+	STDMETHODIMP DrawRect(float x, float y, float w, float h, float line_width, LONGLONG colour) override;
+	STDMETHODIMP DrawRoundRect(float x, float y, float w, float h, float arc_width, float arc_height, float line_width, LONGLONG colour) override;
+	STDMETHODIMP DrawString(BSTR str, IGdiFont* font, LONGLONG colour, float x, float y, float w, float h, int flags) override;
+	STDMETHODIMP EstimateLineWrap(BSTR str, IGdiFont* font, int max_width, VARIANT* p) override;
+	STDMETHODIMP FillEllipse(float x, float y, float w, float h, LONGLONG colour) override;
+	STDMETHODIMP FillGradRect(float x, float y, float w, float h, float angle, LONGLONG colour1, LONGLONG colour2, float focus) override;
+	STDMETHODIMP FillPolygon(LONGLONG colour, int fillmode, VARIANT points) override;
+	STDMETHODIMP FillRoundRect(float x, float y, float w, float h, float arc_width, float arc_height, LONGLONG colour) override;
+	STDMETHODIMP FillSolidRect(float x, float y, float w, float h, LONGLONG colour) override;
+	STDMETHODIMP GdiAlphaBlend(IGdiRawBitmap* bitmap, int dstX, int dstY, int dstW, int dstH, int srcX, int srcY, int srcW, int srcH, BYTE alpha) override;
+	STDMETHODIMP GdiDrawBitmap(IGdiRawBitmap* bitmap, int dstX, int dstY, int dstW, int dstH, int srcX, int srcY, int srcW, int srcH) override;
+	STDMETHODIMP GdiDrawText(BSTR str, IGdiFont* font, LONGLONG colour, int x, int y, int w, int h, int format) override;
+	STDMETHODIMP MeasureString(BSTR str, IGdiFont* font, float x, float y, float w, float h, int flags, IMeasureStringInfo** pp) override;
+	STDMETHODIMP SetInterpolationMode(int mode) override;
+	STDMETHODIMP SetSmoothingMode(int mode) override;
+	STDMETHODIMP SetTextRenderingHint(UINT mode) override;
 };
 
 class GdiRawBitmap : public IDisposableImpl4<IGdiRawBitmap>
@@ -189,9 +189,9 @@ protected:
 	t_size m_height, m_width;
 
 public:
-	STDMETHODIMP get__Handle(HDC* p);
-	STDMETHODIMP get_Height(UINT* p);
-	STDMETHODIMP get_Width(UINT* p);
+	STDMETHODIMP get__Handle(HDC* p) override;
+	STDMETHODIMP get_Height(UINT* p) override;
+	STDMETHODIMP get_Width(UINT* p) override;
 };
 
 class MainMenuManager : public IDisposableImpl4<IMainMenuManager>
@@ -205,9 +205,9 @@ protected:
 	mainmenu_manager::ptr m_mm;
 
 public:
-	STDMETHODIMP BuildMenu(IMenuObj* p, int base_id, int count);
-	STDMETHODIMP ExecuteByID(UINT id, VARIANT_BOOL* p);
-	STDMETHODIMP Init(BSTR root_name);
+	STDMETHODIMP BuildMenu(IMenuObj* p, int base_id, int count) override;
+	STDMETHODIMP ExecuteByID(UINT id, VARIANT_BOOL* p) override;
+	STDMETHODIMP Init(BSTR root_name) override;
 };
 
 class MeasureStringInfo : public IDispatchImpl3<IMeasureStringInfo>
@@ -220,12 +220,12 @@ protected:
 	int m_l, m_c;
 
 public:
-	STDMETHODIMP get_chars(int* p);
-	STDMETHODIMP get_height(float* p);
-	STDMETHODIMP get_lines(int* p);
-	STDMETHODIMP get_width(float* p);
-	STDMETHODIMP get_x(float* p);
-	STDMETHODIMP get_y(float* p);
+	STDMETHODIMP get_chars(int* p) override;
+	STDMETHODIMP get_height(float* p) override;
+	STDMETHODIMP get_lines(int* p) override;
+	STDMETHODIMP get_width(float* p) override;
+	STDMETHODIMP get_x(float* p) override;
+	STDMETHODIMP get_y(float* p) override;
 };
 
 class MenuObj : public IDisposableImpl4<IMenuObj>
@@ -241,13 +241,13 @@ protected:
 	bool m_has_detached;
 
 public:
-	STDMETHODIMP get__ID(HMENU* p);
-	STDMETHODIMP AppendMenuItem(UINT flags, UINT item_id, BSTR text);
-	STDMETHODIMP AppendMenuSeparator();
-	STDMETHODIMP AppendTo(IMenuObj* parent, UINT flags, BSTR text);
-	STDMETHODIMP CheckMenuItem(UINT item_id, VARIANT_BOOL check);
-	STDMETHODIMP CheckMenuRadioItem(UINT first, UINT last, UINT selected);
-	STDMETHODIMP TrackPopupMenu(int x, int y, UINT flags, UINT* p);
+	STDMETHODIMP get__ID(HMENU* p) override;
+	STDMETHODIMP AppendMenuItem(UINT flags, UINT item_id, BSTR text) override;
+	STDMETHODIMP AppendMenuSeparator() override;
+	STDMETHODIMP AppendTo(IMenuObj* parent, UINT flags, BSTR text) override;
+	STDMETHODIMP CheckMenuItem(UINT item_id, VARIANT_BOOL check) override;
+	STDMETHODIMP CheckMenuRadioItem(UINT first, UINT last, UINT selected) override;
+	STDMETHODIMP TrackPopupMenu(int x, int y, UINT flags, UINT* p) override;
 };
 
 class MetadbHandle : public IDisposableImpl4<IMetadbHandle>
@@ -262,22 +262,22 @@ protected:
 	metadb_handle_ptr m_handle;
 
 public:
-	STDMETHODIMP get__ptr(void** pp);
-	STDMETHODIMP ClearStats();
-	STDMETHODIMP Compare(IMetadbHandle* handle, VARIANT_BOOL* p);
-	STDMETHODIMP GetAlbumArt(UINT art_id, VARIANT_BOOL need_stub, VARIANT* p);
-	STDMETHODIMP GetFileInfo(IFileInfo** pp);
-	STDMETHODIMP RefreshStats();
-	STDMETHODIMP SetFirstPlayed(BSTR first_played);
-	STDMETHODIMP SetLastPlayed(BSTR last_played);
-	STDMETHODIMP SetLoved(UINT loved);
-	STDMETHODIMP SetPlaycount(UINT playcount);
-	STDMETHODIMP SetRating(UINT rating);
-	STDMETHODIMP get_FileSize(LONGLONG* p);
-	STDMETHODIMP get_Length(double* p);
-	STDMETHODIMP get_Path(BSTR* p);
-	STDMETHODIMP get_RawPath(BSTR* p);
-	STDMETHODIMP get_SubSong(UINT* p);
+	STDMETHODIMP get__ptr(void** pp) override;
+	STDMETHODIMP ClearStats() override;
+	STDMETHODIMP Compare(IMetadbHandle* handle, VARIANT_BOOL* p) override;
+	STDMETHODIMP GetAlbumArt(UINT art_id, VARIANT_BOOL need_stub, VARIANT* p) override;
+	STDMETHODIMP GetFileInfo(IFileInfo** pp) override;
+	STDMETHODIMP RefreshStats() override;
+	STDMETHODIMP SetFirstPlayed(BSTR first_played) override;
+	STDMETHODIMP SetLastPlayed(BSTR last_played) override;
+	STDMETHODIMP SetLoved(UINT loved) override;
+	STDMETHODIMP SetPlaycount(UINT playcount) override;
+	STDMETHODIMP SetRating(UINT rating) override;
+	STDMETHODIMP get_FileSize(LONGLONG* p) override;
+	STDMETHODIMP get_Length(double* p) override;
+	STDMETHODIMP get_Path(BSTR* p) override;
+	STDMETHODIMP get_RawPath(BSTR* p) override;
+	STDMETHODIMP get_SubSong(UINT* p) override;
 };
 
 class MetadbHandleList : public IDisposableImpl4<IMetadbHandleList>
@@ -291,37 +291,37 @@ protected:
 	metadb_handle_list m_handles;
 
 public:
-	STDMETHODIMP get__ptr(void** pp);
-	STDMETHODIMP Add(IMetadbHandle* handle);
-	STDMETHODIMP AddRange(IMetadbHandleList* handles);
-	STDMETHODIMP AttachImage(BSTR image_path, UINT art_id);
-	STDMETHODIMP BSearch(IMetadbHandle* handle, int* p);
-	STDMETHODIMP CalcTotalDuration(double* p);
-	STDMETHODIMP CalcTotalSize(LONGLONG* p);
-	STDMETHODIMP Clone(IMetadbHandleList** pp);
-	STDMETHODIMP Convert(VARIANT* p);
-	STDMETHODIMP Find(IMetadbHandle* handle, int* p);
-	STDMETHODIMP GetLibraryRelativePaths(VARIANT* p);
-	STDMETHODIMP Insert(UINT index, IMetadbHandle* handle);
-	STDMETHODIMP InsertRange(UINT index, IMetadbHandleList* handles);
-	STDMETHODIMP MakeDifference(IMetadbHandleList* handles);
-	STDMETHODIMP MakeIntersection(IMetadbHandleList* handles);
-	STDMETHODIMP MakeUnion(IMetadbHandleList* handles);
-	STDMETHODIMP OrderByFormat(__interface ITitleFormat* script, int direction);
-	STDMETHODIMP OrderByPath();
-	STDMETHODIMP OrderByRelativePath();
-	STDMETHODIMP RefreshStats();
-	STDMETHODIMP Remove(IMetadbHandle* handle);
-	STDMETHODIMP RemoveAll();
-	STDMETHODIMP RemoveAttachedImage(UINT art_id);
-	STDMETHODIMP RemoveAttachedImages();
-	STDMETHODIMP RemoveById(UINT index);
-	STDMETHODIMP RemoveRange(UINT from, UINT count);
-	STDMETHODIMP Sort();
-	STDMETHODIMP UpdateFileInfoFromJSON(BSTR str);
-	STDMETHODIMP get_Count(UINT* p);
-	STDMETHODIMP get_Item(UINT index, IMetadbHandle** pp);
-	STDMETHODIMP put_Item(UINT index, IMetadbHandle* handle);
+	STDMETHODIMP get__ptr(void** pp) override;
+	STDMETHODIMP Add(IMetadbHandle* handle) override;
+	STDMETHODIMP AddRange(IMetadbHandleList* handles) override;
+	STDMETHODIMP AttachImage(BSTR image_path, UINT art_id) override;
+	STDMETHODIMP BSearch(IMetadbHandle* handle, int* p) override;
+	STDMETHODIMP CalcTotalDuration(double* p) override;
+	STDMETHODIMP CalcTotalSize(LONGLONG* p) override;
+	STDMETHODIMP Clone(IMetadbHandleList** pp) override;
+	STDMETHODIMP Convert(VARIANT* p) override;
+	STDMETHODIMP Find(IMetadbHandle* handle, int* p) override;
+	STDMETHODIMP GetLibraryRelativePaths(VARIANT* p) override;
+	STDMETHODIMP Insert(UINT index, IMetadbHandle* handle) override;
+	STDMETHODIMP InsertRange(UINT index, IMetadbHandleList* handles) override;
+	STDMETHODIMP MakeDifference(IMetadbHandleList* handles) override;
+	STDMETHODIMP MakeIntersection(IMetadbHandleList* handles) override;
+	STDMETHODIMP MakeUnion(IMetadbHandleList* handles) override;
+	STDMETHODIMP OrderByFormat(__interface ITitleFormat* script, int direction) override;
+	STDMETHODIMP OrderByPath() override;
+	STDMETHODIMP OrderByRelativePath() override;
+	STDMETHODIMP RefreshStats() override;
+	STDMETHODIMP Remove(IMetadbHandle* handle) override;
+	STDMETHODIMP RemoveAll() override;
+	STDMETHODIMP RemoveAttachedImage(UINT art_id) override;
+	STDMETHODIMP RemoveAttachedImages() override;
+	STDMETHODIMP RemoveById(UINT index) override;
+	STDMETHODIMP RemoveRange(UINT from, UINT count) override;
+	STDMETHODIMP Sort() override;
+	STDMETHODIMP UpdateFileInfoFromJSON(BSTR str) override;
+	STDMETHODIMP get_Count(UINT* p) override;
+	STDMETHODIMP get_Item(UINT index, IMetadbHandle** pp) override;
+	STDMETHODIMP put_Item(UINT index, IMetadbHandle* handle) override;
 };
 
 class PlaybackQueueItem : public IDisposableImpl4<IPlaybackQueueItem>
@@ -336,10 +336,10 @@ protected:
 	t_playback_queue_item m_playback_queue_item;
 
 public:
-	STDMETHODIMP get__ptr(void** pp);
-	STDMETHODIMP get_Handle(IMetadbHandle** pp);
-	STDMETHODIMP get_PlaylistIndex(int* p);
-	STDMETHODIMP get_PlaylistItemIndex(int* p);
+	STDMETHODIMP get__ptr(void** pp) override;
+	STDMETHODIMP get_Handle(IMetadbHandle** pp) override;
+	STDMETHODIMP get_PlaylistIndex(int* p) override;
+	STDMETHODIMP get_PlaylistItemIndex(int* p) override;
 };
 
 class PlayingItemLocation : public IDispatchImpl3<IPlayingItemLocation>
@@ -352,19 +352,19 @@ protected:
 	t_size m_playlistItemIndex;
 
 public:
-	STDMETHODIMP get_IsValid(VARIANT_BOOL* p);
-	STDMETHODIMP get_PlaylistIndex(int* p);
-	STDMETHODIMP get_PlaylistItemIndex(int* p);
+	STDMETHODIMP get_IsValid(VARIANT_BOOL* p) override;
+	STDMETHODIMP get_PlaylistIndex(int* p) override;
+	STDMETHODIMP get_PlaylistItemIndex(int* p) override;
 };
 
 class PlaylistRecyclerManager : public IDispatchImpl3<IPlaylistRecyclerManager>
 {
 public:
-	STDMETHODIMP Purge(VARIANT affectedItems);
-	STDMETHODIMP Restore(UINT index);
-	STDMETHODIMP get_Content(UINT index, IMetadbHandleList** pp);
-	STDMETHODIMP get_Count(UINT* p);
-	STDMETHODIMP get_Name(UINT index, BSTR* p);
+	STDMETHODIMP Purge(VARIANT affectedItems) override;
+	STDMETHODIMP Restore(UINT index) override;
+	STDMETHODIMP get_Content(UINT index, IMetadbHandleList** pp) override;
+	STDMETHODIMP get_Count(UINT* p) override;
+	STDMETHODIMP get_Name(UINT index, BSTR* p) override;
 };
 
 class Profiler : public IDispatchImpl3<IProfiler>
@@ -377,9 +377,9 @@ protected:
 	pfc::string_simple m_name;
 
 public:
-	STDMETHODIMP Print();
-	STDMETHODIMP Reset();
-	STDMETHODIMP get_Time(int* p);
+	STDMETHODIMP Print() override;
+	STDMETHODIMP Reset() override;
+	STDMETHODIMP get_Time(int* p) override;
 };
 
 class ThemeManager : public IDisposableImpl4<IThemeManager>
@@ -395,9 +395,9 @@ protected:
 	int m_stateid;
 
 public:
-	STDMETHODIMP DrawThemeBackground(IGdiGraphics* gr, int x, int y, int w, int h, int clip_x, int clip_y, int clip_w, int clip_h);
-	STDMETHODIMP IsThemePartDefined(int partid, int stateid, VARIANT_BOOL* p);
-	STDMETHODIMP SetPartAndStateID(int partid, int stateid);
+	STDMETHODIMP DrawThemeBackground(IGdiGraphics* gr, int x, int y, int w, int h, int clip_x, int clip_y, int clip_w, int clip_h) override;
+	STDMETHODIMP IsThemePartDefined(int partid, int stateid, VARIANT_BOOL* p) override;
+	STDMETHODIMP SetPartAndStateID(int partid, int stateid) override;
 };
 
 class TitleFormat : public IDisposableImpl4<ITitleFormat>
@@ -411,10 +411,10 @@ protected:
 	titleformat_object::ptr m_obj;
 
 public:
-	STDMETHODIMP get__ptr(void** pp);
-	STDMETHODIMP Eval(VARIANT_BOOL force, BSTR* p);
-	STDMETHODIMP EvalWithMetadb(IMetadbHandle* handle, BSTR* p);
-	STDMETHODIMP EvalWithMetadbs(IMetadbHandleList* handles, VARIANT* p);
+	STDMETHODIMP get__ptr(void** pp) override;
+	STDMETHODIMP Eval(VARIANT_BOOL force, BSTR* p) override;
+	STDMETHODIMP EvalWithMetadb(IMetadbHandle* handle, BSTR* p) override;
+	STDMETHODIMP EvalWithMetadbs(IMetadbHandleList* handles, VARIANT* p) override;
 };
 
 class Tooltip : public IDisposableImpl4<ITooltip>
@@ -432,15 +432,15 @@ protected:
 	panel_tooltip_param_ptr m_panel_tooltip_param_ptr;
 
 public:
-	STDMETHODIMP Activate();
-	STDMETHODIMP Deactivate();
-	STDMETHODIMP GetDelayTime(int type, int* p);
-	STDMETHODIMP SetDelayTime(int type, int time);
-	STDMETHODIMP SetMaxWidth(int width);
-	STDMETHODIMP TrackPosition(int x, int y);
-	STDMETHODIMP get_Text(BSTR* p);
-	STDMETHODIMP put_Text(BSTR text);
-	STDMETHODIMP put_TrackActivate(VARIANT_BOOL activate);
+	STDMETHODIMP Activate() override;
+	STDMETHODIMP Deactivate() override;
+	STDMETHODIMP GetDelayTime(int type, int* p) override;
+	STDMETHODIMP SetDelayTime(int type, int time) override;
+	STDMETHODIMP SetMaxWidth(int width) override;
+	STDMETHODIMP TrackPosition(int x, int y) override;
+	STDMETHODIMP get_Text(BSTR* p) override;
+	STDMETHODIMP put_Text(BSTR text) override;
+	STDMETHODIMP put_TrackActivate(VARIANT_BOOL activate) override;
 };
 
 class UiSelectionHolder : public IDisposableImpl4<IUiSelectionHolder>
@@ -454,7 +454,7 @@ protected:
 	ui_selection_holder::ptr m_holder;
 
 public:
-	STDMETHODIMP SetPlaylistSelectionTracking();
-	STDMETHODIMP SetPlaylistTracking();
-	STDMETHODIMP SetSelection(IMetadbHandleList* handles);
+	STDMETHODIMP SetPlaylistSelectionTracking() override;
+	STDMETHODIMP SetPlaylistTracking() override;
+	STDMETHODIMP SetSelection(IMetadbHandleList* handles) override;
 };
