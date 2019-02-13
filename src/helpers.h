@@ -70,9 +70,9 @@ namespace helpers
 
 		void run(threaded_process_status& p_status, abort_callback& p_abort) override
 		{
-			GUID what = convert_artid_to_guid(m_art_id);
+			const GUID what = convert_artid_to_guid(m_art_id);
 			auto api = file_lock_manager::get();
-			t_size count = m_handles.get_count();
+			const t_size count = m_handles.get_count();
 			for (t_size i = 0; i < count; ++i)
 			{
 				pfc::string8_fast path = m_handles.get_item(i)->get_path();

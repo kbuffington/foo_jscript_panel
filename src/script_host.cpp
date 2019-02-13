@@ -116,7 +116,7 @@ HRESULT script_host::InvokeCallback(int callbackId, VARIANTARG* argv, UINT argc,
 HRESULT script_host::ProcessImportedScripts(IActiveScriptParsePtr& parser)
 {
 	pfc::string_formatter error_text;
-	t_size count = m_host->m_script_info.imports.get_count();
+	const t_size count = m_host->m_script_info.imports.get_count();
 	for (t_size i = 0; i < count; ++i)
 	{
 		pfc::string8_fast path = m_host->m_script_info.expand_import(i);

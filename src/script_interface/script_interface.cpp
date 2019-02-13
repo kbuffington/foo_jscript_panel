@@ -738,7 +738,7 @@ STDMETHODIMP GdiGraphics::DrawPolygon(LONGLONG colour, float line_width, VARIANT
 
 	helpers::com_array helper;
 	if (!helper.convert(&points)) return E_INVALIDARG;
-	LONG count = helper.get_count();
+	const LONG count = helper.get_count();
 	if (count % 2 != 0) return E_INVALIDARG;
 
 	pfc::array_t<Gdiplus::PointF> point_array;
@@ -819,7 +819,7 @@ STDMETHODIMP GdiGraphics::EstimateLineWrap(BSTR str, IGdiFont* font, int max_wid
 	SelectFont(dc, oldfont);
 	m_ptr->ReleaseHDC(dc);
 
-	LONG count = result.get_count() * 2;
+	const LONG count = result.get_count() * 2;
 	helpers::com_array helper;
 	if (!helper.create(count)) return E_OUTOFMEMORY;
 	for (LONG i = 0; i < count / 2; ++i)
@@ -863,7 +863,7 @@ STDMETHODIMP GdiGraphics::FillPolygon(LONGLONG colour, int fillmode, VARIANT poi
 
 	helpers::com_array helper;
 	if (!helper.convert(&points)) return E_INVALIDARG;
-	LONG count = helper.get_count();
+	const LONG count = helper.get_count();
 	if (count % 2 != 0) return E_INVALIDARG;
 
 	pfc::array_t<Gdiplus::PointF> point_array;
@@ -1646,7 +1646,7 @@ STDMETHODIMP MetadbHandleList::Convert(VARIANT* p)
 {
 	if (!p) return E_POINTER;
 
-	LONG count = m_handles.get_count();
+	const LONG count = m_handles.get_count();
 	helpers::com_array helper;
 	if (!helper.create(count)) return E_OUTOFMEMORY;
 
@@ -1678,7 +1678,7 @@ STDMETHODIMP MetadbHandleList::GetLibraryRelativePaths(VARIANT* p)
 {
 	if (!p) return E_POINTER;
 
-	LONG count = m_handles.get_count();
+	const LONG count = m_handles.get_count();
 	helpers::com_array helper;
 	if (!helper.create(count)) return E_OUTOFMEMORY;
 
@@ -1811,7 +1811,8 @@ STDMETHODIMP MetadbHandleList::OrderByRelativePath()
 {
 	// lifted from metadb_handle_list.cpp - adds subsong index for better sorting. github issue #16
 	auto api = library_manager::get();
-	t_size i, count = m_handles.get_count();
+	const t_size count = m_handles.get_count();
+	t_size i;
 
 	pfc::array_t<helpers::custom_sort_data> data;
 	data.set_size(count);
@@ -1922,7 +1923,7 @@ STDMETHODIMP MetadbHandleList::Sort()
 
 STDMETHODIMP MetadbHandleList::UpdateFileInfoFromJSON(BSTR str)
 {
-	t_size count = m_handles.get_count();
+	const t_size count = m_handles.get_count();
 	if (count == 0) return E_POINTER;
 
 	json j;
@@ -2160,7 +2161,7 @@ STDMETHODIMP PlaylistRecyclerManager::get_Name(UINT index, BSTR* p)
 	if (!p) return E_POINTER;
 
 	auto api = playlist_manager_v3::get();
-	t_size count = api->recycler_get_count();
+	const t_size count = api->recycler_get_count();
 	if (index < count)
 	{
 		pfc::string8_fast name;
@@ -2317,7 +2318,7 @@ STDMETHODIMP TitleFormat::EvalWithMetadbs(IMetadbHandleList* handles, VARIANT* p
 	handles->get__ptr((void**)&handles_ptr);
 
 	metadb_handle_list_ref handles_ref = *handles_ptr;
-	LONG count = handles_ref.get_count();
+	const LONG count = handles_ref.get_count();
 	helpers::com_array helper;
 	if (!helper.create(count)) return E_OUTOFMEMORY;
 

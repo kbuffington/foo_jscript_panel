@@ -22,7 +22,7 @@ STDMETHODIMP Plman::AddLocations(UINT playlistIndex, VARIANT locations, VARIANT_
 	{
 		helpers::com_array helper;
 		if (!helper.convert(&locations)) return E_INVALIDARG;
-		LONG count = helper.get_count();
+		const LONG count = helper.get_count();
 		pfc::string_list_impl list;
 		for (LONG i = 0; i < count; ++i)
 		{
@@ -218,7 +218,7 @@ STDMETHODIMP Plman::GetPlaybackQueueContents(VARIANT* p)
 
 	pfc::list_t<t_playback_queue_item> contents;
 	playlist_manager::get()->queue_get_contents(contents);
-	LONG count = contents.get_count();
+	const LONG count = contents.get_count();
 	helpers::com_array helper;
 	if (!helper.create(count)) return E_OUTOFMEMORY;
 
@@ -242,7 +242,7 @@ STDMETHODIMP Plman::GetPlaybackQueueHandles(IMetadbHandleList** pp)
 
 	pfc::list_t<t_playback_queue_item> contents;
 	playlist_manager::get()->queue_get_contents(contents);
-	t_size count = contents.get_count();
+	const t_size count = contents.get_count();
 	metadb_handle_list items;
 	for (t_size i = 0; i < count; ++i)
 	{
@@ -391,7 +391,7 @@ STDMETHODIMP Plman::MovePlaylist(UINT from, UINT to, VARIANT_BOOL* p)
 	if (!p) return E_POINTER;
 
 	auto api = playlist_manager::get();
-	t_size count = api->get_playlist_count();
+	const t_size count = api->get_playlist_count();
 
 	if (from < count && to < count)
 	{
@@ -633,7 +633,8 @@ STDMETHODIMP Plman::SortByFormatV2(UINT playlistIndex, BSTR pattern, int directi
 STDMETHODIMP Plman::SortPlaylistsByName(int direction)
 {
 	auto api = playlist_manager::get();
-	t_size i, count = api->get_playlist_count();
+	const t_size count = api->get_playlist_count();
+	t_size i;
 
 	pfc::array_t<helpers::custom_sort_data> data;
 	data.set_size(count);

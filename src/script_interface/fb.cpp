@@ -169,7 +169,7 @@ STDMETHODIMP Fb::GetDSPPresets(BSTR* p)
 
 	json j = json::array();
 	auto api = dsp_config_manager_v2::get();
-	t_size count = api->get_preset_count();
+	const t_size count = api->get_preset_count();
 	pfc::string8 name;
 
 	for (t_size i = 0; i < count; ++i)
@@ -474,7 +474,7 @@ STDMETHODIMP Fb::SetDSPPreset(UINT idx)
 	if (!static_api_test_t<dsp_config_manager_v2>()) return E_NOTIMPL;
 
 	auto api = dsp_config_manager_v2::get();
-	t_size count = api->get_preset_count();
+	const t_size count = api->get_preset_count();
 	if (idx < count)
 	{
 		api->select_preset(idx);

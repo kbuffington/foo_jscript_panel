@@ -46,7 +46,7 @@ STDMETHODIMP Utils::CheckFont(BSTR name, VARIANT_BOOL* p)
 
 	wchar_t family_name[LF_FACESIZE] = { 0 };
 	Gdiplus::InstalledFontCollection fonts;
-	int count = fonts.GetFamilyCount();
+	const int count = fonts.GetFamilyCount();
 	Gdiplus::FontFamily* families = new Gdiplus::FontFamily[count];
 	int found;
 	if (fonts.GetFamilies(count, families, &found) == Gdiplus::Ok)
@@ -337,7 +337,7 @@ STDMETHODIMP Utils::ListFiles(BSTR folder, VARIANT_BOOL recur, VARIANT* p)
 	pfc::string_list_impl list;
 	helpers::list(string_utf8_from_wide(folder).get_ptr(), true, recur != VARIANT_FALSE, list);
 
-	LONG count = list.get_count();
+	const LONG count = list.get_count();
 	helpers::com_array helper;
 	if (!helper.create(count)) return E_OUTOFMEMORY;
 	for (LONG i = 0; i < count; ++i)
@@ -359,7 +359,7 @@ STDMETHODIMP Utils::ListFolders(BSTR folder, VARIANT* p)
 	pfc::string_list_impl list;
 	helpers::list(string_utf8_from_wide(folder).get_ptr(), false, false, list);
 
-	LONG count = list.get_count();
+	const LONG count = list.get_count();
 	helpers::com_array helper;
 	if (!helper.create(count)) return E_OUTOFMEMORY;
 	for (LONG i = 0; i < count; ++i)

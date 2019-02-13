@@ -47,7 +47,7 @@ void panel_manager::post_msg_to_all(UINT p_msg, WPARAM p_wp, LPARAM p_lp)
 
 void panel_manager::post_msg_to_all_pointer(UINT p_msg, pfc::refcounted_object_root* p_param)
 {
-	t_size count = m_hwnds.get_count();
+	const t_size count = m_hwnds.get_count();
 
 	if (count < 1 || !p_param)
 		return;
@@ -76,7 +76,7 @@ void panel_manager::send_msg_to_all(UINT p_msg, WPARAM p_wp, LPARAM p_lp)
 
 void panel_manager::send_msg_to_others_pointer(HWND p_wnd_except, UINT p_msg, pfc::refcounted_object_root* p_param)
 {
-	t_size count = m_hwnds.get_count();
+	const t_size count = m_hwnds.get_count();
 
 	if (count < 2 || !p_param)
 		return;

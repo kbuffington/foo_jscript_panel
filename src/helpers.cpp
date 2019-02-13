@@ -17,7 +17,7 @@ namespace helpers
 
 	IGdiBitmap* get_album_art(const metadb_handle_ptr& handle, t_size art_id, bool need_stub, pfc::string_base& image_path, bool no_load)
 	{
-		GUID what = convert_artid_to_guid(art_id);
+		const GUID what = convert_artid_to_guid(art_id);
 		abort_callback_dummy abort;
 		auto api = album_art_manager_v2::get();
 		album_art_extractor_instance_v2::ptr ptr;
@@ -66,7 +66,7 @@ namespace helpers
 		if (album_art_extractor::g_get_interface(ptr, rawpath))
 		{
 			album_art_extractor_instance_ptr aaep;
-			GUID what = convert_artid_to_guid(art_id);
+			const GUID what = convert_artid_to_guid(art_id);
 			abort_callback_dummy abort;
 
 			try
