@@ -141,30 +141,6 @@ namespace helpers
 	public:
 		album_art_async(HWND notify_hwnd, metadb_handle* handle, t_size art_id, bool need_stub, bool only_embed, bool no_load) : m_notify_hwnd(notify_hwnd), m_handle(handle), m_art_id(art_id), m_need_stub(need_stub), m_only_embed(only_embed), m_no_load(no_load) {}
 
-		struct t_param
-		{
-			t_param(IMetadbHandle* p_handle, t_size p_art_id, IGdiBitmap* p_bitmap, const char* p_image_path) : handle(p_handle), art_id(p_art_id), bitmap(p_bitmap), image_path(p_image_path) {}
-
-			~t_param()
-			{
-				if (handle)
-				{
-					handle->Release();
-				}
-
-				if (bitmap)
-				{
-					bitmap->Release();
-				}
-			}
-
-			IGdiBitmap* bitmap;
-			IMetadbHandle* handle;
-			string_wide_from_utf8_fast image_path;
-			t_size art_id;
-		};
-
-	private:
 		void run() override
 		{
 			IGdiBitmap* bitmap = nullptr;
@@ -194,6 +170,30 @@ namespace helpers
 			SendMessage(m_notify_hwnd, CALLBACK_UWM_ON_GET_ALBUM_ART_DONE, (WPARAM)&param, 0);
 		}
 
+		struct t_param
+		{
+			t_param(IMetadbHandle* p_handle, t_size p_art_id, IGdiBitmap* p_bitmap, const char* p_image_path) : handle(p_handle), art_id(p_art_id), bitmap(p_bitmap), image_path(p_image_path) {}
+
+			~t_param()
+			{
+				if (handle)
+				{
+					handle->Release();
+				}
+
+				if (bitmap)
+				{
+					bitmap->Release();
+				}
+			}
+
+			IGdiBitmap* bitmap;
+			IMetadbHandle* handle;
+			string_wide_from_utf8_fast image_path;
+			t_size art_id;
+		};
+
+	private:
 		HWND m_notify_hwnd;
 		bool m_need_stub;
 		bool m_no_load;
@@ -206,6 +206,13 @@ namespace helpers
 	{
 	public:
 		load_image_async(HWND notify_wnd, BSTR path) : m_notify_hwnd(notify_wnd), m_path(path) {}
+
+		void run() override
+		{
+			IGdiBitmap* bitmap = load_image(m_path);
+			t_param param(reinterpret_cast<t_size>(this), bitmap, m_path);
+			SendMessage(m_notify_hwnd, CALLBACK_UWM_ON_LOAD_IMAGE_DONE, (WPARAM)&param, 0);
+		}
 
 		struct t_param
 		{
@@ -225,13 +232,6 @@ namespace helpers
 		};
 
 	private:
-		void run() override
-		{
-			IGdiBitmap* bitmap = load_image(m_path);
-			t_param param(reinterpret_cast<t_size>(this), bitmap, m_path);
-			SendMessage(m_notify_hwnd, CALLBACK_UWM_ON_LOAD_IMAGE_DONE, (WPARAM)&param, 0);
-		}
-
 		HWND m_notify_hwnd;
 		_bstr_t m_path;
 	};
@@ -241,12 +241,12 @@ namespace helpers
 	public:
 		popup_msg(pfc::string8_fast msg, pfc::string8_fast title) : m_msg(msg), m_title(title) {}
 
-	private:
 		void callback_run() override
 		{
 			popup_message::g_show(m_msg, m_title);
 		}
 
+	private:
 		pfc::string8_fast m_msg, m_title;
 	};
 
