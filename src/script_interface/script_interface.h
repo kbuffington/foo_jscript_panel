@@ -32,7 +32,7 @@ protected:
 	ContextMenuManager();
 	virtual ~ContextMenuManager();
 
-	virtual void FinalRelease();
+	void FinalRelease() override;
 
 	contextmenu_manager::ptr m_cm;
 
@@ -50,7 +50,7 @@ protected:
 	DropSourceAction();
 	virtual ~DropSourceAction();
 
-	virtual void FinalRelease();
+	void FinalRelease() override;
 
 public:
 	void Reset()
@@ -79,7 +79,7 @@ protected:
 	FileInfo(file_info_impl* p_info_ptr);
 	virtual ~FileInfo();
 
-	virtual void FinalRelease();
+	void FinalRelease() override;
 
 	file_info_impl* m_info_ptr;
 
@@ -124,7 +124,7 @@ protected:
 	GdiFont(Gdiplus::Font* p, HFONT hFont, bool managed = true);
 	virtual ~GdiFont();
 
-	virtual void FinalRelease();
+	void FinalRelease() override;
 
 	HFONT m_hFont;
 	bool m_managed;
@@ -182,7 +182,7 @@ protected:
 	virtual ~GdiRawBitmap();
 
 	HBITMAP CreateHBITMAP(Gdiplus::Bitmap* bitmap_ptr);
-	virtual void FinalRelease();
+	void FinalRelease() override;
 
 	HBITMAP m_hbmp, m_hbmpold;
 	HDC m_hdc;
@@ -200,7 +200,7 @@ protected:
 	MainMenuManager();
 	virtual ~MainMenuManager();
 
-	virtual void FinalRelease();
+	void FinalRelease() override;
 
 	mainmenu_manager::ptr m_mm;
 
@@ -234,7 +234,7 @@ protected:
 	MenuObj(HWND wnd_parent);
 	virtual ~MenuObj();
 
-	virtual void FinalRelease();
+	void FinalRelease() override;
 
 	HMENU m_hMenu;
 	HWND m_wnd_parent;
@@ -257,7 +257,7 @@ protected:
 	MetadbHandle(metadb_handle* src);
 	virtual ~MetadbHandle();
 
-	virtual void FinalRelease();
+	void FinalRelease() override;
 
 	metadb_handle_ptr m_handle;
 
@@ -286,7 +286,7 @@ protected:
 	MetadbHandleList(metadb_handle_list_cref handles);
 	virtual ~MetadbHandleList();
 
-	virtual void FinalRelease();
+	void FinalRelease() override;
 
 	metadb_handle_list m_handles;
 
@@ -331,7 +331,7 @@ protected:
 	PlaybackQueueItem(const t_playback_queue_item& playbackQueueItem);
 	virtual ~PlaybackQueueItem();
 
-	virtual void FinalRelease();
+	void FinalRelease() override;
 
 	t_playback_queue_item m_playback_queue_item;
 
@@ -388,7 +388,7 @@ protected:
 	ThemeManager(HWND hwnd, BSTR classlist);
 	virtual ~ThemeManager();
 
-	virtual void FinalRelease();
+	void FinalRelease() override;
 
 	HTHEME m_theme;
 	int m_partid;
@@ -406,7 +406,7 @@ protected:
 	TitleFormat(BSTR expr);
 	virtual ~TitleFormat();
 
-	virtual void FinalRelease();
+	void FinalRelease() override;
 
 	titleformat_object::ptr m_obj;
 
@@ -423,7 +423,7 @@ protected:
 	Tooltip(HWND p_wndparent, const panel_tooltip_param_ptr& p_param_ptr);
 	virtual ~Tooltip();
 
-	virtual void FinalRelease();
+	void FinalRelease() override;
 
 	BSTR m_tip_buffer;
 	HWND m_wndparent;
@@ -449,7 +449,7 @@ protected:
 	UiSelectionHolder(const ui_selection_holder::ptr& holder);
 	virtual ~UiSelectionHolder();
 
-	virtual void FinalRelease();
+	void FinalRelease() override;
 
 	ui_selection_holder::ptr m_holder;
 

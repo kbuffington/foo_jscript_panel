@@ -7,33 +7,33 @@ template <typename TImpl>
 class my_ui_element_impl : public ui_element
 {
 public:
-	GUID get_guid()
+	GUID get_guid() override
 	{
 		return TImpl::g_get_guid();
 	}
 
-	GUID get_subclass()
+	GUID get_subclass() override
 	{
 		return TImpl::g_get_subclass();
 	}
 
-	bool get_description(pfc::string_base& out)
+	bool get_description(pfc::string_base& out) override
 	{
 		out = TImpl::g_get_description();
 		return true;
 	}
 
-	ui_element_children_enumerator_ptr enumerate_children(ui_element_config::ptr cfg)
+	ui_element_children_enumerator_ptr enumerate_children(ui_element_config::ptr cfg) override
 	{
 		return nullptr;
 	}
 
-	ui_element_config::ptr get_default_configuration()
+	ui_element_config::ptr get_default_configuration() override
 	{
 		return TImpl::g_get_default_configuration();
 	}
 
-	ui_element_instance::ptr instantiate(HWND parent, ui_element_config::ptr cfg, ui_element_instance_callback::ptr callback)
+	ui_element_instance::ptr instantiate(HWND parent, ui_element_config::ptr cfg, ui_element_instance_callback::ptr callback) override
 	{
 		PFC_ASSERT(cfg->get_guid() == get_guid());
 		auto item = fb2k::service_new<ui_element_instance_impl_helper>(cfg, callback);
@@ -41,7 +41,7 @@ public:
 		return item;
 	}
 
-	void get_name(pfc::string_base& out)
+	void get_name(pfc::string_base& out) override
 	{
 		TImpl::g_get_name(out);
 	}
@@ -52,8 +52,15 @@ private:
 	public:
 		ui_element_instance_impl_helper(ui_element_config::ptr cfg, ui_element_instance_callback::ptr callback) : TImpl(cfg, callback) {}
 
-		GUID get_guid() { return TImpl::g_get_guid(); }
-		GUID get_subclass() { return TImpl::g_get_subclass(); }
+		GUID get_guid() override 
+		{
+			return TImpl::g_get_guid();
+		}
+
+		GUID get_subclass() override
+		{
+			return TImpl::g_get_subclass();
+		}
 	};
 };
 

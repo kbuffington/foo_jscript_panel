@@ -47,10 +47,10 @@ public:
 	cfg_sci_prop_sets(const GUID& p_guid, const t_prop_set_init_table* p_default);
 
 	void export_to_file(const char* filename);
-	void get_data_raw(stream_writer* p_stream, abort_callback& p_abort);
+	void get_data_raw(stream_writer* p_stream, abort_callback& p_abort) override;
 	void import(const char* content);
 	void reset();
-	void set_data_raw(stream_reader* p_stream, t_size p_sizehint, abort_callback& p_abort);
+	void set_data_raw(stream_reader* p_stream, t_size p_sizehint, abort_callback& p_abort) override;
 
 	t_sci_prop_set_list m_data;
 

@@ -12,10 +12,10 @@ public:
 	IDropSourceImpl();
 	virtual ~IDropSourceImpl();
 
-	STDMETHODIMP GiveFeedback(DWORD dwEffect);
-	STDMETHODIMP QueryContinueDrag(BOOL fEscapePressed, DWORD grfKeyState);
-	ULONG STDMETHODCALLTYPE AddRef();
-	ULONG STDMETHODCALLTYPE Release();
+	STDMETHODIMP GiveFeedback(DWORD dwEffect) override;
+	STDMETHODIMP QueryContinueDrag(BOOL fEscapePressed, DWORD grfKeyState) override;
+	ULONG STDMETHODCALLTYPE AddRef() override;
+	ULONG STDMETHODCALLTYPE Release() override;
 
 private:
 	DWORD m_dwLastEffect;

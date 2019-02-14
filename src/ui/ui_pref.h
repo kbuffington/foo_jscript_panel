@@ -23,16 +23,16 @@ public:
 	};
 
 	BOOL OnInitDialog(HWND hwndFocus, LPARAM lParam);
-	HWND get_wnd();
+	HWND get_wnd() override;
 	LRESULT OnExportBnClicked(WORD wNotifyCode, WORD wID, HWND hWndCtl);
 	LRESULT OnImportBnClicked(WORD wNotifyCode, WORD wID, HWND hWndCtl);
 	LRESULT OnPresetsBnClicked(WORD wNotifyCode, WORD wID, HWND hWndCtl);
 	LRESULT OnPropDblClk(LPNMHDR pnmh);
-	t_size get_state();
+	t_size get_state() override;
 	void LoadProps(bool reset = false);
 	void uGetItemText(int nItem, int nSubItem, pfc::string_base& out);
-	void apply();
-	void reset();
+	void apply() override;
+	void reset() override;
 
 private:
 	CListViewCtrl m_props;
@@ -42,9 +42,9 @@ private:
 class js_preferences_page_impl : public preferences_page_v3
 {
 public:
-	GUID get_guid();
-	GUID get_parent_guid();
-	bool get_help_url(pfc::string_base& p_out);
-	const char* get_name();
-	preferences_page_instance::ptr instantiate(HWND parent, preferences_page_callback::ptr callback);
+	GUID get_guid() override;
+	GUID get_parent_guid() override;
+	bool get_help_url(pfc::string_base& p_out) override;
+	const char* get_name() override;
+	preferences_page_instance::ptr instantiate(HWND parent, preferences_page_callback::ptr callback) override;
 };

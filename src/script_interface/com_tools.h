@@ -7,15 +7,18 @@ struct IGdiObj;
 //-- IUnknown ---
 #define BEGIN_COM_QI_IMPL() \
 	public:\
-		STDMETHOD(QueryInterface)(REFIID riid, void** ppv) override { \
+		STDMETHODIMP QueryInterface(REFIID riid, void** ppv) override \
+		{ \
 			if (!ppv) return E_INVALIDARG; \
 
 // C2594: ambiguous conversions
 #define COM_QI_ENTRY_MULTI(Ibase, Iimpl) \
-		if (riid == __uuidof(Ibase)) { \
-			*ppv = static_cast<Ibase*>(static_cast<Iimpl*>(this)); \
-			goto qi_entry_done; \
-		}
+			if (riid == __uuidof(Ibase)) \
+			{ \
+				*ppv = static_cast<Ibase*>(static_cast<Iimpl*>(this)); \
+				reinterpret_cast<IUnknown*>(*ppv)->AddRef(); \
+				return S_OK; \
+			}
 
 #define COM_QI_ENTRY(Iimpl) \
 			COM_QI_ENTRY_MULTI(Iimpl, Iimpl);
@@ -23,9 +26,6 @@ struct IGdiObj;
 #define END_COM_QI_IMPL() \
 			*ppv = nullptr; \
 			return E_NOINTERFACE; \
-		qi_entry_done: \
-			reinterpret_cast<IUnknown*>(*ppv)->AddRef(); \
-			return S_OK; \
 		} \
 	private:
 
@@ -79,25 +79,25 @@ protected:
 	static type_info_cache_holder g_type_info_cache_holder;
 
 public:
-	STDMETHOD(GetIDsOfNames)(REFIID riid, OLECHAR** names, UINT cnames, LCID lcid, DISPID* dispids)
+	STDMETHOD(GetIDsOfNames)(REFIID riid, OLECHAR** names, UINT cnames, LCID lcid, DISPID* dispids) override
 	{
 		if (g_type_info_cache_holder.empty()) return E_UNEXPECTED;
 		return g_type_info_cache_holder.GetIDsOfNames(names, cnames, dispids);
 	}
 
-	STDMETHOD(GetTypeInfo)(UINT i, LCID lcid, ITypeInfo** pp)
+	STDMETHOD(GetTypeInfo)(UINT i, LCID lcid, ITypeInfo** pp) override
 	{
 		return g_type_info_cache_holder.GetTypeInfo(i, lcid, pp);
 	}
 
-	STDMETHOD(GetTypeInfoCount)(UINT* n)
+	STDMETHOD(GetTypeInfoCount)(UINT* n) override
 	{
 		if (!n) return E_INVALIDARG;
 		*n = 1;
 		return S_OK;
 	}
 
-	STDMETHOD(Invoke)(DISPID dispid, REFIID riid, LCID lcid, WORD flag, DISPPARAMS* params, VARIANT* result, EXCEPINFO* excep, UINT* err)
+	STDMETHOD(Invoke)(DISPID dispid, REFIID riid, LCID lcid, WORD flag, DISPPARAMS* params, VARIANT* result, EXCEPINFO* excep, UINT* err) override
 	{
 		if (g_type_info_cache_holder.empty()) return E_UNEXPECTED;
 		return g_type_info_cache_holder.Invoke(this, dispid, flag, params, result, excep, err);
@@ -137,7 +137,7 @@ protected:
 	virtual ~IDisposableImpl4() {}
 
 public:
-	STDMETHODIMP Dispose()
+	STDMETHODIMP Dispose() override
 	{
 		this->FinalRelease();
 		return S_OK;
@@ -160,7 +160,7 @@ protected:
 
 	virtual ~GdiObj<T, T2>() {}
 
-	virtual void FinalRelease()
+	virtual void FinalRelease() override
 	{
 		if (m_ptr)
 		{
@@ -173,13 +173,13 @@ protected:
 
 public:
 	// Default Dispose
-	STDMETHODIMP Dispose()
+	STDMETHODIMP Dispose() override
 	{
 		FinalRelease();
 		return S_OK;
 	}
 
-	STDMETHODIMP get__ptr(void** pp)
+	STDMETHODIMP get__ptr(void** pp) override
 	{
 		*pp = m_ptr;
 		return S_OK;
@@ -190,12 +190,12 @@ template <typename _Base, bool _AddRef = true>
 class com_object_impl_t : public _Base
 {
 public:
-	STDMETHODIMP_(ULONG) AddRef()
+	STDMETHODIMP_(ULONG) AddRef() override
 	{
 		return AddRef_();
 	}
 
-	STDMETHODIMP_(ULONG) Release()
+	STDMETHODIMP_(ULONG) Release() override
 	{
 		ULONG n = Release_();
 		if (n == 0)

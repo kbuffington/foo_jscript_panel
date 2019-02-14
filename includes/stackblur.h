@@ -336,7 +336,7 @@ public:
 		this->stack = stack;
 	}
 
-	inline void threadProc()
+	inline void threadProc() override
 	{
 		stackblurJob(src, w, h, radius, cores, core, step, stack);
 	}

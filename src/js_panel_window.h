@@ -15,7 +15,7 @@ public:
 	void update_script();
 
 protected:
-	LRESULT on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp);
+	LRESULT on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp) override;
 	bool show_configure_popup(HWND parent);
 	bool show_property_popup(HWND parent);
 	static void build_context_menu(HMENU menu, int x, int y, int id_base);
@@ -24,7 +24,7 @@ protected:
 
 private:
 	bool on_mouse_button_up(UINT msg, WPARAM wp, LPARAM lp);
-	virtual class_data& get_class_data() const;
+	class_data& get_class_data() const override;
 	void create_context();
 	void delete_context();
 	void on_always_on_top_changed(WPARAM wp);

@@ -40,7 +40,7 @@ public:
 	LRESULT OnFlagCommand(WORD wNotifyCode, WORD wID, HWND hWndCtl);
 	LRESULT OnReplace(WORD wNotifyCode, WORD wID, HWND hWndCtl);
 	LRESULT OnReplaceall(WORD wNotifyCode, WORD wID, HWND hWndCtl);
-	void OnFinalMessage(HWND hWnd);
+	void OnFinalMessage(HWND hWnd) override;
 
 private:
 	class CEditWithReturn : public CWindowImpl<CEditWithReturn, CEdit>
