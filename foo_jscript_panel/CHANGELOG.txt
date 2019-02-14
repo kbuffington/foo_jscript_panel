@@ -1,3 +1,9 @@
+v2.2.0.2
+- FIX: Revert some changes made in v2.2.0 which may have broken various scripts
+       that made use of plman (Playlist Manager) methods/properties. It would
+       typically be noticeable if you had no playlists on startup or
+       removed all playlists.
+
 v2.2.0.1
 - FIX: Fix issue introduced in v2.2.0 where some colours with certain levels of
        alpha transparency were not handled properly.
