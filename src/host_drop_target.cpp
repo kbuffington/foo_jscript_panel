@@ -82,11 +82,6 @@ HRESULT IDropTargetImpl::RevokeDragDrop()
 	return ::RevokeDragDrop(m_hWnd);
 }
 
-HWND IDropTargetImpl::GetHWND()
-{
-	return m_hWnd;
-}
-
 STDMETHODIMP IDropTargetImpl::DragEnter(IDataObject* pDataObj, DWORD grfKeyState, POINTL pt, DWORD* pdwEffect)
 {
 	if (pDataObj == nullptr) return E_FAIL;
@@ -178,11 +173,6 @@ STDMETHODIMP IDropTargetImpl::Drop(IDataObject* pDataObj, DWORD grfKeyState, POI
 		return E_FAIL;
 	}
 	return hr;
-}
-
-void IDropTargetImpl::SetHWND(HWND hWnd)
-{
-	m_hWnd = hWnd;
 }
 
 host_drop_target::host_drop_target(js_panel_window* host) : IDropTargetImpl(host->GetHWND()), m_host(host), m_action(new com_object_impl_t<DropSourceAction, true>()) {}

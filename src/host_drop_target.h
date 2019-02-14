@@ -37,7 +37,6 @@ public:
 
 	HRESULT RegisterDragDrop();
 	HRESULT RevokeDragDrop();
-	HWND GetHWND();
 	STDMETHODIMP DragEnter(IDataObject* pDataObj, DWORD grfKeyState, POINTL pt, DWORD* pdwEffect) override;
 	STDMETHODIMP DragLeave() override;
 	STDMETHODIMP DragOver(DWORD grfKeyState, POINTL pt, DWORD* pdwEffect) override;
@@ -46,7 +45,6 @@ public:
 	virtual HRESULT OnDragLeave() = 0;
 	virtual HRESULT OnDragOver(DWORD grfKeyState, POINTL pt, DWORD* pdwEffect) = 0;
 	virtual HRESULT OnDrop(IDataObject* pDataObj, DWORD grfKeyState, POINTL pt, DWORD* pdwEffect) = 0;
-	void SetHWND(HWND hWnd);
 
 protected:
 	HWND m_hWnd;

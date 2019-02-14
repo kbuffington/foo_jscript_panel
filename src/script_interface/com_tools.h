@@ -160,7 +160,7 @@ protected:
 
 	virtual ~GdiObj<T, T2>() {}
 
-	virtual void FinalRelease() override
+	void FinalRelease() override
 	{
 		if (m_ptr)
 		{
