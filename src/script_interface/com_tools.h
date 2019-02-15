@@ -190,12 +190,12 @@ template <typename _Base, bool _AddRef = true>
 class com_object_impl_t : public _Base
 {
 public:
-	STDMETHODIMP_(ULONG) AddRef() override
+	ULONG STDMETHODCALLTYPE AddRef() override
 	{
 		return AddRef_();
 	}
 
-	STDMETHODIMP_(ULONG) Release() override
+	ULONG STDMETHODCALLTYPE Release() override
 	{
 		ULONG n = Release_();
 		if (n == 0)

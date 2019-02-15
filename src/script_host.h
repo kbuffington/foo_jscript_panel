@@ -23,8 +23,8 @@ public:
 	STDMETHODIMP OnScriptError(IActiveScriptError* err) override;
 	STDMETHODIMP OnScriptTerminate(const VARIANT* result, const EXCEPINFO* excep) override;
 	STDMETHODIMP OnStateChange(SCRIPTSTATE state) override;
-	STDMETHOD_(ULONG, AddRef)() override;
-	STDMETHOD_(ULONG, Release)() override;
+	ULONG STDMETHODCALLTYPE AddRef() override;
+	ULONG STDMETHODCALLTYPE Release() override;
 	bool HasError();
 	bool Ready();
 	pfc::string8_fast ExtractValue(const std::string& source);

@@ -245,12 +245,12 @@ STDMETHODIMP script_host::OnStateChange(SCRIPTSTATE state)
 	return E_NOTIMPL;
 }
 
-STDMETHODIMP_(ULONG) script_host::AddRef()
+ULONG STDMETHODCALLTYPE script_host::AddRef()
 {
 	return InterlockedIncrement(&m_dwRef);
 }
 
-STDMETHODIMP_(ULONG) script_host::Release()
+ULONG STDMETHODCALLTYPE script_host::Release()
 {
 	ULONG n = InterlockedDecrement(&m_dwRef);
 
