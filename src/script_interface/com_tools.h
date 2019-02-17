@@ -4,30 +4,28 @@ extern ITypeLibPtr g_typelib;
 struct IDisposable;
 struct IGdiObj;
 
-//-- IUnknown ---
-#define BEGIN_COM_QI_IMPL() \
-	public:\
-		STDMETHODIMP QueryInterface(REFIID riid, void** ppv) override \
-		{ \
-			if (!ppv) return E_INVALIDARG; \
+#define COM_QI_BEGIN(first) \
+	STDMETHODIMP QueryInterface(REFIID riid, void** ppv) override \
+	{ \
+		if (!ppv) return E_INVALIDARG; \
+		IUnknown* temp = nullptr; \
+		if (riid == __uuidof(IUnknown)) temp = static_cast<IUnknown*>(static_cast<first*>(this)); \
+		else if (riid == __uuidof(first)) temp = static_cast<first*>(this);
 
-// C2594: ambiguous conversions
-#define COM_QI_ENTRY_MULTI(Ibase, Iimpl) \
-			if (riid == __uuidof(Ibase)) \
-			{ \
-				*ppv = static_cast<Ibase*>(static_cast<Iimpl*>(this)); \
-				reinterpret_cast<IUnknown*>(*ppv)->AddRef(); \
-				return S_OK; \
-			}
+#define COM_QI_ENTRY(entry) \
+		else if (riid == __uuidof(entry)) temp = static_cast<entry*>(this);
 
-#define COM_QI_ENTRY(Iimpl) \
-			COM_QI_ENTRY_MULTI(Iimpl, Iimpl);
+#define COM_QI_END() \
+		else { *ppv = nullptr; return E_NOINTERFACE; } \
+		temp->AddRef(); \
+		*ppv = temp; \
+		return S_OK; \
+	}
 
-#define END_COM_QI_IMPL() \
-			*ppv = nullptr; \
-			return E_NOINTERFACE; \
-		} \
-	private:
+#define COM_QI_ONE(one) COM_QI_BEGIN(one) COM_QI_END()
+#define COM_QI_TWO(one, two) COM_QI_BEGIN(one) COM_QI_ENTRY(two) COM_QI_END()
+#define COM_QI_THREE(one, two, three) COM_QI_BEGIN(one) COM_QI_ENTRY(two) COM_QI_ENTRY(three) COM_QI_END()
+#define COM_QI_FOUR(one, two, three, four) COM_QI_BEGIN(one) COM_QI_ENTRY(two) COM_QI_ENTRY(three) COM_QI_ENTRY(four) COM_QI_END()
 
 class name_to_id_cache
 {
@@ -60,7 +58,6 @@ protected:
 	name_to_id_cache m_cache;
 };
 
-//-- IDispatch --
 template <class T>
 class MyIDispatchImpl : public T
 {
@@ -79,25 +76,25 @@ protected:
 	static type_info_cache_holder g_type_info_cache_holder;
 
 public:
-	STDMETHOD(GetIDsOfNames)(REFIID riid, OLECHAR** names, UINT cnames, LCID lcid, DISPID* dispids) override
+	STDMETHOD(GetIDsOfNames)(REFIID riid, OLECHAR** names, UINT cnames, LCID lcid, DISPID* dispids)
 	{
 		if (g_type_info_cache_holder.empty()) return E_UNEXPECTED;
 		return g_type_info_cache_holder.GetIDsOfNames(names, cnames, dispids);
 	}
 
-	STDMETHOD(GetTypeInfo)(UINT i, LCID lcid, ITypeInfo** pp) override
+	STDMETHOD(GetTypeInfo)(UINT i, LCID lcid, ITypeInfo** pp)
 	{
 		return g_type_info_cache_holder.GetTypeInfo(i, lcid, pp);
 	}
 
-	STDMETHOD(GetTypeInfoCount)(UINT* n) override
+	STDMETHOD(GetTypeInfoCount)(UINT* n)
 	{
 		if (!n) return E_INVALIDARG;
 		*n = 1;
 		return S_OK;
 	}
 
-	STDMETHOD(Invoke)(DISPID dispid, REFIID riid, LCID lcid, WORD flag, DISPPARAMS* params, VARIANT* result, EXCEPINFO* excep, UINT* err) override
+	STDMETHOD(Invoke)(DISPID dispid, REFIID riid, LCID lcid, WORD flag, DISPPARAMS* params, VARIANT* result, EXCEPINFO* excep, UINT* err)
 	{
 		if (g_type_info_cache_holder.empty()) return E_UNEXPECTED;
 		return g_type_info_cache_holder.Invoke(this, dispid, flag, params, result, excep, err);
@@ -106,37 +103,27 @@ public:
 
 template <class T> FOOGUIDDECL type_info_cache_holder MyIDispatchImpl<T>::g_type_info_cache_holder;
 
-//-- IDispatch impl -- [T] [IDispatch] [IUnknown]
 template <class T>
 class IDispatchImpl3 : public MyIDispatchImpl<T>
 {
-	BEGIN_COM_QI_IMPL()
-		COM_QI_ENTRY_MULTI(IUnknown, IDispatch)
-		COM_QI_ENTRY(T)
-		COM_QI_ENTRY(IDispatch)
-	END_COM_QI_IMPL()
-
 protected:
 	IDispatchImpl3<T>() {}
 	virtual ~IDispatchImpl3<T>() {}
+
+public:
+	COM_QI_TWO(IDispatch, T)
 };
 
-//-- IDisposable impl -- [T] [IDisposable] [IDispatch] [IUnknown]
 template <class T>
 class IDisposableImpl4 : public MyIDispatchImpl<T>
 {
-	BEGIN_COM_QI_IMPL()
-		COM_QI_ENTRY_MULTI(IUnknown, IDispatch)
-		COM_QI_ENTRY(T)
-		COM_QI_ENTRY(IDisposable)
-		COM_QI_ENTRY(IDispatch)
-	END_COM_QI_IMPL()
-
 protected:
 	IDisposableImpl4<T>() {}
 	virtual ~IDisposableImpl4() {}
 
 public:
+	COM_QI_THREE(IDispatch, IDisposable, T)
+
 	STDMETHODIMP Dispose() override
 	{
 		this->FinalRelease();
@@ -147,14 +134,6 @@ public:
 template <class T, class T2>
 class GdiObj : public MyIDispatchImpl<T>
 {
-	BEGIN_COM_QI_IMPL()
-		COM_QI_ENTRY_MULTI(IUnknown, IDispatch)
-		COM_QI_ENTRY(T)
-		COM_QI_ENTRY(IGdiObj)
-		COM_QI_ENTRY(IDisposable)
-		COM_QI_ENTRY(IDispatch)
-	END_COM_QI_IMPL()
-
 protected:
 	GdiObj<T, T2>(T2* p) : m_ptr(p) {}
 
@@ -172,7 +151,8 @@ protected:
 	T2* m_ptr;
 
 public:
-	// Default Dispose
+	COM_QI_FOUR(IDispatch, IDisposable, IGdiObj, T)
+
 	STDMETHODIMP Dispose() override
 	{
 		FinalRelease();

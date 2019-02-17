@@ -12,6 +12,8 @@ public:
 	IDropSourceImpl();
 	virtual ~IDropSourceImpl();
 
+	COM_QI_ONE(IDropSource)
+
 	STDMETHODIMP GiveFeedback(DWORD dwEffect) override;
 	STDMETHODIMP QueryContinueDrag(BOOL fEscapePressed, DWORD grfKeyState) override;
 	ULONG STDMETHODCALLTYPE AddRef() override;
@@ -20,11 +22,6 @@ public:
 private:
 	DWORD m_dwLastEffect;
 	LONG m_refCount;
-
-	BEGIN_COM_QI_IMPL()
-		COM_QI_ENTRY_MULTI(IUnknown, IDropSource)
-		COM_QI_ENTRY(IDropSource)
-	END_COM_QI_IMPL()
 };
 
 _COM_SMARTPTR_TYPEDEF(IDropTargetHelper, IID_IDropTargetHelper);
@@ -60,6 +57,8 @@ public:
 	host_drop_target(js_panel_window* host);
 	virtual ~host_drop_target();
 
+	COM_QI_ONE(IDropTarget)
+
 	HRESULT OnDragEnter(IDataObject* pDataObj, DWORD grfKeyState, POINTL pt, DWORD* pdwEffect) override;
 	HRESULT OnDragLeave() override;
 	HRESULT OnDragOver(DWORD grfKeyState, POINTL pt, DWORD* pdwEffect) override;
@@ -73,9 +72,4 @@ private:
 	DropSourceAction* m_action;
 	DWORD m_fb2kAllowedEffect;
 	js_panel_window* m_host;
-
-	BEGIN_COM_QI_IMPL()
-		COM_QI_ENTRY_MULTI(IUnknown, IDropTarget)
-		COM_QI_ENTRY(IDropTarget)
-	END_COM_QI_IMPL()
 };

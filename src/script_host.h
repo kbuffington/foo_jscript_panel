@@ -9,6 +9,8 @@ public:
 	script_host(host_comm* host);
 	virtual ~script_host();
 
+	COM_QI_TWO(IActiveScriptSite, IActiveScriptSiteWindow)
+
 	HRESULT Initialize();
 	HRESULT InitScriptEngine();
 	HRESULT InvokeCallback(int callbackId, VARIANTARG* argv = nullptr, UINT argc = 0, VARIANT* ret = nullptr);
@@ -37,13 +39,13 @@ public:
 private:
 	DWORD m_lastSourceContext;
 	IActiveScriptPtr m_script_engine;
-	IDispatchPtr m_script_root;
-	IPlmanPtr m_plman;
-	IFbPtr m_fb;
-	IWindowPtr m_window;
-	IGdiPtr m_gdi;
-	IUtilsPtr m_utils;
 	IConsolePtr m_console;
+	IDispatchPtr m_script_root;
+	IFbPtr m_fb;
+	IGdiPtr m_gdi;
+	IPlmanPtr m_plman;
+	IUtilsPtr m_utils;
+	IWindowPtr m_window;
 	bool m_engine_inited;
 	bool m_has_error;
 	host_comm* m_host;
@@ -51,10 +53,4 @@ private:
 	pfc::tickcount_t m_dwStartTime;
 	script_callback_invoker m_callback_invoker;
 	volatile DWORD m_dwRef;
-
-	BEGIN_COM_QI_IMPL()
-		COM_QI_ENTRY_MULTI(IUnknown, IActiveScriptSite)
-		COM_QI_ENTRY(IActiveScriptSite)
-		COM_QI_ENTRY(IActiveScriptSiteWindow)
-	END_COM_QI_IMPL()
 };
