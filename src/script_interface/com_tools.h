@@ -7,7 +7,7 @@ struct IGdiObj;
 #define COM_QI_BEGIN(first) \
 	STDMETHODIMP QueryInterface(REFIID riid, void** ppv) override \
 	{ \
-		if (!ppv) return E_INVALIDARG; \
+		if (!ppv) return E_POINTER; \
 		IUnknown* temp = nullptr; \
 		if (riid == __uuidof(IUnknown)) temp = static_cast<IUnknown*>(static_cast<first*>(this)); \
 		else if (riid == __uuidof(first)) temp = static_cast<first*>(this);
@@ -27,82 +27,56 @@ struct IGdiObj;
 #define COM_QI_THREE(one, two, three) COM_QI_BEGIN(one) COM_QI_ENTRY(two) COM_QI_ENTRY(three) COM_QI_END()
 #define COM_QI_FOUR(one, two, three, four) COM_QI_BEGIN(one) COM_QI_ENTRY(two) COM_QI_ENTRY(three) COM_QI_ENTRY(four) COM_QI_END()
 
-class name_to_id_cache
-{
-public:
-	bool lookup(ULONG hash, DISPID* p_dispid) const;
-	void add(ULONG hash, DISPID dispid);
-
-protected:
-	using name_to_id_map = pfc::map_t<ULONG, DISPID>;
-
-	name_to_id_map m_map;
-};
-
-class type_info_cache_holder
-{
-public:
-	type_info_cache_holder();
-
-	HRESULT GetIDsOfNames(LPOLESTR* rgszNames, UINT cNames, MEMBERID* pMemId);
-	HRESULT GetTypeInfo(UINT iTInfo, LCID lcid, ITypeInfo** ppTInfo);
-	HRESULT Invoke(PVOID pvInstance, MEMBERID memid, WORD wFlags, DISPPARAMS* pDispParams, VARIANT* pVarResult, EXCEPINFO* pExcepInfo, UINT* puArgErr);
-	ITypeInfo* get_ptr() throw();
-	bool empty() throw();
-	bool valid() throw();
-	void init_from_typelib(ITypeLib* p_typeLib, const GUID& guid);
-	void set_type_info(ITypeInfo* type_info);
-
-protected:
-	ITypeInfoPtr m_type_info;
-	name_to_id_cache m_cache;
-};
-
 template <class T>
 class MyIDispatchImpl : public T
 {
 protected:
 	MyIDispatchImpl<T>()
 	{
-		if (g_type_info_cache_holder.empty() && g_typelib)
-		{
-			g_type_info_cache_holder.init_from_typelib(g_typelib, __uuidof(T));
-		}
+		g_typelib->GetTypeInfoOfGuid(__uuidof(T), &m_type_info);
 	}
 
 	virtual ~MyIDispatchImpl<T>() {}
 
 	virtual void FinalRelease() {}
 
-	static type_info_cache_holder g_type_info_cache_holder;
+	ITypeInfoPtr m_type_info;
 
 public:
-	STDMETHODIMP GetIDsOfNames(REFIID riid, OLECHAR** names, UINT cnames, LCID lcid, DISPID* dispids) override
+	STDMETHODIMP GetIDsOfNames(REFIID riid, OLECHAR** names, UINT cNames, LCID lcid, DISPID* dispids) override
 	{
-		if (g_type_info_cache_holder.empty()) return E_UNEXPECTED;
-		return g_type_info_cache_holder.GetIDsOfNames(names, cnames, dispids);
+		if (!dispids) return E_POINTER;
+		for (t_size i = 0; i < cNames; ++i)
+		{
+			HRESULT hr = m_type_info->GetIDsOfNames(&names[i], 1, &dispids[i]);
+			if (FAILED(hr)) return hr;
+		}
+		return S_OK;
 	}
 
 	STDMETHODIMP GetTypeInfo(UINT i, LCID lcid, ITypeInfo** pp) override
 	{
-		return g_type_info_cache_holder.GetTypeInfo(i, lcid, pp);
+		if (!pp) return E_POINTER;
+		if (i != 0) return DISP_E_BADINDEX;
+		m_type_info->AddRef();
+		*pp = m_type_info.GetInterfacePtr();
+		return S_OK;
 	}
 
 	STDMETHODIMP GetTypeInfoCount(UINT* n) override
 	{
-		if (!n) return E_INVALIDARG;
+		if (!n) return E_POINTER;
 		*n = 1;
 		return S_OK;
 	}
 
-	STDMETHODIMP Invoke(DISPID dispid, REFIID riid, LCID lcid, WORD flag, DISPPARAMS* params, VARIANT* result, EXCEPINFO* excep, UINT* err) override
+	STDMETHODIMP Invoke(DISPID dispid, REFIID riid, LCID lcid, WORD flags, DISPPARAMS* params, VARIANT* result, EXCEPINFO* excep, UINT* err) override
 	{
-		if (g_type_info_cache_holder.empty()) return E_UNEXPECTED;
-		return g_type_info_cache_holder.Invoke(this, dispid, flag, params, result, excep, err);
+		HRESULT hr = m_type_info->Invoke(this, dispid, flags, params, result, excep, err);
+		PFC_ASSERT(hr != RPC_E_WRONG_THREAD);
+		return hr;
 	}
 };
-
-template <class T> FOOGUIDDECL type_info_cache_holder MyIDispatchImpl<T>::g_type_info_cache_holder;
 
 template <class T>
 class IDispatchImpl3 : public MyIDispatchImpl<T>

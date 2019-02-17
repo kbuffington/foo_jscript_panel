@@ -137,9 +137,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\src\script_interface\com_tools.cpp">
-      <Filter>Source Files\script_interface</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\script_interface\console.cpp">
       <Filter>Source Files\script_interface</Filter>
     </ClCompile>
