@@ -14,10 +14,9 @@
 #include <ComDef.h>
 #include <StrSafe.h>
 
-// ATL
 #include <atlstr.h>
 #include <atlwin.h>
-// WTL
+
 #include <atlapp.h>
 #include <atlframe.h>
 #include <atldlgs.h>
@@ -26,16 +25,12 @@
 #include <atlcrack.h>
 #include <atltheme.h>
 
-// Scintilla
 #include <Scintilla.h>
 #include <SciLexer.h>
 
-// foobar2000 SDK
 #include "../foobar2000/SDK/foobar2000.h"
-// Columns UI SDK
 #include "../columns_ui-sdk/ui_extension.h"
 
-// Some macros defined by windowsx.h should be removed
 #ifdef _INC_WINDOWSX
 #undef SubclassWindow
 #endif

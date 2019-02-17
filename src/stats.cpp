@@ -123,7 +123,7 @@ namespace stats
 			return false;
 		}
 
-		void enumerate_properties(metadb_handle_list_cref p_tracks, track_property_callback& p_out)
+		void enumerate_properties(metadb_handle_list_cref p_tracks, track_property_callback& p_out) override
 		{
 			const t_size count = p_tracks.get_count();
 			if (count == 1)

@@ -52,7 +52,7 @@ private:
 	public:
 		ui_element_instance_impl_helper(ui_element_config::ptr cfg, ui_element_instance_callback::ptr callback) : TImpl(cfg, callback) {}
 
-		GUID get_guid() override 
+		GUID get_guid() override
 		{
 			return TImpl::g_get_guid();
 		}
