@@ -5,7 +5,7 @@ class Fb : public IDispatchImpl3<IFb>
 {
 protected:
 	Fb();
-	virtual ~Fb();
+	~Fb();
 
 public:
 	STDMETHODIMP AcquireUiSelectionHolder(IUiSelectionHolder** pp) override;

@@ -71,30 +71,31 @@ protected:
 	}
 
 	virtual ~MyIDispatchImpl<T>() {}
+
 	virtual void FinalRelease() {}
 
 	static type_info_cache_holder g_type_info_cache_holder;
 
 public:
-	STDMETHOD(GetIDsOfNames)(REFIID riid, OLECHAR** names, UINT cnames, LCID lcid, DISPID* dispids)
+	STDMETHODIMP GetIDsOfNames(REFIID riid, OLECHAR** names, UINT cnames, LCID lcid, DISPID* dispids) override
 	{
 		if (g_type_info_cache_holder.empty()) return E_UNEXPECTED;
 		return g_type_info_cache_holder.GetIDsOfNames(names, cnames, dispids);
 	}
 
-	STDMETHOD(GetTypeInfo)(UINT i, LCID lcid, ITypeInfo** pp)
+	STDMETHODIMP GetTypeInfo(UINT i, LCID lcid, ITypeInfo** pp) override
 	{
 		return g_type_info_cache_holder.GetTypeInfo(i, lcid, pp);
 	}
 
-	STDMETHOD(GetTypeInfoCount)(UINT* n)
+	STDMETHODIMP GetTypeInfoCount(UINT* n) override
 	{
 		if (!n) return E_INVALIDARG;
 		*n = 1;
 		return S_OK;
 	}
 
-	STDMETHOD(Invoke)(DISPID dispid, REFIID riid, LCID lcid, WORD flag, DISPPARAMS* params, VARIANT* result, EXCEPINFO* excep, UINT* err)
+	STDMETHODIMP Invoke(DISPID dispid, REFIID riid, LCID lcid, WORD flag, DISPPARAMS* params, VARIANT* result, EXCEPINFO* excep, UINT* err) override
 	{
 		if (g_type_info_cache_holder.empty()) return E_UNEXPECTED;
 		return g_type_info_cache_holder.Invoke(this, dispid, flag, params, result, excep, err);
@@ -108,7 +109,7 @@ class IDispatchImpl3 : public MyIDispatchImpl<T>
 {
 protected:
 	IDispatchImpl3<T>() {}
-	virtual ~IDispatchImpl3<T>() {}
+	~IDispatchImpl3<T>() {}
 
 public:
 	COM_QI_TWO(IDispatch, T)
@@ -119,7 +120,7 @@ class IDisposableImpl4 : public MyIDispatchImpl<T>
 {
 protected:
 	IDisposableImpl4<T>() {}
-	virtual ~IDisposableImpl4() {}
+	~IDisposableImpl4() {}
 
 public:
 	COM_QI_THREE(IDispatch, IDisposable, T)
@@ -136,8 +137,7 @@ class GdiObj : public MyIDispatchImpl<T>
 {
 protected:
 	GdiObj<T, T2>(T2* p) : m_ptr(p) {}
-
-	virtual ~GdiObj<T, T2>() {}
+	~GdiObj<T, T2>() {}
 
 	void FinalRelease() override
 	{
@@ -189,7 +189,7 @@ public:
 	TEMPLATE_CONSTRUCTOR_FORWARD_FLOOD_WITH_INITIALIZER(com_object_impl_t, _Base, { Construct_(); })
 
 private:
-	virtual ~com_object_impl_t() {}
+	~com_object_impl_t() {}
 
 	ULONG AddRef_()
 	{

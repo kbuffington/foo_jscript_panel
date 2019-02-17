@@ -30,7 +30,7 @@ class ContextMenuManager : public IDisposableImpl4<IContextMenuManager>
 {
 protected:
 	ContextMenuManager();
-	virtual ~ContextMenuManager();
+	~ContextMenuManager();
 
 	void FinalRelease() override;
 
@@ -48,7 +48,7 @@ class DropSourceAction : public IDisposableImpl4<IDropSourceAction>
 {
 protected:
 	DropSourceAction();
-	virtual ~DropSourceAction();
+	~DropSourceAction();
 
 	void FinalRelease() override;
 
@@ -77,7 +77,7 @@ class FileInfo : public IDisposableImpl4<IFileInfo>
 {
 protected:
 	FileInfo(file_info_impl* p_info_ptr);
-	virtual ~FileInfo();
+	~FileInfo();
 
 	void FinalRelease() override;
 
@@ -122,7 +122,7 @@ class GdiFont : public GdiObj<IGdiFont, Gdiplus::Font>
 {
 protected:
 	GdiFont(Gdiplus::Font* p, HFONT hFont, bool managed = true);
-	virtual ~GdiFont();
+	~GdiFont();
 
 	void FinalRelease() override;
 
@@ -179,7 +179,7 @@ class GdiRawBitmap : public IDisposableImpl4<IGdiRawBitmap>
 {
 protected:
 	GdiRawBitmap(Gdiplus::Bitmap* p_bmp);
-	virtual ~GdiRawBitmap();
+	~GdiRawBitmap();
 
 	HBITMAP CreateHBITMAP(Gdiplus::Bitmap* bitmap_ptr);
 	void FinalRelease() override;
@@ -198,7 +198,7 @@ class MainMenuManager : public IDisposableImpl4<IMainMenuManager>
 {
 protected:
 	MainMenuManager();
-	virtual ~MainMenuManager();
+	~MainMenuManager();
 
 	void FinalRelease() override;
 
@@ -214,7 +214,7 @@ class MeasureStringInfo : public IDispatchImpl3<IMeasureStringInfo>
 {
 protected:
 	MeasureStringInfo(float x, float y, float w, float h, int l, int c);
-	virtual ~MeasureStringInfo();
+	~MeasureStringInfo();
 
 	float m_x, m_y, m_w, m_h;
 	int m_l, m_c;
@@ -232,7 +232,7 @@ class MenuObj : public IDisposableImpl4<IMenuObj>
 {
 protected:
 	MenuObj(HWND wnd_parent);
-	virtual ~MenuObj();
+	~MenuObj();
 
 	void FinalRelease() override;
 
@@ -255,7 +255,7 @@ class MetadbHandle : public IDisposableImpl4<IMetadbHandle>
 protected:
 	MetadbHandle(const metadb_handle_ptr& src);
 	MetadbHandle(metadb_handle* src);
-	virtual ~MetadbHandle();
+	~MetadbHandle();
 
 	void FinalRelease() override;
 
@@ -284,7 +284,7 @@ class MetadbHandleList : public IDisposableImpl4<IMetadbHandleList>
 {
 protected:
 	MetadbHandleList(metadb_handle_list_cref handles);
-	virtual ~MetadbHandleList();
+	~MetadbHandleList();
 
 	void FinalRelease() override;
 
@@ -329,7 +329,7 @@ class PlaybackQueueItem : public IDisposableImpl4<IPlaybackQueueItem>
 protected:
 	PlaybackQueueItem();
 	PlaybackQueueItem(const t_playback_queue_item& playbackQueueItem);
-	virtual ~PlaybackQueueItem();
+	~PlaybackQueueItem();
 
 	void FinalRelease() override;
 
@@ -371,7 +371,7 @@ class Profiler : public IDispatchImpl3<IProfiler>
 {
 protected:
 	Profiler(const char* p_name);
-	virtual ~Profiler();
+	~Profiler();
 
 	pfc::hires_timer m_timer;
 	pfc::string_simple m_name;
@@ -386,7 +386,7 @@ class ThemeManager : public IDisposableImpl4<IThemeManager>
 {
 protected:
 	ThemeManager(HWND hwnd, BSTR classlist);
-	virtual ~ThemeManager();
+	~ThemeManager();
 
 	void FinalRelease() override;
 
@@ -404,7 +404,7 @@ class TitleFormat : public IDisposableImpl4<ITitleFormat>
 {
 protected:
 	TitleFormat(BSTR expr);
-	virtual ~TitleFormat();
+	~TitleFormat();
 
 	void FinalRelease() override;
 
@@ -421,7 +421,7 @@ class Tooltip : public IDisposableImpl4<ITooltip>
 {
 protected:
 	Tooltip(HWND p_wndparent, const panel_tooltip_param_ptr& p_param_ptr);
-	virtual ~Tooltip();
+	~Tooltip();
 
 	void FinalRelease() override;
 
@@ -447,7 +447,7 @@ class UiSelectionHolder : public IDisposableImpl4<IUiSelectionHolder>
 {
 protected:
 	UiSelectionHolder(const ui_selection_holder::ptr& holder);
-	virtual ~UiSelectionHolder();
+	~UiSelectionHolder();
 
 	void FinalRelease() override;
 

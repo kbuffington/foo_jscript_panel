@@ -5,7 +5,7 @@ class Gdi : public IDispatchImpl3<IGdi>
 {
 protected:
 	Gdi();
-	virtual ~Gdi();
+	~Gdi();
 
 public:
 	STDMETHODIMP CreateImage(int w, int h, IGdiBitmap** pp) override;

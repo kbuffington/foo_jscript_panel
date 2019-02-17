@@ -5,7 +5,7 @@ class Plman : public IDispatchImpl3<IPlman>
 {
 protected:
 	Plman();
-	virtual ~Plman();
+	~Plman();
 
 public:
 	STDMETHODIMP AddItemToPlaybackQueue(IMetadbHandle* handle) override;

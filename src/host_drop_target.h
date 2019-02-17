@@ -55,7 +55,7 @@ protected:
 
 public:
 	host_drop_target(js_panel_window* host);
-	virtual ~host_drop_target();
+	~host_drop_target();
 
 	COM_QI_ONE(IDropTarget)
 

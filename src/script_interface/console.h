@@ -5,7 +5,7 @@ class Console : public IDispatchImpl3<IConsole>
 {
 protected:
 	Console();
-	virtual ~Console();
+	~Console();
 
 public:
 	STDMETHODIMP Log(SAFEARRAY* p) override;

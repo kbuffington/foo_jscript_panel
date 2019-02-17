@@ -8,7 +8,7 @@ class CDialogProperty : public CDialogImpl<CDialogProperty>, public CDialogResiz
 {
 public:
 	CDialogProperty(js_panel_window* p_parent);
-	virtual ~CDialogProperty();
+	~CDialogProperty();
 
 	BEGIN_DLGRESIZE_MAP(CDialogProperty)
 		DLGRESIZE_CONTROL(IDC_LIST_PROPERTIES, DLSZ_SIZE_X | DLSZ_SIZE_Y)

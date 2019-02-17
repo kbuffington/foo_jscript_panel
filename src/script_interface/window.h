@@ -7,7 +7,7 @@ class Window : public IDispatchImpl3<IWindow>
 {
 protected:
 	Window(host_comm* p);
-	virtual ~Window();
+	~Window();
 
 public:
 	STDMETHODIMP ClearInterval(UINT intervalID) override;

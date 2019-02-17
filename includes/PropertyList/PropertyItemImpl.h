@@ -55,7 +55,7 @@ public:
 		ATLASSERT(m_pszName);
 		::lstrcpyn(m_pszName, pstrName, size);
 	}
-	virtual ~CProperty()
+	~CProperty()
 	{
 		delete[] m_pszName;
 	}

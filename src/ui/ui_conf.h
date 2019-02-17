@@ -10,7 +10,7 @@ class CDialogConf : public CDialogImpl<CDialogConf>, public CDialogResize<CDialo
 {
 public:
 	CDialogConf(js_panel_window* p_parent);
-	virtual ~CDialogConf();
+	~CDialogConf();
 
 	BEGIN_DLGRESIZE_MAP(CDialogConf)
 		DLGRESIZE_CONTROL(IDC_EDIT, DLSZ_SIZE_X | DLSZ_SIZE_Y)

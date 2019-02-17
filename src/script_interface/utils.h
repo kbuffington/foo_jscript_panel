@@ -5,7 +5,7 @@ class Utils : public IDispatchImpl3<IUtils>
 {
 protected:
 	Utils();
-	virtual ~Utils();
+	~Utils();
 
 public:
 	STDMETHODIMP CheckComponent(BSTR name, VARIANT_BOOL is_dll, VARIANT_BOOL* p) override;

@@ -1,5 +1,4 @@
 import "docobj.idl";
-import "C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\MLang.idl";
 
 [version(1.8), uuid(68a66280-20a9-3fba-afab-df2f94de3ac3)]
 library foo_jscript_panel
