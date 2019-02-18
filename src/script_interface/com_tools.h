@@ -27,9 +27,8 @@ struct IGdiObj;
 #define COM_QI_THREE(one, two, three) COM_QI_BEGIN(one) COM_QI_ENTRY(two) COM_QI_ENTRY(three) COM_QI_END()
 #define COM_QI_FOUR(one, two, three, four) COM_QI_BEGIN(one) COM_QI_ENTRY(two) COM_QI_ENTRY(three) COM_QI_ENTRY(four) COM_QI_END()
 
-class type_info_cache
+struct type_info_cache
 {
-public:
 	type_info_cache() : m_type_info(nullptr) {}
 
 	ITypeInfoPtr m_type_info;
