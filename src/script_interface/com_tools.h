@@ -27,20 +27,32 @@ struct IGdiObj;
 #define COM_QI_THREE(one, two, three) COM_QI_BEGIN(one) COM_QI_ENTRY(two) COM_QI_ENTRY(three) COM_QI_END()
 #define COM_QI_FOUR(one, two, three, four) COM_QI_BEGIN(one) COM_QI_ENTRY(two) COM_QI_ENTRY(three) COM_QI_ENTRY(four) COM_QI_END()
 
+class type_info_cache
+{
+public:
+	type_info_cache() : m_type_info(nullptr) {}
+
+	ITypeInfoPtr m_type_info;
+	pfc::map_t<ULONG, DISPID> m_cache;
+};
+
 template <class T>
 class MyIDispatchImpl : public T
 {
 protected:
 	MyIDispatchImpl<T>()
 	{
-		g_typelib->GetTypeInfoOfGuid(__uuidof(T), &m_type_info);
+		if (g_type_info_cache.m_type_info == nullptr)
+		{
+			g_typelib->GetTypeInfoOfGuid(__uuidof(T), &g_type_info_cache.m_type_info);
+		}
 	}
 
 	virtual ~MyIDispatchImpl<T>() {}
 
 	virtual void FinalRelease() {}
 
-	ITypeInfoPtr m_type_info;
+	static type_info_cache g_type_info_cache;
 
 public:
 	STDMETHODIMP GetIDsOfNames(REFIID riid, OLECHAR** names, UINT cNames, LCID lcid, DISPID* dispids) override
@@ -48,8 +60,13 @@ public:
 		if (!dispids) return E_POINTER;
 		for (t_size i = 0; i < cNames; ++i)
 		{
-			HRESULT hr = m_type_info->GetIDsOfNames(&names[i], 1, &dispids[i]);
-			if (FAILED(hr)) return hr;
+			ULONG hash = LHashValOfName(LANG_NEUTRAL, names[i]);
+			if (!g_type_info_cache.m_cache.query(hash, dispids[i]))
+			{
+				HRESULT hr = g_type_info_cache.m_type_info->GetIDsOfNames(&names[i], 1, &dispids[i]);
+				if (FAILED(hr)) return hr;
+				g_type_info_cache.m_cache[hash] = dispids[i];
+			}
 		}
 		return S_OK;
 	}
@@ -58,8 +75,8 @@ public:
 	{
 		if (!pp) return E_POINTER;
 		if (i != 0) return DISP_E_BADINDEX;
-		m_type_info->AddRef();
-		*pp = m_type_info.GetInterfacePtr();
+		g_type_info_cache.m_type_info->AddRef();
+		*pp = g_type_info_cache.m_type_info.GetInterfacePtr();
 		return S_OK;
 	}
 
@@ -72,11 +89,14 @@ public:
 
 	STDMETHODIMP Invoke(DISPID dispid, REFIID riid, LCID lcid, WORD flags, DISPPARAMS* params, VARIANT* result, EXCEPINFO* excep, UINT* err) override
 	{
-		HRESULT hr = m_type_info->Invoke(this, dispid, flags, params, result, excep, err);
+		HRESULT hr = g_type_info_cache.m_type_info->Invoke(this, dispid, flags, params, result, excep, err);
 		PFC_ASSERT(hr != RPC_E_WRONG_THREAD);
 		return hr;
 	}
 };
+
+template <class T>
+FOOGUIDDECL type_info_cache MyIDispatchImpl<T>::g_type_info_cache;
 
 template <class T>
 class IDispatchImpl3 : public MyIDispatchImpl<T>
