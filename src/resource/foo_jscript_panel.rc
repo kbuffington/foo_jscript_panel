@@ -45,14 +45,6 @@ END
 
 3 TEXTINCLUDE
 BEGIN
-    "1 TYPELIB"
-    "foo_jscript_panel.tlb"
-    "\r\n"
-    "\0"
-END
-
-4 TEXTINCLUDE
-BEGIN
     "\r\n"
     "\0"
 END

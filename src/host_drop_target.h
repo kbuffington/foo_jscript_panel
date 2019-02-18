@@ -1,6 +1,4 @@
 #pragma once
-#include "script_interface.h"
-
 #include <OleIdl.h>
 #include <ShlObj.h>
 

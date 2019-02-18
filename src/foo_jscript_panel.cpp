@@ -27,7 +27,7 @@ namespace
 			{
 				pfc::string8_fast path;
 				uGetModuleFileName(ins, path);
-				LoadTypeLibEx(string_wide_from_utf8_fast(path), REGKIND_NONE, &g_typelib);
+				if (FAILED(LoadTypeLibEx(string_wide_from_utf8_fast(path), REGKIND_NONE, &g_typelib))) return FALSE;
 
 				Scintilla_RegisterClasses(ins);
 				_Module.Init(nullptr, ins);
