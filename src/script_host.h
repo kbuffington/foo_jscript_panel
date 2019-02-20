@@ -2,6 +2,13 @@
 #include "script_callback_invoker.h"
 
 _COM_SMARTPTR_TYPEDEF(IActiveScriptParse, IID_IActiveScriptParse);
+_COM_SMARTPTR_TYPEDEF(IConsole, __uuidof(IConsole));
+_COM_SMARTPTR_TYPEDEF(IFb, __uuidof(IFb));
+_COM_SMARTPTR_TYPEDEF(IGdi, __uuidof(IGdi));
+_COM_SMARTPTR_TYPEDEF(IGdiGraphics, __uuidof(IGdiGraphics));
+_COM_SMARTPTR_TYPEDEF(IPlman, __uuidof(IPlman));
+_COM_SMARTPTR_TYPEDEF(IUtils, __uuidof(IUtils));
+_COM_SMARTPTR_TYPEDEF(IWindow, __uuidof(IWindow));
 
 class script_host : public IActiveScriptSite, public IActiveScriptSiteWindow
 {

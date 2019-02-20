@@ -1,6 +1,8 @@
 #pragma once
 #include "script_interface.h"
 
+_COM_SMARTPTR_TYPEDEF(IPlaylistRecyclerManager, __uuidof(IPlaylistRecyclerManager));
+
 class Plman : public IDispatchImpl3<IPlman>
 {
 protected:

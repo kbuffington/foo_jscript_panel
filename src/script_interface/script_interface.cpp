@@ -1328,7 +1328,6 @@ STDMETHODIMP MenuObj::get__ID(HMENU* p)
 }
 
 MetadbHandle::MetadbHandle(const metadb_handle_ptr & src) : m_handle(src) {}
-MetadbHandle::MetadbHandle(metadb_handle* src) : m_handle(src) {}
 MetadbHandle::~MetadbHandle() {}
 
 void MetadbHandle::FinalRelease()

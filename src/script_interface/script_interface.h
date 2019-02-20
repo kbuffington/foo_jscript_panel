@@ -4,18 +4,9 @@
 
 #include <memory>
 
-_COM_SMARTPTR_TYPEDEF(IConsole, __uuidof(IConsole));
-_COM_SMARTPTR_TYPEDEF(IFb, __uuidof(IFb));
-_COM_SMARTPTR_TYPEDEF(IGdi, __uuidof(IGdi));
-_COM_SMARTPTR_TYPEDEF(IGdiGraphics, __uuidof(IGdiGraphics));
-_COM_SMARTPTR_TYPEDEF(IPlman, __uuidof(IPlman));
-_COM_SMARTPTR_TYPEDEF(IPlaylistRecyclerManager, __uuidof(IPlaylistRecyclerManager));
-_COM_SMARTPTR_TYPEDEF(IUtils, __uuidof(IUtils));
-_COM_SMARTPTR_TYPEDEF(IWindow, __uuidof(IWindow));
-
 struct panel_tooltip_param
 {
-	panel_tooltip_param() : tooltip_hwnd(0) {}
+	panel_tooltip_param() : tooltip_hwnd(nullptr) {}
 
 	BSTR font_name;
 	HWND tooltip_hwnd;
@@ -254,7 +245,6 @@ class MetadbHandle : public IDisposableImpl4<IMetadbHandle>
 {
 protected:
 	MetadbHandle(const metadb_handle_ptr& src);
-	MetadbHandle(metadb_handle* src);
 	~MetadbHandle();
 
 	void FinalRelease() override;
