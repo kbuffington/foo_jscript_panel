@@ -84,9 +84,9 @@ copy /Y "$(TargetPath)" "%component_path%\"
 copy /Y "$(TargetDir)$(TargetName).pdb" "%component_path%\"</Command>
     </PostBuildEvent>
     <Midl>
-      <TypeLibraryName>$(SolutionDir)..\src\resource\$(ProjectName).tlb</TypeLibraryName>
+      <TypeLibraryName>$(SolutionDir)resource\$(ProjectName).tlb</TypeLibraryName>
       <HeaderFileName>%(Filename)_h.h</HeaderFileName>
-      <OutputDirectory>$(SolutionDir)..\src\script_interface</OutputDirectory>
+      <OutputDirectory>$(SolutionDir)script_interface</OutputDirectory>
     </Midl>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -129,8 +129,8 @@ copy /Y "$(TargetPath)" "%component_path%\"
 copy /Y "$(TargetDir)$(TargetName).pdb" "%component_path%\"</Command>
     </PostBuildEvent>
     <Midl>
-      <OutputDirectory>$(SolutionDir)..\src\script_interface</OutputDirectory>
-      <TypeLibraryName>$(SolutionDir)..\src\resource\$(ProjectName).tlb</TypeLibraryName>
+      <OutputDirectory>$(SolutionDir)script_interface</OutputDirectory>
+      <TypeLibraryName>$(SolutionDir)resource\$(ProjectName).tlb</TypeLibraryName>
       <HeaderFileName>%(Filename)_h.h</HeaderFileName>
     </Midl>
   </ItemDefinitionGroup>
@@ -160,96 +160,96 @@ copy /Y "$(TargetDir)$(TargetName).pdb" "%component_path%\"</Command>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\src\component_defines.h" />
-    <ClInclude Include="..\src\helpers.h" />
-    <ClInclude Include="..\src\host_comm.h" />
-    <ClInclude Include="..\src\host_drop_target.h" />
-    <ClInclude Include="..\src\host_timer_dispatcher.h" />
-    <ClInclude Include="..\src\js_panel_window.h" />
-    <ClInclude Include="..\src\js_panel_window_cui.h" />
-    <ClInclude Include="..\src\js_panel_window_dui.h" />
-    <ClInclude Include="..\src\mainmenu.h" />
-    <ClInclude Include="..\src\panel_manager.h" />
-    <ClInclude Include="..\src\resource.h" />
-    <ClInclude Include="..\src\script_callback_invoker.h" />
-    <ClInclude Include="..\src\script_host.h" />
-    <ClInclude Include="..\src\script_interface\com_tools.h" />
-    <ClInclude Include="..\src\script_interface\console.h" />
-    <ClInclude Include="..\src\script_interface\fb.h" />
-    <ClInclude Include="..\src\script_interface\gdi.h" />
-    <ClInclude Include="..\src\script_interface\plman.h" />
-    <ClInclude Include="..\src\script_interface\script_interface.h" />
-    <ClInclude Include="..\src\script_interface\utils.h" />
-    <ClInclude Include="..\src\script_interface\window.h" />
-    <ClInclude Include="..\src\stats.h" />
-    <ClInclude Include="..\src\stdafx.h" />
-    <ClInclude Include="..\src\thread_pool.h" />
-    <ClInclude Include="..\src\ui\config.h" />
-    <ClInclude Include="..\src\ui\editorctrl.h" />
-    <ClInclude Include="..\src\ui\scintilla_prop_sets.h" />
-    <ClInclude Include="..\src\ui\ui_conf.h" />
-    <ClInclude Include="..\src\ui\ui_find.h" />
-    <ClInclude Include="..\src\ui\ui_goto.h" />
-    <ClInclude Include="..\src\ui\ui_input_box.h" />
-    <ClInclude Include="..\src\ui\ui_name_value_edit.h" />
-    <ClInclude Include="..\src\ui\ui_pref.h" />
-    <ClInclude Include="..\src\ui\ui_property.h" />
-    <ClInclude Include="..\src\ui\ui_replace.h" />
-    <ClInclude Include="..\src\user_message.h" />
+    <ClInclude Include="component_defines.h" />
+    <ClInclude Include="helpers.h" />
+    <ClInclude Include="host_comm.h" />
+    <ClInclude Include="host_drop_target.h" />
+    <ClInclude Include="host_timer_dispatcher.h" />
+    <ClInclude Include="js_panel_window.h" />
+    <ClInclude Include="js_panel_window_cui.h" />
+    <ClInclude Include="js_panel_window_dui.h" />
+    <ClInclude Include="mainmenu.h" />
+    <ClInclude Include="panel_manager.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="script_callback_invoker.h" />
+    <ClInclude Include="script_host.h" />
+    <ClInclude Include="script_interface\com_tools.h" />
+    <ClInclude Include="script_interface\console.h" />
+    <ClInclude Include="script_interface\fb.h" />
+    <ClInclude Include="script_interface\gdi.h" />
+    <ClInclude Include="script_interface\plman.h" />
+    <ClInclude Include="script_interface\script_interface.h" />
+    <ClInclude Include="script_interface\utils.h" />
+    <ClInclude Include="script_interface\window.h" />
+    <ClInclude Include="stats.h" />
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="thread_pool.h" />
+    <ClInclude Include="ui\config.h" />
+    <ClInclude Include="ui\editorctrl.h" />
+    <ClInclude Include="ui\scintilla_prop_sets.h" />
+    <ClInclude Include="ui\ui_conf.h" />
+    <ClInclude Include="ui\ui_find.h" />
+    <ClInclude Include="ui\ui_goto.h" />
+    <ClInclude Include="ui\ui_input_box.h" />
+    <ClInclude Include="ui\ui_name_value_edit.h" />
+    <ClInclude Include="ui\ui_pref.h" />
+    <ClInclude Include="ui\ui_property.h" />
+    <ClInclude Include="ui\ui_replace.h" />
+    <ClInclude Include="user_message.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\src\foo_jscript_panel.cpp">
+    <ClCompile Include="foo_jscript_panel.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="..\src\helpers.cpp" />
-    <ClCompile Include="..\src\host_comm.cpp" />
-    <ClCompile Include="..\src\host_drop_target.cpp" />
-    <ClCompile Include="..\src\host_timer_dispatcher.cpp" />
-    <ClCompile Include="..\src\js_panel_window.cpp" />
-    <ClCompile Include="..\src\js_panel_window_cui.cpp" />
-    <ClCompile Include="..\src\js_panel_window_dui.cpp" />
-    <ClCompile Include="..\src\mainmenu.cpp" />
-    <ClCompile Include="..\src\panel_manager.cpp" />
-    <ClCompile Include="..\src\script_callback_invoker.cpp" />
-    <ClCompile Include="..\src\script_host.cpp" />
-    <ClCompile Include="..\src\script_interface\console.cpp" />
-    <ClCompile Include="..\src\script_interface\fb.cpp" />
-    <ClCompile Include="..\src\script_interface\gdi.cpp" />
-    <ClCompile Include="..\src\script_interface\plman.cpp" />
-    <ClCompile Include="..\src\script_interface\script_interface.cpp" />
-    <ClCompile Include="..\src\script_interface\utils.cpp" />
-    <ClCompile Include="..\src\script_interface\window.cpp" />
-    <ClCompile Include="..\src\stats.cpp" />
-    <ClCompile Include="..\src\stdafx.cpp">
+    <ClCompile Include="helpers.cpp" />
+    <ClCompile Include="host_comm.cpp" />
+    <ClCompile Include="host_drop_target.cpp" />
+    <ClCompile Include="host_timer_dispatcher.cpp" />
+    <ClCompile Include="js_panel_window.cpp" />
+    <ClCompile Include="js_panel_window_cui.cpp" />
+    <ClCompile Include="js_panel_window_dui.cpp" />
+    <ClCompile Include="mainmenu.cpp" />
+    <ClCompile Include="panel_manager.cpp" />
+    <ClCompile Include="script_callback_invoker.cpp" />
+    <ClCompile Include="script_host.cpp" />
+    <ClCompile Include="script_interface\console.cpp" />
+    <ClCompile Include="script_interface\fb.cpp" />
+    <ClCompile Include="script_interface\gdi.cpp" />
+    <ClCompile Include="script_interface\plman.cpp" />
+    <ClCompile Include="script_interface\script_interface.cpp" />
+    <ClCompile Include="script_interface\utils.cpp" />
+    <ClCompile Include="script_interface\window.cpp" />
+    <ClCompile Include="stats.cpp" />
+    <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="..\src\thread_pool.cpp" />
-    <ClCompile Include="..\src\ui\config.cpp" />
-    <ClCompile Include="..\src\ui\editorctrl.cpp" />
-    <ClCompile Include="..\src\ui\scintilla_prop_sets.cpp" />
-    <ClCompile Include="..\src\ui\ui_conf.cpp" />
-    <ClCompile Include="..\src\ui\ui_find.cpp" />
-    <ClCompile Include="..\src\ui\ui_goto.cpp" />
-    <ClCompile Include="..\src\ui\ui_input_box.cpp" />
-    <ClCompile Include="..\src\ui\ui_name_value_edit.cpp" />
-    <ClCompile Include="..\src\ui\ui_pref.cpp" />
-    <ClCompile Include="..\src\ui\ui_property.cpp" />
-    <ClCompile Include="..\src\ui\ui_replace.cpp" />
+    <ClCompile Include="thread_pool.cpp" />
+    <ClCompile Include="ui\config.cpp" />
+    <ClCompile Include="ui\editorctrl.cpp" />
+    <ClCompile Include="ui\scintilla_prop_sets.cpp" />
+    <ClCompile Include="ui\ui_conf.cpp" />
+    <ClCompile Include="ui\ui_find.cpp" />
+    <ClCompile Include="ui\ui_goto.cpp" />
+    <ClCompile Include="ui\ui_input_box.cpp" />
+    <ClCompile Include="ui\ui_name_value_edit.cpp" />
+    <ClCompile Include="ui\ui_pref.cpp" />
+    <ClCompile Include="ui\ui_property.cpp" />
+    <ClCompile Include="ui\ui_replace.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <Midl Include="..\src\script_interface\script_interface.idl" />
+    <Midl Include="script_interface\script_interface.idl" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\src\resource\cfgBright.cfg" />
-    <None Include="..\src\resource\cfgDark.cfg" />
-    <None Include="..\src\resource\cfgRubyBlue.cfg" />
-    <None Include="..\src\resource\foo_jscript_panel.api" />
-    <None Include="..\src\resource\foo_jscript_panel.js" />
-    <None Include="..\src\resource\foo_jscript_panel.tlb" />
+    <None Include="resource\cfgBright.cfg" />
+    <None Include="resource\cfgDark.cfg" />
+    <None Include="resource\cfgRubyBlue.cfg" />
+    <None Include="resource\foo_jscript_panel.api" />
+    <None Include="resource\foo_jscript_panel.js" />
+    <None Include="resource\foo_jscript_panel.tlb" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="..\src\resource\foo_jscript_panel.rc" />
+    <ResourceCompile Include="resource\foo_jscript_panel.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
