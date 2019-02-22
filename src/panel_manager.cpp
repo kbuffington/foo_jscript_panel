@@ -47,16 +47,12 @@ void panel_manager::post_msg_to_all(UINT p_msg, WPARAM p_wp, LPARAM p_lp)
 
 void panel_manager::post_msg_to_all_pointer(UINT p_msg, pfc::refcounted_object_root* p_param)
 {
-	const t_size count = m_hwnds.get_count();
-
-	if (count < 1 || !p_param)
+	if (!p_param)
 		return;
-
-	for (t_size i = 0; i < count; ++i)
-		p_param->refcount_add_ref();
 
 	m_hwnds.for_each([p_msg, p_param](const HWND& hWnd) -> void
 	{
+		p_param->refcount_add_ref();
 		PostMessage(hWnd, p_msg, reinterpret_cast<WPARAM>(p_param), 0);
 	});
 }
@@ -76,18 +72,14 @@ void panel_manager::send_msg_to_all(UINT p_msg, WPARAM p_wp, LPARAM p_lp)
 
 void panel_manager::send_msg_to_others_pointer(HWND p_wnd_except, UINT p_msg, pfc::refcounted_object_root* p_param)
 {
-	const t_size count = m_hwnds.get_count();
-
-	if (count < 2 || !p_param)
+	if (!p_param)
 		return;
-
-	for (t_size i = 0; i < count - 1; ++i)
-		p_param->refcount_add_ref();
 
 	m_hwnds.for_each([p_msg, p_param, p_wnd_except](const HWND& hWnd) -> void
 	{
 		if (hWnd != p_wnd_except)
 		{
+			p_param->refcount_add_ref();
 			SendMessage(hWnd, p_msg, reinterpret_cast<WPARAM>(p_param), 0);
 		}
 	});
@@ -256,10 +248,7 @@ t_size my_config_object_notify::get_watched_object_count()
 void my_config_object_notify::on_watched_object_changed(const config_object::ptr& p_object)
 {
 	GUID guid = p_object->get_guid();
-	bool boolval = false;
-	t_size msg = 0;
-
-	p_object->get_data_bool(boolval);
+	t_size msg;
 
 	if (guid == standard_config_objects::bool_playlist_stop_after_current)
 		msg = CALLBACK_UWM_ON_PLAYLIST_STOP_AFTER_CURRENT_CHANGED;
@@ -269,8 +258,12 @@ void my_config_object_notify::on_watched_object_changed(const config_object::ptr
 		msg = CALLBACK_UWM_ON_PLAYBACK_FOLLOW_CURSOR_CHANGED;
 	else if (guid == standard_config_objects::bool_ui_always_on_top)
 		msg = CALLBACK_UWM_ON_ALWAYS_ON_TOP_CHANGED;
+	else
+		return;
 
-	panel_manager::instance().post_msg_to_all(msg, TO_VARIANT_BOOL(boolval));
+	bool b;
+	p_object->get_data_bool(b);
+	panel_manager::instance().post_msg_to_all(msg, TO_VARIANT_BOOL(b));
 }
 
 t_size my_playlist_callback_static::get_flags()

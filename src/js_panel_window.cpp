@@ -588,12 +588,11 @@ void js_panel_window::on_font_changed()
 
 void js_panel_window::on_get_album_art_done(WPARAM wp)
 {
-	using namespace helpers;
-	auto param = reinterpret_cast<album_art_async::t_param*>(wp);
+	auto param = reinterpret_cast<helpers::album_art_async::t_param*>(wp);
 
 	VARIANTARG args[4];
 	args[0].vt = VT_BSTR;
-	args[0].bstrVal = SysAllocString(param->image_path);
+	args[0].bstrVal = param->path;
 	args[1].vt = VT_DISPATCH;
 	args[1].pdispVal = param->bitmap;
 	args[2].vt = VT_I4;
@@ -633,8 +632,7 @@ void js_panel_window::on_item_played(WPARAM wp)
 
 void js_panel_window::on_load_image_done(WPARAM wp)
 {
-	using namespace helpers;
-	auto param = reinterpret_cast<load_image_async::t_param*>(wp);
+	auto param = reinterpret_cast<helpers::load_image_async::t_param*>(wp);
 
 	VARIANTARG args[3];
 	args[0].vt = VT_BSTR;

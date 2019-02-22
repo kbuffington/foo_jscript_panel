@@ -139,7 +139,7 @@ namespace helpers
 	class album_art_async : public simple_thread_task
 	{
 	public:
-		album_art_async(HWND notify_hwnd, metadb_handle* handle, t_size art_id, bool need_stub, bool only_embed, bool no_load) : m_notify_hwnd(notify_hwnd), m_handle(handle), m_art_id(art_id), m_need_stub(need_stub), m_only_embed(only_embed), m_no_load(no_load) {}
+		album_art_async(HWND p_wnd, metadb_handle* handle, t_size art_id, bool need_stub, bool only_embed, bool no_load) : m_hwnd(p_wnd), m_handle(handle), m_art_id(art_id), m_need_stub(need_stub), m_only_embed(only_embed), m_no_load(no_load) {}
 
 		void run() override
 		{
@@ -166,13 +166,13 @@ namespace helpers
 				handle = new com_object_impl_t<MetadbHandle>(m_handle);
 			}
 
-			t_param param(handle, m_art_id, bitmap, image_path);
-			SendMessage(m_notify_hwnd, CALLBACK_UWM_ON_GET_ALBUM_ART_DONE, (WPARAM)&param, 0);
+			t_param param(handle, m_art_id, bitmap, SysAllocString(string_wide_from_utf8_fast(image_path)));
+			SendMessage(m_hwnd, CALLBACK_UWM_ON_GET_ALBUM_ART_DONE, (WPARAM)&param, 0);
 		}
 
 		struct t_param
 		{
-			t_param(IMetadbHandle* p_handle, t_size p_art_id, IGdiBitmap* p_bitmap, const char* p_image_path) : handle(p_handle), art_id(p_art_id), bitmap(p_bitmap), image_path(p_image_path) {}
+			t_param(IMetadbHandle* p_handle, t_size p_art_id, IGdiBitmap* p_bitmap, BSTR p_path) : handle(p_handle), art_id(p_art_id), bitmap(p_bitmap), path(p_path) {}
 
 			~t_param()
 			{
@@ -189,12 +189,12 @@ namespace helpers
 
 			IGdiBitmap* bitmap;
 			IMetadbHandle* handle;
-			string_wide_from_utf8_fast image_path;
+			_bstr_t path;
 			t_size art_id;
 		};
 
 	private:
-		HWND m_notify_hwnd;
+		HWND m_hwnd;
 		bool m_need_stub;
 		bool m_no_load;
 		bool m_only_embed;
@@ -205,13 +205,13 @@ namespace helpers
 	class load_image_async : public simple_thread_task
 	{
 	public:
-		load_image_async(HWND notify_wnd, BSTR path) : m_notify_hwnd(notify_wnd), m_path(path) {}
+		load_image_async(HWND p_wnd, BSTR path) : m_hwnd(p_wnd), m_path(path) {}
 
 		void run() override
 		{
 			IGdiBitmap* bitmap = load_image(m_path);
 			t_param param(reinterpret_cast<t_size>(this), bitmap, m_path);
-			SendMessage(m_notify_hwnd, CALLBACK_UWM_ON_LOAD_IMAGE_DONE, (WPARAM)&param, 0);
+			SendMessage(m_hwnd, CALLBACK_UWM_ON_LOAD_IMAGE_DONE, (WPARAM)&param, 0);
 		}
 
 		struct t_param
@@ -232,7 +232,7 @@ namespace helpers
 		};
 
 	private:
-		HWND m_notify_hwnd;
+		HWND m_hwnd;
 		_bstr_t m_path;
 	};
 
