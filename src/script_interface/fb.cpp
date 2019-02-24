@@ -170,7 +170,7 @@ STDMETHODIMP Fb::GetDSPPresets(BSTR* p)
 	json j = json::array();
 	auto api = dsp_config_manager_v2::get();
 	const t_size count = api->get_preset_count();
-	pfc::string8 name;
+	pfc::string8_fast name;
 
 	for (t_size i = 0; i < count; ++i)
 	{
@@ -254,8 +254,8 @@ STDMETHODIMP Fb::GetOutputDevices(BSTR* p)
 	outputCoreConfig_t config;
 	api->getCoreConfig(config);
 
-	api->listDevices([&j, &config](pfc::string8 && name, auto && output_id, auto && device_id) {
-		pfc::string8 output_string, device_string;
+	api->listDevices([&j, &config](pfc::string8_fast&& name, auto&& output_id, auto&& device_id) {
+		pfc::string8_fast output_string, device_string;
 		output_string << "{" << pfc::print_guid(output_id) << "}";
 		device_string << "{" << pfc::print_guid(device_id) << "}";
 
@@ -264,8 +264,8 @@ STDMETHODIMP Fb::GetOutputDevices(BSTR* p)
 			{ "output_id", output_string.get_ptr() },
 			{ "device_id", device_string.get_ptr() },
 			{ "active", config.m_output == output_id && config.m_device == device_id }
-			});
 		});
+	});
 	*p = SysAllocString(string_wide_from_utf8_fast((j.dump()).c_str()));
 	return S_OK;
 }

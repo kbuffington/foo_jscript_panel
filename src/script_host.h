@@ -56,7 +56,7 @@ private:
 	bool m_engine_inited;
 	bool m_has_error;
 	host_comm* m_host;
-	pfc::map_t<DWORD, pfc::string8> m_contextToPathMap;
+	pfc::map_t<DWORD, pfc::string8_fast> m_contextToPathMap;
 	pfc::tickcount_t m_dwStartTime;
 	script_callback_invoker m_callback_invoker;
 	volatile DWORD m_dwRef;

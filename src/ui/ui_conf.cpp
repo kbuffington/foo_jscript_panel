@@ -198,8 +198,7 @@ LRESULT CDialogConf::OnFileSave(WORD wNotifyCode, WORD wID, HWND hWndCtl)
 
 LRESULT CDialogConf::OnFileImport(WORD wNotifyCode, WORD wID, HWND hWndCtl)
 {
-	pfc::string8 filename;
-
+	pfc::string8_fast filename;
 	if (uGetOpenFileName(m_hWnd, "Text files|*.txt|JScript files|*.js|All files|*.*", 0, "txt", "Import from", nullptr, filename, FALSE))
 	{
 		m_editorctrl.SetContent(helpers::read_file(filename));
@@ -209,8 +208,7 @@ LRESULT CDialogConf::OnFileImport(WORD wNotifyCode, WORD wID, HWND hWndCtl)
 
 LRESULT CDialogConf::OnFileExport(WORD wNotifyCode, WORD wID, HWND hWndCtl)
 {
-	pfc::string8 filename;
-
+	pfc::string8_fast filename;
 	if (uGetOpenFileName(m_hWnd, "Text files|*.txt|All files|*.*", 0, "txt", "Save as", nullptr, filename, TRUE))
 	{
 		int len = m_editorctrl.GetTextLength();

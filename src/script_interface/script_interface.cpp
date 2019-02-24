@@ -8,6 +8,7 @@
 
 ContextMenuManager::ContextMenuManager() {}
 ContextMenuManager::~ContextMenuManager() {}
+
 void ContextMenuManager::FinalRelease()
 {
 	m_cm.release();
@@ -61,6 +62,7 @@ DropSourceAction::DropSourceAction()
 }
 
 DropSourceAction::~DropSourceAction() {}
+
 void DropSourceAction::FinalRelease() {}
 
 STDMETHODIMP DropSourceAction::get_Effect(UINT* p)
@@ -510,9 +512,7 @@ STDMETHODIMP GdiBitmap::SaveAs(BSTR path, BSTR format, VARIANT_BOOL* p)
 	if (!m_ptr || !p) return E_POINTER;
 
 	CLSID clsid_encoder;
-	int ret = helpers::get_encoder_clsid(format, &clsid_encoder);
-
-	if (ret > -1)
+	if (helpers::get_encoder_clsid(format, &clsid_encoder) > -1)
 	{
 		m_ptr->Save(path, &clsid_encoder);
 		*p = TO_VARIANT_BOOL(m_ptr->GetLastStatus() == Gdiplus::Ok);
@@ -521,7 +521,6 @@ STDMETHODIMP GdiBitmap::SaveAs(BSTR path, BSTR format, VARIANT_BOOL* p)
 	{
 		*p = VARIANT_FALSE;
 	}
-
 	return S_OK;
 }
 
@@ -550,11 +549,11 @@ STDMETHODIMP GdiBitmap::get_Width(UINT* p)
 }
 
 GdiFont::GdiFont(Gdiplus::Font* p, HFONT hFont, bool managed) : GdiObj<IGdiFont, Gdiplus::Font>(p), m_hFont(hFont), m_managed(managed) {}
-GdiFont:: ~GdiFont() {}
+GdiFont::~GdiFont() {}
 
 void GdiFont::FinalRelease()
 {
-	if (m_hFont&& m_managed)
+	if (m_hFont && m_managed)
 	{
 		DeleteFont(m_hFont);
 		m_hFont = nullptr;
@@ -612,7 +611,7 @@ STDMETHODIMP GdiFont::get_Style(int* p)
 
 GdiGraphics::GdiGraphics() : GdiObj<IGdiGraphics, Gdiplus::Graphics>(nullptr) {}
 
-void GdiGraphics::GetRoundRectPath(Gdiplus::GraphicsPath & gp, Gdiplus::RectF & rect, float arc_width, float arc_height)
+void GdiGraphics::GetRoundRectPath(Gdiplus::GraphicsPath& gp, Gdiplus::RectF& rect, float arc_width, float arc_height)
 {
 	float arc_dia_w = arc_width * 2;
 	float arc_dia_h = arc_height * 2;
@@ -638,15 +637,21 @@ void GdiGraphics::GetRoundRectPath(Gdiplus::GraphicsPath & gp, Gdiplus::RectF & 
 	gp.CloseFigure();
 }
 
+STDMETHODIMP GdiGraphics::put__ptr(void* p)
+{
+	m_ptr = (Gdiplus::Graphics*)p;
+	return S_OK;
+}
+
 STDMETHODIMP GdiGraphics::CalcTextHeight(BSTR str, IGdiFont* font, UINT* p)
 {
 	if (!m_ptr || !p) return E_POINTER;
 
 	HFONT hFont = nullptr;
 	font->get__HFont((UINT*)&hFont);
-	HFONT oldfont;
 	HDC dc = m_ptr->GetHDC();
-	oldfont = SelectFont(dc, hFont);
+	HFONT oldfont = SelectFont(dc, hFont);
+
 	*p = helpers::get_text_height(dc, str, SysStringLen(str));
 	SelectFont(dc, oldfont);
 	m_ptr->ReleaseHDC(dc);
@@ -659,9 +664,9 @@ STDMETHODIMP GdiGraphics::CalcTextWidth(BSTR str, IGdiFont* font, UINT* p)
 
 	HFONT hFont = nullptr;
 	font->get__HFont((UINT*)&hFont);
-	HFONT oldfont;
 	HDC dc = m_ptr->GetHDC();
-	oldfont = SelectFont(dc, hFont);
+	HFONT oldfont = SelectFont(dc, hFont);
+
 	*p = helpers::get_text_width(dc, str, SysStringLen(str));
 	SelectFont(dc, oldfont);
 	m_ptr->ReleaseHDC(dc);
@@ -687,12 +692,8 @@ STDMETHODIMP GdiGraphics::DrawImage(IGdiBitmap* image, float dstX, float dstY, f
 
 	if (angle != 0.0)
 	{
+		Gdiplus::PointF pt(dstX + dstW / 2, dstY + dstH / 2);
 		Gdiplus::Matrix m;
-		Gdiplus::RectF rect;
-		Gdiplus::PointF pt;
-
-		pt.X = dstX + dstW / 2;
-		pt.Y = dstY + dstH / 2;
 		m.RotateAt(angle, pt);
 		m_ptr->GetTransform(&old_m);
 		m_ptr->SetTransform(&m);
@@ -815,7 +816,7 @@ STDMETHODIMP GdiGraphics::EstimateLineWrap(BSTR str, IGdiFont* font, int max_wid
 	HFONT oldfont = SelectFont(dc, hFont);
 
 	pfc::list_t<helpers::wrapped_item> result;
-	estimate_line_wrap(dc, str, SysStringLen(str), max_width, result);
+	helpers::estimate_line_wrap(dc, str, SysStringLen(str), max_width, result);
 	SelectFont(dc, oldfont);
 	m_ptr->ReleaseHDC(dc);
 
@@ -947,22 +948,19 @@ STDMETHODIMP GdiGraphics::GdiDrawBitmap(IGdiRawBitmap* bitmap, int dstX, int dst
 STDMETHODIMP GdiGraphics::GdiDrawText(BSTR str, IGdiFont* font, LONGLONG colour, int x, int y, int w, int h, int format)
 {
 	if (!m_ptr) return E_POINTER;
+	if (format & DT_MODIFYSTRING) return E_INVALIDARG;
 
 	HFONT hFont = nullptr;
 	font->get__HFont((UINT*)&hFont);
-	HFONT oldfont;
 	HDC dc = m_ptr->GetHDC();
+	HFONT oldfont = SelectFont(dc, hFont);
+
 	RECT rc = { x, y, x + w, y + h };
 	DRAWTEXTPARAMS dpt = { sizeof(DRAWTEXTPARAMS), 4, 0, 0, 0 };
 
-	oldfont = SelectFont(dc, hFont);
 	SetTextColor(dc, helpers::convert_argb_to_colorref(static_cast<t_size>(colour)));
 	SetBkMode(dc, TRANSPARENT);
 	SetTextAlign(dc, TA_LEFT | TA_TOP | TA_NOUPDATECP);
-
-	// Remove DT_MODIFYSTRING flag
-	if (format& DT_MODIFYSTRING)
-		format &= ~DT_MODIFYSTRING;
 
 	// Well, magic :P
 	if (format & DT_CALCRECT)
@@ -977,12 +975,12 @@ STDMETHODIMP GdiGraphics::GdiDrawText(BSTR str, IGdiFont* font, LONGLONG colour,
 		format &= ~DT_CALCRECT;
 
 		// adjust vertical align
-		if (format& DT_VCENTER)
+		if (format & DT_VCENTER)
 		{
 			rc.top = rc_old.top + (((rc_old.bottom - rc_old.top) - (rc_calc.bottom - rc_calc.top)) >> 1);
 			rc.bottom = rc.top + (rc_calc.bottom - rc_calc.top);
 		}
-		else if (format& DT_BOTTOM)
+		else if (format & DT_BOTTOM)
 		{
 			rc.top = rc_old.bottom - (rc_calc.bottom - rc_calc.top);
 		}
@@ -1044,12 +1042,6 @@ STDMETHODIMP GdiGraphics::SetTextRenderingHint(UINT mode)
 	return S_OK;
 }
 
-STDMETHODIMP GdiGraphics::put__ptr(void* p)
-{
-	m_ptr = (Gdiplus::Graphics*)p;
-	return S_OK;
-}
-
 GdiRawBitmap::GdiRawBitmap(Gdiplus::Bitmap* p_bmp)
 {
 	PFC_ASSERT(p_bmp != nullptr);
@@ -1104,6 +1096,14 @@ void GdiRawBitmap::FinalRelease()
 	}
 }
 
+STDMETHODIMP GdiRawBitmap::get__Handle(HDC* p)
+{
+	if (!m_hdc || !p) return E_POINTER;
+
+	*p = m_hdc;
+	return S_OK;
+}
+
 STDMETHODIMP GdiRawBitmap::get_Height(UINT* p)
 {
 	if (!m_hdc || !p) return E_POINTER;
@@ -1117,14 +1117,6 @@ STDMETHODIMP GdiRawBitmap::get_Width(UINT* p)
 	if (!m_hdc || !p) return E_POINTER;
 
 	*p = m_width;
-	return S_OK;
-}
-
-STDMETHODIMP GdiRawBitmap::get__Handle(HDC* p)
-{
-	if (!m_hdc || !p) return E_POINTER;
-
-	*p = m_hdc;
 	return S_OK;
 }
 
@@ -1260,10 +1252,18 @@ void MenuObj::FinalRelease()
 	}
 }
 
+STDMETHODIMP MenuObj::get__ID(HMENU* p)
+{
+	if (!m_hMenu || !p) return E_POINTER;
+
+	*p = m_hMenu;
+	return S_OK;
+}
+
 STDMETHODIMP MenuObj::AppendMenuItem(UINT flags, UINT item_id, BSTR text)
 {
 	if (!m_hMenu) return E_POINTER;
-	if (flags& MF_POPUP) return E_INVALIDARG;
+	if (flags & MF_POPUP || flags & MF_OWNERDRAW || flags & MF_BITMAP) return E_INVALIDARG;
 
 	::AppendMenu(m_hMenu, flags, item_id, text);
 	return S_OK;
@@ -1319,15 +1319,7 @@ STDMETHODIMP MenuObj::TrackPopupMenu(int x, int y, UINT flags, UINT* p)
 	return S_OK;
 }
 
-STDMETHODIMP MenuObj::get__ID(HMENU* p)
-{
-	if (!m_hMenu || !p) return E_POINTER;
-
-	*p = m_hMenu;
-	return S_OK;
-}
-
-MetadbHandle::MetadbHandle(const metadb_handle_ptr & src) : m_handle(src) {}
+MetadbHandle::MetadbHandle(const metadb_handle_ptr& src) : m_handle(src) {}
 MetadbHandle::~MetadbHandle() {}
 
 void MetadbHandle::FinalRelease()
@@ -1844,9 +1836,8 @@ STDMETHODIMP MetadbHandleList::OrderByRelativePath()
 
 STDMETHODIMP MetadbHandleList::RefreshStats()
 {
-	const t_size count = m_handles.get_count();
 	pfc::avltree_t<metadb_index_hash> tmp;
-	for (t_size i = 0; i < count; ++i)
+	for (t_size i = 0; i < m_handles.get_count(); ++i)
 	{
 		metadb_index_hash hash;
 		if (stats::hashHandle(m_handles[i], hash))
@@ -1925,13 +1916,15 @@ STDMETHODIMP MetadbHandleList::UpdateFileInfoFromJSON(BSTR str)
 	const t_size count = m_handles.get_count();
 	if (count == 0) return E_POINTER;
 
-	json j;
+	pfc::list_t<file_info_impl> info;
+	info.set_size(count);
+
 	bool is_array;
+	json j;
 
 	try
 	{
-		string_utf8_from_wide ustr(str);
-		j = json::parse(ustr.get_ptr());
+		j = json::parse(string_utf8_from_wide(str).get_ptr());
 	}
 	catch (...)
 	{
@@ -1951,20 +1944,17 @@ STDMETHODIMP MetadbHandleList::UpdateFileInfoFromJSON(BSTR str)
 		return E_INVALIDARG;
 	}
 
-	pfc::list_t<file_info_impl> info;
-	info.set_size(count);
-
 	for (t_size i = 0; i < count; ++i)
 	{
 		json obj = is_array ? j[i] : j;
 		if (!obj.is_object() || obj.size() == 0) return E_INVALIDARG;
 
-		metadb_handle_ptr item = m_handles.get_item(i);
+		metadb_handle_ptr item = m_handles[i];
 		item->get_info(info[i]);
 
 		for (json::iterator it = obj.begin(); it != obj.end(); ++it)
 		{
-			pfc::string8 key = (it.key()).c_str();
+			pfc::string8_fast key = (it.key()).c_str();
 			if (key.is_empty()) return E_INVALIDARG;
 
 			info[i].meta_remove_field(key);
@@ -1973,16 +1963,20 @@ STDMETHODIMP MetadbHandleList::UpdateFileInfoFromJSON(BSTR str)
 			{
 				for (json::iterator ita = it.value().begin(); ita != it.value().end(); ++ita)
 				{
-					pfc::string8 value = helpers::iterator_to_string(ita);
+					pfc::string8_fast value = helpers::iterator_to_string(ita);
 					if (value.get_length())
+					{
 						info[i].meta_add(key, value);
+					}
 				}
 			}
 			else
 			{
-				pfc::string8 value = helpers::iterator_to_string(it);
+				pfc::string8_fast value = helpers::iterator_to_string(it);
 				if (value.get_length())
+				{
 					info[i].meta_set(key, value);
+				}
 			}
 		}
 	}
@@ -2034,7 +2028,7 @@ STDMETHODIMP MetadbHandleList::put_Item(UINT index, IMetadbHandle* handle)
 
 PlaybackQueueItem::PlaybackQueueItem() {}
 
-PlaybackQueueItem::PlaybackQueueItem(const t_playback_queue_item & playbackQueueItem)
+PlaybackQueueItem::PlaybackQueueItem(const t_playback_queue_item& playbackQueueItem)
 {
 	m_playback_queue_item.m_handle = playbackQueueItem.m_handle;
 	m_playback_queue_item.m_playlist = playbackQueueItem.m_playlist;
@@ -2224,16 +2218,16 @@ STDMETHODIMP ThemeManager::DrawThemeBackground(IGdiGraphics* gr, int x, int y, i
 	gr->get__ptr((void**)&graphics);
 
 	RECT rc = { x, y, x + w, y + h };
-	RECT clip_rc = { clip_x, clip_y, clip_x + clip_w, clip_y + clip_h };
-	LPCRECT pclip_rc = &clip_rc;
+	RECT rc_clip = { clip_x, clip_y, clip_x + clip_w, clip_y + clip_h };
+	LPCRECT rc_pclip = &rc_clip;
 	HDC dc = graphics->GetHDC();
 
 	if (clip_x == 0 && clip_y == 0 && clip_w == 0 && clip_h == 0)
 	{
-		pclip_rc = nullptr;
+		rc_pclip = nullptr;
 	}
 
-	HRESULT hr = ::DrawThemeBackground(m_theme, dc, m_partid, m_stateid, &rc, pclip_rc);
+	HRESULT hr = ::DrawThemeBackground(m_theme, dc, m_partid, m_stateid, &rc, rc_pclip);
 
 	graphics->ReleaseHDC(dc);
 	return hr;
@@ -2256,10 +2250,9 @@ STDMETHODIMP ThemeManager::SetPartAndStateID(int partid, int stateid)
 	return S_OK;
 }
 
-TitleFormat::TitleFormat(BSTR expr)
+TitleFormat::TitleFormat(BSTR pattern)
 {
-	string_utf8_from_wide uexpr(expr);
-	titleformat_compiler::get()->compile_safe(m_obj, uexpr);
+	titleformat_compiler::get()->compile_safe(m_obj, string_utf8_from_wide(pattern));
 }
 
 TitleFormat::~TitleFormat() {}
@@ -2281,16 +2274,16 @@ STDMETHODIMP TitleFormat::Eval(VARIANT_BOOL force, BSTR* p)
 {
 	if (m_obj.is_empty() || !p) return E_POINTER;
 
-	pfc::string8_fast text;
+	pfc::string8_fast str;
 
-	if (!playback_control::get()->playback_format_title(nullptr, text, m_obj, nullptr, playback_control::display_level_all) && force != VARIANT_FALSE)
+	if (!playback_control::get()->playback_format_title(nullptr, str, m_obj, nullptr, playback_control::display_level_all) && force != VARIANT_FALSE)
 	{
 		metadb_handle_ptr handle;
 		metadb::get()->handle_create(handle, make_playable_location("file://C:\\________.ogg", 0));
-		handle->format_title(nullptr, text, m_obj, nullptr);
+		handle->format_title(nullptr, str, m_obj, nullptr);
 	}
 
-	*p = SysAllocString(string_wide_from_utf8_fast(text));
+	*p = SysAllocString(string_wide_from_utf8_fast(str));
 	return S_OK;
 }
 
@@ -2302,10 +2295,9 @@ STDMETHODIMP TitleFormat::EvalWithMetadb(IMetadbHandle* handle, BSTR* p)
 	handle->get__ptr((void**)&ptr);
 	if (!ptr) return E_INVALIDARG;
 
-	pfc::string8_fast text;
-	ptr->format_title(nullptr, text, m_obj, nullptr);
-
-	*p = SysAllocString(string_wide_from_utf8_fast(text));
+	pfc::string8_fast str;
+	ptr->format_title(nullptr, str, m_obj, nullptr);
+	*p = SysAllocString(string_wide_from_utf8_fast(str));
 	return S_OK;
 }
 
@@ -2323,11 +2315,11 @@ STDMETHODIMP TitleFormat::EvalWithMetadbs(IMetadbHandleList* handles, VARIANT* p
 
 	for (LONG i = 0; i < count; ++i)
 	{
-		pfc::string8_fast text;
-		handles_ref[i]->format_title(nullptr, text, m_obj, nullptr);
+		pfc::string8_fast str;
+		handles_ref[i]->format_title(nullptr, str, m_obj, nullptr);
 		_variant_t var;
 		var.vt = VT_BSTR;
-		var.bstrVal = SysAllocString(string_wide_from_utf8_fast(text));
+		var.bstrVal = SysAllocString(string_wide_from_utf8_fast(str));
 		if (!helper.put_item(i, var)) return E_OUTOFMEMORY;
 	}
 	p->vt = VT_ARRAY | VT_VARIANT;
@@ -2335,7 +2327,7 @@ STDMETHODIMP TitleFormat::EvalWithMetadbs(IMetadbHandleList* handles, VARIANT* p
 	return S_OK;
 }
 
-Tooltip::Tooltip(HWND p_wndparent, const panel_tooltip_param_ptr & p_param_ptr) : m_wndparent(p_wndparent), m_panel_tooltip_param_ptr(p_param_ptr), m_tip_buffer(SysAllocString(PFC_WIDESTRING(JSP_NAME)))
+Tooltip::Tooltip(HWND p_wndparent, const panel_tooltip_param_ptr& p_param_ptr) : m_wndparent(p_wndparent), m_panel_tooltip_param_ptr(p_param_ptr), m_tip_buffer(SysAllocString(PFC_WIDESTRING(JSP_NAME)))
 {
 	m_wndtooltip = CreateWindowEx(
 		WS_EX_TOPMOST,
@@ -2480,7 +2472,7 @@ STDMETHODIMP Tooltip::TrackPosition(int x, int y)
 	return S_OK;
 }
 
-UiSelectionHolder::UiSelectionHolder(const ui_selection_holder::ptr & holder) : m_holder(holder) {}
+UiSelectionHolder::UiSelectionHolder(const ui_selection_holder::ptr& holder) : m_holder(holder) {}
 UiSelectionHolder::~UiSelectionHolder() {}
 
 void UiSelectionHolder::FinalRelease()
