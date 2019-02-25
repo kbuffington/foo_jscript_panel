@@ -1,15 +1,13 @@
 #include "stdafx.h"
 #include "script_callback_invoker.h"
 
+#define DEFINE_ID_NAME_MAP_ENTRY(x) { CallbackIds::##x, PFC_WIDESTRING(#x) }
+
 struct IDToNameEntry
 {
 	int id;
 	const wchar_t* name;
 };
-
-#define _STRINGIFY(x)       #x
-#define _TOSTRING(x)        _STRINGIFY(x)
-#define DEFINE_ID_NAME_MAP_ENTRY(x)    { CallbackIds::##x, PFC_WIDESTRING(_STRINGIFY(x)) }
 
 static const IDToNameEntry g_idToNames[] =
 {
@@ -75,7 +73,7 @@ static const IDToNameEntry g_idToNames[] =
 	DEFINE_ID_NAME_MAP_ENTRY(on_script_unload),
 	DEFINE_ID_NAME_MAP_ENTRY(on_selection_changed),
 	DEFINE_ID_NAME_MAP_ENTRY(on_size),
-	DEFINE_ID_NAME_MAP_ENTRY(on_volume_change),
+	DEFINE_ID_NAME_MAP_ENTRY(on_volume_change)
 };
 
 script_callback_invoker::script_callback_invoker() {}
@@ -87,21 +85,16 @@ script_callback_invoker::~script_callback_invoker()
 
 HRESULT script_callback_invoker::Invoke(int callbackId, VARIANTARG* argv, UINT argc, VARIANT* ret)
 {
-	if (!m_activeScriptRoot) return E_POINTER;
-	DISPPARAMS param = { argv, nullptr, argc, 0 };
 	int dispId;
 	if (!m_callbackInvokerMap.query(callbackId, dispId)) return DISP_E_MEMBERNOTFOUND;
-	if (dispId == DISPID_UNKNOWN) return DISP_E_MEMBERNOTFOUND;
+	DISPPARAMS param = { argv, nullptr, argc, 0 };
 	return m_activeScriptRoot->Invoke(dispId, IID_NULL, LOCALE_USER_DEFAULT, DISPATCH_METHOD, &param, ret, nullptr, nullptr);
 }
 
 void script_callback_invoker::Init(IDispatch* pActiveScriptRoot)
 {
 	Reset();
-	if (!pActiveScriptRoot) return;
-
 	m_activeScriptRoot = pActiveScriptRoot;
-
 	for (const auto& i : g_idToNames)
 	{
 		LPOLESTR name = const_cast<LPOLESTR>(i.name);
