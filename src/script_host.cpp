@@ -97,7 +97,7 @@ HRESULT script_host::InitScriptEngine()
 	return hr;
 }
 
-HRESULT script_host::InvokeCallback(int callbackId, VARIANTARG* argv, UINT argc, VARIANT* ret)
+HRESULT script_host::InvokeCallback(t_size callbackId, VARIANTARG* argv, t_size argc, VARIANT* ret)
 {
 	if (HasError()) return E_FAIL;
 	if (!Ready()) return E_FAIL;

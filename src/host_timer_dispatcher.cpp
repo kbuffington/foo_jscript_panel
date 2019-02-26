@@ -66,8 +66,8 @@ host_timer_task::host_timer_task(IDispatch* pDisp, t_size timerId) : m_pDisp(pDi
 void host_timer_task::invoke()
 {
 	VARIANTARG args[1];
-	args[0].vt = VT_I4;
-	args[0].lVal = m_timerId;
+	args[0].vt = VT_UI4;
+	args[0].ulVal = m_timerId;
 	DISPPARAMS dispParams = { args, nullptr, _countof(args), 0 };
 	m_pDisp->Invoke(DISPID_VALUE, IID_NULL, LOCALE_USER_DEFAULT, DISPATCH_METHOD, &dispParams, nullptr, nullptr, nullptr);
 }

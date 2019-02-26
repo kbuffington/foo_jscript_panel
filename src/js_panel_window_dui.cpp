@@ -198,13 +198,13 @@ void js_panel_window_dui::initialize_window(HWND parent)
 
 void js_panel_window_dui::notify(const GUID& p_what, t_size p_param1, const void* p_param2, t_size p_param2size)
 {
-	if (p_what == ui_element_notify_font_changed)
+	if (p_what == ui_element_notify_colors_changed)
 	{
-		PostMessage(m_hwnd, CALLBACK_UWM_ON_FONT_CHANGED, 0, 0);
+		PostMessage(m_hwnd, CallbackIds::on_colours_changed, 0, 0);
 	}
-	else if (p_what == ui_element_notify_colors_changed)
+	else if (p_what == ui_element_notify_font_changed)
 	{
-		PostMessage(m_hwnd, CALLBACK_UWM_ON_COLOURS_CHANGED, 0, 0);
+		PostMessage(m_hwnd, CallbackIds::on_font_changed, 0, 0);
 	}
 }
 

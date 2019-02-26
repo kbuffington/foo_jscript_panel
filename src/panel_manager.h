@@ -110,8 +110,8 @@ public:
 	void on_playback_new_track(metadb_handle_ptr track) override;
 	void on_playback_pause(bool state) override;
 	void on_playback_seek(double time) override;
-	void on_playback_starting(play_control::t_track_command cmd, bool paused) override;
-	void on_playback_stop(play_control::t_stop_reason reason) override;
+	void on_playback_starting(playback_control::t_track_command cmd, bool paused) override;
+	void on_playback_stop(playback_control::t_stop_reason reason) override;
 	void on_playback_time(double time) override;
 	void on_volume_change(float newval) override;
 };
@@ -141,7 +141,7 @@ class my_playlist_callback_static : public playlist_callback_static
 public:
 	void on_default_format_changed() override {}
 	void on_items_modified(t_size p_playlist, const pfc::bit_array& p_mask) override {}
-	void on_items_modified_fromplayback(t_size p_playlist, const pfc::bit_array& p_mask, play_control::t_display_level p_level) override {}
+	void on_items_modified_fromplayback(t_size p_playlist, const pfc::bit_array& p_mask, playback_control::t_display_level p_level) override {}
 	void on_items_removing(t_size p_playlist, const pfc::bit_array& p_mask, t_size p_old_count, t_size p_new_count) override {}
 	void on_items_replaced(t_size p_playlist, const pfc::bit_array& p_mask, const pfc::list_base_const_t<t_on_items_replaced_entry>& p_data) override {}
 	void on_playlists_removing(const pfc::bit_array& p_mask, t_size p_old_count, t_size p_new_count) override {}

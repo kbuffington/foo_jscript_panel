@@ -167,7 +167,7 @@ namespace helpers
 			}
 
 			t_param param(handle, m_art_id, bitmap, SysAllocString(string_wide_from_utf8_fast(image_path)));
-			SendMessage(m_hwnd, CALLBACK_UWM_ON_GET_ALBUM_ART_DONE, (WPARAM)&param, 0);
+			SendMessage(m_hwnd, CallbackIds::on_get_album_art_done, (WPARAM)&param, 0);
 		}
 
 		struct t_param
@@ -211,7 +211,7 @@ namespace helpers
 		{
 			IGdiBitmap* bitmap = load_image(m_path);
 			t_param param(reinterpret_cast<t_size>(this), bitmap, m_path);
-			SendMessage(m_hwnd, CALLBACK_UWM_ON_LOAD_IMAGE_DONE, (WPARAM)&param, 0);
+			SendMessage(m_hwnd, CallbackIds::on_load_image_done, (WPARAM)&param, 0);
 		}
 
 		struct t_param

@@ -87,12 +87,12 @@ void panel_manager::send_msg_to_others_pointer(HWND p_wnd_except, UINT p_msg, pf
 
 void my_dsp_config_callback::on_core_settings_change(const dsp_chain_config& p_newdata)
 {
-	panel_manager::instance().post_msg_to_all(CALLBACK_UWM_ON_DSP_PRESET_CHANGED);
+	panel_manager::instance().post_msg_to_all(CallbackIds::on_dsp_preset_changed);
 }
 
 void my_initquit::on_changed(const t_replaygain_config& cfg)
 {
-	panel_manager::instance().post_msg_to_all(CALLBACK_UWM_ON_REPLAYGAIN_MODE_CHANGED, (WPARAM)cfg.m_source_mode);
+	panel_manager::instance().post_msg_to_all(CallbackIds::on_replaygain_mode_changed, cfg.m_source_mode);
 }
 
 void my_initquit::on_init()
@@ -125,36 +125,36 @@ void my_initquit::on_quit()
 
 void my_initquit::on_selection_changed(metadb_handle_list_cref p_selection)
 {
-	panel_manager::instance().post_msg_to_all(CALLBACK_UWM_ON_SELECTION_CHANGED);
+	panel_manager::instance().post_msg_to_all(CallbackIds::on_selection_changed);
 }
 
 void my_initquit::outputConfigChanged()
 {
-	panel_manager::instance().post_msg_to_all(CALLBACK_UWM_ON_OUTPUT_DEVICE_CHANGED);
+	panel_manager::instance().post_msg_to_all(CallbackIds::on_output_device_changed);
 }
 
 void my_library_callback::on_items_added(metadb_handle_list_cref p_data)
 {
 	auto data = new metadb_callback_data(p_data);
-	panel_manager::instance().post_msg_to_all_pointer(CALLBACK_UWM_ON_LIBRARY_ITEMS_ADDED, data);
+	panel_manager::instance().post_msg_to_all_pointer(CallbackIds::on_library_items_added, data);
 }
 
 void my_library_callback::on_items_modified(metadb_handle_list_cref p_data)
 {
 	auto data = new metadb_callback_data(p_data);
-	panel_manager::instance().post_msg_to_all_pointer(CALLBACK_UWM_ON_LIBRARY_ITEMS_CHANGED, data);
+	panel_manager::instance().post_msg_to_all_pointer(CallbackIds::on_library_items_changed, data);
 }
 
 void my_library_callback::on_items_removed(metadb_handle_list_cref p_data)
 {
 	auto data = new metadb_callback_data(p_data);
-	panel_manager::instance().post_msg_to_all_pointer(CALLBACK_UWM_ON_LIBRARY_ITEMS_REMOVED, data);
+	panel_manager::instance().post_msg_to_all_pointer(CallbackIds::on_library_items_removed, data);
 }
 
 void my_metadb_io_callback::on_changed_sorted(metadb_handle_list_cref p_items_sorted, bool p_fromhook)
 {
 	auto data = new metadb_callback_data(p_items_sorted);
-	panel_manager::instance().post_msg_to_all_pointer(CALLBACK_UWM_ON_METADB_CHANGED, data);
+	panel_manager::instance().post_msg_to_all_pointer(CallbackIds::on_metadb_changed, data);
 }
 
 t_size my_play_callback_static::get_flags()
@@ -164,68 +164,68 @@ t_size my_play_callback_static::get_flags()
 
 void my_play_callback_static::on_playback_dynamic_info(const file_info& info)
 {
-	panel_manager::instance().post_msg_to_all(CALLBACK_UWM_ON_PLAYBACK_DYNAMIC_INFO);
+	panel_manager::instance().post_msg_to_all(CallbackIds::on_playback_dynamic_info);
 }
 
 void my_play_callback_static::on_playback_dynamic_info_track(const file_info& info)
 {
-	panel_manager::instance().post_msg_to_all(CALLBACK_UWM_ON_PLAYBACK_DYNAMIC_INFO_TRACK);
+	panel_manager::instance().post_msg_to_all(CallbackIds::on_playback_dynamic_info_track);
 }
 
 void my_play_callback_static::on_playback_edited(metadb_handle_ptr track)
 {
 	auto data = new callback_data<metadb_handle_ptr>(track);
-	panel_manager::instance().post_msg_to_all_pointer(CALLBACK_UWM_ON_PLAYBACK_EDITED, data);
+	panel_manager::instance().post_msg_to_all_pointer(CallbackIds::on_playback_edited, data);
 }
 
 void my_play_callback_static::on_playback_new_track(metadb_handle_ptr track)
 {
 	auto data = new callback_data<metadb_handle_ptr>(track);
-	panel_manager::instance().post_msg_to_all_pointer(CALLBACK_UWM_ON_PLAYBACK_NEW_TRACK, data);
+	panel_manager::instance().post_msg_to_all_pointer(CallbackIds::on_playback_new_track, data);
 }
 
 void my_play_callback_static::on_playback_pause(bool state)
 {
-	panel_manager::instance().post_msg_to_all(CALLBACK_UWM_ON_PLAYBACK_PAUSE, (WPARAM)state);
+	panel_manager::instance().post_msg_to_all(CallbackIds::on_playback_pause, TO_VARIANT_BOOL(state));
 }
 
 void my_play_callback_static::on_playback_seek(double time)
 {
 	auto data = new callback_data<double>(time);
-	panel_manager::instance().post_msg_to_all_pointer(CALLBACK_UWM_ON_PLAYBACK_SEEK, data);
+	panel_manager::instance().post_msg_to_all_pointer(CallbackIds::on_playback_seek, data);
 }
 
-void my_play_callback_static::on_playback_starting(play_control::t_track_command cmd, bool paused)
+void my_play_callback_static::on_playback_starting(playback_control::t_track_command cmd, bool paused)
 {
-	panel_manager::instance().post_msg_to_all(CALLBACK_UWM_ON_PLAYBACK_STARTING, (WPARAM)cmd, (LPARAM)paused);
+	panel_manager::instance().post_msg_to_all(CallbackIds::on_playback_starting, cmd, TO_VARIANT_BOOL(paused));
 }
 
-void my_play_callback_static::on_playback_stop(play_control::t_stop_reason reason)
+void my_play_callback_static::on_playback_stop(playback_control::t_stop_reason reason)
 {
-	panel_manager::instance().post_msg_to_all(CALLBACK_UWM_ON_PLAYBACK_STOP, (WPARAM)reason);
+	panel_manager::instance().post_msg_to_all(CallbackIds::on_playback_stop, reason);
 }
 
 void my_play_callback_static::on_playback_time(double time)
 {
 	auto data = new callback_data<double>(time);
-	panel_manager::instance().post_msg_to_all_pointer(CALLBACK_UWM_ON_PLAYBACK_TIME, data);
+	panel_manager::instance().post_msg_to_all_pointer(CallbackIds::on_playback_time, data);
 }
 
 void my_play_callback_static::on_volume_change(float newval)
 {
 	auto data = new callback_data<float>(newval);
-	panel_manager::instance().post_msg_to_all_pointer(CALLBACK_UWM_ON_VOLUME_CHANGE, data);
+	panel_manager::instance().post_msg_to_all_pointer(CallbackIds::on_volume_change, data);
 }
 
 void my_playback_queue_callback::on_changed(t_change_origin p_origin)
 {
-	panel_manager::instance().post_msg_to_all(CALLBACK_UWM_ON_PLAYBACK_QUEUE_CHANGED, (WPARAM)p_origin);
+	panel_manager::instance().post_msg_to_all(CallbackIds::on_playback_queue_changed, p_origin);
 }
 
 void my_playback_statistics_collector::on_item_played(metadb_handle_ptr p_item)
 {
 	auto data = new callback_data<metadb_handle_ptr>(p_item);
-	panel_manager::instance().post_msg_to_all_pointer(CALLBACK_UWM_ON_ITEM_PLAYED, data);
+	panel_manager::instance().post_msg_to_all_pointer(CallbackIds::on_item_played, data);
 }
 
 GUID my_config_object_notify::get_watched_object(t_size p_index)
@@ -251,13 +251,13 @@ void my_config_object_notify::on_watched_object_changed(const config_object::ptr
 	t_size msg;
 
 	if (guid == standard_config_objects::bool_playlist_stop_after_current)
-		msg = CALLBACK_UWM_ON_PLAYLIST_STOP_AFTER_CURRENT_CHANGED;
+		msg = CallbackIds::on_playlist_stop_after_current_changed;
 	else if (guid == standard_config_objects::bool_cursor_follows_playback)
-		msg = CALLBACK_UWM_ON_CURSOR_FOLLOW_PLAYBACK_CHANGED;
+		msg = CallbackIds::on_cursor_follow_playback_changed;
 	else if (guid == standard_config_objects::bool_playback_follows_cursor)
-		msg = CALLBACK_UWM_ON_PLAYBACK_FOLLOW_CURSOR_CHANGED;
+		msg = CallbackIds::on_playback_follow_cursor_changed;
 	else if (guid == standard_config_objects::bool_ui_always_on_top)
-		msg = CALLBACK_UWM_ON_ALWAYS_ON_TOP_CHANGED;
+		msg = CallbackIds::on_always_on_top_changed;
 	else
 		return;
 
@@ -276,38 +276,38 @@ t_size my_playlist_callback_static::get_flags()
 
 void my_playlist_callback_static::on_item_ensure_visible(t_size p_playlist, t_size p_idx)
 {
-	panel_manager::instance().post_msg_to_all(CALLBACK_UWM_ON_PLAYLIST_ITEM_ENSURE_VISIBLE, p_playlist, p_idx);
+	panel_manager::instance().post_msg_to_all(CallbackIds::on_playlist_item_ensure_visible, p_playlist, p_idx);
 }
 
 void my_playlist_callback_static::on_item_focus_change(t_size p_playlist, t_size p_from, t_size p_to)
 {
 	auto data = new callback_data<t_size, t_size, t_size>(p_playlist, p_from, p_to);
-	panel_manager::instance().post_msg_to_all_pointer(CALLBACK_UWM_ON_ITEM_FOCUS_CHANGE, data);
+	panel_manager::instance().post_msg_to_all_pointer(CallbackIds::on_item_focus_change, data);
 }
 
 void my_playlist_callback_static::on_items_added(t_size p_playlist, t_size p_start, metadb_handle_list_cref p_data, const pfc::bit_array& p_selection)
 {
-	panel_manager::instance().post_msg_to_all(CALLBACK_UWM_ON_PLAYLIST_ITEMS_ADDED, p_playlist);
+	panel_manager::instance().post_msg_to_all(CallbackIds::on_playlist_items_added, p_playlist);
 }
 
 void my_playlist_callback_static::on_items_removed(t_size p_playlist, const pfc::bit_array& p_mask, t_size p_old_count, t_size p_new_count)
 {
-	panel_manager::instance().post_msg_to_all(CALLBACK_UWM_ON_PLAYLIST_ITEMS_REMOVED, p_playlist, p_new_count);
+	panel_manager::instance().post_msg_to_all(CallbackIds::on_playlist_items_removed, p_playlist, p_new_count);
 }
 
 void my_playlist_callback_static::on_items_reordered(t_size p_playlist, const t_size* p_order, t_size p_count)
 {
-	panel_manager::instance().post_msg_to_all(CALLBACK_UWM_ON_PLAYLIST_ITEMS_REORDERED, p_playlist);
+	panel_manager::instance().post_msg_to_all(CallbackIds::on_playlist_items_reordered, p_playlist);
 }
 
 void my_playlist_callback_static::on_items_selection_change(t_size p_playlist, const pfc::bit_array& p_affected, const pfc::bit_array& p_state)
 {
-	panel_manager::instance().post_msg_to_all(CALLBACK_UWM_ON_PLAYLIST_ITEMS_SELECTION_CHANGE);
+	panel_manager::instance().post_msg_to_all(CallbackIds::on_playlist_items_selection_change);
 }
 
 void my_playlist_callback_static::on_playback_order_changed(t_size p_new_index)
 {
-	panel_manager::instance().post_msg_to_all(CALLBACK_UWM_ON_PLAYBACK_ORDER_CHANGED, (WPARAM)p_new_index);
+	panel_manager::instance().post_msg_to_all(CallbackIds::on_playback_order_changed, p_new_index);
 }
 
 void my_playlist_callback_static::on_playlist_activate(t_size p_old, t_size p_new)
@@ -345,10 +345,10 @@ void my_playlist_callback_static::on_playlists_reorder(const t_size* p_order, t_
 
 void my_playlist_callback_static::on_playlist_switch()
 {
-	panel_manager::instance().post_msg_to_all(CALLBACK_UWM_ON_PLAYLIST_SWITCH);
+	panel_manager::instance().post_msg_to_all(CallbackIds::on_playlist_switch);
 }
 
 void my_playlist_callback_static::on_playlists_changed()
 {
-	panel_manager::instance().post_msg_to_all(CALLBACK_UWM_ON_PLAYLISTS_CHANGED);
+	panel_manager::instance().post_msg_to_all(CallbackIds::on_playlists_changed);
 }

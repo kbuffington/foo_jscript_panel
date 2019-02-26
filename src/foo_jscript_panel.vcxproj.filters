@@ -132,9 +132,6 @@
     <ClInclude Include="thread_pool.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="user_message.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="script_interface\console.cpp">

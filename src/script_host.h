@@ -20,7 +20,7 @@ public:
 
 	HRESULT Initialize();
 	HRESULT InitScriptEngine();
-	HRESULT InvokeCallback(int callbackId, VARIANTARG* argv = nullptr, UINT argc = 0, VARIANT* ret = nullptr);
+	HRESULT InvokeCallback(t_size callbackId, VARIANTARG* argv = nullptr, t_size argc = 0, VARIANT* ret = nullptr);
 	HRESULT ProcessImportedScripts(IActiveScriptParsePtr& parser);
 	STDMETHODIMP EnableModeless(BOOL fEnable) override;
 	STDMETHODIMP GetDocVersionString(BSTR* pstr) override;

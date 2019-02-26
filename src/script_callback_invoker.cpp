@@ -5,7 +5,7 @@
 
 struct IDToNameEntry
 {
-	int id;
+	t_size id;
 	const wchar_t* name;
 };
 
@@ -83,7 +83,7 @@ script_callback_invoker::~script_callback_invoker()
 	Reset();
 }
 
-HRESULT script_callback_invoker::Invoke(int callbackId, VARIANTARG* argv, UINT argc, VARIANT* ret)
+HRESULT script_callback_invoker::Invoke(t_size callbackId, VARIANTARG* argv, t_size argc, VARIANT* ret)
 {
 	int dispId;
 	if (!m_callbackInvokerMap.query(callbackId, dispId)) return DISP_E_MEMBERNOTFOUND;
