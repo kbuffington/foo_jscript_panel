@@ -1,8 +1,7 @@
 _.mixin({
 	lastfm : function () {
 		this.notify_data = function (name, data) {
-			switch (name) {
-			case '2K3.NOTIFY.LASTFM':
+			if (name == '2K3.NOTIFY.LASTFM') {
 				this.username = this.read_ini('username');
 				this.sk = this.read_ini('sk');
 				if (typeof buttons == 'object' && typeof buttons.update == 'function') {
@@ -14,12 +13,6 @@ _.mixin({
 						item.update();
 					}
 				});
-				break;
-			case '2K3.NOTIFY.LOVE':
-				if (typeof buttons == 'object' && typeof buttons.update == 'function') { // make sure this only fires from scrobbler/lover scripts
-					this.post(this.tfo.loved.EvalWithMetadb(data) == 1 ? 'track.unlove' : 'track.love', null, data);
-				}
-				break;
 			}
 		}
 		
