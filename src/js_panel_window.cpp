@@ -11,7 +11,7 @@ js_panel_window::~js_panel_window()
 	m_script_host->Release();
 }
 
-HRESULT js_panel_window::script_invoke_v(int callbackId, VARIANTARG* argv, UINT argc, VARIANT* ret)
+HRESULT js_panel_window::script_invoke_v(t_size callbackId, VARIANTARG* argv, t_size argc, VARIANT* ret)
 {
 	return m_script_host->InvokeCallback(callbackId, argv, argc, ret);
 }

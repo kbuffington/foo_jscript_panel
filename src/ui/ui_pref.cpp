@@ -156,35 +156,32 @@ void CDialogPref::reset()
 	LoadProps(true);
 }
 
-GUID js_preferences_page_impl::get_guid()
+GUID my_preferences_page_v3::get_guid()
 {
 	return g_guid_jsp_ui_pref;
 }
 
-GUID js_preferences_page_impl::get_parent_guid()
+GUID my_preferences_page_v3::get_parent_guid()
 {
 	return preferences_page::guid_tools;
 }
 
-bool js_preferences_page_impl::get_help_url(pfc::string_base& p_out)
+bool my_preferences_page_v3::get_help_url(pfc::string_base& p_out)
 {
 	p_out = "https://github.com/marc2k3/foo_jscript_panel/wiki";
 	return true;
 }
 
-const char* js_preferences_page_impl::get_name()
+const char* my_preferences_page_v3::get_name()
 {
 	return JSP_NAME;
 }
 
-preferences_page_instance::ptr js_preferences_page_impl::instantiate(HWND parent, preferences_page_callback::ptr callback)
+preferences_page_instance::ptr my_preferences_page_v3::instantiate(HWND parent, preferences_page_callback::ptr callback)
 {
 	auto p = fb2k::service_new<CDialogPref>(callback);
 	p->Create(parent);
 	return p;
 }
 
-namespace
-{
-	preferences_page_factory_t<js_preferences_page_impl> g_pref;
-}
+static service_factory_single_t<my_preferences_page_v3> g_my_preferences_page_v3;

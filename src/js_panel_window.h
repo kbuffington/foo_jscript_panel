@@ -11,7 +11,7 @@ public:
 	js_panel_window();
 	~js_panel_window();
 
-	HRESULT script_invoke_v(int callbackId, VARIANTARG* argv = nullptr, UINT argc = 0, VARIANT* ret = nullptr);
+	HRESULT script_invoke_v(t_size callbackId, VARIANTARG* argv = nullptr, t_size argc = 0, VARIANT* ret = nullptr);
 	LRESULT on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp) override;
 	class_data& get_class_data() const override;
 	void update_script();

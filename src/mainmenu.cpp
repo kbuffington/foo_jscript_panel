@@ -2,11 +2,8 @@
 #include "mainmenu.h"
 #include "panel_manager.h"
 
-namespace
-{
-	static mainmenu_commands_factory_t<my_mainmenu_commands> g_my_mainmenu_commands_factory;
-	static mainmenu_group_popup_factory g_mainmenu_group(g_guid_jsp_mainmenu_group_id, mainmenu_groups::file, mainmenu_commands::sort_priority_dontcare, JSP_NAME);
-}
+static service_factory_single_t<my_mainmenu_commands> g_my_mainmenu_commands;
+static mainmenu_group_popup_factory g_my_mainmenu_group(g_guid_jsp_mainmenu_group_id, mainmenu_groups::file, mainmenu_commands::sort_priority_dontcare, JSP_NAME);
 
 GUID my_mainmenu_commands::get_command(t_size p_index)
 {

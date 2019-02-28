@@ -39,7 +39,7 @@ private:
 	preferences_page_callback::ptr m_callback;
 };
 
-class js_preferences_page_impl : public preferences_page_v3
+class my_preferences_page_v3 : public preferences_page_v3
 {
 public:
 	GUID get_guid() override;

@@ -70,6 +70,14 @@ private:
 	PFC_CLASS_NOT_COPYABLE_EX(panel_manager)
 };
 
+class my_config_object_notify : public config_object_notify
+{
+public:
+	GUID get_watched_object(t_size p_index) override;
+	t_size get_watched_object_count() override;
+	void on_watched_object_changed(const config_object::ptr& p_object) override;
+};
+
 class my_dsp_config_callback : public dsp_config_callback
 {
 public:
@@ -126,14 +134,6 @@ class my_playback_statistics_collector : public playback_statistics_collector
 {
 public:
 	void on_item_played(metadb_handle_ptr p_item) override;
-};
-
-class my_config_object_notify : public config_object_notify
-{
-public:
-	GUID get_watched_object(t_size p_index) override;
-	t_size get_watched_object_count() override;
-	void on_watched_object_changed(const config_object::ptr& p_object) override;
 };
 
 class my_playlist_callback_static : public playlist_callback_static

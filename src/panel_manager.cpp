@@ -2,18 +2,15 @@
 #include "panel_manager.h"
 #include "thread_pool.h"
 
-namespace
-{
-	initquit_factory_t<my_initquit> g_my_initquit;
-	library_callback_factory_t<my_library_callback> g_my_library_callback;
-	play_callback_static_factory_t<my_play_callback_static> g_my_play_callback_static;
-	play_callback_static_factory_t<my_playback_queue_callback> g_my_playback_queue_callback;
-	playback_statistics_collector_factory_t<my_playback_statistics_collector> g_my_playback_statistics_collector;
-	service_factory_single_t<my_config_object_notify> g_my_config_object_notify;
-	service_factory_single_t<my_dsp_config_callback> g_my_dsp_config_callback;
-	service_factory_single_t<my_metadb_io_callback> g_my_metadb_io_callback;
-	service_factory_single_t<my_playlist_callback_static> g_my_playlist_callback_static;
-}
+static service_factory_single_t<my_config_object_notify> g_my_config_object_notify;
+static service_factory_single_t<my_dsp_config_callback> g_my_dsp_config_callback;
+static service_factory_single_t<my_initquit> g_my_initquit;
+static service_factory_single_t<my_library_callback> g_my_library_callback;
+static service_factory_single_t<my_metadb_io_callback> g_my_metadb_io_callback;
+static service_factory_single_t<my_play_callback_static> g_my_play_callback_static;
+static service_factory_single_t<my_playback_queue_callback> g_my_playback_queue_callback;
+static service_factory_single_t<my_playback_statistics_collector> g_my_playback_statistics_collector;
+static service_factory_single_t<my_playlist_callback_static> g_my_playlist_callback_static;
 
 panel_manager::panel_manager() {}
 
@@ -91,6 +88,44 @@ void panel_manager::send_msg_to_others_pointer(HWND p_wnd_except, UINT p_msg, pf
 			SendMessage(hWnd, p_msg, reinterpret_cast<WPARAM>(p_param), 0);
 		}
 	});
+}
+
+GUID my_config_object_notify::get_watched_object(t_size p_index)
+{
+	switch (p_index)
+	{
+	case 0: return standard_config_objects::bool_playlist_stop_after_current;
+	case 1: return standard_config_objects::bool_cursor_follows_playback;
+	case 2: return standard_config_objects::bool_playback_follows_cursor;
+	case 3: return standard_config_objects::bool_ui_always_on_top;
+	default: return pfc::guid_null;
+	}
+}
+
+t_size my_config_object_notify::get_watched_object_count()
+{
+	return 4;
+}
+
+void my_config_object_notify::on_watched_object_changed(const config_object::ptr& p_object)
+{
+	GUID guid = p_object->get_guid();
+	t_size msg;
+
+	if (guid == standard_config_objects::bool_playlist_stop_after_current)
+		msg = CallbackIds::on_playlist_stop_after_current_changed;
+	else if (guid == standard_config_objects::bool_cursor_follows_playback)
+		msg = CallbackIds::on_cursor_follow_playback_changed;
+	else if (guid == standard_config_objects::bool_playback_follows_cursor)
+		msg = CallbackIds::on_playback_follow_cursor_changed;
+	else if (guid == standard_config_objects::bool_ui_always_on_top)
+		msg = CallbackIds::on_always_on_top_changed;
+	else
+		return;
+
+	bool b;
+	p_object->get_data_bool(b);
+	panel_manager::instance().post_msg_to_all(msg, TO_VARIANT_BOOL(b));
 }
 
 void my_dsp_config_callback::on_core_settings_change(const dsp_chain_config& p_newdata)
@@ -234,44 +269,6 @@ void my_playback_statistics_collector::on_item_played(metadb_handle_ptr p_item)
 {
 	auto data = new callback_data<metadb_handle_ptr>(p_item);
 	panel_manager::instance().post_msg_to_all_pointer(CallbackIds::on_item_played, data);
-}
-
-GUID my_config_object_notify::get_watched_object(t_size p_index)
-{
-	switch (p_index)
-	{
-	case 0: return standard_config_objects::bool_playlist_stop_after_current;
-	case 1: return standard_config_objects::bool_cursor_follows_playback;
-	case 2: return standard_config_objects::bool_playback_follows_cursor;
-	case 3: return standard_config_objects::bool_ui_always_on_top;
-	default: return pfc::guid_null;
-	}
-}
-
-t_size my_config_object_notify::get_watched_object_count()
-{
-	return 4;
-}
-
-void my_config_object_notify::on_watched_object_changed(const config_object::ptr& p_object)
-{
-	GUID guid = p_object->get_guid();
-	t_size msg;
-
-	if (guid == standard_config_objects::bool_playlist_stop_after_current)
-		msg = CallbackIds::on_playlist_stop_after_current_changed;
-	else if (guid == standard_config_objects::bool_cursor_follows_playback)
-		msg = CallbackIds::on_cursor_follow_playback_changed;
-	else if (guid == standard_config_objects::bool_playback_follows_cursor)
-		msg = CallbackIds::on_playback_follow_cursor_changed;
-	else if (guid == standard_config_objects::bool_ui_always_on_top)
-		msg = CallbackIds::on_always_on_top_changed;
-	else
-		return;
-
-	bool b;
-	p_object->get_data_bool(b);
-	panel_manager::instance().post_msg_to_all(msg, TO_VARIANT_BOOL(b));
 }
 
 t_size my_playlist_callback_static::get_flags()
