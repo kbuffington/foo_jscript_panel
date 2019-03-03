@@ -8,7 +8,6 @@ BOOL CDialogProperty::OnInitDialog(HWND hwndFocus, LPARAM lParam)
 {
 	DlgResize_Init();
 
-	// Subclassing
 	m_properties.SubclassWindow(GetDlgItem(IDC_LIST_PROPERTIES));
 	m_properties.ModifyStyle(0, LBS_SORT | LBS_HASSTRINGS);
 	m_properties.SetExtendedListStyle(PLS_EX_SORTED | PLS_EX_XPLOOK);
@@ -120,7 +119,6 @@ LRESULT CDialogProperty::OnPinItemChanged(LPNMHDR pnmh)
 
 void CDialogProperty::Apply()
 {
-	// Copy back
 	m_parent->m_config_prop.m_map = m_dup_prop_map;
 	m_parent->update_script();
 	LoadProperties();

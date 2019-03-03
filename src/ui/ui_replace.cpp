@@ -24,7 +24,6 @@ CHARRANGE CDialogReplace::GetSelection()
 
 LRESULT CDialogReplace::OnCancel(WORD wNotifyCode, WORD wID, HWND hWndCtl)
 {
-	//DestroyWindow();
 	ShowWindow(SW_HIDE);
 	return 0;
 }
@@ -95,14 +94,12 @@ LRESULT CDialogReplace::OnReplace(WORD wNotifyCode, WORD wID, HWND hWndCtl)
 		m_havefound = false;
 	}
 
-	// Find Next
 	OnFindNext(0, 0, 0);
 	return 0;
 }
 
 LRESULT CDialogReplace::OnReplaceall(WORD wNotifyCode, WORD wID, HWND hWndCtl)
 {
-	// Reset target position
 	SendMessage(m_hedit, SCI_BEGINUNDOACTION, 0, 0);
 	SendMessage(m_hedit, SCI_SETTARGETSTART, 0, 0);
 	SendMessage(m_hedit, SCI_SETTARGETEND, 0, 0);

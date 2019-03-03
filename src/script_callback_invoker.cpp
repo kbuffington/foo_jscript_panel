@@ -85,6 +85,7 @@ script_callback_invoker::~script_callback_invoker()
 
 HRESULT script_callback_invoker::Invoke(t_size callbackId, VARIANTARG* argv, t_size argc, VARIANT* ret)
 {
+	if (!m_activeScriptRoot) return E_POINTER;
 	int dispId;
 	if (!m_callbackInvokerMap.query(callbackId, dispId)) return DISP_E_MEMBERNOTFOUND;
 	DISPPARAMS param = { argv, nullptr, argc, 0 };
@@ -94,6 +95,7 @@ HRESULT script_callback_invoker::Invoke(t_size callbackId, VARIANTARG* argv, t_s
 void script_callback_invoker::Init(IDispatch* pActiveScriptRoot)
 {
 	Reset();
+	if (!pActiveScriptRoot) return;
 	m_activeScriptRoot = pActiveScriptRoot;
 	for (const auto& i : g_idToNames)
 	{

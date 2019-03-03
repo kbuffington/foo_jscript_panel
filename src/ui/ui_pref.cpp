@@ -72,8 +72,6 @@ LRESULT CDialogPref::OnPresetsBnClicked(WORD wNotifyCode, WORD wID, HWND hWndCtl
 
 LRESULT CDialogPref::OnPropDblClk(LPNMHDR pnmh)
 {
-	//for ListView - (LPNMITEMACTIVATE)pnmh
-	//for StatusBar	- (LPNMMOUSE)pnmh
 	LPNMITEMACTIVATE pniv = (LPNMITEMACTIVATE)pnmh;
 
 	if (pniv->iItem >= 0)

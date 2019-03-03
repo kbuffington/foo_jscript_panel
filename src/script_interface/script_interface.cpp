@@ -263,7 +263,6 @@ STDMETHODIMP GdiBitmap::ApplyMask(IGdiBitmap* mask, VARIANT_BOOL* p)
 	const int width = rect.Width;
 	const int height = rect.Height;
 	const int size = width * height;
-	//const int size_threshold = 512;
 	t_size* p_mask = reinterpret_cast<t_size*>(bmpdata_mask.Scan0);
 	t_size* p_dst = reinterpret_cast<t_size*>(bmpdata_dst.Scan0);
 	const t_size* p_mask_end = p_mask + rect.Width * rect.Height;
@@ -271,13 +270,8 @@ STDMETHODIMP GdiBitmap::ApplyMask(IGdiBitmap* mask, VARIANT_BOOL* p)
 
 	while (p_mask < p_mask_end)
 	{
-		// Method 1:
-		//alpha = (~*p_mask & 0xff) * (*p_dst >> 24) + 0x80;
-		//*p_dst = ((((alpha >> 8) + alpha) & 0xff00) << 16) | (*p_dst & 0xffffff);
-		// Method 2
 		alpha = (((~*p_mask & 0xff) * (*p_dst >> 24)) << 16) & 0xff000000;
 		*p_dst = alpha | (*p_dst & 0xffffff);
-
 		++p_mask;
 		++p_dst;
 	}
@@ -331,13 +325,11 @@ STDMETHODIMP GdiBitmap::GetColourScheme(UINT count, VARIANT* p)
 
 	for (t_size i = 0; i < colors_length; ++i)
 	{
-		// format: 0xaarrggbb
 		t_size color = colors[i];
 		BYTE r = (color >> 16) & 0xff;
 		BYTE g = (color >> 8) & 0xff;
 		BYTE b = (color) & 0xff;
 
-		// Round colors
 		r = (r + 16) & 0xffffffe0;
 		g = (g + 16) & 0xffffffe0;
 		b = (b + 16) & 0xffffffe0;
@@ -351,7 +343,6 @@ STDMETHODIMP GdiBitmap::GetColourScheme(UINT count, VARIANT* p)
 
 	m_ptr->UnlockBits(&bmpdata);
 
-	// Sorting
 	using sort_vec_pair_t = std::pair<t_size, int>;
 	std::vector<sort_vec_pair_t> sort_vec(color_counters.begin(), color_counters.end());
 	count = min(count, sort_vec.size());
@@ -359,7 +350,7 @@ STDMETHODIMP GdiBitmap::GetColourScheme(UINT count, VARIANT* p)
 		sort_vec.begin(),
 		sort_vec.begin() + count,
 		sort_vec.end(),
-		[](const sort_vec_pair_t & a, const sort_vec_pair_t & b)
+		[](const sort_vec_pair_t& a, const sort_vec_pair_t& b)
 		{
 			return a.second > b.second;
 		});
@@ -385,15 +376,12 @@ STDMETHODIMP GdiBitmap::GetColourSchemeJSON(UINT count, BSTR* p)
 	if (!m_ptr || !p) return E_POINTER;
 
 	Gdiplus::BitmapData bmpdata;
-
-	// rescaled image will have max of ~48k pixels
 	int w = min(m_ptr->GetWidth(), 220), h = min(m_ptr->GetHeight(), 220);
-
 	Gdiplus::Bitmap* bitmap = new Gdiplus::Bitmap(w, h, PixelFormat32bppPARGB);
 	Gdiplus::Graphics g(bitmap);
 	Gdiplus::Rect rect(0, 0, w, h);
-	g.SetInterpolationMode((Gdiplus::InterpolationMode)6); // InterpolationModeHighQualityBilinear
-	g.DrawImage(m_ptr, 0, 0, w, h); // scale image down
+	g.SetInterpolationMode((Gdiplus::InterpolationMode)6);
+	g.DrawImage(m_ptr, 0, 0, w, h);
 
 	if (bitmap->LockBits(&rect, Gdiplus::ImageLockModeRead, PixelFormat32bppARGB, &bmpdata) != Gdiplus::Ok)
 		return E_POINTER;
@@ -402,14 +390,12 @@ STDMETHODIMP GdiBitmap::GetColourSchemeJSON(UINT count, BSTR* p)
 	const t_size colours_length = bmpdata.Width * bmpdata.Height;
 	const t_size* colours = (const t_size*)bmpdata.Scan0;
 
-	// reduce color set to pass to k-means by rounding colour components to multiples of 8
 	for (t_size i = 0; i < colours_length; ++i)
 	{
 		BYTE r = (colours[i] >> 16) & 0xff;
 		BYTE g = (colours[i] >> 8) & 0xff;
 		BYTE b = (colours[i] & 0xff);
 
-		// round colours
 		r = (r + 4) & 0xfffffff8;
 		g = (g + 4) & 0xfffffff8;
 		b = (b + 4) & 0xfffffff8;
@@ -437,10 +423,9 @@ STDMETHODIMP GdiBitmap::GetColourSchemeJSON(UINT count, BSTR* p)
 		points.push_back(p);
 	}
 
-	KMeans kmeans(count, colour_counters.size(), 12); // 12 iterations max
+	KMeans kmeans(count, colour_counters.size(), 12);
 	std::vector<Cluster> clusters = kmeans.run(points);
 
-	// sort by largest clusters
 	std::sort(
 		clusters.begin(),
 		clusters.end(),
@@ -559,7 +544,6 @@ void GdiFont::FinalRelease()
 		m_hFont = nullptr;
 	}
 
-	// call parent
 	GdiObj<IGdiFont, Gdiplus::Font>::FinalRelease();
 }
 
@@ -619,18 +603,14 @@ void GdiGraphics::GetRoundRectPath(Gdiplus::GraphicsPath& gp, Gdiplus::RectF& re
 
 	gp.Reset();
 
-	// top left
 	gp.AddArc(corner, 180, 90);
 
-	// top right
 	corner.X += (rect.Width - arc_dia_w);
 	gp.AddArc(corner, 270, 90);
 
-	// bottom right
 	corner.Y += (rect.Height - arc_dia_h);
 	gp.AddArc(corner, 0, 90);
 
-	// bottom left
 	corner.X -= (rect.Width - arc_dia_w);
 	gp.AddArc(corner, 90, 90);
 
@@ -796,10 +776,10 @@ STDMETHODIMP GdiGraphics::DrawString(BSTR str, IGdiFont* font, LONGLONG colour, 
 
 	if (flags != 0)
 	{
-		fmt.SetAlignment((Gdiplus::StringAlignment)((flags >> 28) & 0x3)); //0xf0000000
-		fmt.SetLineAlignment((Gdiplus::StringAlignment)((flags >> 24) & 0x3)); //0x0f000000
-		fmt.SetTrimming((Gdiplus::StringTrimming)((flags >> 20) & 0x7)); //0x00f00000
-		fmt.SetFormatFlags((Gdiplus::StringFormatFlags)(flags & 0x7FFF)); //0x0000ffff
+		fmt.SetAlignment((Gdiplus::StringAlignment)((flags >> 28) & 0x3));
+		fmt.SetLineAlignment((Gdiplus::StringAlignment)((flags >> 24) & 0x3));
+		fmt.SetTrimming((Gdiplus::StringTrimming)((flags >> 20) & 0x7));
+		fmt.SetFormatFlags((Gdiplus::StringFormatFlags)(flags & 0x7FFF));
 	}
 
 	m_ptr->DrawString(str, -1, fn, Gdiplus::RectF(x, y, w, h), &fmt, &br);
@@ -962,7 +942,6 @@ STDMETHODIMP GdiGraphics::GdiDrawText(BSTR str, IGdiFont* font, LONGLONG colour,
 	SetBkMode(dc, TRANSPARENT);
 	SetTextAlign(dc, TA_LEFT | TA_TOP | TA_NOUPDATECP);
 
-	// Well, magic :P
 	if (format & DT_CALCRECT)
 	{
 		RECT rc_calc = { 0 }, rc_old = { 0 };
@@ -974,7 +953,6 @@ STDMETHODIMP GdiGraphics::GdiDrawText(BSTR str, IGdiFont* font, LONGLONG colour,
 
 		format &= ~DT_CALCRECT;
 
-		// adjust vertical align
 		if (format & DT_VCENTER)
 		{
 			rc.top = rc_old.top + (((rc_old.bottom - rc_old.top) - (rc_calc.bottom - rc_calc.top)) >> 1);
@@ -1003,10 +981,10 @@ STDMETHODIMP GdiGraphics::MeasureString(BSTR str, IGdiFont* font, float x, float
 
 	if (flags != 0)
 	{
-		fmt.SetAlignment((Gdiplus::StringAlignment)((flags >> 28) & 0x3)); //0xf0000000
-		fmt.SetLineAlignment((Gdiplus::StringAlignment)((flags >> 24) & 0x3)); //0x0f000000
-		fmt.SetTrimming((Gdiplus::StringTrimming)((flags >> 20) & 0x7)); //0x00f00000
-		fmt.SetFormatFlags((Gdiplus::StringFormatFlags)(flags & 0x7FFF)); //0x0000ffff
+		fmt.SetAlignment((Gdiplus::StringAlignment)((flags >> 28) & 0x3));
+		fmt.SetLineAlignment((Gdiplus::StringAlignment)((flags >> 24) & 0x3));
+		fmt.SetTrimming((Gdiplus::StringTrimming)((flags >> 20) & 0x7));
+		fmt.SetFormatFlags((Gdiplus::StringFormatFlags)(flags & 0x7FFF));
 	}
 
 	Gdiplus::RectF bound;
@@ -1062,7 +1040,6 @@ HBITMAP GdiRawBitmap::CreateHBITMAP(Gdiplus::Bitmap* bitmap_ptr)
 
 	if (bitmap_ptr->LockBits(&rect, Gdiplus::ImageLockModeRead, PixelFormat32bppPARGB, &bmpdata) != Gdiplus::Ok)
 	{
-		// Error
 		return nullptr;
 	}
 
@@ -1140,9 +1117,7 @@ STDMETHODIMP MainMenuManager::BuildMenu(IMenuObj* p, int base_id, int count)
 	{
 		m_mm->generate_menu_win32(menuid, base_id, count, mainmenu_manager::flag_show_shortcuts);
 	}
-	catch (...)
-	{
-	}
+	catch (...) {}
 
 	return S_OK;
 }
@@ -1309,7 +1284,6 @@ STDMETHODIMP MenuObj::TrackPopupMenu(int x, int y, UINT flags, UINT* p)
 {
 	if (!m_hMenu || !p) return E_POINTER;
 
-	// Only include specified flags
 	flags |= TPM_NONOTIFY | TPM_RETURNCMD | TPM_RIGHTBUTTON;
 	flags &= ~TPM_RECURSE;
 
@@ -2343,12 +2317,8 @@ Tooltip::Tooltip(HWND p_wndparent, const panel_tooltip_param_ptr& p_param_ptr) :
 		core_api::get_my_instance(),
 		nullptr);
 
-	// Original position
 	SetWindowPos(m_wndtooltip, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
-
-	// Set up tooltip information.
 	memset(&m_ti, 0, sizeof(m_ti));
-
 	m_ti.cbSize = sizeof(m_ti);
 	m_ti.uFlags = TTF_IDISHWND | TTF_SUBCLASS | TTF_TRANSPARENT;
 	m_ti.hinst = core_api::get_my_instance();

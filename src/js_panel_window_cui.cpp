@@ -37,7 +37,7 @@ HWND js_panel_window_cui::create_or_transfer_window(HWND parent, const uie::wind
 	}
 	else
 	{
-		m_host = host; //store interface to host
+		m_host = host;
 		create(parent, this, p_position);
 	}
 	return get_wnd();

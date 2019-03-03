@@ -7,10 +7,10 @@
 
 enum IndentationStatus
 {
-	isNone, // no effect on indentation
-	isBlockStart, // indentation block begin such as "{" or VB "function"
-	isBlockEnd, // indentation end indicator such as "}" or VB "end"
-	isKeyWordStart // Keywords that cause indentation
+	isNone,
+	isBlockStart,
+	isBlockEnd,
+	isKeyWordStart
 };
 
 struct StyleAndWords
@@ -21,7 +21,6 @@ struct StyleAndWords
 	bool IsSingleChar() const { return words.length() == 1; }
 };
 
-// forward declaration
 struct t_sci_prop_set;
 
 struct t_style_to_key_table

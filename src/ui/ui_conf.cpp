@@ -122,7 +122,7 @@ BOOL CDialogConf::OnInitDialog(HWND hwndFocus, LPARAM lParam)
 
 	if (core_version_info_v2::get()->test_version(1, 4, 0, 0) && m_parent->GetInstanceType() == host_comm::KInstanceTypeDUI)
 	{
-		// disable in default UI fb2k v1.4 and above
+		// Disable in default UI fb2k v1.4 and above
 		ComboBox_SetCurSel(combo_edge, 0);
 		GetDlgItem(IDC_COMBO_EDGE).EnableWindow(false);
 	}

@@ -20,33 +20,22 @@ struct StringComparePartialNC
 
 const t_style_to_key_table js_style_table[] =
 {
-	// Default
 	{ STYLE_DEFAULT, "style.default" },
-	// Line number
 	{ STYLE_LINENUMBER, "style.linenumber" },
-	// Bracelight
 	{ STYLE_BRACELIGHT, "style.bracelight" },
-	// Bracebad
 	{ STYLE_BRACEBAD, "style.bracebad" },
-	// Comments
 	{ SCE_C_COMMENT, "style.comment" },
 	{ SCE_C_COMMENTLINE, "style.comment" },
 	{ SCE_C_COMMENTDOC, "style.comment" },
 	{ SCE_C_COMMENTLINEDOC, "style.comment" },
 	{ SCE_C_COMMENTDOCKEYWORD, "style.comment" },
 	{ SCE_C_COMMENTDOCKEYWORDERROR, "style.comment" },
-	// Keywords
 	{ SCE_C_WORD, "style.keyword" },
-	// Indentifier
 	{ SCE_C_IDENTIFIER, "style.indentifier" },
-	// Numbers
 	{ SCE_C_NUMBER, "style.number" },
-	// String/Chars
 	{ SCE_C_STRING, "style.string" },
 	{ SCE_C_CHARACTER, "style.string" },
-	// Operators
 	{ SCE_C_OPERATOR, "style.operator" },
-	//
 	{ -1, nullptr },
 };
 
@@ -106,7 +95,6 @@ static bool IsSymIncludes(const StyleAndWords& symbols, const SString value)
 	}
 	else if (isalpha(symbols.words[0]))
 	{
-		// Set of symbols separated by spaces
 		t_size lenVal = value.length();
 		const char* symbol = symbols.words.c_str();
 
@@ -134,7 +122,6 @@ static bool IsSymIncludes(const StyleAndWords& symbols, const SString value)
 	}
 	else
 	{
-		// Set of individual characters. Only one character allowed for now
 		char ch = symbols.words[0];
 		return strchr(value.c_str(), ch) != 0;
 	}
@@ -152,21 +139,17 @@ static bool ParseStyle(const char* p_definition, t_sci_editor_style& p_style)
 
 	while (opt)
 	{
-		// Find attribute separator
 		char* cpComma = strchr(opt, ',');
 
 		if (cpComma)
 		{
-			// If found, we terminate the current attribute (opt) string
 			*cpComma = 0;
 		}
 
-		// Find attribute name/value separator
 		char* colon = strchr(opt, ':');
 
 		if (colon)
 		{
-			// If found, we terminate the current attribute name and point on the value
 			*colon++ = '\0';
 		}
 
@@ -252,27 +235,19 @@ static inline bool IsASpace(t_size ch)
 static t_size LengthWord(const char* word, char otherSeparator)
 {
 	const char* endWord = 0;
-	// Find an otherSeparator
 
 	if (otherSeparator)
 		endWord = strchr(word, otherSeparator);
 
-	// Find a '('. If that fails go to the end of the string.
 	if (!endWord)
 		endWord = strchr(word, '(');
 
 	if (!endWord)
 		endWord = word + strlen(word);
 
-	// Last case always succeeds so endWord != 0
-
-	// Drop any space characters.
 	if (endWord > word)
 	{
 		endWord--;
-		// Back from the '(', otherSeparator, or '\0'
-		// Move backwards over any spaces
-
 		while ((endWord > word) && (IsASpace(*endWord)))
 		{
 			endWord--;
@@ -297,7 +272,7 @@ BOOL CScriptEditorCtrl::SubclassWindow(HWND hWnd)
 DWORD CScriptEditorCtrl::GetPropertyColor(const char* key, bool* key_exist)
 {
 	pfc::array_t<char> buff;
-	int len = GetPropertyExpanded(key, 0); // Get property len
+	int len = GetPropertyExpanded(key, 0);
 
 	if (key_exist)
 		*key_exist = (len != 0);
@@ -305,18 +280,14 @@ DWORD CScriptEditorCtrl::GetPropertyColor(const char* key, bool* key_exist)
 	if (len == 0)
 		return 0;
 
-	// Allocate buffer
 	buff.set_size(len + 1);
 	buff[len] = 0;
-	// Get property
 	GetPropertyExpanded(key, buff.get_ptr());
-
 	return ParseHex(buff.get_ptr());
 }
 
 IndentationStatus CScriptEditorCtrl::GetIndentState(int line)
 {
-	// C like language indentation defined by braces and keywords
 	IndentationStatus indentState = isNone;
 	SString controlWords[20];
 	t_size parts = GetLinePartsInStyle(line, m_StatementIndent.styleNumber, -1, controlWords, _countof(controlWords));
@@ -335,7 +306,6 @@ IndentationStatus CScriptEditorCtrl::GetIndentState(int line)
 		if (IsSymIncludes(m_StatementEnd, controlWords[i]))
 			indentState = isNone;
 	}
-	// Braces override keywords
 	SString controlStrings[20];
 
 	parts = GetLinePartsInStyle(line, m_BlockEnd.styleNumber, -1, controlStrings, _countof(controlStrings));
@@ -438,7 +408,6 @@ LRESULT CScriptEditorCtrl::OnKeyDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BO
 
 LRESULT CScriptEditorCtrl::OnUpdateUI(LPNMHDR pnmn)
 {
-	// Match Brace
 	int braceAtCaret = -1;
 	int braceOpposite = -1;
 
@@ -489,7 +458,6 @@ bool CScriptEditorCtrl::FindBraceMatchPos(int& braceAtCaret, int& braceOpposite)
 
 	if ((lengthDoc > 0) && (caretPos > 0))
 	{
-		// Check to ensure not matching brace that is part of a multibyte character
 		int posBefore = PositionBefore(caretPos);
 
 		if (posBefore == (caretPos - 1))
@@ -498,7 +466,6 @@ bool CScriptEditorCtrl::FindBraceMatchPos(int& braceAtCaret, int& braceOpposite)
 		}
 	}
 
-	// Priority goes to character before caret
 	if (charBefore && IsBraceChar(charBefore))
 	{
 		braceAtCaret = caretPos - 1;
@@ -509,8 +476,6 @@ bool CScriptEditorCtrl::FindBraceMatchPos(int& braceAtCaret, int& braceOpposite)
 
 	if (lengthDoc > 0 && (braceAtCaret < 0) && (caretPos < lengthDoc))
 	{
-		// No brace found so check other side
-		// Check to ensure not matching brace that is part of a multibyte character
 		char charAfter = GetCharAt(caretPos);
 
 		if (charAfter && IsBraceChar(charAfter))
@@ -562,14 +527,11 @@ bool CScriptEditorCtrl::GetNearestWords(pfc::string_base& out, const char* wordS
 			t_size pivot = index;
 			status = true;
 
-			// Find first match
-			while ((pivot > 0) &&
-				(StringComparePartialNC(searchLen)(m_apis[pivot - 1], wordStart) == 0))
+			while ((pivot > 0) && (StringComparePartialNC(searchLen)(m_apis[pivot - 1], wordStart) == 0))
 			{
 				--pivot;
 			}
 
-			// Grab each match
 			while (pivot <= m_apis.get_count() - 1)
 			{
 				if (StringComparePartialNC(searchLen)(m_apis[pivot], wordStart) != 0)
@@ -704,7 +666,6 @@ const char* CScriptEditorCtrl::GetNearestWord(const char* wordStart, int searchL
 
 	if (m_apis.bsearch_t(StringComparePartialNC(searchLen), wordStart, index))
 	{
-		// Find first match
 		t_size start = index;
 
 		while (start > 0 && StringComparePartialNC(searchLen)(m_apis[start - 1], wordStart) == 0)
@@ -712,7 +673,6 @@ const char* CScriptEditorCtrl::GetNearestWord(const char* wordStart, int searchL
 			--start;
 		}
 
-		// Find last match
 		t_size end = index;
 
 		while (end < m_apis.get_count() - 1 && StringComparePartialNC(searchLen)(m_apis[end + 1], wordStart) == 0)
@@ -720,15 +680,14 @@ const char* CScriptEditorCtrl::GetNearestWord(const char* wordStart, int searchL
 			++end;
 		}
 
-		// Finds first word in a series of equal words
 		for (t_size i = start; i <= end; ++i)
 		{
 			const char* word = m_apis[i];
 
 			if (!wordCharacters.contains(word[searchLen]))
 			{
-				if (wordIndex <= 0) // Checks if a specific index was requested
-					return word; // result must not be freed with free()
+				if (wordIndex <= 0)
+					return word;
 
 				--wordIndex;
 			}
@@ -842,7 +801,6 @@ t_size CScriptEditorCtrl::GetLinePartsInStyle(int line, int style1, int style2, 
 
 void CScriptEditorCtrl::AutoMarginWidth()
 {
-	// Auto margin width
 	int linenumwidth = 1;
 	int marginwidth, oldmarginwidth;
 	int linecount;
@@ -873,7 +831,6 @@ void CScriptEditorCtrl::AutomaticIndentation(char ch)
 
 	if (curLine > 0)
 	{
-		// Smart indent?
 		pfc::array_t<char> linebuf;
 		bool foundBrace = false;
 		int prevLineLength = LineLength(curLine - 1);
@@ -906,7 +863,6 @@ void CScriptEditorCtrl::AutomaticIndentation(char ch)
 
 	if (ch == '}')
 	{
-		// Dedent maybe
 		if (RangeIsAllWhitespace(thisLineStart, selStart - 1))
 		{
 			SetIndentation(curLine, indentBlock - indentSize);
@@ -914,7 +870,6 @@ void CScriptEditorCtrl::AutomaticIndentation(char ch)
 	}
 	else if (ch == '{')
 	{
-		// Dedent maybe if first on line and previous line was starting keyword
 		if ((GetIndentState(curLine - 1) == isKeyWordStart))
 		{
 			if (RangeIsAllWhitespace(thisLineStart, selStart - 1))
@@ -925,16 +880,13 @@ void CScriptEditorCtrl::AutomaticIndentation(char ch)
 	}
 	else if ((ch == '\r' || ch == '\n') && (selStart == thisLineStart))
 	{
-		// Dedent previous line maybe
 		SString controlWords[1];
 
 		if (GetLinePartsInStyle(curLine - 1, m_BlockEnd.styleNumber, -1, controlWords, _countof(controlWords)))
 		{
 			if (IsSymIncludes(m_BlockEnd, controlWords[0]))
 			{
-				// Check if first keyword on line is an ender
 				SetIndentation(curLine - 1, IndentOfBlock(curLine - 2) - indentSize);
-				// Recalculate as may have changed previous line
 				indentBlock = IndentOfBlock(curLine - 1);
 			}
 		}
@@ -972,8 +924,6 @@ void CScriptEditorCtrl::ContinueCallTip()
 	{
 		if (m_szFunctionDefinition[startHighlight] == ',')
 			commas--;
-		// If it reached the end of the argument list it means that the user typed in more
-		// arguments than the ones listed in the calltip
 		if (m_szFunctionDefinition[startHighlight] == ')')
 			commas = 0;
 		else
@@ -1023,7 +973,6 @@ void CScriptEditorCtrl::FillFunctionDefinition(int pos)
 			}
 		}
 
-		// Should get current api definition
 		const char* word = GetNearestWord(m_szCurrentCallTipWord.get_ptr(),
 			m_szCurrentCallTipWord.get_length(),
 			"_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", m_nCurrentCallTip);
@@ -1040,10 +989,8 @@ void CScriptEditorCtrl::FillFunctionDefinition(int pos)
 
 void CScriptEditorCtrl::Init()
 {
-	// Reset to default p_style
 	StyleResetDefault();
 
-	// Common
 	SetCodePage(SC_CP_UTF8);
 	SetEOLMode(SC_EOL_CRLF);
 	SetModEventMask(SC_MOD_INSERTTEXT | SC_MOD_DELETETEXT | SC_PERFORMED_UNDO | SC_PERFORMED_REDO);
@@ -1142,7 +1089,7 @@ void CScriptEditorCtrl::RestoreDefaultStyle()
 	ClearDocumentStyle();
 	StyleResetDefault();
 
-	// enable line numbering
+	// Enable line numbering
 	SetMarginWidthN(1, 0);
 	SetMarginWidthN(2, 0);
 	SetMarginWidthN(3, 0);
@@ -1206,21 +1153,17 @@ void CScriptEditorCtrl::SetAllStylesFromTable(const t_style_to_key_table table[]
 
 			style_num = table[i].style_num;
 
-			// Get property len
 			len = GetPropertyExpanded(key, 0);
 
 			if (len != 0)
 			{
-				// Alloc buffer
 				definition.set_size(len + 1);
 				definition[len] = 0;
-				// Get property
 				GetPropertyExpanded(key, definition.get_ptr());
 
 				if (!ParseStyle(definition.get_ptr(), style))
 					continue;
 
-				// Set style
 				if (style.flags & ESF_FONT)
 					StyleSetFont(style_num, style.font.get_ptr());
 
@@ -1277,13 +1220,9 @@ void CScriptEditorCtrl::SetJScript()
 
 	RestoreDefaultStyle();
 
-	// Set lexer
 	SetLexer(SCLEX_CPP);
-	// Set keywords
 	SetKeyWords(0, js_keywords);
-	// Set styles
 	SetAllStylesFromTable(js_style_table);
-	// Colorise
 	Colourise(0, -1);
 }
 
@@ -1299,7 +1238,6 @@ void CScriptEditorCtrl::SetIndentation(int line, int indent)
 	int posDifference = posAfter - posBefore;
 	if (posAfter > posBefore)
 	{
-		// Move selection on
 		if (crange.cpMin >= posBefore)
 		{
 			crange.cpMin += posDifference;
@@ -1312,7 +1250,6 @@ void CScriptEditorCtrl::SetIndentation(int line, int indent)
 	}
 	else if (posAfter < posBefore)
 	{
-		// Move selection back
 		if (crange.cpMin >= posAfter)
 		{
 			if (crange.cpMin >= posBefore)
@@ -1339,7 +1276,6 @@ void CScriptEditorCtrl::TrackWidth()
 
 	for (int i = 0; i < GetLineCount(); ++i)
 	{
-		// Get max width
 		int pos = GetLineEndPosition(i);
 		int width = PointXFromPosition(pos);
 

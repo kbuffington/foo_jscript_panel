@@ -16,7 +16,7 @@ const t_prop_set_init_table prop_sets_init_table[] =
 	{"style.bracebad", "bold,fore:#ff0000"},
 	{"style.selection.fore", ""},
 	{"style.selection.back", ""},
-	{"style.selection.alpha", "256"}, // 256 - SC_ALPHA_NOALPHA
+	{"style.selection.alpha", "256"},
 	{"style.caret.fore", ""},
 	{"style.caret.width", "1"},
 	{"style.caret.line.back", ""},
@@ -93,7 +93,6 @@ void cfg_sci_prop_sets::import(const char* content)
 		}
 	}
 
-	// Merge
 	merge_data(data_map);
 }
 
@@ -151,7 +150,6 @@ void cfg_sci_prop_sets::set_data_raw(stream_reader* p_stream, t_size p_sizehint,
 	}
 	catch (...)
 	{
-		// Load default
 		init_data(prop_sets_init_table);
 		return;
 	}

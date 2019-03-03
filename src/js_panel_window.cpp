@@ -766,7 +766,6 @@ void js_panel_window::on_mouse_leave()
 	m_is_mouse_tracked = false;
 
 	script_invoke_v(CallbackIds::on_mouse_leave);
-	// Restore default cursor
 	SetCursor(LoadCursor(nullptr, IDC_ARROW));
 }
 
@@ -781,8 +780,6 @@ void js_panel_window::on_mouse_move(WPARAM wp, LPARAM lp)
 		tme.dwFlags = TME_LEAVE;
 		TrackMouseEvent(&tme);
 		m_is_mouse_tracked = true;
-
-		// Restore default cursor
 		SetCursor(LoadCursor(nullptr, IDC_ARROW));
 	}
 
@@ -885,7 +882,6 @@ void js_panel_window::on_paint_error(HDC memdc)
 	RECT rc = { 0, 0, m_width, m_height };
 	SIZE sz = { 0 };
 
-	// Font chosing
 	HFONT newfont = CreateFont(
 		20,
 		0,
@@ -904,7 +900,6 @@ void js_panel_window::on_paint_error(HDC memdc)
 
 	HFONT oldfont = (HFONT)SelectObject(memdc, newfont);
 
-	// Font drawing
 	{
 		LOGBRUSH lbBack = { BS_SOLID, RGB(225, 60, 45), 0 };
 		HBRUSH hBack = CreateBrushIndirect(&lbBack);
@@ -925,18 +920,13 @@ void js_panel_window::on_paint_user(HDC memdc, LPRECT lpUpdateRect)
 {
 	if (m_script_host->Ready())
 	{
-		// Prepare graphics object to the script.
 		Gdiplus::Graphics gr(memdc);
 		Gdiplus::Rect rect(lpUpdateRect->left, lpUpdateRect->top, lpUpdateRect->right - lpUpdateRect->left, lpUpdateRect->bottom - lpUpdateRect->top);
-
-		// SetClip() may improve performance slightly
 		gr.SetClip(rect);
-
 		m_gr_wrap->put__ptr(&gr);
 
 		{
 			VARIANTARG args[1];
-
 			args[0].vt = VT_DISPATCH;
 			args[0].pdispVal = m_gr_wrap;
 			script_invoke_v(CallbackIds::on_paint, args, _countof(args));

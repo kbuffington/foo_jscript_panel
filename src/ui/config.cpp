@@ -54,7 +54,6 @@ void prop_kv_config::g_load(t_map& data, stream_reader* reader, abort_callback& 
 
 	try
 	{
-		// Get count
 		reader->read_lendian_t(count, abort);
 
 		for (t_size i = 0; i < count; ++i)
@@ -64,9 +63,7 @@ void prop_kv_config::g_load(t_map& data, stream_reader* reader, abort_callback& 
 			VARTYPE vt;
 			int cbRead = 0;
 
-			// read key
 			reader->read_string(key, abort);
-			// read vtype
 			reader->read_lendian_t(vt, abort);
 
 			switch (vt)
@@ -110,9 +107,7 @@ void prop_kv_config::g_load(t_map& data, stream_reader* reader, abort_callback& 
 			}
 			else
 			{
-				// Read to bstr
 				pfc::string8_fast str;
-
 				reader->read_string(str, abort);
 				val.bstrVal = SysAllocString(string_wide_from_utf8_fast(str));
 			}
@@ -127,16 +122,12 @@ void prop_kv_config::g_save(const t_map& data, stream_writer* writer, abort_call
 {
 	try
 	{
-		// Write count
 		writer->write_lendian_t(data.get_count(), abort);
 
 		for (t_map::const_iterator iter = data.first(); iter.is_valid(); ++iter)
 		{
-			// Write key
 			writer->write_string(iter->m_key, abort);
-			// Write vt
 			writer->write_lendian_t(iter->m_value.vt, abort);
-			// Write value
 			int cbWrite = 0;
 
 			switch (iter->m_value.vt)

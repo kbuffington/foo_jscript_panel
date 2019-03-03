@@ -32,8 +32,6 @@ STDMETHODIMP Gdi::Font(BSTR name, float pxSize, int style, IGdiFont** pp)
 	Gdiplus::Font* font = new Gdiplus::Font(name, pxSize, style, Gdiplus::UnitPixel);
 	if (helpers::ensure_gdiplus_object(font))
 	{
-		// Generate HFONT
-		// The benefit of replacing Gdiplus::Font::GetLogFontW is that you can get it work with CCF/OpenType fonts.
 		HFONT hFont = CreateFont(
 			-(int)pxSize,
 			0,

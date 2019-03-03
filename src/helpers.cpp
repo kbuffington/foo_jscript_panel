@@ -267,7 +267,6 @@ namespace helpers
 		if (!data.is_valid())
 			return ret;
 
-		// Using IStream
 		IStreamPtr is;
 		if (SUCCEEDED(CreateStreamOnHGlobal(nullptr, TRUE, &is)) && is)
 		{
@@ -739,7 +738,7 @@ namespace helpers
 	wchar_t* make_sort_string(const char* in)
 	{
 		wchar_t* out = new wchar_t[estimate_utf8_to_wide(in) + 1];
-		out[0] = ' ';//StrCmpLogicalW bug workaround.
+		out[0] = ' '; // StrCmpLogicalW bug workaround.
 		convert_utf8_to_wide_unchecked(out + 1, in);
 		return out;
 	}

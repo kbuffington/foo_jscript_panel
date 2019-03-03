@@ -56,6 +56,7 @@ HRESULT script_host::Initialize()
 
 	if (SUCCEEDED(hr))
 	{
+		m_callback_invoker.Init(m_script_root);
 		m_engine_inited = true;
 	}
 	else
@@ -64,7 +65,6 @@ HRESULT script_host::Initialize()
 		m_has_error = true;
 	}
 
-	m_callback_invoker.Init(m_script_root);
 	return hr;
 }
 
@@ -99,17 +99,14 @@ HRESULT script_host::InitScriptEngine()
 
 HRESULT script_host::InvokeCallback(t_size callbackId, VARIANTARG* argv, t_size argc, VARIANT* ret)
 {
-	if (HasError()) return E_FAIL;
-	if (!Ready()) return E_FAIL;
-
 	HRESULT hr = E_FAIL;
+	if (HasError() || !Ready()) return hr;
 
 	try
 	{
 		hr = m_callback_invoker.Invoke(callbackId, argv, argc, ret);
 	}
 	catch (...) {}
-
 	return hr;
 }
 
@@ -154,9 +151,7 @@ STDMETHODIMP script_host::GetDocVersionString(BSTR* pstr)
 STDMETHODIMP script_host::GetItemInfo(LPCOLESTR name, DWORD mask, IUnknown** ppunk, ITypeInfo** ppti)
 {
 	if (ppti) *ppti = nullptr;
-
 	if (ppunk) *ppunk = nullptr;
-
 	if (mask & SCRIPTINFO_IUNKNOWN)
 	{
 		if (!name) return E_INVALIDARG;
@@ -199,7 +194,6 @@ STDMETHODIMP script_host::GetItemInfo(LPCOLESTR name, DWORD mask, IUnknown** ppu
 			return S_OK;
 		}
 	}
-
 	return TYPE_E_ELEMENTNOTFOUND;
 }
 
@@ -228,9 +222,7 @@ STDMETHODIMP script_host::OnLeaveScript()
 STDMETHODIMP script_host::OnScriptError(IActiveScriptError* err)
 {
 	m_has_error = true;
-
 	if (!err) return E_POINTER;
-
 	ReportError(err);
 	return S_OK;
 }
@@ -253,12 +245,10 @@ ULONG STDMETHODCALLTYPE script_host::AddRef()
 ULONG STDMETHODCALLTYPE script_host::Release()
 {
 	ULONG n = InterlockedDecrement(&m_dwRef);
-
 	if (n == 0)
 	{
 		delete this;
 	}
-
 	return n;
 }
 
@@ -290,7 +280,6 @@ void script_host::Finalize()
 
 	if (Ready())
 	{
-		// Call GC explicitly
 		IActiveScriptGarbageCollector* gc = nullptr;
 		if (SUCCEEDED(m_script_engine->QueryInterface(IID_IActiveScriptGarbageCollector, (void**)&gc)))
 		{
@@ -301,7 +290,6 @@ void script_host::Finalize()
 		m_script_engine->SetScriptState(SCRIPTSTATE_DISCONNECTED);
 		m_script_engine->SetScriptState(SCRIPTSTATE_CLOSED);
 		m_script_engine->Close();
-		//m_script_engine->InterruptScriptThread(SCRIPTTHREADID_ALL, nullptr, 0);
 		m_engine_inited = false;
 	}
 
@@ -380,7 +368,6 @@ void script_host::ReportError(IActiveScriptError* err)
 	LONG charpos = 0;
 	EXCEPINFO excep = { 0 };
 	_bstr_t sourceline;
-	_bstr_t name;
 
 	if (FAILED(err->GetSourcePosition(&ctx, &line, &charpos)))
 	{
@@ -398,7 +385,6 @@ void script_host::ReportError(IActiveScriptError* err)
 		return;
 	}
 
-	// Do a deferred fill-in if necessary
 	if (excep.pfnDeferredFillIn)
 	{
 		(*excep.pfnDeferredFillIn)(&excep);
@@ -427,9 +413,7 @@ void script_host::ReportError(IActiveScriptError* err)
 		formatter << "File: " << m_contextToPathMap[ctx] << "\n";
 	}
 
-	formatter << "Line: " << (t_size)(line + 1) << ", Col: " << (t_size)(charpos + 1) << "\n";
-	formatter << string_utf8_from_wide(sourceline);
-	if (name.length() > 0) formatter << "\nAt: " << name;
+	formatter << "Line: " << (line + 1) << ", Col: " << (charpos + 1) << "\n" << string_utf8_from_wide(sourceline);
 
 	if (excep.bstrSource) SysFreeString(excep.bstrSource);
 	if (excep.bstrDescription) SysFreeString(excep.bstrDescription);

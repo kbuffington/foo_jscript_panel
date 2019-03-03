@@ -1,7 +1,6 @@
 #pragma once
 #include "editorctrl.h"
 
-// Forward declarations
 class js_panel_window;
 class CDialogFind;
 class CDialogReplace;
