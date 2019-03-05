@@ -17,15 +17,12 @@ protected:
 	void get_category(pfc::string_base& out) const override;
 	void get_config(stream_writer* writer, abort_callback& abort) const override;
 	void get_name(pfc::string_base& out) const override;
+	void notify_size_limit_changed(t_size limit) override;
 	void on_bool_changed(t_size mask) const override;
 	void on_colour_changed(t_size mask) const override;
 	void on_font_changed(t_size mask) const override;
 	void set_config(stream_reader* reader, t_size size, abort_callback& abort) override;
 
 private:
-	using t_parent = js_panel_window;
-
-	void notify_size_limit_changed(WPARAM wp) override;
-
 	uie::window_host_ptr m_host;
 };

@@ -75,7 +75,7 @@ js_panel_window_dui::js_panel_window_dui(ui_element_config::ptr cfg, ui_element_
 
 js_panel_window_dui::~js_panel_window_dui()
 {
-	t_parent::destroy();
+	js_panel_window::destroy();
 }
 
 DWORD js_panel_window_dui::GetColourUI(t_size type)
@@ -126,7 +126,7 @@ HFONT js_panel_window_dui::GetFontUI(t_size type)
 
 HWND js_panel_window_dui::get_wnd()
 {
-	return t_parent::get_wnd();
+	return js_panel_window::get_wnd();
 }
 
 LRESULT js_panel_window_dui::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
@@ -144,7 +144,7 @@ LRESULT js_panel_window_dui::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM l
 	case WM_GETDLGCODE:
 		return DLGC_WANTALLKEYS;
 	}
-	return t_parent::on_message(hwnd, msg, wp, lp);
+	return js_panel_window::on_message(hwnd, msg, wp, lp);
 }
 
 bool js_panel_window_dui::edit_mode_context_menu_test(const POINT& p_point, bool p_fromkeyboard)
@@ -208,7 +208,7 @@ void js_panel_window_dui::notify(const GUID& p_what, t_size p_param1, const void
 	}
 }
 
-void js_panel_window_dui::notify_size_limit_changed(WPARAM wp)
+void js_panel_window_dui::notify_size_limit_changed(t_size limit)
 {
 	m_callback->on_min_max_info_change();
 }

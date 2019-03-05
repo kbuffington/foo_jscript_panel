@@ -375,22 +375,6 @@ LRESULT js_panel_window::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 		show_property_popup(m_hwnd);
 		return 0;
 
-	case UWM_SIZE:
-		on_size(m_width, m_height);
-		if (m_pseudo_transparent)
-		{
-			PostMessage(m_hwnd, UWM_REFRESHBK, 0, 0);
-		}
-		else
-		{
-			Repaint();
-		}
-		return 0;
-
-	case UWM_SIZE_LIMIT_CHANGED:
-		notify_size_limit_changed(wp);
-		return 0;
-
 	case UWM_TIMER:
 		host_timer_dispatcher::instance().onInvokeMessage(wp);
 		return 0;
@@ -1150,7 +1134,7 @@ void js_panel_window::script_load()
 
 	m_max_size = { INT_MAX, INT_MAX };
 	m_min_size = { 0, 0 };
-	PostMessage(m_hwnd, UWM_SIZE_LIMIT_CHANGED, uie::size_limit_all, 0);
+	notify_size_limit_changed(uie::size_limit_all);
 
 	if (FAILED(m_script_host->Initialize()))
 	{
@@ -1165,7 +1149,15 @@ void js_panel_window::script_load()
 	}
 
 	// HACK: Script update will not call on_size, so invoke it explicitly
-	SendMessage(m_hwnd, UWM_SIZE, 0, 0);
+	on_size(m_width, m_height);
+	if (m_pseudo_transparent)
+	{
+		PostMessage(m_hwnd, UWM_REFRESHBK, 0, 0);
+	}
+	else
+	{
+		Repaint();
+	}
 
 	FB2K_console_formatter() << m_script_info.build_info_string() << ": initialised in " << (int)(timer.query() * 1000) << " ms";
 }

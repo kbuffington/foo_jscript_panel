@@ -321,27 +321,27 @@ STDMETHODIMP Window::get_Width(int* p)
 STDMETHODIMP Window::put_MaxHeight(UINT height)
 {
 	m_host->m_max_size.y = height;
-	PostMessage(m_host->GetHWND(), UWM_SIZE_LIMIT_CHANGED, uie::size_limit_maximum_height, 0);
+	m_host->notify_size_limit_changed(uie::size_limit_maximum_height);
 	return S_OK;
 }
 
 STDMETHODIMP Window::put_MaxWidth(UINT width)
 {
 	m_host->m_max_size.x = width;
-	PostMessage(m_host->GetHWND(), UWM_SIZE_LIMIT_CHANGED, uie::size_limit_maximum_width, 0);
+	m_host->notify_size_limit_changed(uie::size_limit_maximum_width);
 	return S_OK;
 }
 
 STDMETHODIMP Window::put_MinHeight(UINT height)
 {
 	m_host->m_min_size.y = height;
-	PostMessage(m_host->GetHWND(), UWM_SIZE_LIMIT_CHANGED, uie::size_limit_minimum_height, 0);
+	m_host->notify_size_limit_changed(uie::size_limit_minimum_height);
 	return S_OK;
 }
 
 STDMETHODIMP Window::put_MinWidth(UINT width)
 {
 	m_host->m_min_size.x = width;
-	PostMessage(m_host->GetHWND(), UWM_SIZE_LIMIT_CHANGED, uie::size_limit_minimum_width, 0);
+	m_host->notify_size_limit_changed(uie::size_limit_minimum_width);
 	return S_OK;
 }

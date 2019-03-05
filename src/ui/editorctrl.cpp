@@ -1071,7 +1071,7 @@ void CScriptEditorCtrl::ReadAPI()
 	pfc::string8_fast content(static_cast<const char*>(pures->GetPointer()), pures->GetSize());
 	pfc::string_list_impl list;
 	pfc::splitStringByLines(list, content);
-	
+
 	for (t_size i = 0; i < list.get_count(); ++i)
 	{
 		pfc::string8_fast tmp = list[i];

@@ -45,7 +45,7 @@ HWND js_panel_window_cui::create_or_transfer_window(HWND parent, const uie::wind
 
 HWND js_panel_window_cui::get_wnd() const
 {
-	return t_parent::get_wnd();
+	return js_panel_window::get_wnd();
 }
 
 LRESULT js_panel_window_cui::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
@@ -76,7 +76,7 @@ LRESULT js_panel_window_cui::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM l
 		catch (...) {}
 		break;
 	}
-	return t_parent::on_message(hwnd, msg, wp, lp);
+	return js_panel_window::on_message(hwnd, msg, wp, lp);
 }
 
 bool js_panel_window_cui::have_config_popup() const
@@ -145,7 +145,7 @@ void js_panel_window_cui::set_config(stream_reader* reader, t_size size, abort_c
 	load_config(reader, size, abort);
 }
 
-void js_panel_window_cui::notify_size_limit_changed(WPARAM wp)
+void js_panel_window_cui::notify_size_limit_changed(t_size limit)
 {
-	m_host->on_size_limit_change(m_hwnd, wp);
+	m_host->on_size_limit_change(m_hwnd, limit);
 }
