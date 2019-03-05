@@ -5,7 +5,7 @@
 // CUI panel instance
 static uie::window_factory<js_panel_window_cui> g_js_panel_wndow_cui;
 
-DWORD js_panel_window_cui::GetColourUI(t_size type)
+DWORD js_panel_window_cui::get_colour_ui(t_size type)
 {
 	if (type <= cui::colours::colour_active_item_frame)
 	{
@@ -15,7 +15,7 @@ DWORD js_panel_window_cui::GetColourUI(t_size type)
 	return 0;
 }
 
-HFONT js_panel_window_cui::GetFontUI(t_size type)
+HFONT js_panel_window_cui::get_font_ui(t_size type)
 {
 	if (type <= cui::fonts::font_type_labels)
 	{

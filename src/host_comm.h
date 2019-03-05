@@ -98,19 +98,19 @@ public:
 		KInstanceTypeDUI,
 	};
 
-	HDC GetHDC();
-	HWND GetHWND();
-	int GetHeight();
-	int GetWidth();
-	panel_tooltip_param_ptr& PanelTooltipParam();
-	t_size GetInstanceType();
-	virtual DWORD GetColourUI(t_size type) = 0;
-	virtual HFONT GetFontUI(t_size type) = 0;
+	HDC get_hdc();
+	HWND get_hwnd();
+	int get_height();
+	int get_width();
+	panel_tooltip_param_ptr& panel_tooltip();
+	t_size get_instance_type();
+	virtual DWORD get_colour_ui(t_size type) = 0;
+	virtual HFONT get_font_ui(t_size type) = 0;
 	virtual void notify_size_limit_changed(t_size limit) = 0;
-	void Redraw();
-	void RefreshBackground(LPRECT lprcUpdate = nullptr);
-	void Repaint(bool force = false);
-	void RepaintRect(int x, int y, int w, int h, bool force = false);
+	void redraw();
+	void refresh_background(LPRECT lprcUpdate = nullptr);
+	void repaint(bool force = false);
+	void repaint_rect(int x, int y, int w, int h, bool force = false);
 
 	POINT m_max_size;
 	POINT m_min_size;

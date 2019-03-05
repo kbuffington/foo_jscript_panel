@@ -204,7 +204,7 @@ STDMETHODIMP script_host::GetLCID(LCID* plcid)
 
 STDMETHODIMP script_host::GetWindow(HWND* phwnd)
 {
-	*phwnd = m_host->GetHWND();
+	*phwnd = m_host->get_hwnd();
 	return S_OK;
 }
 
@@ -316,7 +316,7 @@ void script_host::GenerateSourceContext(const pfc::string8_fast& path, DWORD& so
 void script_host::ProcessScriptInfo(t_script_info& info)
 {
 	info.clear();
-	info.id = (t_size)m_host->GetHWND();
+	info.id = (t_size)m_host->get_hwnd();
 
 	std::string source(m_host->m_script_code);
 	t_size start = source.find("// ==PREPROCESSOR==");
@@ -422,7 +422,7 @@ void script_host::ReportError(IActiveScriptError* err)
 	FB2K_console_formatter() << formatter;
 	main_thread_callback_add(fb2k::service_new<helpers::popup_msg>(formatter, JSP_NAME_VERSION));
 	MessageBeep(MB_ICONASTERISK);
-	SendMessage(m_host->GetHWND(), UWM_SCRIPT_ERROR, 0, 0);
+	SendMessage(m_host->get_hwnd(), UWM_SCRIPT_ERROR, 0, 0);
 }
 
 void script_host::Stop()

@@ -3,8 +3,8 @@
 class js_panel_window_cui : public js_panel_window, public uie::window, public cui::fonts::common_callback, public cui::colours::common_callback
 {
 protected:
-	DWORD GetColourUI(t_size type) override;
-	HFONT GetFontUI(t_size type) override;
+	DWORD get_colour_ui(t_size type) override;
+	HFONT get_font_ui(t_size type) override;
 	HWND create_or_transfer_window(HWND parent, const uie::window_host_ptr& host, const ui_helpers::window_position_t& p_position) override;
 	HWND get_wnd() const override;
 	LRESULT on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp) override;

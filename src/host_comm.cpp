@@ -19,43 +19,43 @@ host_comm::host_comm()
 
 host_comm::~host_comm() {}
 
-HDC host_comm::GetHDC()
+HDC host_comm::get_hdc()
 {
 	return m_hdc;
 }
 
-HWND host_comm::GetHWND()
+HWND host_comm::get_hwnd()
 {
 	return m_hwnd;
 }
 
-int host_comm::GetHeight()
+int host_comm::get_height()
 {
 	return m_height;
 }
 
-int host_comm::GetWidth()
+int host_comm::get_width()
 {
 	return m_width;
 }
 
-panel_tooltip_param_ptr& host_comm::PanelTooltipParam()
+panel_tooltip_param_ptr& host_comm::panel_tooltip()
 {
 	return m_panel_tooltip_param_ptr;
 }
 
-t_size host_comm::GetInstanceType()
+t_size host_comm::get_instance_type()
 {
 	return m_instance_type;
 }
 
-void host_comm::Redraw()
+void host_comm::redraw()
 {
 	m_paint_pending = false;
 	RedrawWindow(m_hwnd, nullptr, nullptr, RDW_INVALIDATE | RDW_UPDATENOW);
 }
 
-void host_comm::RefreshBackground(LPRECT lprcUpdate)
+void host_comm::refresh_background(LPRECT lprcUpdate)
 {
 	HWND wnd_parent = GetAncestor(m_hwnd, GA_PARENT);
 
@@ -121,10 +121,10 @@ void host_comm::RefreshBackground(LPRECT lprcUpdate)
 	SetWindowRgn(m_hwnd, nullptr, FALSE);
 	m_suppress_drawing = false;
 	if (m_edge_style) SendMessage(m_hwnd, WM_NCPAINT, 1, 0);
-	Repaint(true);
+	repaint(true);
 }
 
-void host_comm::Repaint(bool force)
+void host_comm::repaint(bool force)
 {
 	m_paint_pending = true;
 
@@ -138,7 +138,7 @@ void host_comm::Repaint(bool force)
 	}
 }
 
-void host_comm::RepaintRect(int x, int y, int w, int h, bool force)
+void host_comm::repaint_rect(int x, int y, int w, int h, bool force)
 {
 	RECT rc = { x, y, x + w, y + h };
 	m_paint_pending = true;

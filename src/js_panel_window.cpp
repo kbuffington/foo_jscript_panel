@@ -63,7 +63,7 @@ LRESULT js_panel_window::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 			{
 				RECT rc;
 				GetUpdateRect(m_hwnd, &rc, FALSE);
-				RefreshBackground(&rc);
+				refresh_background(&rc);
 				return 0;
 			}
 
@@ -83,7 +83,7 @@ LRESULT js_panel_window::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 			if (m_pseudo_transparent)
 				PostMessage(m_hwnd, UWM_REFRESHBK, 0, 0);
 			else
-				Repaint();
+				repaint();
 		}
 		return 0;
 
@@ -344,7 +344,7 @@ LRESULT js_panel_window::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 		return 0;
 
 	case UWM_REFRESHBK:
-		Redraw();
+		redraw();
 		return 0;
 
 	case UWM_RELOAD:
@@ -353,11 +353,11 @@ LRESULT js_panel_window::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 
 	case UWM_SCRIPT_ERROR:
 		{
-			const auto& tooltip_param = PanelTooltipParam();
+			const auto& tooltip_param = panel_tooltip();
 			if (tooltip_param && tooltip_param->tooltip_hwnd)
 				SendMessage(tooltip_param->tooltip_hwnd, TTM_ACTIVATE, FALSE, 0);
 
-			Repaint();
+			repaint();
 			m_script_host->Stop();
 			script_unload();
 		}
@@ -1156,7 +1156,7 @@ void js_panel_window::script_load()
 	}
 	else
 	{
-		Repaint();
+		repaint();
 	}
 
 	FB2K_console_formatter() << m_script_info.build_info_string() << ": initialised in " << (int)(timer.query() * 1000) << " ms";

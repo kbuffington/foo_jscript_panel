@@ -23,7 +23,7 @@ STDMETHODIMP Window::CreatePopupMenu(IMenuObj** pp)
 {
 	if (!pp) return E_POINTER;
 
-	*pp = new com_object_impl_t<MenuObj>(m_host->GetHWND());
+	*pp = new com_object_impl_t<MenuObj>(m_host->get_hwnd());
 	return S_OK;
 }
 
@@ -35,7 +35,7 @@ STDMETHODIMP Window::CreateThemeManager(BSTR classid, IThemeManager** pp)
 
 	try
 	{
-		ptheme = new com_object_impl_t<ThemeManager>(m_host->GetHWND(), classid);
+		ptheme = new com_object_impl_t<ThemeManager>(m_host->get_hwnd(), classid);
 	}
 	catch (...)
 	{
@@ -55,42 +55,42 @@ STDMETHODIMP Window::CreateTooltip(BSTR name, float pxSize, int style, ITooltip*
 {
 	if (!pp) return E_POINTER;
 
-	const auto& tooltip_param = m_host->PanelTooltipParam();
+	const auto& tooltip_param = m_host->panel_tooltip();
 	tooltip_param->font_name = name;
 	tooltip_param->font_size = pxSize;
 	tooltip_param->font_style = style;
-	*pp = new com_object_impl_t<Tooltip>(m_host->GetHWND(), tooltip_param);
+	*pp = new com_object_impl_t<Tooltip>(m_host->get_hwnd(), tooltip_param);
 	return S_OK;
 }
 
 STDMETHODIMP Window::GetColourCUI(UINT type, int* p)
 {
 	if (!p) return E_POINTER;
-	if (m_host->GetInstanceType() != host_comm::KInstanceTypeCUI) return E_NOTIMPL;
+	if (m_host->get_instance_type() != host_comm::KInstanceTypeCUI) return E_NOTIMPL;
 
-	*p = m_host->GetColourUI(type);
+	*p = m_host->get_colour_ui(type);
 	return S_OK;
 }
 
 STDMETHODIMP Window::GetColourDUI(UINT type, int* p)
 {
 	if (!p) return E_POINTER;
-	if (m_host->GetInstanceType() != host_comm::KInstanceTypeDUI) return E_NOTIMPL;
+	if (m_host->get_instance_type() != host_comm::KInstanceTypeDUI) return E_NOTIMPL;
 
-	*p = m_host->GetColourUI(type);
+	*p = m_host->get_colour_ui(type);
 	return S_OK;
 }
 
 STDMETHODIMP Window::GetFontCUI(UINT type, IGdiFont** pp)
 {
 	if (!pp) return E_POINTER;
-	if (m_host->GetInstanceType() != host_comm::KInstanceTypeCUI) return E_NOTIMPL;
+	if (m_host->get_instance_type() != host_comm::KInstanceTypeCUI) return E_NOTIMPL;
 
 	*pp = nullptr;
-	HFONT hFont = m_host->GetFontUI(type);
+	HFONT hFont = m_host->get_font_ui(type);
 	if (hFont)
 	{
-		Gdiplus::Font* font = new Gdiplus::Font(m_host->GetHDC(), hFont);
+		Gdiplus::Font* font = new Gdiplus::Font(m_host->get_hdc(), hFont);
 		if (helpers::ensure_gdiplus_object(font))
 		{
 			*pp = new com_object_impl_t<GdiFont>(font, hFont);
@@ -107,13 +107,13 @@ STDMETHODIMP Window::GetFontCUI(UINT type, IGdiFont** pp)
 STDMETHODIMP Window::GetFontDUI(UINT type, IGdiFont** pp)
 {
 	if (!pp) return E_POINTER;
-	if (m_host->GetInstanceType() != host_comm::KInstanceTypeDUI) return E_NOTIMPL;
+	if (m_host->get_instance_type() != host_comm::KInstanceTypeDUI) return E_NOTIMPL;
 
 	*pp = nullptr;
-	HFONT hFont = m_host->GetFontUI(type);
+	HFONT hFont = m_host->get_font_ui(type);
 	if (hFont)
 	{
-		Gdiplus::Font* font = new Gdiplus::Font(m_host->GetHDC(), hFont);
+		Gdiplus::Font* font = new Gdiplus::Font(m_host->get_hdc(), hFont);
 		if (helpers::ensure_gdiplus_object(font))
 		{
 			*pp = new com_object_impl_t<GdiFont>(font, hFont, false);
@@ -163,25 +163,25 @@ STDMETHODIMP Window::NotifyOthers(BSTR name, VARIANT info)
 	auto data = new callback_data<_bstr_t, _variant_t>(name, 0);
 	auto d = var.Detach();
 	data->m_item2.Attach(d);
-	panel_manager::instance().send_msg_to_others_pointer(m_host->GetHWND(), CallbackIds::on_notify_data, data);
+	panel_manager::instance().send_msg_to_others_pointer(m_host->get_hwnd(), CallbackIds::on_notify_data, data);
 	return S_OK;
 }
 
 STDMETHODIMP Window::Reload()
 {
-	PostMessage(m_host->GetHWND(), UWM_RELOAD, 0, 0);
+	PostMessage(m_host->get_hwnd(), UWM_RELOAD, 0, 0);
 	return S_OK;
 }
 
 STDMETHODIMP Window::Repaint(VARIANT_BOOL force)
 {
-	m_host->Repaint(force != VARIANT_FALSE);
+	m_host->repaint(force != VARIANT_FALSE);
 	return S_OK;
 }
 
 STDMETHODIMP Window::RepaintRect(int x, int y, int w, int h, VARIANT_BOOL force)
 {
-	m_host->RepaintRect(x, y, w, h, force != VARIANT_FALSE);
+	m_host->repaint_rect(x, y, w, h, force != VARIANT_FALSE);
 	return S_OK;
 }
 
@@ -195,7 +195,7 @@ STDMETHODIMP Window::SetInterval(IDispatch* func, int delay, UINT* p)
 {
 	if (!p) return E_POINTER;
 
-	*p = host_timer_dispatcher::instance().setInterval(m_host->GetHWND(), delay, func);
+	*p = host_timer_dispatcher::instance().setInterval(m_host->get_hwnd(), delay, func);
 	return S_OK;
 }
 
@@ -209,19 +209,19 @@ STDMETHODIMP Window::SetTimeout(IDispatch* func, int delay, UINT* p)
 {
 	if (!p) return E_POINTER;
 
-	*p = host_timer_dispatcher::instance().setTimeout(m_host->GetHWND(), delay, func);
+	*p = host_timer_dispatcher::instance().setTimeout(m_host->get_hwnd(), delay, func);
 	return S_OK;
 }
 
 STDMETHODIMP Window::ShowConfigure()
 {
-	PostMessage(m_host->GetHWND(), UWM_SHOW_CONFIGURE, 0, 0);
+	PostMessage(m_host->get_hwnd(), UWM_SHOW_CONFIGURE, 0, 0);
 	return S_OK;
 }
 
 STDMETHODIMP Window::ShowProperties()
 {
-	PostMessage(m_host->GetHWND(), UWM_SHOW_PROPERTIES, 0, 0);
+	PostMessage(m_host->get_hwnd(), UWM_SHOW_PROPERTIES, 0, 0);
 	return S_OK;
 }
 
@@ -229,7 +229,7 @@ STDMETHODIMP Window::get_Height(int* p)
 {
 	if (!p) return E_POINTER;
 
-	*p = m_host->GetHeight();
+	*p = m_host->get_height();
 	return S_OK;
 }
 
@@ -245,7 +245,7 @@ STDMETHODIMP Window::get_InstanceType(UINT* p)
 {
 	if (!p) return E_POINTER;
 
-	*p = m_host->GetInstanceType();
+	*p = m_host->get_instance_type();
 	return S_OK;
 }
 
@@ -261,7 +261,7 @@ STDMETHODIMP Window::get_IsVisible(VARIANT_BOOL* p)
 {
 	if (!p) return E_POINTER;
 
-	*p = TO_VARIANT_BOOL(IsWindowVisible(m_host->GetHWND()));
+	*p = TO_VARIANT_BOOL(IsWindowVisible(m_host->get_hwnd()));
 	return S_OK;
 }
 
@@ -314,7 +314,7 @@ STDMETHODIMP Window::get_Width(int* p)
 {
 	if (!p) return E_POINTER;
 
-	*p = m_host->GetWidth();
+	*p = m_host->get_width();
 	return S_OK;
 }
 

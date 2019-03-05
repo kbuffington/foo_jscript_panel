@@ -11,8 +11,8 @@ public:
 	static pfc::string8_fast g_get_description();
 	static ui_element_config::ptr g_get_default_configuration();
 	static void g_get_name(pfc::string_base& out);
-	DWORD GetColourUI(t_size type) override;
-	HFONT GetFontUI(t_size type) override;
+	DWORD get_colour_ui(t_size type) override;
+	HFONT get_font_ui(t_size type) override;
 	HWND get_wnd() override;
 	LRESULT on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp) override;
 	bool edit_mode_context_menu_test(const POINT& p_point, bool p_fromkeyboard) override;
