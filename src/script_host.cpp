@@ -17,17 +17,22 @@ script_host::script_host(host_comm* host)
 	, m_utils(com_object_singleton_t<Utils>::instance())
 	, m_plman(com_object_singleton_t<Plman>::instance())
 	, m_console(com_object_singleton_t<Console>::instance())
-	, m_dwStartTime(0)
-	, m_dwRef(1)
+	, m_ref_count(1)
 	, m_engine_inited(false)
 	, m_has_error(false)
-	, m_lastSourceContext(0) {}
+	, m_last_source_context(0) {}
 
 script_host::~script_host() {}
 
-HRESULT script_host::Initialize()
+DWORD script_host::GenerateSourceContext(const pfc::string8_fast& path)
 {
-	Finalize();
+	m_context_to_path_map[++m_last_source_context] = path;
+	return m_last_source_context;
+}
+
+HRESULT script_host::Initialise()
+{
+	Finalise();
 
 	m_has_error = false;
 
@@ -49,14 +54,13 @@ HRESULT script_host::Initialize()
 	if (SUCCEEDED(hr)) hr = ProcessImportedScripts(parser);
 	if (SUCCEEDED(hr))
 	{
-		DWORD source_context;
-		GenerateSourceContext("<main>", source_context);
+		DWORD source_context = GenerateSourceContext("<main>");
 		hr = parser->ParseScriptText(string_wide_from_utf8_fast(m_host->m_script_code), nullptr, nullptr, nullptr, source_context, 0, SCRIPTTEXT_HOSTMANAGESSOURCE | SCRIPTTEXT_ISVISIBLE, nullptr, nullptr);
 	}
 
 	if (SUCCEEDED(hr))
 	{
-		m_callback_invoker.Init(m_script_root);
+		m_callback_invoker.init(m_script_root);
 		m_engine_inited = true;
 	}
 	else
@@ -104,7 +108,7 @@ HRESULT script_host::InvokeCallback(t_size callbackId, VARIANTARG* argv, t_size 
 
 	try
 	{
-		hr = m_callback_invoker.Invoke(callbackId, argv, argc, ret);
+		hr = m_callback_invoker.invoke(callbackId, argv, argc, ret);
 	}
 	catch (...) {}
 	return hr;
@@ -120,8 +124,7 @@ HRESULT script_host::ProcessImportedScripts(IActiveScriptParsePtr& parser)
 		pfc::string8_fast code = helpers::read_file(path);
 		if (code.get_length())
 		{
-			DWORD source_context;
-			GenerateSourceContext(path, source_context);
+			DWORD source_context = GenerateSourceContext(path);
 			HRESULT hr = parser->ParseScriptText(string_wide_from_utf8_fast(code), nullptr, nullptr, nullptr, source_context, 0, SCRIPTTEXT_HOSTMANAGESSOURCE | SCRIPTTEXT_ISVISIBLE, nullptr, nullptr);
 			if (FAILED(hr)) return hr;
 		}
@@ -210,7 +213,6 @@ STDMETHODIMP script_host::GetWindow(HWND* phwnd)
 
 STDMETHODIMP script_host::OnEnterScript()
 {
-	m_dwStartTime = pfc::getTickCount();
 	return S_OK;
 }
 
@@ -223,7 +225,65 @@ STDMETHODIMP script_host::OnScriptError(IActiveScriptError* err)
 {
 	m_has_error = true;
 	if (!err) return E_POINTER;
-	ReportError(err);
+
+	DWORD ctx = 0;
+	EXCEPINFO excep = { 0 };
+	LONG charpos = 0;
+	ULONG line = 0;
+	_bstr_t sourceline;
+	pfc::string_formatter formatter;
+	
+	formatter << m_host->m_script_info.build_info_string() << "\n";
+
+	if (SUCCEEDED(err->GetExceptionInfo(&excep)))
+	{
+		if (excep.pfnDeferredFillIn)
+		{
+			(*excep.pfnDeferredFillIn)(&excep);
+		}
+
+		if (excep.bstrSource && excep.bstrDescription)
+		{
+			formatter << string_utf8_from_wide(excep.bstrSource) << ":\n";
+			formatter << string_utf8_from_wide(excep.bstrDescription) << "\n";
+		}
+		else
+		{
+			pfc::string8_fast errorMessage;
+			if (uFormatSystemErrorMessage(errorMessage, excep.scode))
+			{
+				formatter << errorMessage;
+			}
+			else
+			{
+				formatter << "Unknown error code: 0x" << pfc::format_hex_lowercase((t_size)excep.scode);
+			}
+		}
+	}
+
+	if (SUCCEEDED(err->GetSourcePosition(&ctx, &line, &charpos)))
+	{
+		if (m_context_to_path_map.have_item(ctx))
+		{
+			formatter << "File: " << m_context_to_path_map[ctx] << "\n";
+		}
+		formatter << "Line: " << (line + 1) << ", Col: " << (charpos + 1) << "\n";
+	}
+
+	if (SUCCEEDED(err->GetSourceLineText(sourceline.GetAddress())))
+	{
+		formatter << string_utf8_from_wide(sourceline);
+	}
+
+	FB2K_console_formatter() << formatter;
+	main_thread_callback_add(fb2k::service_new<helpers::popup_msg>(formatter, JSP_NAME_VERSION));
+
+	if (excep.bstrSource) SysFreeString(excep.bstrSource);
+	if (excep.bstrDescription) SysFreeString(excep.bstrDescription);
+	if (excep.bstrHelpFile) SysFreeString(excep.bstrHelpFile);
+
+	MessageBeep(MB_ICONASTERISK);
+	SendMessage(m_host->get_hwnd(), UWM_SCRIPT_ERROR, 0, 0);
 	return S_OK;
 }
 
@@ -239,12 +299,12 @@ STDMETHODIMP script_host::OnStateChange(SCRIPTSTATE state)
 
 ULONG STDMETHODCALLTYPE script_host::AddRef()
 {
-	return InterlockedIncrement(&m_dwRef);
+	return InterlockedIncrement(&m_ref_count);
 }
 
 ULONG STDMETHODCALLTYPE script_host::Release()
 {
-	ULONG n = InterlockedDecrement(&m_dwRef);
+	ULONG n = InterlockedDecrement(&m_ref_count);
 	if (n == 0)
 	{
 		delete this;
@@ -274,7 +334,7 @@ pfc::string8_fast script_host::ExtractValue(const std::string& source)
 	return "";
 }
 
-void script_host::Finalize()
+void script_host::Finalise()
 {
 	InvokeCallback(CallbackIds::on_script_unload);
 
@@ -293,8 +353,8 @@ void script_host::Finalize()
 		m_engine_inited = false;
 	}
 
-	m_contextToPathMap.remove_all();
-	m_callback_invoker.Reset();
+	m_context_to_path_map.remove_all();
+	m_callback_invoker.reset();
 
 	if (m_script_engine)
 	{
@@ -305,12 +365,6 @@ void script_host::Finalize()
 	{
 		m_script_root.Release();
 	}
-}
-
-void script_host::GenerateSourceContext(const pfc::string8_fast& path, DWORD& source_context)
-{
-	source_context = m_lastSourceContext++;
-	m_contextToPathMap[source_context] = path;
 }
 
 void script_host::ProcessScriptInfo(t_script_info& info)
@@ -359,74 +413,11 @@ void script_host::ProcessScriptInfo(t_script_info& info)
 	}
 }
 
-void script_host::ReportError(IActiveScriptError* err)
-{
-	if (!err) return;
-
-	DWORD ctx = 0;
-	ULONG line = 0;
-	LONG charpos = 0;
-	EXCEPINFO excep = { 0 };
-	_bstr_t sourceline;
-
-	if (FAILED(err->GetSourcePosition(&ctx, &line, &charpos)))
-	{
-		line = 0;
-		charpos = 0;
-	}
-
-	if (FAILED(err->GetSourceLineText(sourceline.GetAddress())))
-	{
-		sourceline = L"<source text only available at compile time>";
-	}
-
-	if (FAILED(err->GetExceptionInfo(&excep)))
-	{
-		return;
-	}
-
-	if (excep.pfnDeferredFillIn)
-	{
-		(*excep.pfnDeferredFillIn)(&excep);
-	}
-
-	pfc::string_formatter formatter;
-	formatter << m_host->m_script_info.build_info_string() << "\n";
-
-	if (excep.bstrSource && excep.bstrDescription)
-	{
-		formatter << string_utf8_from_wide(excep.bstrSource) << ":\n";
-		formatter << string_utf8_from_wide(excep.bstrDescription) << "\n";
-	}
-	else
-	{
-		pfc::string8_fast errorMessage;
-
-		if (uFormatSystemErrorMessage(errorMessage, excep.scode))
-			formatter << errorMessage;
-		else
-			formatter << "Unknown error code: 0x" << pfc::format_hex_lowercase((t_size)excep.scode);
-	}
-
-	if (m_contextToPathMap.exists(ctx))
-	{
-		formatter << "File: " << m_contextToPathMap[ctx] << "\n";
-	}
-
-	formatter << "Line: " << (line + 1) << ", Col: " << (charpos + 1) << "\n" << string_utf8_from_wide(sourceline);
-
-	if (excep.bstrSource) SysFreeString(excep.bstrSource);
-	if (excep.bstrDescription) SysFreeString(excep.bstrDescription);
-	if (excep.bstrHelpFile) SysFreeString(excep.bstrHelpFile);
-
-	FB2K_console_formatter() << formatter;
-	main_thread_callback_add(fb2k::service_new<helpers::popup_msg>(formatter, JSP_NAME_VERSION));
-	MessageBeep(MB_ICONASTERISK);
-	SendMessage(m_host->get_hwnd(), UWM_SCRIPT_ERROR, 0, 0);
-}
-
 void script_host::Stop()
 {
 	m_engine_inited = false;
-	if (m_script_engine) m_script_engine->SetScriptState(SCRIPTSTATE_DISCONNECTED);
+	if (m_script_engine)
+	{
+		m_script_engine->SetScriptState(SCRIPTSTATE_DISCONNECTED);
+	}
 }

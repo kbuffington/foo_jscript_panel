@@ -18,7 +18,8 @@ public:
 
 	COM_QI_TWO(IActiveScriptSite, IActiveScriptSiteWindow)
 
-	HRESULT Initialize();
+	DWORD GenerateSourceContext(const pfc::string8_fast& path);
+	HRESULT Initialise();
 	HRESULT InitScriptEngine();
 	HRESULT InvokeCallback(t_size callbackId, VARIANTARG* argv = nullptr, t_size argc = 0, VARIANT* ret = nullptr);
 	HRESULT ProcessImportedScripts(IActiveScriptParsePtr& parser);
@@ -37,14 +38,12 @@ public:
 	bool HasError();
 	bool Ready();
 	pfc::string8_fast ExtractValue(const std::string& source);
-	void Finalize();
-	void GenerateSourceContext(const pfc::string8_fast& path, DWORD& source_context);
+	void Finalise();
 	void ProcessScriptInfo(t_script_info& info);
-	void ReportError(IActiveScriptError* err);
 	void Stop();
 
 private:
-	DWORD m_lastSourceContext;
+	DWORD m_last_source_context;
 	IActiveScriptPtr m_script_engine;
 	IConsolePtr m_console;
 	IDispatchPtr m_script_root;
@@ -56,8 +55,7 @@ private:
 	bool m_engine_inited;
 	bool m_has_error;
 	host_comm* m_host;
-	pfc::map_t<DWORD, pfc::string8_fast> m_contextToPathMap;
-	pfc::tickcount_t m_dwStartTime;
+	pfc::map_t<DWORD, pfc::string8_fast> m_context_to_path_map;
 	script_callback_invoker m_callback_invoker;
-	volatile DWORD m_dwRef;
+	volatile DWORD m_ref_count;
 };

@@ -80,35 +80,35 @@ script_callback_invoker::script_callback_invoker() {}
 
 script_callback_invoker::~script_callback_invoker()
 {
-	Reset();
+	reset();
 }
 
-HRESULT script_callback_invoker::Invoke(t_size callbackId, VARIANTARG* argv, t_size argc, VARIANT* ret)
+HRESULT script_callback_invoker::invoke(t_size callbackId, VARIANTARG* argv, t_size argc, VARIANT* ret)
 {
-	if (!m_activeScriptRoot) return E_POINTER;
+	if (!m_active_script_root) return E_POINTER;
 	int dispId;
-	if (!m_callbackInvokerMap.query(callbackId, dispId)) return DISP_E_MEMBERNOTFOUND;
+	if (!m_callback_invoker_map.query(callbackId, dispId)) return DISP_E_MEMBERNOTFOUND;
 	DISPPARAMS param = { argv, nullptr, argc, 0 };
-	return m_activeScriptRoot->Invoke(dispId, IID_NULL, LOCALE_USER_DEFAULT, DISPATCH_METHOD, &param, ret, nullptr, nullptr);
+	return m_active_script_root->Invoke(dispId, IID_NULL, LOCALE_USER_DEFAULT, DISPATCH_METHOD, &param, ret, nullptr, nullptr);
 }
 
-void script_callback_invoker::Init(IDispatch* pActiveScriptRoot)
+void script_callback_invoker::init(IDispatch* pActiveScriptRoot)
 {
-	Reset();
+	reset();
 	if (!pActiveScriptRoot) return;
-	m_activeScriptRoot = pActiveScriptRoot;
+	m_active_script_root = pActiveScriptRoot;
 	for (const auto& i : g_idToNames)
 	{
 		LPOLESTR name = const_cast<LPOLESTR>(i.name);
 		DISPID dispId;
-		if (SUCCEEDED(m_activeScriptRoot->GetIDsOfNames(IID_NULL, &name, 1, LOCALE_USER_DEFAULT, &dispId)))
+		if (SUCCEEDED(m_active_script_root->GetIDsOfNames(IID_NULL, &name, 1, LOCALE_USER_DEFAULT, &dispId)))
 		{
-			m_callbackInvokerMap[i.id] = dispId;
+			m_callback_invoker_map[i.id] = dispId;
 		}
 	}
 }
 
-void script_callback_invoker::Reset()
+void script_callback_invoker::reset()
 {
-	m_callbackInvokerMap.remove_all();
+	m_callback_invoker_map.remove_all();
 }

@@ -1136,7 +1136,7 @@ void js_panel_window::script_load()
 	m_min_size = { 0, 0 };
 	notify_size_limit_changed(uie::size_limit_all);
 
-	if (FAILED(m_script_host->Initialize()))
+	if (FAILED(m_script_host->Initialise()))
 	{
 		return;
 	}
@@ -1164,7 +1164,7 @@ void js_panel_window::script_load()
 
 void js_panel_window::script_unload()
 {
-	m_script_host->Finalize();
+	m_script_host->Finalise();
 
 	if (m_is_droptarget_registered)
 	{
