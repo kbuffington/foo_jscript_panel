@@ -54,44 +54,40 @@ function menu() {
 	menuman5.Init('library');
 	menuman6.Init('help');
 	
-	menuman1.BuildMenu(child1, 1, 200);
-	menuman2.BuildMenu(child2, 201, 200);
-	menuman3.BuildMenu(child3, 401, 200);
-	menuman4.BuildMenu(child4, 601, 300);
-	menuman5.BuildMenu(child5, 901, 300);
-	menuman6.BuildMenu(child6, 1201, 100);
+	menuman1.BuildMenu(child1, 1000);
+	menuman2.BuildMenu(child2, 2000);
+	menuman3.BuildMenu(child3, 3000);
+	menuman4.BuildMenu(child4, 4000);
+	menuman5.BuildMenu(child5, 5000);
+	menuman6.BuildMenu(child6, 6000);
 	
 	contextman.InitNowPlaying();
-	contextman.BuildMenu(child7, 1301);
-	ret = basemenu.TrackPopupMenu(0, 0);
+	contextman.BuildMenu(child7, 7000);
+	var idx = basemenu.TrackPopupMenu(0, 0);
 
 	switch (true) {
-	case(ret >= 1 && ret < 201):
-		menuman1.ExecuteByID(ret - 1);
+	case idx == 0:
 		break;
-		
-	case (ret >= 201 && ret < 401):
-		menuman2.ExecuteByID(ret - 201);
+	case idx < 2000:
+		menuman1.ExecuteByID(idx - 1000);
 		break;
-		
-	case (ret >= 401 && ret < 601):
-		menuman3.ExecuteByID(ret - 401);
+	case idx < 3000:
+		menuman2.ExecuteByID(idx - 2000);
 		break;
-		
-	case (ret >= 601 && ret < 901):
-		menuman4.ExecuteByID(ret - 601);
+	case idx < 4000:
+		menuman3.ExecuteByID(idx - 3000);
 		break;
-		
-	case (ret >= 901 && ret < 1201):
-		menuman5.ExecuteByID(ret - 901);
+	case idx < 5000:
+		menuman4.ExecuteByID(idx - 4000);
 		break;
-		
-	case (ret >= 1201 && ret < 1301):
-		menuman6.ExecuteByID(ret - 1201);
+	case idx < 6000:
+		menuman5.ExecuteByID(idx - 5000);
 		break;
-		
-	case (ret >= 1301):
-		contextman.ExecuteByID(ret - 1301);
+	case idx < 7000:
+		menuman6.ExecuteByID(idx - 6000);
+		break;
+	case idx < 8000:
+		contextman.ExecuteByID(idx - 7000);
 		break;
 	}
 	

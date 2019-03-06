@@ -17,6 +17,10 @@ function on_mouse_lbtn_down(x, y) {
 	
 	_context.InitNowPlaying();
 	_context.BuildMenu(_child, 3);
+	/*
+	base_id set to 3 so it won't conflict with manually added items above.
+	max_id was made optional in v2.0.4 and is omitted in this example.
+	*/
 	
 	idx = _basemenu.TrackPopupMenu(x, y);
 	

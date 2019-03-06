@@ -377,12 +377,12 @@ _.mixin({
 		mm4.Init('Playback');
 		mm5.Init('Library');
 		mm6.Init('Help');
-		mm1.BuildMenu(s1, 1000, 999);
-		mm2.BuildMenu(s2, 2000, 999);
-		mm3.BuildMenu(s3, 3000, 999);
-		mm4.BuildMenu(s4, 4000, 999);
-		mm5.BuildMenu(s5, 5000, 999);
-		mm6.BuildMenu(s6, 6000, 999);
+		mm1.BuildMenu(s1, 1000);
+		mm2.BuildMenu(s2, 2000);
+		mm3.BuildMenu(s3, 3000);
+		mm4.BuildMenu(s4, 4000);
+		mm5.BuildMenu(s5, 5000);
+		mm6.BuildMenu(s6, 6000);
 		s1.AppendTo(m1, MF_STRING, 'File');
 		s2.AppendTo(m1, MF_STRING, 'Edit');
 		s3.AppendTo(m1, MF_STRING, 'View');
