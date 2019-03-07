@@ -358,7 +358,6 @@ LRESULT js_panel_window::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 				SendMessage(tooltip_param->tooltip_hwnd, TTM_ACTIVATE, FALSE, 0);
 
 			repaint();
-			m_script_host->Stop();
 			script_unload();
 		}
 		return 0;

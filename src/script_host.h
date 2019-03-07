@@ -40,7 +40,6 @@ public:
 	pfc::string8_fast ExtractValue(const std::string& source);
 	void Finalise();
 	void ProcessScriptInfo(t_script_info& info);
-	void Stop();
 
 private:
 	DWORD m_last_source_context;

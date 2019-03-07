@@ -223,8 +223,10 @@ STDMETHODIMP script_host::OnLeaveScript()
 
 STDMETHODIMP script_host::OnScriptError(IActiveScriptError* err)
 {
-	m_has_error = true;
 	if (!err) return E_POINTER;
+
+	m_has_error = true;
+	m_engine_inited = false;
 
 	DWORD ctx = 0;
 	EXCEPINFO excep = { 0 };
@@ -281,6 +283,7 @@ STDMETHODIMP script_host::OnScriptError(IActiveScriptError* err)
 	if (excep.bstrSource) SysFreeString(excep.bstrSource);
 	if (excep.bstrDescription) SysFreeString(excep.bstrDescription);
 	if (excep.bstrHelpFile) SysFreeString(excep.bstrHelpFile);
+	if (m_script_engine) m_script_engine->SetScriptState(SCRIPTSTATE_DISCONNECTED);
 
 	MessageBeep(MB_ICONASTERISK);
 	SendMessage(m_host->get_hwnd(), UWM_SCRIPT_ERROR, 0, 0);
@@ -410,14 +413,5 @@ void script_host::ProcessScriptInfo(t_script_info& info)
 		{
 			info.imports.add_item(ExtractValue(line));
 		}
-	}
-}
-
-void script_host::Stop()
-{
-	m_engine_inited = false;
-	if (m_script_engine)
-	{
-		m_script_engine->SetScriptState(SCRIPTSTATE_DISCONNECTED);
 	}
 }
