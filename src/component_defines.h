@@ -46,7 +46,7 @@ enum t_user_message
 	UWM_TIMER
 };
 
-enum CallbackIds
+enum callback_id
 {
 	on_always_on_top_changed = WM_USER + 100,
 	on_char,

@@ -132,12 +132,12 @@ void js_panel_window_cui::on_bool_changed(t_size mask) const
 
 void js_panel_window_cui::on_colour_changed(t_size mask) const
 {
-	PostMessage(m_hwnd, CallbackIds::on_colours_changed, 0, 0);
+	PostMessage(m_hwnd, callback_id::on_colours_changed, 0, 0);
 }
 
 void js_panel_window_cui::on_font_changed(t_size mask) const
 {
-	PostMessage(m_hwnd, CallbackIds::on_font_changed, 0, 0);
+	PostMessage(m_hwnd, callback_id::on_font_changed, 0, 0);
 }
 
 void js_panel_window_cui::set_config(stream_reader* reader, t_size size, abort_callback& abort)

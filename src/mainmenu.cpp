@@ -48,7 +48,7 @@ t_size my_mainmenu_commands::get_command_count()
 
 void my_mainmenu_commands::execute(t_size p_index, service_ptr_t<service_base> p_callback)
 {
-	panel_manager::instance().post_msg_to_all(CallbackIds::on_main_menu, p_index + 1);
+	panel_manager::instance().post_msg_to_all(callback_id::on_main_menu, p_index + 1);
 }
 
 void my_mainmenu_commands::get_name(t_size p_index, pfc::string_base& p_out)

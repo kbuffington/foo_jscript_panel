@@ -339,7 +339,7 @@ pfc::string8_fast script_host::ExtractValue(const std::string& source)
 
 void script_host::Finalise()
 {
-	InvokeCallback(CallbackIds::on_script_unload);
+	InvokeCallback(callback_id::on_script_unload);
 
 	if (Ready())
 	{
