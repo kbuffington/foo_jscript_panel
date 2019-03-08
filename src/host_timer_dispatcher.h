@@ -7,21 +7,20 @@
 class host_timer
 {
 public:
-	host_timer(HWND hWnd, t_size id, t_size delay, bool isRepeated);
+	host_timer(HWND hwnd, t_size id, t_size delay, bool is_repeated);
 	~host_timer() = default;
 
-	HANDLE GetHandle() const;
 	HWND GetHwnd() const;
-	bool start(HANDLE hTimerQueue);
-	static VOID CALLBACK timerProc(PVOID lpParameter, BOOLEAN TimerOrWaitFired);
+	bool start(HANDLE timer_queue);
+	static VOID CALLBACK timer_proc(PVOID lp_param, BOOLEAN timer_or_wait_fired);
 	void stop();
 
 private:
-	HWND m_hWnd = nullptr;
-	HANDLE m_hTimer = nullptr;
-	bool m_isRepeated;
-	bool m_isStopped = false;
-	std::atomic<bool> m_isStopRequested = false;
+	HWND m_hwnd = nullptr;
+	HANDLE m_timer_handle = nullptr;
+	bool m_is_repeated;
+	bool m_is_stopped = false;
+	std::atomic<bool> m_is_stop_requested = false;
 	t_size m_delay;
 	t_size m_id;
 };
@@ -29,71 +28,65 @@ private:
 class host_timer_task
 {
 public:
-	host_timer_task(IDispatch* pDisp, t_size timerId);
+	host_timer_task(IDispatch* p_disp, t_size timer_id);
 	~host_timer_task() = default;
 
 	void invoke();
 
 private:
-	IDispatchPtr m_pDisp;
-	t_size m_timerId;
+	IDispatchPtr m_disp;
+	t_size m_timer_id;
 };
 
 class host_timer_dispatcher
 {
 public:
+	host_timer_dispatcher();
 	~host_timer_dispatcher();
 
 	static host_timer_dispatcher& instance();
-	t_size setInterval(HWND hWnd, t_size delay, IDispatch* pDisp);
-	t_size setTimeout(HWND hWnd, t_size delay, IDispatch* pDisp);
-	void killTimer(t_size timerId);
-	void onInvokeMessage(t_size timerId);
-	void onPanelUnload(HWND hWnd);
-	void onTimerExpire(t_size timerId);
-	void onTimerStopRequest(HWND hWnd, HANDLE hTimer, t_size timerId);
+	t_size set_interval(HWND hwnd, t_size delay, IDispatch* p_disp);
+	t_size set_timeout(HWND hwnd, t_size delay, IDispatch* p_disp);
+	void kill_timer(t_size timer_id);
+	void invoke_message(t_size timer_id);
+	void script_unload(HWND hwnd);
+	void stop_request(HWND hwnd, HANDLE timer_handle, t_size timerId);
 
 private:
-	host_timer_dispatcher();
+	t_size create_timer(HWND hwnd, t_size delay, bool is_repeated, IDispatch* p_disp);
+	void create_thread();
+	void stop_thread();
+	void thread_main();
 
-	t_size createTimer(HWND hWnd, t_size delay, bool isRepeated, IDispatch* pDisp);
-	void createThread();
-	void stopThread();
-	void threadMain();
-
-	enum class ThreadTaskId
+	enum class thread_task_id
 	{
-		killTimerTask,
-		shutdownTask
+		kill_timer_task,
+		shutdown_task
 	};
 
-	struct ThreadTask
+	struct thread_task
 	{
-		HANDLE hTimer;
-		HWND hWnd;
-		ThreadTaskId taskId;
-		t_size timerId;
+		HANDLE timer_handle;
+		HWND hwnd;
+		thread_task_id task_id;
+		t_size timer_id;
 	};
 
-	struct TimerObject
+	struct timer_object
 	{
-		TimerObject(std::unique_ptr<host_timer> timerArg, std::unique_ptr<host_timer_task> taskArg)
-			: timer(std::move(timerArg))
-			, task(std::move(taskArg))
-		{
-		}
+		timer_object(std::unique_ptr<host_timer> timerArg, std::unique_ptr<host_timer_task> taskArg) : timer(std::move(timerArg)), task(std::move(taskArg)) {}
 		std::unique_ptr<host_timer> timer;
 		std::shared_ptr<host_timer_task> task;
 	};
 
-	using TimerMap = std::map<t_size, std::unique_ptr<TimerObject>>;
+	using timer_map = std::map<t_size, std::unique_ptr<timer_object>>;
 
-	HANDLE m_hTimerQueue = nullptr;
-	TimerMap m_timerMap;
+	HANDLE m_timer_queue = nullptr;
 	std::condition_variable m_cv;
-	std::list<ThreadTask> m_threadTaskList;
-	std::mutex m_timerMutex;
-	std::mutex m_threadTaskMutex;
+	std::list<thread_task> m_thread_task_list;
+	std::mutex m_timer_mutex;
+	std::mutex m_thread_task_mutex;
 	std::unique_ptr<std::thread> m_thread;
-	t_size m_curTimerId;
+	timer_map m_timer_map;
+	t_size m_cur_timer_id;
 };

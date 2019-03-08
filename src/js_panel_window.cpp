@@ -375,7 +375,7 @@ LRESULT js_panel_window::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 		return 0;
 
 	case UWM_TIMER:
-		host_timer_dispatcher::instance().onInvokeMessage(wp);
+		host_timer_dispatcher::instance().invoke_message(wp);
 		return 0;
 	}
 
@@ -1171,7 +1171,7 @@ void js_panel_window::script_unload()
 		m_is_droptarget_registered = false;
 	}
 
-	host_timer_dispatcher::instance().onPanelUnload(m_hwnd);
+	host_timer_dispatcher::instance().script_unload(m_hwnd);
 	m_selection_holder.release();
 }
 

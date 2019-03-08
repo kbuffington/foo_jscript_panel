@@ -9,13 +9,13 @@ Window::~Window() {}
 
 STDMETHODIMP Window::ClearInterval(UINT intervalID)
 {
-	host_timer_dispatcher::instance().killTimer(intervalID);
+	host_timer_dispatcher::instance().kill_timer(intervalID);
 	return S_OK;
 }
 
 STDMETHODIMP Window::ClearTimeout(UINT timeoutID)
 {
-	host_timer_dispatcher::instance().killTimer(timeoutID);
+	host_timer_dispatcher::instance().kill_timer(timeoutID);
 	return S_OK;
 }
 
@@ -195,7 +195,7 @@ STDMETHODIMP Window::SetInterval(IDispatch* func, int delay, UINT* p)
 {
 	if (!p) return E_POINTER;
 
-	*p = host_timer_dispatcher::instance().setInterval(m_host->get_hwnd(), delay, func);
+	*p = host_timer_dispatcher::instance().set_interval(m_host->get_hwnd(), delay, func);
 	return S_OK;
 }
 
@@ -209,7 +209,7 @@ STDMETHODIMP Window::SetTimeout(IDispatch* func, int delay, UINT* p)
 {
 	if (!p) return E_POINTER;
 
-	*p = host_timer_dispatcher::instance().setTimeout(m_host->get_hwnd(), delay, func);
+	*p = host_timer_dispatcher::instance().set_timeout(m_host->get_hwnd(), delay, func);
 	return S_OK;
 }
 
