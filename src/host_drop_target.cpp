@@ -3,12 +3,12 @@
 #include "host_drop_target.h"
 #include "js_panel_window.h"
 
-IDropSourceImpl::IDropSourceImpl() : m_refCount(0), m_dwLastEffect(DROPEFFECT_NONE) {}
+IDropSourceImpl::IDropSourceImpl() : m_ref_count(0), m_last_effect(DROPEFFECT_NONE) {}
 IDropSourceImpl::~IDropSourceImpl() {}
 
 STDMETHODIMP IDropSourceImpl::GiveFeedback(DWORD dwEffect)
 {
-	m_dwLastEffect = dwEffect;
+	m_last_effect = dwEffect;
 	return DRAGDROP_S_USEDEFAULTCURSORS;
 }
 
@@ -21,7 +21,7 @@ STDMETHODIMP IDropSourceImpl::QueryContinueDrag(BOOL fEscapePressed, DWORD grfKe
 
 	if (!(grfKeyState & MK_LBUTTON))
 	{
-		return m_dwLastEffect == DROPEFFECT_NONE ? DRAGDROP_S_CANCEL : DRAGDROP_S_DROP;
+		return m_last_effect == DROPEFFECT_NONE ? DRAGDROP_S_CANCEL : DRAGDROP_S_DROP;
 	}
 
 	return S_OK;
@@ -29,12 +29,12 @@ STDMETHODIMP IDropSourceImpl::QueryContinueDrag(BOOL fEscapePressed, DWORD grfKe
 
 ULONG STDMETHODCALLTYPE IDropSourceImpl::AddRef()
 {
-	return InterlockedIncrement(&m_refCount);
+	return InterlockedIncrement(&m_ref_count);
 }
 
 ULONG STDMETHODCALLTYPE IDropSourceImpl::Release()
 {
-	LONG rv = InterlockedDecrement(&m_refCount);
+	LONG rv = InterlockedDecrement(&m_ref_count);
 	if (!rv)
 	{
 		delete this;
@@ -42,9 +42,9 @@ ULONG STDMETHODCALLTYPE IDropSourceImpl::Release()
 	return rv;
 }
 
-IDropTargetImpl::IDropTargetImpl(HWND hWnd) : m_hWnd(hWnd)
+IDropTargetImpl::IDropTargetImpl(HWND hwnd) : m_hwnd(hwnd)
 {
-	CoCreateInstance(CLSID_DragDropHelper, nullptr, CLSCTX_INPROC_SERVER, IID_IDropTargetHelper, (LPVOID*)&m_dropTargetHelper);
+	CoCreateInstance(CLSID_DragDropHelper, nullptr, CLSCTX_INPROC_SERVER, IID_IDropTargetHelper, (LPVOID*)&m_drop_target_helper);
 }
 
 IDropTargetImpl::~IDropTargetImpl()
@@ -74,12 +74,12 @@ HRESULT IDropTargetImpl::OnDrop(IDataObject* pDataObj, DWORD grfKeyState, POINTL
 
 HRESULT IDropTargetImpl::RegisterDragDrop()
 {
-	return ::RegisterDragDrop(m_hWnd, this);
+	return ::RegisterDragDrop(m_hwnd, this);
 }
 
 HRESULT IDropTargetImpl::RevokeDragDrop()
 {
-	return ::RevokeDragDrop(m_hWnd);
+	return ::RevokeDragDrop(m_hwnd);
 }
 
 STDMETHODIMP IDropTargetImpl::DragEnter(IDataObject* pDataObj, DWORD grfKeyState, POINTL pt, DWORD* pdwEffect)
@@ -90,10 +90,10 @@ STDMETHODIMP IDropTargetImpl::DragEnter(IDataObject* pDataObj, DWORD grfKeyState
 	HRESULT hr = S_OK;
 	try
 	{
-		if (m_dropTargetHelper)
+		if (m_drop_target_helper)
 		{
 			POINT point = { pt.x, pt.y };
-			m_dropTargetHelper->DragEnter(m_hWnd, pDataObj, &point, *pdwEffect);
+			m_drop_target_helper->DragEnter(m_hwnd, pDataObj, &point, *pdwEffect);
 		}
 
 		hr = OnDragEnter(pDataObj, grfKeyState, pt, pdwEffect);
@@ -112,9 +112,9 @@ STDMETHODIMP IDropTargetImpl::DragLeave()
 
 	try
 	{
-		if (m_dropTargetHelper)
+		if (m_drop_target_helper)
 		{
-			m_dropTargetHelper->DragLeave();
+			m_drop_target_helper->DragLeave();
 		}
 
 		hr = OnDragLeave();
@@ -134,10 +134,10 @@ STDMETHODIMP IDropTargetImpl::DragOver(DWORD grfKeyState, POINTL pt, DWORD* pdwE
 	HRESULT hr = S_OK;
 	try
 	{
-		if (m_dropTargetHelper)
+		if (m_drop_target_helper)
 		{
 			POINT point = { pt.x, pt.y };
-			m_dropTargetHelper->DragOver(&point, *pdwEffect);
+			m_drop_target_helper->DragOver(&point, *pdwEffect);
 		}
 
 		hr = OnDragOver(grfKeyState, pt, pdwEffect);
@@ -159,10 +159,10 @@ STDMETHODIMP IDropTargetImpl::Drop(IDataObject* pDataObj, DWORD grfKeyState, POI
 
 	try
 	{
-		if (m_dropTargetHelper)
+		if (m_drop_target_helper)
 		{
 			POINT point = { pt.x, pt.y };
-			m_dropTargetHelper->Drop(pDataObj, &point, *pdwEffect);
+			m_drop_target_helper->Drop(pDataObj, &point, *pdwEffect);
 		}
 
 		hr = OnDrop(pDataObj, grfKeyState, pt, pdwEffect);
@@ -189,21 +189,21 @@ HRESULT host_drop_target::OnDragEnter(IDataObject* pDataObj, DWORD grfKeyState, 
 	m_action->Reset();
 
 	bool native;
-	if (SUCCEEDED(ole_interaction::get()->check_dataobject(pDataObj, m_fb2kAllowedEffect, native)))
+	if (SUCCEEDED(ole_interaction::get()->check_dataobject(pDataObj, m_allowed_effect, native)))
 	{
 		if (native && (*pdwEffect & DROPEFFECT_MOVE))
 		{
-			m_fb2kAllowedEffect |= DROPEFFECT_MOVE; // Remove check_dataobject move suppression for intra fb2k interactions
+			m_allowed_effect |= DROPEFFECT_MOVE; // Remove check_dataobject move suppression for intra fb2k interactions
 		}
 	}
 	else
 	{
-		m_fb2kAllowedEffect = DROPEFFECT_NONE;
+		m_allowed_effect = DROPEFFECT_NONE;
 	}
 
-	m_action->m_effect = *pdwEffect & m_fb2kAllowedEffect;
+	m_action->m_effect = *pdwEffect & m_allowed_effect;
 
-	ScreenToClient(m_hWnd, reinterpret_cast<LPPOINT>(&pt));
+	ScreenToClient(m_hwnd, reinterpret_cast<LPPOINT>(&pt));
 	on_drag_enter(grfKeyState, pt, m_action);
 
 	*pdwEffect = m_action->m_effect;
@@ -220,9 +220,9 @@ HRESULT host_drop_target::OnDragOver(DWORD grfKeyState, POINTL pt, DWORD* pdwEff
 {
 	if (!pdwEffect) return E_POINTER;
 
-	m_action->m_effect = *pdwEffect & m_fb2kAllowedEffect;
+	m_action->m_effect = *pdwEffect & m_allowed_effect;
 
-	ScreenToClient(m_hWnd, reinterpret_cast<LPPOINT>(&pt));
+	ScreenToClient(m_hwnd, reinterpret_cast<LPPOINT>(&pt));
 	on_drag_over(grfKeyState, pt, m_action);
 
 	*pdwEffect = m_action->m_effect;
@@ -233,9 +233,9 @@ HRESULT host_drop_target::OnDrop(IDataObject* pDataObj, DWORD grfKeyState, POINT
 {
 	if (!pdwEffect) return E_POINTER;
 
-	m_action->m_effect = *pdwEffect & m_fb2kAllowedEffect;
+	m_action->m_effect = *pdwEffect & m_allowed_effect;
 
-	ScreenToClient(m_hWnd, reinterpret_cast<LPPOINT>(&pt));
+	ScreenToClient(m_hwnd, reinterpret_cast<LPPOINT>(&pt));
 	on_drag_drop(grfKeyState, pt, m_action);
 
 	if (*pdwEffect == DROPEFFECT_NONE || m_action->m_effect == DROPEFFECT_NONE)

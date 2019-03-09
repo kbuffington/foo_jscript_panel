@@ -18,8 +18,8 @@ public:
 	ULONG STDMETHODCALLTYPE Release() override;
 
 private:
-	DWORD m_dwLastEffect;
-	LONG m_refCount;
+	DWORD m_last_effect;
+	LONG m_ref_count;
 };
 
 _COM_SMARTPTR_TYPEDEF(IDropTargetHelper, IID_IDropTargetHelper);
@@ -27,7 +27,7 @@ _COM_SMARTPTR_TYPEDEF(IDropTargetHelper, IID_IDropTargetHelper);
 class IDropTargetImpl : public IDropTarget
 {
 public:
-	IDropTargetImpl(HWND hWnd = nullptr);
+	IDropTargetImpl(HWND hwnd = nullptr);
 	virtual ~IDropTargetImpl();
 
 	HRESULT RegisterDragDrop();
@@ -42,8 +42,8 @@ public:
 	virtual HRESULT OnDrop(IDataObject* pDataObj, DWORD grfKeyState, POINTL pt, DWORD* pdwEffect) = 0;
 
 protected:
-	HWND m_hWnd;
-	IDropTargetHelperPtr m_dropTargetHelper;
+	HWND m_hwnd;
+	IDropTargetHelperPtr m_drop_target_helper;
 };
 
 class host_drop_target : public IDropTargetImpl
@@ -68,6 +68,6 @@ public:
 
 private:
 	DropSourceAction* m_action;
-	DWORD m_fb2kAllowedEffect;
+	DWORD m_allowed_effect;
 	js_panel_window* m_host;
 };

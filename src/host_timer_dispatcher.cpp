@@ -180,13 +180,13 @@ void host_timer_dispatcher::stop_request(HWND hwnd, HANDLE timer_handle, t_size 
 {
 	std::unique_lock<std::mutex> lock(m_thread_task_mutex);
 
-	thread_task threadTask = {};
-	threadTask.task_id = thread_task_id::kill_timer_task;
-	threadTask.hwnd = hwnd;
-	threadTask.timer_handle = timer_handle;
-	threadTask.timer_id = timer_id;
+	thread_task task = {};
+	task.task_id = thread_task_id::kill_timer_task;
+	task.hwnd = hwnd;
+	task.timer_handle = timer_handle;
+	task.timer_id = timer_id;
 
-	m_thread_task_list.push_front(threadTask);
+	m_thread_task_list.push_front(task);
 	m_cv.notify_one();
 }
 
@@ -199,10 +199,10 @@ void host_timer_dispatcher::stop_thread()
 
 	{
 		std::lock_guard<std::mutex> lock(m_thread_task_mutex);
-		thread_task threadTask = {};
-		threadTask.task_id = thread_task_id::shutdown_task;
+		thread_task task = {};
+		task.task_id = thread_task_id::shutdown_task;
 
-		m_thread_task_list.push_front(threadTask);
+		m_thread_task_list.push_front(task);
 		m_cv.notify_one();
 	}
 
