@@ -389,6 +389,7 @@ namespace helpers
 		if (hFileMapping == nullptr)
 		{
 			CloseHandle(hFile);
+			if (content.get_length() + offset == 0 && uFileExists(path)) return true; // suppress errors for empty files w/o BOM
 			return false;
 		}
 
