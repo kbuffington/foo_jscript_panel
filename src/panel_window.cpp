@@ -778,13 +778,9 @@ void panel_window::on_mouse_move(WPARAM wp, LPARAM lp)
 
 void panel_window::on_mouse_wheel(WPARAM wp)
 {
-	VARIANTARG args[3];
-	args[2].vt = VT_I4;
-	args[2].lVal = GET_WHEEL_DELTA_WPARAM(wp) > 0 ? 1 : -1;
-	args[1].vt = VT_I4;
-	args[1].lVal = GET_WHEEL_DELTA_WPARAM(wp);
+	VARIANTARG args[1];
 	args[0].vt = VT_I4;
-	args[0].lVal = WHEEL_DELTA;
+	args[0].lVal = GET_WHEEL_DELTA_WPARAM(wp) > 0 ? 1 : -1;
 	script_invoke(callback_id::on_mouse_wheel, args, _countof(args));
 }
 
