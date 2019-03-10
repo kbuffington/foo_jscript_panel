@@ -1,22 +1,22 @@
 #include "stdafx.h"
 #include "host_timer_dispatcher.h"
-#include "js_panel_window.h"
+#include "panel_window.h"
 #include "ui_conf.h"
 #include "ui_property.h"
 
-js_panel_window::js_panel_window() : m_script_host(new script_host(this)), m_is_mouse_tracked(false), m_is_droptarget_registered(false) {}
+panel_window::panel_window() : m_script_host(new script_host(this)), m_is_mouse_tracked(false), m_is_droptarget_registered(false) {}
 
-js_panel_window::~js_panel_window()
+panel_window::~panel_window()
 {
 	m_script_host->Release();
 }
 
-HRESULT js_panel_window::script_invoke(t_size callbackId, VARIANTARG* argv, t_size argc, VARIANT* ret)
+HRESULT panel_window::script_invoke(t_size callbackId, VARIANTARG* argv, t_size argc, VARIANT* ret)
 {
 	return m_script_host->InvokeCallback(callbackId, argv, argc, ret);
 }
 
-LRESULT js_panel_window::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
+LRESULT panel_window::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 {
 	switch (msg)
 	{
@@ -382,7 +382,7 @@ LRESULT js_panel_window::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 	return uDefWindowProc(hwnd, msg, wp, lp);
 }
 
-bool js_panel_window::on_mouse_button_up(UINT msg, WPARAM wp, LPARAM lp)
+bool panel_window::on_mouse_button_up(UINT msg, WPARAM wp, LPARAM lp)
 {
 	bool ret = false;
 
@@ -429,7 +429,7 @@ bool js_panel_window::on_mouse_button_up(UINT msg, WPARAM wp, LPARAM lp)
 	return ret;
 }
 
-bool js_panel_window::show_configure_popup(HWND parent)
+bool panel_window::show_configure_popup(HWND parent)
 {
 	modal_dialog_scope scope;
 	if (!scope.can_create()) return false;
@@ -439,7 +439,7 @@ bool js_panel_window::show_configure_popup(HWND parent)
 	return (dlg.DoModal(parent) == IDOK);
 }
 
-bool js_panel_window::show_property_popup(HWND parent)
+bool panel_window::show_property_popup(HWND parent)
 {
 	modal_dialog_scope scope;
 	if (!scope.can_create()) return false;
@@ -449,7 +449,7 @@ bool js_panel_window::show_property_popup(HWND parent)
 	return (dlg.DoModal(parent) == IDOK);
 }
 
-ui_helpers::container_window::class_data& js_panel_window::get_class_data() const
+ui_helpers::container_window::class_data& panel_window::get_class_data() const
 {
 	static class_data my_class_data =
 	{
@@ -468,7 +468,7 @@ ui_helpers::container_window::class_data& js_panel_window::get_class_data() cons
 	return my_class_data;
 }
 
-void js_panel_window::build_context_menu(HMENU menu, int x, int y, int id_base)
+void panel_window::build_context_menu(HMENU menu, int x, int y, int id_base)
 {
 	uAppendMenu(menu, MF_STRING, id_base + 1, "&Reload");
 	uAppendMenu(menu, MF_SEPARATOR, 0, 0);
@@ -476,7 +476,7 @@ void js_panel_window::build_context_menu(HMENU menu, int x, int y, int id_base)
 	uAppendMenu(menu, MF_STRING, id_base + 3, "&Configure...");
 }
 
-void js_panel_window::create_context()
+void panel_window::create_context()
 {
 	if (m_gr_bmp || m_gr_bmp_bk)
 	{
@@ -491,7 +491,7 @@ void js_panel_window::create_context()
 	}
 }
 
-void js_panel_window::delete_context()
+void panel_window::delete_context()
 {
 	if (m_gr_bmp)
 	{
@@ -506,7 +506,7 @@ void js_panel_window::delete_context()
 	}
 }
 
-void js_panel_window::execute_context_menu_command(int id, int id_base)
+void panel_window::execute_context_menu_command(int id, int id_base)
 {
 	switch (id - id_base)
 	{
@@ -522,7 +522,7 @@ void js_panel_window::execute_context_menu_command(int id, int id_base)
 	}
 }
 
-void js_panel_window::on_always_on_top_changed(WPARAM wp)
+void panel_window::on_always_on_top_changed(WPARAM wp)
 {
 	VARIANTARG args[1];
 	args[0].vt = VT_BOOL;
@@ -530,12 +530,12 @@ void js_panel_window::on_always_on_top_changed(WPARAM wp)
 	script_invoke(callback_id::on_always_on_top_changed, args, _countof(args));
 }
 
-void js_panel_window::on_colours_changed()
+void panel_window::on_colours_changed()
 {
 	script_invoke(callback_id::on_colours_changed);
 }
 
-void js_panel_window::on_context_menu(int x, int y)
+void panel_window::on_context_menu(int x, int y)
 {
 	HMENU menu = CreatePopupMenu();
 	const int base_id = 0;
@@ -545,7 +545,7 @@ void js_panel_window::on_context_menu(int x, int y)
 	DestroyMenu(menu);
 }
 
-void js_panel_window::on_cursor_follow_playback_changed(WPARAM wp)
+void panel_window::on_cursor_follow_playback_changed(WPARAM wp)
 {
 	VARIANTARG args[1];
 	args[0].vt = VT_BOOL;
@@ -553,17 +553,17 @@ void js_panel_window::on_cursor_follow_playback_changed(WPARAM wp)
 	script_invoke(callback_id::on_cursor_follow_playback_changed, args, _countof(args));
 }
 
-void js_panel_window::on_dsp_preset_changed()
+void panel_window::on_dsp_preset_changed()
 {
 	script_invoke(callback_id::on_dsp_preset_changed);
 }
 
-void js_panel_window::on_font_changed()
+void panel_window::on_font_changed()
 {
 	script_invoke(callback_id::on_font_changed);
 }
 
-void js_panel_window::on_get_album_art_done(WPARAM wp)
+void panel_window::on_get_album_art_done(WPARAM wp)
 {
 	auto param = reinterpret_cast<helpers::album_art_async::t_param*>(wp);
 
@@ -579,7 +579,7 @@ void js_panel_window::on_get_album_art_done(WPARAM wp)
 	script_invoke(callback_id::on_get_album_art_done, args, _countof(args));
 }
 
-void js_panel_window::on_item_focus_change(WPARAM wp)
+void panel_window::on_item_focus_change(WPARAM wp)
 {
 	callback_data_scope_releaser<callback_data<t_size, t_size, t_size>> data(wp);
 
@@ -593,7 +593,7 @@ void js_panel_window::on_item_focus_change(WPARAM wp)
 	script_invoke(callback_id::on_item_focus_change, args, _countof(args));
 }
 
-void js_panel_window::on_item_played(WPARAM wp)
+void panel_window::on_item_played(WPARAM wp)
 {
 	callback_data_scope_releaser<callback_data<metadb_handle_ptr>> data(wp);
 	auto handle = new com_object_impl_t<MetadbHandle>(data->m_item1);
@@ -607,7 +607,7 @@ void js_panel_window::on_item_played(WPARAM wp)
 		handle->Release();
 }
 
-void js_panel_window::on_load_image_done(WPARAM wp)
+void panel_window::on_load_image_done(WPARAM wp)
 {
 	auto param = reinterpret_cast<helpers::load_image_async::t_param*>(wp);
 
@@ -621,7 +621,7 @@ void js_panel_window::on_load_image_done(WPARAM wp)
 	script_invoke(callback_id::on_load_image_done, args, _countof(args));
 }
 
-void js_panel_window::on_library_items_added(WPARAM wp)
+void panel_window::on_library_items_added(WPARAM wp)
 {
 	callback_data_scope_releaser<metadb_callback_data> data(wp);
 	auto handles = new com_object_impl_t<MetadbHandleList>(data->m_items);
@@ -635,7 +635,7 @@ void js_panel_window::on_library_items_added(WPARAM wp)
 		handles->Release();
 }
 
-void js_panel_window::on_library_items_changed(WPARAM wp)
+void panel_window::on_library_items_changed(WPARAM wp)
 {
 	callback_data_scope_releaser<metadb_callback_data> data(wp);
 	auto handles = new com_object_impl_t<MetadbHandleList>(data->m_items);
@@ -649,7 +649,7 @@ void js_panel_window::on_library_items_changed(WPARAM wp)
 		handles->Release();
 }
 
-void js_panel_window::on_library_items_removed(WPARAM wp)
+void panel_window::on_library_items_removed(WPARAM wp)
 {
 	callback_data_scope_releaser<metadb_callback_data> data(wp);
 	auto handles = new com_object_impl_t<MetadbHandleList>(data->m_items);
@@ -663,7 +663,7 @@ void js_panel_window::on_library_items_removed(WPARAM wp)
 		handles->Release();
 }
 
-void js_panel_window::on_main_menu(WPARAM wp)
+void panel_window::on_main_menu(WPARAM wp)
 {
 	VARIANTARG args[1];
 	args[0].vt = VT_UI4;
@@ -671,7 +671,7 @@ void js_panel_window::on_main_menu(WPARAM wp)
 	script_invoke(callback_id::on_main_menu, args, _countof(args));
 }
 
-void js_panel_window::on_metadb_changed(WPARAM wp)
+void panel_window::on_metadb_changed(WPARAM wp)
 {
 	callback_data_scope_releaser<metadb_callback_data> data(wp);
 	auto handles = new com_object_impl_t<MetadbHandleList>(data->m_items);
@@ -685,7 +685,7 @@ void js_panel_window::on_metadb_changed(WPARAM wp)
 		handles->Release();
 }
 
-void js_panel_window::on_mouse_button_dblclk(UINT msg, WPARAM wp, LPARAM lp)
+void panel_window::on_mouse_button_dblclk(UINT msg, WPARAM wp, LPARAM lp)
 {
 	VARIANTARG args[3];
 	args[0].vt = VT_I4;
@@ -711,7 +711,7 @@ void js_panel_window::on_mouse_button_dblclk(UINT msg, WPARAM wp, LPARAM lp)
 	}
 }
 
-void js_panel_window::on_mouse_button_down(UINT msg, WPARAM wp, LPARAM lp)
+void panel_window::on_mouse_button_down(UINT msg, WPARAM wp, LPARAM lp)
 {
 	if (m_grab_focus)
 	{
@@ -744,7 +744,7 @@ void js_panel_window::on_mouse_button_down(UINT msg, WPARAM wp, LPARAM lp)
 	}
 }
 
-void js_panel_window::on_mouse_leave()
+void panel_window::on_mouse_leave()
 {
 	m_is_mouse_tracked = false;
 
@@ -752,7 +752,7 @@ void js_panel_window::on_mouse_leave()
 	SetCursor(LoadCursor(nullptr, IDC_ARROW));
 }
 
-void js_panel_window::on_mouse_move(WPARAM wp, LPARAM lp)
+void panel_window::on_mouse_move(WPARAM wp, LPARAM lp)
 {
 	if (!m_is_mouse_tracked)
 	{
@@ -776,7 +776,7 @@ void js_panel_window::on_mouse_move(WPARAM wp, LPARAM lp)
 	script_invoke(callback_id::on_mouse_move, args, _countof(args));
 }
 
-void js_panel_window::on_mouse_wheel(WPARAM wp)
+void panel_window::on_mouse_wheel(WPARAM wp)
 {
 	VARIANTARG args[3];
 	args[2].vt = VT_I4;
@@ -788,7 +788,7 @@ void js_panel_window::on_mouse_wheel(WPARAM wp)
 	script_invoke(callback_id::on_mouse_wheel, args, _countof(args));
 }
 
-void js_panel_window::on_mouse_wheel_h(WPARAM wp)
+void panel_window::on_mouse_wheel_h(WPARAM wp)
 {
 	VARIANTARG args[1];
 	args[0].vt = VT_I4;
@@ -796,7 +796,7 @@ void js_panel_window::on_mouse_wheel_h(WPARAM wp)
 	script_invoke(callback_id::on_mouse_wheel_h, args, _countof(args));
 }
 
-void js_panel_window::on_notify_data(WPARAM wp)
+void panel_window::on_notify_data(WPARAM wp)
 {
 	callback_data_scope_releaser<callback_data<_bstr_t, _variant_t>> data(wp);
 
@@ -807,12 +807,12 @@ void js_panel_window::on_notify_data(WPARAM wp)
 	script_invoke(callback_id::on_notify_data, args, _countof(args));
 }
 
-void js_panel_window::on_output_device_changed()
+void panel_window::on_output_device_changed()
 {
 	script_invoke(callback_id::on_output_device_changed);
 }
 
-void js_panel_window::on_paint(HDC dc, LPRECT lpUpdateRect)
+void panel_window::on_paint(HDC dc, LPRECT lpUpdateRect)
 {
 	if (!dc || !lpUpdateRect || !m_gr_bmp || !m_gr_wrap) return;
 
@@ -859,7 +859,7 @@ void js_panel_window::on_paint(HDC dc, LPRECT lpUpdateRect)
 	DeleteDC(memdc);
 }
 
-void js_panel_window::on_paint_error(HDC memdc)
+void panel_window::on_paint_error(HDC memdc)
 {
 	const wchar_t errmsg[] = L"Aw, crashed :(";
 	RECT rc = { 0, 0, m_width, m_height };
@@ -899,7 +899,7 @@ void js_panel_window::on_paint_error(HDC memdc)
 	SelectObject(memdc, oldfont);
 }
 
-void js_panel_window::on_paint_user(HDC memdc, LPRECT lpUpdateRect)
+void panel_window::on_paint_user(HDC memdc, LPRECT lpUpdateRect)
 {
 	if (m_script_host->Ready())
 	{
@@ -919,17 +919,17 @@ void js_panel_window::on_paint_user(HDC memdc, LPRECT lpUpdateRect)
 	}
 }
 
-void js_panel_window::on_playback_dynamic_info()
+void panel_window::on_playback_dynamic_info()
 {
 	script_invoke(callback_id::on_playback_dynamic_info);
 }
 
-void js_panel_window::on_playback_dynamic_info_track()
+void panel_window::on_playback_dynamic_info_track()
 {
 	script_invoke(callback_id::on_playback_dynamic_info_track);
 }
 
-void js_panel_window::on_playback_edited(WPARAM wp)
+void panel_window::on_playback_edited(WPARAM wp)
 {
 	callback_data_scope_releaser<callback_data<metadb_handle_ptr>> data(wp);
 	auto handle = new com_object_impl_t<MetadbHandle>(data->m_item1);
@@ -943,7 +943,7 @@ void js_panel_window::on_playback_edited(WPARAM wp)
 		handle->Release();
 }
 
-void js_panel_window::on_playback_follow_cursor_changed(WPARAM wp)
+void panel_window::on_playback_follow_cursor_changed(WPARAM wp)
 {
 	VARIANTARG args[1];
 	args[0].vt = VT_BOOL;
@@ -951,7 +951,7 @@ void js_panel_window::on_playback_follow_cursor_changed(WPARAM wp)
 	script_invoke(callback_id::on_playback_follow_cursor_changed, args, _countof(args));
 }
 
-void js_panel_window::on_playback_new_track(WPARAM wp)
+void panel_window::on_playback_new_track(WPARAM wp)
 {
 	callback_data_scope_releaser<callback_data<metadb_handle_ptr>> data(wp);
 	auto handle = new com_object_impl_t<MetadbHandle>(data->m_item1);
@@ -965,7 +965,7 @@ void js_panel_window::on_playback_new_track(WPARAM wp)
 		handle->Release();
 }
 
-void js_panel_window::on_playback_order_changed(WPARAM wp)
+void panel_window::on_playback_order_changed(WPARAM wp)
 {
 	VARIANTARG args[1];
 	args[0].vt = VT_UI4;
@@ -973,7 +973,7 @@ void js_panel_window::on_playback_order_changed(WPARAM wp)
 	script_invoke(callback_id::on_playback_order_changed, args, _countof(args));
 }
 
-void js_panel_window::on_playback_pause(WPARAM wp)
+void panel_window::on_playback_pause(WPARAM wp)
 {
 	VARIANTARG args[1];
 	args[0].vt = VT_BOOL;
@@ -981,7 +981,7 @@ void js_panel_window::on_playback_pause(WPARAM wp)
 	script_invoke(callback_id::on_playback_pause, args, _countof(args));
 }
 
-void js_panel_window::on_playback_queue_changed(WPARAM wp)
+void panel_window::on_playback_queue_changed(WPARAM wp)
 {
 	VARIANTARG args[1];
 	args[0].vt = VT_UI4;
@@ -989,7 +989,7 @@ void js_panel_window::on_playback_queue_changed(WPARAM wp)
 	script_invoke(callback_id::on_playback_queue_changed, args, _countof(args));
 }
 
-void js_panel_window::on_playback_seek(WPARAM wp)
+void panel_window::on_playback_seek(WPARAM wp)
 {
 	callback_data_scope_releaser<callback_data<double>> data(wp);
 
@@ -999,7 +999,7 @@ void js_panel_window::on_playback_seek(WPARAM wp)
 	script_invoke(callback_id::on_playback_seek, args, _countof(args));
 }
 
-void js_panel_window::on_playback_starting(WPARAM wp, LPARAM lp)
+void panel_window::on_playback_starting(WPARAM wp, LPARAM lp)
 {
 	VARIANTARG args[2];
 	args[0].vt = VT_BOOL;
@@ -1009,7 +1009,7 @@ void js_panel_window::on_playback_starting(WPARAM wp, LPARAM lp)
 	script_invoke(callback_id::on_playback_starting, args, _countof(args));
 }
 
-void js_panel_window::on_playback_stop(WPARAM wp)
+void panel_window::on_playback_stop(WPARAM wp)
 {
 	VARIANTARG args[1];
 	args[0].vt = VT_UI4;
@@ -1017,7 +1017,7 @@ void js_panel_window::on_playback_stop(WPARAM wp)
 	script_invoke(callback_id::on_playback_stop, args, _countof(args));
 }
 
-void js_panel_window::on_playback_time(WPARAM wp)
+void panel_window::on_playback_time(WPARAM wp)
 {
 	callback_data_scope_releaser<callback_data<double>> data(wp);
 
@@ -1027,7 +1027,7 @@ void js_panel_window::on_playback_time(WPARAM wp)
 	script_invoke(callback_id::on_playback_time, args, _countof(args));
 }
 
-void js_panel_window::on_playlist_item_ensure_visible(WPARAM wp, LPARAM lp)
+void panel_window::on_playlist_item_ensure_visible(WPARAM wp, LPARAM lp)
 {
 	VARIANTARG args[2];
 	args[0].vt = VT_UI4;
@@ -1037,7 +1037,7 @@ void js_panel_window::on_playlist_item_ensure_visible(WPARAM wp, LPARAM lp)
 	script_invoke(callback_id::on_playlist_item_ensure_visible, args, _countof(args));
 }
 
-void js_panel_window::on_playlist_items_added(WPARAM wp)
+void panel_window::on_playlist_items_added(WPARAM wp)
 {
 	VARIANTARG args[1];
 	args[0].vt = VT_UI4;
@@ -1045,7 +1045,7 @@ void js_panel_window::on_playlist_items_added(WPARAM wp)
 	script_invoke(callback_id::on_playlist_items_added, args, _countof(args));
 }
 
-void js_panel_window::on_playlist_items_removed(WPARAM wp, LPARAM lp)
+void panel_window::on_playlist_items_removed(WPARAM wp, LPARAM lp)
 {
 	VARIANTARG args[2];
 	args[0].vt = VT_UI4;
@@ -1055,7 +1055,7 @@ void js_panel_window::on_playlist_items_removed(WPARAM wp, LPARAM lp)
 	script_invoke(callback_id::on_playlist_items_removed, args, _countof(args));
 }
 
-void js_panel_window::on_playlist_items_reordered(WPARAM wp)
+void panel_window::on_playlist_items_reordered(WPARAM wp)
 {
 	VARIANTARG args[1];
 	args[0].vt = VT_UI4;
@@ -1063,12 +1063,12 @@ void js_panel_window::on_playlist_items_reordered(WPARAM wp)
 	script_invoke(callback_id::on_playlist_items_reordered, args, _countof(args));
 }
 
-void js_panel_window::on_playlist_items_selection_change()
+void panel_window::on_playlist_items_selection_change()
 {
 	script_invoke(callback_id::on_playlist_items_selection_change);
 }
 
-void js_panel_window::on_playlist_stop_after_current_changed(WPARAM wp)
+void panel_window::on_playlist_stop_after_current_changed(WPARAM wp)
 {
 	VARIANTARG args[1];
 	args[0].vt = VT_BOOL;
@@ -1076,17 +1076,17 @@ void js_panel_window::on_playlist_stop_after_current_changed(WPARAM wp)
 	script_invoke(callback_id::on_playlist_stop_after_current_changed, args, _countof(args));
 }
 
-void js_panel_window::on_playlist_switch()
+void panel_window::on_playlist_switch()
 {
 	script_invoke(callback_id::on_playlist_switch);
 }
 
-void js_panel_window::on_playlists_changed()
+void panel_window::on_playlists_changed()
 {
 	script_invoke(callback_id::on_playlists_changed);
 }
 
-void js_panel_window::on_replaygain_mode_changed(WPARAM wp)
+void panel_window::on_replaygain_mode_changed(WPARAM wp)
 {
 	VARIANTARG args[1];
 	args[0].vt = VT_UI4;
@@ -1094,12 +1094,12 @@ void js_panel_window::on_replaygain_mode_changed(WPARAM wp)
 	script_invoke(callback_id::on_replaygain_mode_changed, args, _countof(args));
 }
 
-void js_panel_window::on_selection_changed()
+void panel_window::on_selection_changed()
 {
 	script_invoke(callback_id::on_selection_changed);
 }
 
-void js_panel_window::on_size(int w, int h)
+void panel_window::on_size(int w, int h)
 {
 	m_width = w;
 	m_height = h;
@@ -1110,7 +1110,7 @@ void js_panel_window::on_size(int w, int h)
 	script_invoke(callback_id::on_size);
 }
 
-void js_panel_window::on_volume_change(WPARAM wp)
+void panel_window::on_volume_change(WPARAM wp)
 {
 	callback_data_scope_releaser<callback_data<float>> data(wp);
 
@@ -1120,7 +1120,7 @@ void js_panel_window::on_volume_change(WPARAM wp)
 	script_invoke(callback_id::on_volume_change, args, _countof(args));
 }
 
-void js_panel_window::script_load()
+void panel_window::script_load()
 {
 	pfc::hires_timer timer;
 	timer.start();
@@ -1161,7 +1161,7 @@ void js_panel_window::script_load()
 	FB2K_console_formatter() << m_script_info.build_info_string() << ": initialised in " << (int)(timer.query() * 1000) << " ms";
 }
 
-void js_panel_window::script_unload()
+void panel_window::script_unload()
 {
 	m_script_host->Finalise();
 
@@ -1175,7 +1175,7 @@ void js_panel_window::script_unload()
 	m_selection_holder.release();
 }
 
-void js_panel_window::update_script()
+void panel_window::update_script()
 {
 	script_unload();
 	script_load();

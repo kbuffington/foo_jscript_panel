@@ -2,7 +2,7 @@
 #include <OleIdl.h>
 #include <ShlObj.h>
 
-class js_panel_window;
+class panel_window;
 
 class IDropSourceImpl : public IDropSource
 {
@@ -52,7 +52,7 @@ protected:
 	virtual void FinalRelease() {}
 
 public:
-	host_drop_target(js_panel_window* host);
+	host_drop_target(panel_window* host);
 	~host_drop_target();
 
 	COM_QI_ONE(IDropTarget)
@@ -69,5 +69,5 @@ public:
 private:
 	DropSourceAction* m_action;
 	DWORD m_allowed_effect;
-	js_panel_window* m_host;
+	panel_window* m_host;
 };

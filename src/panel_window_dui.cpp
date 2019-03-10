@@ -1,6 +1,6 @@
 #include "stdafx.h"
-#include "js_panel_window.h"
-#include "js_panel_window_dui.h"
+#include "panel_window.h"
+#include "panel_window_dui.h"
 
 // Using this avoids having to include ATL helpers
 template <typename TImpl>
@@ -37,7 +37,7 @@ public:
 	{
 		PFC_ASSERT(cfg->get_guid() == get_guid());
 		auto item = fb2k::service_new<ui_element_instance_impl_helper>(cfg, callback);
-		item->initialize_window(parent);
+		item->initialise_window(parent);
 		return item;
 	}
 
@@ -65,20 +65,20 @@ private:
 };
 
 // DUI panel instance
-static service_factory_t<my_ui_element_impl<js_panel_window_dui>> g_js_panel_wndow_dui;
+static service_factory_t<my_ui_element_impl<panel_window_dui>> g_js_panel_wndow_dui;
 
-js_panel_window_dui::js_panel_window_dui(ui_element_config::ptr cfg, ui_element_instance_callback::ptr callback) : m_callback(callback)
+panel_window_dui::panel_window_dui(ui_element_config::ptr cfg, ui_element_instance_callback::ptr callback) : m_callback(callback)
 {
 	m_instance_type = KInstanceTypeDUI;
 	set_configuration(cfg);
 }
 
-js_panel_window_dui::~js_panel_window_dui()
+panel_window_dui::~panel_window_dui()
 {
-	js_panel_window::destroy();
+	panel_window::destroy();
 }
 
-DWORD js_panel_window_dui::get_colour_ui(t_size type)
+DWORD panel_window_dui::get_colour_ui(t_size type)
 {
 	const GUID* guids[] = {
 		&ui_color_text,
@@ -95,17 +95,17 @@ DWORD js_panel_window_dui::get_colour_ui(t_size type)
 	return 0;
 }
 
-GUID js_panel_window_dui::g_get_guid()
+GUID panel_window_dui::g_get_guid()
 {
 	return g_guid_jsp_window_dui;
 }
 
-GUID js_panel_window_dui::g_get_subclass()
+GUID panel_window_dui::g_get_subclass()
 {
 	return ui_element_subclass_utility;
 }
 
-HFONT js_panel_window_dui::get_font_ui(t_size type)
+HFONT panel_window_dui::get_font_ui(t_size type)
 {
 	const GUID* guids[] = {
 		&ui_font_default,
@@ -124,12 +124,12 @@ HFONT js_panel_window_dui::get_font_ui(t_size type)
 	return nullptr;
 }
 
-HWND js_panel_window_dui::get_wnd()
+HWND panel_window_dui::get_wnd()
 {
-	return js_panel_window::get_wnd();
+	return panel_window::get_wnd();
 }
 
-LRESULT js_panel_window_dui::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
+LRESULT panel_window_dui::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 {
 	switch (msg)
 	{
@@ -144,20 +144,20 @@ LRESULT js_panel_window_dui::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM l
 	case WM_GETDLGCODE:
 		return DLGC_WANTALLKEYS;
 	}
-	return js_panel_window::on_message(hwnd, msg, wp, lp);
+	return panel_window::on_message(hwnd, msg, wp, lp);
 }
 
-bool js_panel_window_dui::edit_mode_context_menu_test(const POINT& p_point, bool p_fromkeyboard)
+bool panel_window_dui::edit_mode_context_menu_test(const POINT& p_point, bool p_fromkeyboard)
 {
 	return true;
 }
 
-pfc::string8_fast js_panel_window_dui::g_get_description()
+pfc::string8_fast panel_window_dui::g_get_description()
 {
 	return "Customisable panel with JScript scripting support.";
 }
 
-ui_element_config::ptr js_panel_window_dui::g_get_default_configuration()
+ui_element_config::ptr panel_window_dui::g_get_default_configuration()
 {
 	ui_element_config_builder builder;
 	abort_callback_dummy abort;
@@ -168,7 +168,7 @@ ui_element_config::ptr js_panel_window_dui::g_get_default_configuration()
 	return builder.finish(g_get_guid());
 }
 
-ui_element_config::ptr js_panel_window_dui::get_configuration()
+ui_element_config::ptr panel_window_dui::get_configuration()
 {
 	ui_element_config_builder builder;
 	abort_callback_dummy abort;
@@ -176,27 +176,27 @@ ui_element_config::ptr js_panel_window_dui::get_configuration()
 	return builder.finish(g_get_guid());
 }
 
-void js_panel_window_dui::edit_mode_context_menu_build(const POINT& p_point, bool p_fromkeyboard, HMENU p_menu, t_size p_id_base)
+void panel_window_dui::edit_mode_context_menu_build(const POINT& p_point, bool p_fromkeyboard, HMENU p_menu, t_size p_id_base)
 {
 	build_context_menu(p_menu, p_point.x, p_point.y, p_id_base);
 }
 
-void js_panel_window_dui::edit_mode_context_menu_command(const POINT& p_point, bool p_fromkeyboard, t_size p_id, t_size p_id_base)
+void panel_window_dui::edit_mode_context_menu_command(const POINT& p_point, bool p_fromkeyboard, t_size p_id, t_size p_id_base)
 {
 	execute_context_menu_command(p_id, p_id_base);
 }
 
-void js_panel_window_dui::g_get_name(pfc::string_base& out)
+void panel_window_dui::g_get_name(pfc::string_base& out)
 {
 	out = JSP_NAME;
 }
 
-void js_panel_window_dui::initialize_window(HWND parent)
+void panel_window_dui::initialise_window(HWND parent)
 {
 	create(parent);
 }
 
-void js_panel_window_dui::notify(const GUID& p_what, t_size p_param1, const void* p_param2, t_size p_param2size)
+void panel_window_dui::notify(const GUID& p_what, t_size p_param1, const void* p_param2, t_size p_param2size)
 {
 	if (p_what == ui_element_notify_colors_changed)
 	{
@@ -208,12 +208,12 @@ void js_panel_window_dui::notify(const GUID& p_what, t_size p_param1, const void
 	}
 }
 
-void js_panel_window_dui::notify_size_limit_changed(t_size limit)
+void panel_window_dui::notify_size_limit_changed(t_size limit)
 {
 	m_callback->on_min_max_info_change();
 }
 
-void js_panel_window_dui::set_configuration(ui_element_config::ptr data)
+void panel_window_dui::set_configuration(ui_element_config::ptr data)
 {
 	ui_element_config_parser parser(data);
 	abort_callback_dummy abort;

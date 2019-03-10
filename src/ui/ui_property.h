@@ -1,13 +1,13 @@
 #pragma once
 #include "config.h"
-#include "js_panel_window.h"
+#include "panel_window.h"
 
 #include <PropertyList.h>
 
 class CDialogProperty : public CDialogImpl<CDialogProperty>, public CDialogResize<CDialogProperty>
 {
 public:
-	CDialogProperty(js_panel_window* p_parent);
+	CDialogProperty(panel_window* p_parent);
 	~CDialogProperty();
 
 	BEGIN_DLGRESIZE_MAP(CDialogProperty)
@@ -51,6 +51,6 @@ public:
 
 private:
 	CPropertyListCtrl m_properties;
-	js_panel_window* m_parent;
+	panel_window* m_parent;
 	prop_kv_config::t_map m_dup_prop_map;
 };

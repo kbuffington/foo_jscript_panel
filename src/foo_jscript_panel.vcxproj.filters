@@ -99,13 +99,13 @@
     <ClInclude Include="host_timer_dispatcher.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="js_panel_window.h">
+    <ClInclude Include="panel_window.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="js_panel_window_cui.h">
+    <ClInclude Include="panel_window_cui.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="js_panel_window_dui.h">
+    <ClInclude Include="panel_window_dui.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="mainmenu.h">
@@ -197,13 +197,13 @@
     <ClCompile Include="host_timer_dispatcher.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="js_panel_window.cpp">
+    <ClCompile Include="panel_window.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="js_panel_window_cui.cpp">
+    <ClCompile Include="panel_window_cui.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="js_panel_window_dui.cpp">
+    <ClCompile Include="panel_window_dui.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="mainmenu.cpp">

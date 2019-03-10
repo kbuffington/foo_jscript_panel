@@ -1,11 +1,11 @@
 #include "stdafx.h"
-#include "js_panel_window.h"
-#include "js_panel_window_cui.h"
+#include "panel_window.h"
+#include "panel_window_cui.h"
 
 // CUI panel instance
-static uie::window_factory<js_panel_window_cui> g_js_panel_wndow_cui;
+static uie::window_factory<panel_window_cui> g_js_panel_wndow_cui;
 
-DWORD js_panel_window_cui::get_colour_ui(t_size type)
+DWORD panel_window_cui::get_colour_ui(t_size type)
 {
 	if (type <= cui::colours::colour_active_item_frame)
 	{
@@ -15,7 +15,7 @@ DWORD js_panel_window_cui::get_colour_ui(t_size type)
 	return 0;
 }
 
-HFONT js_panel_window_cui::get_font_ui(t_size type)
+HFONT panel_window_cui::get_font_ui(t_size type)
 {
 	if (type <= cui::fonts::font_type_labels)
 	{
@@ -24,7 +24,7 @@ HFONT js_panel_window_cui::get_font_ui(t_size type)
 	return nullptr;
 }
 
-HWND js_panel_window_cui::create_or_transfer_window(HWND parent, const uie::window_host_ptr& host, const ui_helpers::window_position_t& p_position)
+HWND panel_window_cui::create_or_transfer_window(HWND parent, const uie::window_host_ptr& host, const ui_helpers::window_position_t& p_position)
 {
 	if (m_host.is_valid())
 	{
@@ -43,12 +43,12 @@ HWND js_panel_window_cui::create_or_transfer_window(HWND parent, const uie::wind
 	return get_wnd();
 }
 
-HWND js_panel_window_cui::get_wnd() const
+HWND panel_window_cui::get_wnd() const
 {
-	return js_panel_window::get_wnd();
+	return panel_window::get_wnd();
 }
 
-LRESULT js_panel_window_cui::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
+LRESULT panel_window_cui::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 {
 	switch (msg)
 	{
@@ -76,76 +76,76 @@ LRESULT js_panel_window_cui::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM l
 		catch (...) {}
 		break;
 	}
-	return js_panel_window::on_message(hwnd, msg, wp, lp);
+	return panel_window::on_message(hwnd, msg, wp, lp);
 }
 
-bool js_panel_window_cui::have_config_popup() const
+bool panel_window_cui::have_config_popup() const
 {
 	return true;
 }
 
-bool js_panel_window_cui::is_available(const uie::window_host_ptr& p) const
+bool panel_window_cui::is_available(const uie::window_host_ptr& p) const
 {
 	return true;
 }
 
-bool js_panel_window_cui::show_config_popup(HWND parent)
+bool panel_window_cui::show_config_popup(HWND parent)
 {
 	return show_configure_popup(parent);
 }
 
-const GUID& js_panel_window_cui::get_extension_guid() const
+const GUID& panel_window_cui::get_extension_guid() const
 {
 	return g_guid_jsp_window_cui;
 }
 
-t_size js_panel_window_cui::get_type() const
+t_size panel_window_cui::get_type() const
 {
 	return uie::type_toolbar | uie::type_panel;
 }
 
-void js_panel_window_cui::destroy_window()
+void panel_window_cui::destroy_window()
 {
 	destroy();
 	m_host.release();
 }
 
-void js_panel_window_cui::get_category(pfc::string_base& out) const
+void panel_window_cui::get_category(pfc::string_base& out) const
 {
 	out = "Panels";
 }
 
-void js_panel_window_cui::get_config(stream_writer* writer, abort_callback& abort) const
+void panel_window_cui::get_config(stream_writer* writer, abort_callback& abort) const
 {
 	save_config(writer, abort);
 }
 
-void js_panel_window_cui::get_name(pfc::string_base& out) const
+void panel_window_cui::get_name(pfc::string_base& out) const
 {
 	out = JSP_NAME;
 }
 
-void js_panel_window_cui::on_bool_changed(t_size mask) const
+void panel_window_cui::on_bool_changed(t_size mask) const
 {
 	// TODO: may be implemented one day
 }
 
-void js_panel_window_cui::on_colour_changed(t_size mask) const
+void panel_window_cui::on_colour_changed(t_size mask) const
 {
 	PostMessage(m_hwnd, callback_id::on_colours_changed, 0, 0);
 }
 
-void js_panel_window_cui::on_font_changed(t_size mask) const
+void panel_window_cui::on_font_changed(t_size mask) const
 {
 	PostMessage(m_hwnd, callback_id::on_font_changed, 0, 0);
 }
 
-void js_panel_window_cui::set_config(stream_reader* reader, t_size size, abort_callback& abort)
+void panel_window_cui::set_config(stream_reader* reader, t_size size, abort_callback& abort)
 {
 	load_config(reader, size, abort);
 }
 
-void js_panel_window_cui::notify_size_limit_changed(t_size limit)
+void panel_window_cui::notify_size_limit_changed(t_size limit)
 {
 	m_host->on_size_limit_change(m_hwnd, limit);
 }

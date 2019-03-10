@@ -5,11 +5,11 @@
 #include "panel_manager.h"
 #include "script_host.h"
 
-class js_panel_window : public host_comm, public ui_helpers::container_window
+class panel_window : public host_comm, public ui_helpers::container_window
 {
 public:
-	js_panel_window();
-	~js_panel_window();
+	panel_window();
+	~panel_window();
 
 	HRESULT script_invoke(t_size callbackId, VARIANTARG* argv = nullptr, t_size argc = 0, VARIANT* ret = nullptr);
 	LRESULT on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp) override;

@@ -1,10 +1,10 @@
 #pragma once
 
-class js_panel_window_dui : public js_panel_window, public ui_element_instance
+class panel_window_dui : public panel_window, public ui_element_instance
 {
 public:
-	js_panel_window_dui(ui_element_config::ptr cfg, ui_element_instance_callback::ptr callback);
-	~js_panel_window_dui();
+	panel_window_dui(ui_element_config::ptr cfg, ui_element_instance_callback::ptr callback);
+	~panel_window_dui();
 
 	static GUID g_get_guid();
 	static GUID g_get_subclass();
@@ -19,10 +19,10 @@ public:
 	ui_element_config::ptr get_configuration() override;
 	void edit_mode_context_menu_build(const POINT& p_point, bool p_fromkeyboard, HMENU p_menu, t_size p_id_base) override;
 	void edit_mode_context_menu_command(const POINT& p_point, bool p_fromkeyboard, t_size p_id, t_size p_id_base) override;
+	void initialise_window(HWND parent);
 	void notify(const GUID& p_what, t_size p_param1, const void* p_param2, t_size p_param2size) override;
 	void notify_size_limit_changed(t_size limit) override;
 	void set_configuration(ui_element_config::ptr data) override;
-	void initialize_window(HWND parent);
 
 private:
 	ui_element_instance_callback::ptr m_callback;

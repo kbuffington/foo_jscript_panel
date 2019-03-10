@@ -1,6 +1,6 @@
 #pragma once
 
-class js_panel_window_cui : public js_panel_window, public uie::window, public cui::fonts::common_callback, public cui::colours::common_callback
+class panel_window_cui : public panel_window, public uie::window, public cui::fonts::common_callback, public cui::colours::common_callback
 {
 protected:
 	DWORD get_colour_ui(t_size type) override;

@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "ui_property.h"
 
-CDialogProperty::CDialogProperty(js_panel_window* p_parent) : m_parent(p_parent) {}
+CDialogProperty::CDialogProperty(panel_window* p_parent) : m_parent(p_parent) {}
 CDialogProperty::~CDialogProperty() {}
 
 BOOL CDialogProperty::OnInitDialog(HWND hwndFocus, LPARAM lParam)

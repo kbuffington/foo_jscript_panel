@@ -1,11 +1,11 @@
 #include "stdafx.h"
-#include "js_panel_window.h"
+#include "panel_window.h"
 #include "ui_conf.h"
 #include "ui_find.h"
 #include "ui_goto.h"
 #include "ui_replace.h"
 
-CDialogConf::CDialogConf(js_panel_window* p_parent) : m_parent(p_parent), m_dlgfind(nullptr), m_dlgreplace(nullptr), m_lastSearchText(""), m_lastFlags(0)
+CDialogConf::CDialogConf(panel_window* p_parent) : m_parent(p_parent), m_dlgfind(nullptr), m_dlgreplace(nullptr), m_lastSearchText(""), m_lastFlags(0)
 {
 	m_caption << JSP_NAME " Configuration (id:" << m_parent->m_script_info.id << ")";
 }

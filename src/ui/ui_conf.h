@@ -1,14 +1,14 @@
 #pragma once
 #include "editorctrl.h"
 
-class js_panel_window;
+class panel_window;
 class CDialogFind;
 class CDialogReplace;
 
 class CDialogConf : public CDialogImpl<CDialogConf>, public CDialogResize<CDialogConf>
 {
 public:
-	CDialogConf(js_panel_window* p_parent);
+	CDialogConf(panel_window* p_parent);
 	~CDialogConf();
 
 	BEGIN_DLGRESIZE_MAP(CDialogConf)
@@ -71,7 +71,7 @@ private:
 	CDialogReplace* m_dlgreplace;
 	CMenu m_menu;
 	CScriptEditorCtrl m_editorctrl;
-	js_panel_window* m_parent;
+	panel_window* m_parent;
 	pfc::string8_fast m_caption;
 	pfc::string8_fast m_lastSearchText;
 	pfc::string_list_impl m_docs;
