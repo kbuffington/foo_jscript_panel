@@ -19,7 +19,7 @@ public:
 
 	DWORD GenerateSourceContext(const pfc::string8_fast& path);
 	HRESULT Initialise();
-	HRESULT InitInvokerMap();
+	HRESULT InitCallbackMap();
 	HRESULT InitScriptEngine();
 	HRESULT InvokeCallback(t_size callbackId, VARIANTARG* argv = nullptr, t_size argc = 0, VARIANT* ret = nullptr);
 	HRESULT ProcessImportedScripts(IActiveScriptParsePtr& parser);
@@ -55,6 +55,6 @@ private:
 	bool m_has_error;
 	host_comm* m_host;
 	pfc::map_t<DWORD, pfc::string8_fast> m_context_to_path_map;
-	pfc::map_t<t_size, DISPID> m_invoker_map;
+	pfc::map_t<t_size, DISPID> m_callback_map;
 	volatile DWORD m_ref_count;
 };
