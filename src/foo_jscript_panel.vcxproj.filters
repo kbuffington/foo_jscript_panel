@@ -117,9 +117,6 @@
     <ClInclude Include="resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="script_callback_invoker.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="script_host.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -213,9 +210,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="panel_manager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="script_callback_invoker.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="script_host.cpp">

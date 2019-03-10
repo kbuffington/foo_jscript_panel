@@ -9,6 +9,81 @@
 #include "utils.h"
 #include "window.h"
 
+#define DEFINE_ID_NAME_ENTRY(x) { callback_id::##x, PFC_WIDESTRING(#x) }
+
+struct id_name_entry
+{
+	t_size id;
+	const wchar_t* name;
+};
+
+static const id_name_entry id_names[] =
+{
+	DEFINE_ID_NAME_ENTRY(on_always_on_top_changed),
+	DEFINE_ID_NAME_ENTRY(on_char),
+	DEFINE_ID_NAME_ENTRY(on_colours_changed),
+	DEFINE_ID_NAME_ENTRY(on_cursor_follow_playback_changed),
+	DEFINE_ID_NAME_ENTRY(on_drag_drop),
+	DEFINE_ID_NAME_ENTRY(on_drag_enter),
+	DEFINE_ID_NAME_ENTRY(on_drag_leave),
+	DEFINE_ID_NAME_ENTRY(on_drag_over),
+	DEFINE_ID_NAME_ENTRY(on_dsp_preset_changed),
+	DEFINE_ID_NAME_ENTRY(on_focus),
+	DEFINE_ID_NAME_ENTRY(on_font_changed),
+	DEFINE_ID_NAME_ENTRY(on_get_album_art_done),
+	DEFINE_ID_NAME_ENTRY(on_item_focus_change),
+	DEFINE_ID_NAME_ENTRY(on_item_played),
+	DEFINE_ID_NAME_ENTRY(on_key_down),
+	DEFINE_ID_NAME_ENTRY(on_key_up),
+	DEFINE_ID_NAME_ENTRY(on_library_items_added),
+	DEFINE_ID_NAME_ENTRY(on_library_items_changed),
+	DEFINE_ID_NAME_ENTRY(on_library_items_removed),
+	DEFINE_ID_NAME_ENTRY(on_load_image_done),
+	DEFINE_ID_NAME_ENTRY(on_main_menu),
+	DEFINE_ID_NAME_ENTRY(on_metadb_changed),
+	DEFINE_ID_NAME_ENTRY(on_mouse_lbtn_dblclk),
+	DEFINE_ID_NAME_ENTRY(on_mouse_lbtn_down),
+	DEFINE_ID_NAME_ENTRY(on_mouse_lbtn_up),
+	DEFINE_ID_NAME_ENTRY(on_mouse_leave),
+	DEFINE_ID_NAME_ENTRY(on_mouse_mbtn_dblclk),
+	DEFINE_ID_NAME_ENTRY(on_mouse_mbtn_down),
+	DEFINE_ID_NAME_ENTRY(on_mouse_mbtn_up),
+	DEFINE_ID_NAME_ENTRY(on_mouse_move),
+	DEFINE_ID_NAME_ENTRY(on_mouse_rbtn_dblclk),
+	DEFINE_ID_NAME_ENTRY(on_mouse_rbtn_down),
+	DEFINE_ID_NAME_ENTRY(on_mouse_rbtn_up),
+	DEFINE_ID_NAME_ENTRY(on_mouse_wheel),
+	DEFINE_ID_NAME_ENTRY(on_mouse_wheel_h),
+	DEFINE_ID_NAME_ENTRY(on_notify_data),
+	DEFINE_ID_NAME_ENTRY(on_output_device_changed),
+	DEFINE_ID_NAME_ENTRY(on_paint),
+	DEFINE_ID_NAME_ENTRY(on_playback_dynamic_info),
+	DEFINE_ID_NAME_ENTRY(on_playback_dynamic_info_track),
+	DEFINE_ID_NAME_ENTRY(on_playback_edited),
+	DEFINE_ID_NAME_ENTRY(on_playback_follow_cursor_changed),
+	DEFINE_ID_NAME_ENTRY(on_playback_new_track),
+	DEFINE_ID_NAME_ENTRY(on_playback_order_changed),
+	DEFINE_ID_NAME_ENTRY(on_playback_pause),
+	DEFINE_ID_NAME_ENTRY(on_playback_queue_changed),
+	DEFINE_ID_NAME_ENTRY(on_playback_seek),
+	DEFINE_ID_NAME_ENTRY(on_playback_starting),
+	DEFINE_ID_NAME_ENTRY(on_playback_stop),
+	DEFINE_ID_NAME_ENTRY(on_playback_time),
+	DEFINE_ID_NAME_ENTRY(on_playlist_item_ensure_visible),
+	DEFINE_ID_NAME_ENTRY(on_playlist_items_added),
+	DEFINE_ID_NAME_ENTRY(on_playlist_items_removed),
+	DEFINE_ID_NAME_ENTRY(on_playlist_items_reordered),
+	DEFINE_ID_NAME_ENTRY(on_playlist_items_selection_change),
+	DEFINE_ID_NAME_ENTRY(on_playlist_stop_after_current_changed),
+	DEFINE_ID_NAME_ENTRY(on_playlist_switch),
+	DEFINE_ID_NAME_ENTRY(on_playlists_changed),
+	DEFINE_ID_NAME_ENTRY(on_replaygain_mode_changed),
+	DEFINE_ID_NAME_ENTRY(on_script_unload),
+	DEFINE_ID_NAME_ENTRY(on_selection_changed),
+	DEFINE_ID_NAME_ENTRY(on_size),
+	DEFINE_ID_NAME_ENTRY(on_volume_change)
+};
+
 script_host::script_host(host_comm* host)
 	: m_host(host)
 	, m_window(new com_object_impl_t<Window, false>(host))
@@ -22,7 +97,10 @@ script_host::script_host(host_comm* host)
 	, m_has_error(false)
 	, m_last_source_context(0) {}
 
-script_host::~script_host() {}
+script_host::~script_host()
+{
+	m_invoker_map.remove_all();
+}
 
 DWORD script_host::GenerateSourceContext(const pfc::string8_fast& path)
 {
@@ -57,10 +135,9 @@ HRESULT script_host::Initialise()
 		DWORD source_context = GenerateSourceContext("<main>");
 		hr = parser->ParseScriptText(string_wide_from_utf8_fast(m_host->m_script_code), nullptr, nullptr, nullptr, source_context, 0, SCRIPTTEXT_HOSTMANAGESSOURCE | SCRIPTTEXT_ISVISIBLE, nullptr, nullptr);
 	}
-
+	if (SUCCEEDED(hr)) hr = InitInvokerMap();
 	if (SUCCEEDED(hr))
 	{
-		m_callback_invoker.init(m_script_root);
 		m_engine_inited = true;
 	}
 	else
@@ -68,8 +145,23 @@ HRESULT script_host::Initialise()
 		m_engine_inited = false;
 		m_has_error = true;
 	}
-
 	return hr;
+}
+
+HRESULT script_host::InitInvokerMap()
+{
+	m_invoker_map.remove_all();
+	if (!m_script_root) return E_POINTER;
+	for (const auto& i : id_names)
+	{
+		LPOLESTR name = const_cast<LPOLESTR>(i.name);
+		DISPID dispId;
+		if (SUCCEEDED(m_script_root->GetIDsOfNames(IID_NULL, &name, 1, LOCALE_USER_DEFAULT, &dispId)))
+		{
+			m_invoker_map[i.id] = dispId;
+		}
+	}
+	return S_OK;
 }
 
 HRESULT script_host::InitScriptEngine()
@@ -103,15 +195,15 @@ HRESULT script_host::InitScriptEngine()
 
 HRESULT script_host::InvokeCallback(t_size callbackId, VARIANTARG* argv, t_size argc, VARIANT* ret)
 {
+	if (!m_script_root) return E_POINTER;
+
 	HRESULT hr = E_FAIL;
 	if (HasError() || !Ready()) return hr;
 
-	try
-	{
-		hr = m_callback_invoker.invoke(callbackId, argv, argc, ret);
-	}
-	catch (...) {}
-	return hr;
+	int dispId;
+	if (!m_invoker_map.query(callbackId, dispId)) return DISP_E_MEMBERNOTFOUND;
+	DISPPARAMS param = { argv, nullptr, argc, 0 };
+	return m_script_root->Invoke(dispId, IID_NULL, LOCALE_USER_DEFAULT, DISPATCH_METHOD, &param, ret, nullptr, nullptr);
 }
 
 HRESULT script_host::ProcessImportedScripts(IActiveScriptParsePtr& parser)
@@ -357,7 +449,7 @@ void script_host::Finalise()
 	}
 
 	m_context_to_path_map.remove_all();
-	m_callback_invoker.reset();
+	m_invoker_map.remove_all();
 
 	if (m_script_engine)
 	{
