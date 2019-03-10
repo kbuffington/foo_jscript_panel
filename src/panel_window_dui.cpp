@@ -208,7 +208,7 @@ void panel_window_dui::notify(const GUID& p_what, t_size p_param1, const void* p
 	}
 }
 
-void panel_window_dui::notify_size_limit_changed(t_size limit)
+void panel_window_dui::notify_size_limit_changed()
 {
 	m_callback->on_min_max_info_change();
 }

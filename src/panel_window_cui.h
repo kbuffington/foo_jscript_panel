@@ -17,7 +17,7 @@ protected:
 	void get_category(pfc::string_base& out) const override;
 	void get_config(stream_writer* writer, abort_callback& abort) const override;
 	void get_name(pfc::string_base& out) const override;
-	void notify_size_limit_changed(t_size limit) override;
+	void notify_size_limit_changed() override;
 	void on_bool_changed(t_size mask) const override;
 	void on_colour_changed(t_size mask) const override;
 	void on_font_changed(t_size mask) const override;

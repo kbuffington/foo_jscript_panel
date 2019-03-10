@@ -1133,7 +1133,7 @@ void panel_window::script_load()
 
 	m_max_size = { INT_MAX, INT_MAX };
 	m_min_size = { 0, 0 };
-	notify_size_limit_changed(uie::size_limit_all);
+	notify_size_limit_changed();
 
 	if (FAILED(m_script_host->Initialise()))
 	{

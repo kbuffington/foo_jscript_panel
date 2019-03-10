@@ -106,7 +106,7 @@ public:
 	t_size get_instance_type();
 	virtual DWORD get_colour_ui(t_size type) = 0;
 	virtual HFONT get_font_ui(t_size type) = 0;
-	virtual void notify_size_limit_changed(t_size limit) = 0;
+	virtual void notify_size_limit_changed() = 0;
 	void redraw();
 	void refresh_background(LPRECT lprcUpdate = nullptr);
 	void repaint(bool force = false);

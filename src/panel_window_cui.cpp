@@ -145,7 +145,7 @@ void panel_window_cui::set_config(stream_reader* reader, t_size size, abort_call
 	load_config(reader, size, abort);
 }
 
-void panel_window_cui::notify_size_limit_changed(t_size limit)
+void panel_window_cui::notify_size_limit_changed()
 {
-	m_host->on_size_limit_change(m_hwnd, limit);
+	m_host->on_size_limit_change(m_hwnd, uie::size_limit_all);
 }
