@@ -196,14 +196,10 @@ HRESULT script_host::InitScriptEngine()
 HRESULT script_host::InvokeCallback(t_size callbackId, VARIANTARG* argv, t_size argc, VARIANT* ret)
 {
 	if (!m_script_root) return E_POINTER;
-
-	HRESULT hr = E_FAIL;
-	if (HasError() || !Ready()) return hr;
-
-	int dispId;
-	if (!m_invoker_map.query(callbackId, dispId)) return DISP_E_MEMBERNOTFOUND;
+	if (HasError() || !Ready()) return E_FAIL;
+	if (!m_invoker_map.have_item(callbackId)) return DISP_E_MEMBERNOTFOUND;
 	DISPPARAMS param = { argv, nullptr, argc, 0 };
-	return m_script_root->Invoke(dispId, IID_NULL, LOCALE_USER_DEFAULT, DISPATCH_METHOD, &param, ret, nullptr, nullptr);
+	return m_script_root->Invoke(m_invoker_map[callbackId], IID_NULL, LOCALE_USER_DEFAULT, DISPATCH_METHOD, &param, ret, nullptr, nullptr);
 }
 
 HRESULT script_host::ProcessImportedScripts(IActiveScriptParsePtr& parser)
