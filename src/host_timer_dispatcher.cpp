@@ -5,7 +5,7 @@
 
 host_timer::host_timer(HWND hwnd, t_size id, t_size delay, bool is_repeated) : m_hwnd(hwnd), m_delay(delay), m_is_repeated(is_repeated), m_id(id) {}
 
-HWND host_timer::GetHwnd() const
+HWND host_timer::get_hwnd() const
 {
 	return m_hwnd;
 }
@@ -163,7 +163,7 @@ void host_timer_dispatcher::script_unload(HWND hwnd)
 
 		for (const auto& elem : m_timer_map)
 		{
-			if (elem.second->timer->GetHwnd() == hwnd)
+			if (elem.second->timer->get_hwnd() == hwnd)
 			{
 				timers_to_delete.push_back(elem.first);
 			}

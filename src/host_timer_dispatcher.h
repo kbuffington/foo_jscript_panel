@@ -10,7 +10,7 @@ public:
 	host_timer(HWND hwnd, t_size id, t_size delay, bool is_repeated);
 	~host_timer() = default;
 
-	HWND GetHwnd() const;
+	HWND get_hwnd() const;
 	bool start(HANDLE timer_queue);
 	static VOID CALLBACK timer_proc(PVOID lp_param, BOOLEAN timer_or_wait_fired);
 	void stop();
