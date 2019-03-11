@@ -429,26 +429,6 @@ bool panel_window::on_mouse_button_up(UINT msg, WPARAM wp, LPARAM lp)
 	return ret;
 }
 
-bool panel_window::show_configure_popup(HWND parent)
-{
-	modal_dialog_scope scope;
-	if (!scope.can_create()) return false;
-	scope.initialize(parent);
-
-	CDialogConf dlg(this);
-	return (dlg.DoModal(parent) == IDOK);
-}
-
-bool panel_window::show_property_popup(HWND parent)
-{
-	modal_dialog_scope scope;
-	if (!scope.can_create()) return false;
-	scope.initialize(parent);
-
-	CDialogProperty dlg(this);
-	return (dlg.DoModal(parent) == IDOK);
-}
-
 ui_helpers::container_window::class_data& panel_window::get_class_data() const
 {
 	static class_data my_class_data =
@@ -1169,6 +1149,28 @@ void panel_window::script_unload()
 
 	host_timer_dispatcher::instance().script_unload(m_hwnd);
 	m_selection_holder.release();
+}
+
+void panel_window::show_configure_popup(HWND parent)
+{
+	modal_dialog_scope scope;
+	if (scope.can_create())
+	{
+		scope.initialize(parent);
+		CDialogConf dlg(this);
+		dlg.DoModal(parent);
+	}
+}
+
+void panel_window::show_property_popup(HWND parent)
+{
+	modal_dialog_scope scope;
+	if (scope.can_create())
+	{
+		scope.initialize(parent);
+		CDialogProperty dlg(this);
+		dlg.DoModal(parent);
+	}
 }
 
 void panel_window::update_script()
