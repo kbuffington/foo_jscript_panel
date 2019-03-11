@@ -74,13 +74,18 @@ host_timer_dispatcher::host_timer_dispatcher()
 
 host_timer_dispatcher::~host_timer_dispatcher()
 {
-	stop_thread();
+	assert(!m_thread);
 }
 
 host_timer_dispatcher& host_timer_dispatcher::instance()
 {
 	static host_timer_dispatcher dispatcher;
 	return dispatcher;
+}
+
+void host_timer_dispatcher::finalise()
+{
+    stop_thread();
 }
 
 t_size host_timer_dispatcher::create_timer(HWND hwnd, t_size delay, bool is_repeated, IDispatch* p_disp)

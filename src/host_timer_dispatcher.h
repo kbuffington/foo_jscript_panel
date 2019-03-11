@@ -45,6 +45,8 @@ public:
 	~host_timer_dispatcher();
 
 	static host_timer_dispatcher& instance();
+	void finalise();
+
 	t_size set_interval(HWND hwnd, t_size delay, IDispatch* p_disp);
 	t_size set_timeout(HWND hwnd, t_size delay, IDispatch* p_disp);
 	void kill_timer(t_size timer_id);
