@@ -1,3 +1,10 @@
+v2.2.0.3
+- FIX: Fix potential freeze on shutdown caused by timer threads. Thanks to TheQwertiest.
+- CHG: Access to the "Configuration Window" via the "Layout" tab in the Columns UI
+       Preferences has been blocked. The "Configure Panel..." button will now
+       be grayed out. Always use the context menu on the panel itself.
+- FIX: Some minor sample bugs have been fixed.
+
 v2.2.0.2
 - FIX: Revert some changes made in v2.2.0 which may have broken various scripts
        that made use of plman (Playlist Manager) methods/properties. It would

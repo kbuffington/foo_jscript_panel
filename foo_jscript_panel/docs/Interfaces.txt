@@ -206,7 +206,7 @@ interface IFb {
 			interface IMainMenuManager {
 				Methods:
 					BuildMenu(IMenuObj, base_id[, count]); (void)
-					// count: optional as of v2.2.1. Default -1.
+					// count: optional as of v2.2.0.3. Default -1.
 					Dispose(); (void)
 					ExecuteByID(id); (boolean)
 					Init(root_name); (void)
