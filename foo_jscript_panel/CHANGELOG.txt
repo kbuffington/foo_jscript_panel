@@ -1,3 +1,9 @@
+v2.2.1
+- FIX: Revert all timer related changes made in v2.2.0.2-v2.2.0.3. Although tested
+       and working fine on my main machine, it caused crashes on Windows XP and
+       foobar2000 not to exit properly when running inside a Windows 7 virtual machine.
+       Apologies for any inconvience!
+
 v2.2.0.3
 - FIX: Fix potential freeze on shutdown caused by timer threads. Thanks to TheQwertiest.
 - CHG: Access to the "Configuration Window" via the "Layout" tab in the Columns UI

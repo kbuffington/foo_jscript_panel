@@ -1,5 +1,4 @@
 #include "stdafx.h"
-#include "host_timer_dispatcher.h"
 #include "panel_manager.h"
 #include "thread_pool.h"
 
@@ -165,7 +164,6 @@ void my_initquit::on_quit()
 	ui_selection_manager_v2::get()->unregister_callback(this);
 	panel_manager::instance().send_msg_to_all(UWM_SCRIPT_TERM, 0, 0);
 	simple_thread_pool::instance().exit();
-	host_timer_dispatcher::instance().finalise();
 }
 
 void my_initquit::on_selection_changed(metadb_handle_list_cref p_selection)

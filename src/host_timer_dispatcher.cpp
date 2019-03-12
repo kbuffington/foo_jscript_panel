@@ -1,18 +1,29 @@
 #include "stdafx.h"
 #include "host_timer_dispatcher.h"
 
-#include <vector>
+host_timer::host_timer(HWND hwnd, t_size id, t_size delay, bool isRepeated)
+{
+	m_hTimer = 0;
 
-host_timer::host_timer(HWND hwnd, t_size id, t_size delay, bool is_repeated) : m_hwnd(hwnd), m_delay(delay), m_is_repeated(is_repeated), m_id(id) {}
+	m_hwnd = hwnd;
+	m_delay = delay;
+	m_is_repeated = isRepeated;
+	m_id = id;
+
+	m_is_stop_requested = false;
+	m_is_stopped = false;
+}
+
+host_timer::~host_timer() {}
 
 HWND host_timer::get_hwnd() const
 {
 	return m_hwnd;
 }
 
-VOID CALLBACK host_timer::timer_proc(PVOID lp_param, BOOLEAN timer_or_wait_fired)
+VOID CALLBACK host_timer::timerProc(PVOID lpParameter, BOOLEAN TimerOrWaitFired)
 {
-	host_timer* timer = (host_timer*)lp_param;
+	host_timer* timer = (host_timer*)lpParameter;
 
 	if (timer->m_is_stopped)
 	{
@@ -22,7 +33,8 @@ VOID CALLBACK host_timer::timer_proc(PVOID lp_param, BOOLEAN timer_or_wait_fired
 	if (timer->m_is_stop_requested)
 	{
 		timer->m_is_stopped = true;
-		host_timer_dispatcher::instance().stop_request(timer->m_hwnd, timer->m_timer_handle, timer->m_id);
+		host_timer_dispatcher::instance().on_timer_stop_request(timer->m_hwnd, timer->m_hTimer, timer->m_id);
+
 		return;
 	}
 
@@ -30,19 +42,20 @@ VOID CALLBACK host_timer::timer_proc(PVOID lp_param, BOOLEAN timer_or_wait_fired
 	{
 		timer->m_is_stopped = true;
 		SendMessage(timer->m_hwnd, UWM_TIMER, timer->m_id, 0);
-		host_timer_dispatcher::instance().stop_request(timer->m_hwnd, timer->m_timer_handle, timer->m_id);
+		host_timer_dispatcher::instance().on_timer_stop_request(timer->m_hwnd, timer->m_hTimer, timer->m_id);
+
 		return;
 	}
 
 	SendMessage(timer->m_hwnd, UWM_TIMER, timer->m_id, 0);
 }
 
-bool host_timer::start(HANDLE timer_queue)
+bool host_timer::start(HANDLE hTimerQueue)
 {
 	return !!CreateTimerQueueTimer(
-		&m_timer_handle,
-		timer_queue,
-		host_timer::timer_proc,
+		&m_hTimer,
+		hTimerQueue,
+		host_timer::timerProc,
 		this,
 		m_delay,
 		m_is_repeated ? m_delay : 0,
@@ -54,43 +67,74 @@ void host_timer::stop()
 	m_is_stop_requested = true;
 }
 
-host_timer_task::host_timer_task(IDispatch* p_disp, t_size timer_id) : m_disp(p_disp, true), m_timer_id(timer_id) {}
+host_timer_task::host_timer_task(IDispatch* pDisp, t_size timerId)
+{
+	m_pDisp = pDisp;
+	m_timerId = timerId;
+
+	m_refCount = 0;
+	m_pDisp->AddRef();
+}
+
+host_timer_task::~host_timer_task()
+{
+	m_pDisp->Release();
+}
+
+void host_timer_task::acquire()
+{
+	++m_refCount;
+}
 
 void host_timer_task::invoke()
 {
+	acquire();
+
 	VARIANTARG args[1];
-	args[0].vt = VT_UI4;
-	args[0].ulVal = m_timer_id;
+	args[0].vt = VT_I4;
+	args[0].lVal = m_timerId;
 	DISPPARAMS dispParams = { args, nullptr, _countof(args), 0 };
-	m_disp->Invoke(DISPID_VALUE, IID_NULL, LOCALE_USER_DEFAULT, DISPATCH_METHOD, &dispParams, nullptr, nullptr, nullptr);
+	m_pDisp->Invoke(DISPID_VALUE, IID_NULL, LOCALE_USER_DEFAULT, DISPATCH_METHOD, &dispParams, nullptr, nullptr, nullptr);
+
+	release();
+}
+
+void host_timer_task::release()
+{
+	if (!m_refCount)
+	{
+		return;
+	}
+
+	--m_refCount;
+	if (!m_refCount)
+	{
+		host_timer_dispatcher::instance().on_task_complete(m_timerId);
+	}
 }
 
 host_timer_dispatcher::host_timer_dispatcher()
 {
 	m_cur_timer_id = 1;
 	m_timer_queue = CreateTimerQueue();
-	create_thread();
 }
 
 host_timer_dispatcher::~host_timer_dispatcher()
 {
-	assert(!m_thread);
+	stop_thread();
+	// Clear all references
+	m_task_map.clear();
 }
 
 host_timer_dispatcher& host_timer_dispatcher::instance()
 {
-	static host_timer_dispatcher dispatcher;
-	return dispatcher;
+	static host_timer_dispatcher timerDispatcher;
+	return timerDispatcher;
 }
 
-void host_timer_dispatcher::finalise()
+t_size host_timer_dispatcher::create_timer(HWND hwnd, t_size delay, bool isRepeated, IDispatch* pDisp)
 {
-    stop_thread();
-}
-
-t_size host_timer_dispatcher::create_timer(HWND hwnd, t_size delay, bool is_repeated, IDispatch* p_disp)
-{
-	if (!p_disp)
+	if (!pDisp)
 	{
 		return 0;
 	}
@@ -98,100 +142,115 @@ t_size host_timer_dispatcher::create_timer(HWND hwnd, t_size delay, bool is_repe
 	std::lock_guard<std::mutex> lock(m_timer_mutex);
 
 	t_size id = m_cur_timer_id++;
-	while (m_timer_map.count(id))
+	while (m_task_map.end() != m_task_map.find(id) && m_timer_map.end() != m_timer_map.find(id))
 	{
 		id = m_cur_timer_id++;
 	}
 
-	m_timer_map.emplace(id, std::make_unique<timer_object>(std::make_unique<host_timer>(hwnd, id, delay, is_repeated), std::make_unique<host_timer_task>(p_disp, id)));
+	m_timer_map.emplace(id, new host_timer(hwnd, id, delay, isRepeated));
 
-	if (!m_timer_map[id]->timer->start(m_timer_queue))
+	auto curTask = m_task_map.emplace(id, new host_timer_task(pDisp, id));
+	curTask.first->second->acquire();
+
+	if (!m_timer_map[id]->start(m_timer_queue))
 	{
 		m_timer_map.erase(id);
+		m_task_map.erase(id);
 		return 0;
 	}
 
 	return id;
 }
 
-t_size host_timer_dispatcher::set_interval(HWND hwnd, t_size delay, IDispatch* p_disp)
+t_size host_timer_dispatcher::set_interval(HWND hwnd, t_size delay, IDispatch* pDisp)
 {
-	return create_timer(hwnd, delay, true, p_disp);
+	return create_timer(hwnd, delay, true, pDisp);
 }
 
-t_size host_timer_dispatcher::set_timeout(HWND hwnd, t_size delay, IDispatch* p_disp)
+t_size host_timer_dispatcher::set_timeout(HWND hwnd, t_size delay, IDispatch* pDisp)
 {
-	return create_timer(hwnd, delay, false, p_disp);
+	return create_timer(hwnd, delay, false, pDisp);
 }
 
 void host_timer_dispatcher::create_thread()
 {
-	m_thread = std::make_unique<std::thread>(&host_timer_dispatcher::thread_main, this);
+	m_thread = new std::thread(&host_timer_dispatcher::thread_main, this);
 }
 
-void host_timer_dispatcher::kill_timer(t_size timer_id)
+void host_timer_dispatcher::kill_timer(t_size timerId)
 {
-	std::lock_guard<std::mutex> lock(m_timer_mutex);
-
-	auto it = m_timer_map.find(timer_id);
-	if (m_timer_map.end() != it)
-	{
-		it->second->timer->stop();
-	}
-}
-
-void host_timer_dispatcher::invoke_message(t_size timer_id)
-{
-	std::shared_ptr<host_timer_task> task;
-
 	{
 		std::lock_guard<std::mutex> lock(m_timer_mutex);
 
-		if (m_timer_map.count(timer_id))
+		auto timerIter = m_timer_map.find(timerId);
+		if (m_timer_map.end() != timerIter)
 		{
-			task = m_timer_map[timer_id]->task;
+			timerIter->second->stop();
 		}
 	}
 
-	if (task)
+	auto taskIter = m_task_map.find(timerId);
+	if (m_task_map.end() != taskIter)
 	{
-		task->invoke();
+		taskIter->second->release();
+	}
+}
+
+void host_timer_dispatcher::invoke_message(t_size timerId)
+{
+	if (m_task_map.end() != m_task_map.find(timerId))
+	{
+		m_task_map[timerId]->invoke();
 	}
 }
 
 void host_timer_dispatcher::script_unload(HWND hwnd)
 {
-	std::vector<t_size> timers_to_delete;
+	std::list<t_size> timersToDelete;
 
 	{
 		std::lock_guard<std::mutex> lock(m_timer_mutex);
-
 		for (const auto& elem : m_timer_map)
 		{
-			if (elem.second->timer->get_hwnd() == hwnd)
+			if (elem.second->get_hwnd() == hwnd)
 			{
-				timers_to_delete.push_back(elem.first);
+				timersToDelete.push_back(elem.first);
 			}
 		}
 	}
 
-	for (auto timer_id : timers_to_delete)
+	for (auto timerId : timersToDelete)
 	{
-		kill_timer(timer_id);
+		kill_timer(timerId);
 	}
 }
 
-void host_timer_dispatcher::stop_request(HWND hwnd, HANDLE timer_handle, t_size timer_id)
+void host_timer_dispatcher::on_task_complete(t_size timerId)
+{
+	if (m_task_map.end() != m_task_map.find(timerId))
+	{
+		m_task_map.erase(timerId);
+	}
+}
+
+void host_timer_dispatcher::on_timer_expire(t_size timerId)
+{
+	std::unique_lock<std::mutex> lock(m_timer_mutex);
+
+	m_timer_map.erase(timerId);
+}
+
+void host_timer_dispatcher::on_timer_stop_request(HWND hwnd, HANDLE hTimer, t_size timerId)
 {
 	std::unique_lock<std::mutex> lock(m_thread_task_mutex);
 
-	thread_task task = {};
-	task.task_id = thread_task_id::kill_timer_task;
-	task.hwnd = hwnd;
-	task.timer_handle = timer_handle;
-	task.timer_id = timer_id;
+	thread_task threadTask = {};
+	threadTask.taskId = killTimerTask;
+	threadTask.hwnd = hwnd;
+	threadTask.hTimer = hTimer;
+	threadTask.timerId = timerId;
 
-	m_thread_task_list.push_front(task);
+	m_thread_task_list.push_front(threadTask);
 	m_cv.notify_one();
 }
 
@@ -204,10 +263,10 @@ void host_timer_dispatcher::stop_thread()
 
 	{
 		std::lock_guard<std::mutex> lock(m_thread_task_mutex);
-		thread_task task = {};
-		task.task_id = thread_task_id::shutdown_task;
+		thread_task threadTask = {};
+		threadTask.taskId = shutdownTask;
 
-		m_thread_task_list.push_front(task);
+		m_thread_task_list.push_front(threadTask);
 		m_cv.notify_one();
 	}
 
@@ -216,15 +275,15 @@ void host_timer_dispatcher::stop_thread()
 		m_thread->join();
 	}
 
-	m_thread.reset();
+	delete m_thread;
+	m_thread = nullptr;
 }
 
 void host_timer_dispatcher::thread_main()
 {
 	while (true)
 	{
-		thread_task task;
-
+		thread_task threadTask;
 		{
 			std::unique_lock<std::mutex> lock(m_thread_task_mutex);
 
@@ -238,20 +297,17 @@ void host_timer_dispatcher::thread_main()
 				continue;
 			}
 
-			task = m_thread_task_list.front();
+			threadTask = m_thread_task_list.front();
 			m_thread_task_list.pop_front();
 		}
 
-		switch (task.task_id)
+		switch (threadTask.taskId)
 		{
-		case thread_task_id::kill_timer_task:
-			DeleteTimerQueueTimer(m_timer_queue, task.timer_handle, INVALID_HANDLE_VALUE);
-			{
-				std::unique_lock<std::mutex> lock(m_timer_mutex);
-				m_timer_map.erase(task.timer_id);
-			}
+		case killTimerTask:
+			DeleteTimerQueueTimer(m_timer_queue, threadTask.hTimer, INVALID_HANDLE_VALUE);
+			on_timer_expire(threadTask.timerId);
 			break;
-		case thread_task_id::shutdown_task:
+		case shutdownTask:
 			DeleteTimerQueueEx(m_timer_queue, INVALID_HANDLE_VALUE);
 			m_timer_queue = nullptr;
 			return;
