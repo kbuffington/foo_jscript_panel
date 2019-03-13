@@ -20,7 +20,6 @@ function on_mouse_lbtn_up(x, y) {
 function menu() {
 	var basemenu = window.CreatePopupMenu();
 	var contextman = fb.CreateContextMenuManager();
-	contextman.InitNowPlaying();
 	
 	var child1 = window.CreatePopupMenu(); //File
 	var child2 = window.CreatePopupMenu(); //Edit
@@ -44,8 +43,6 @@ function menu() {
 	child4.AppendTo(basemenu, MF_STRING, 'Playback');
 	child5.AppendTo(basemenu, MF_STRING, 'Library');
 	child6.AppendTo(basemenu, MF_STRING, 'Help');
-	basemenu.AppendMenuSeparator();
-	child7.AppendTo(basemenu, MF_STRING, 'Now Playing');
 	
 	menuman1.Init('file');
 	menuman2.Init('edit');
@@ -61,8 +58,13 @@ function menu() {
 	menuman5.BuildMenu(child5, 5000);
 	menuman6.BuildMenu(child6, 6000);
 	
-	contextman.InitNowPlaying();
-	contextman.BuildMenu(child7, 7000);
+	if (fb.IsPlaying) {
+		contextman.InitNowPlaying();
+		contextman.BuildMenu(child7, 7000);
+		basemenu.AppendMenuSeparator();
+		child7.AppendTo(basemenu, MF_STRING, 'Now Playing');
+	}
+	
 	var idx = basemenu.TrackPopupMenu(0, 0);
 
 	switch (true) {
