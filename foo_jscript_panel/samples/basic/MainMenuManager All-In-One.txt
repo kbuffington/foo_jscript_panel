@@ -7,6 +7,12 @@
 
 var img = gdi.Image(fb.ComponentPath + 'samples\\basic\\images\\cog.png');
 
+function on_focus(is_focused) {
+	if (is_focused) {
+		plman.SetActivePlaylistContext();
+	}
+}
+
 function on_paint(gr) {
 	gr.DrawImage(img, 0, 0, img.Width, img.Height, 0, 0, img.Width, img.Height);
 }

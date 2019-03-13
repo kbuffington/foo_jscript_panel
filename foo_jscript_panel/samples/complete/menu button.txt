@@ -10,6 +10,12 @@ var panel = new _.panel('custom_background');
 var buttons = new _.buttons();
 buttons.buttons.menu = new _.button(0, 0, 36, 36, {normal : 'misc\\foobar2000.png'}, function (x, y, mask) { _.menu(0, 36); }, 'Menu');
 
+function on_focus(is_focused) {
+	if (is_focused) {
+		plman.SetActivePlaylistContext();
+	}
+}
+
 function on_size() {
 	panel.size();
 }
