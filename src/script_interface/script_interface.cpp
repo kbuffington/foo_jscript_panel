@@ -2407,7 +2407,7 @@ STDMETHODIMP Tooltip::TrackPosition(int x, int y)
 {
 	POINT pt = { x, y };
 	ClientToScreen(m_wndparent, &pt);
-	SendMessage(m_wndtooltip, TTM_TRACKPOSITION, 0, MAKELONG(pt.x, pt.y));
+	SendMessage(m_wndtooltip, TTM_TRACKPOSITION, 0, (LPARAM)MAKELONG(pt.x, pt.y));
 	return S_OK;
 }
 
@@ -2423,7 +2423,7 @@ STDMETHODIMP Tooltip::put_Text(BSTR text)
 {
 	SysReAllocString(&m_tip_buffer, text);
 	m_ti.lpszText = m_tip_buffer;
-	SendMessage(m_wndtooltip, TTM_SETTOOLINFO, 0, (LPARAM)& m_ti);
+	SendMessage(m_wndtooltip, TTM_SETTOOLINFO, 0, (LPARAM)&m_ti);
 	return S_OK;
 }
 
@@ -2438,7 +2438,7 @@ STDMETHODIMP Tooltip::put_TrackActivate(VARIANT_BOOL activate)
 		m_ti.uFlags &= ~(TTF_TRACK | TTF_ABSOLUTE);
 	}
 
-	SendMessage(m_wndtooltip, TTM_TRACKACTIVATE, activate != VARIANT_FALSE ? TRUE : FALSE, (LPARAM)& m_ti);
+	SendMessage(m_wndtooltip, TTM_TRACKACTIVATE, activate != VARIANT_FALSE ? TRUE : FALSE, (LPARAM)&m_ti);
 	return S_OK;
 }
 
