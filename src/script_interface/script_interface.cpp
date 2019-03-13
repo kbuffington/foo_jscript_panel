@@ -2368,37 +2368,6 @@ void Tooltip::FinalRelease()
 	}
 }
 
-STDMETHODIMP Tooltip::get_Text(BSTR* p)
-{
-	if (!p) return E_POINTER;
-
-	*p = SysAllocString(m_tip_buffer);
-	return S_OK;
-}
-
-STDMETHODIMP Tooltip::put_Text(BSTR text)
-{
-	SysReAllocString(&m_tip_buffer, text);
-	m_ti.lpszText = m_tip_buffer;
-	SendMessage(m_wndtooltip, TTM_SETTOOLINFO, 0, (LPARAM)&m_ti);
-	return S_OK;
-}
-
-STDMETHODIMP Tooltip::put_TrackActivate(VARIANT_BOOL activate)
-{
-	if (activate)
-	{
-		m_ti.uFlags |= TTF_TRACK | TTF_ABSOLUTE;
-	}
-	else
-	{
-		m_ti.uFlags &= ~(TTF_TRACK | TTF_ABSOLUTE);
-	}
-
-	SendMessage(m_wndtooltip, TTM_TRACKACTIVATE, activate != VARIANT_FALSE ? TRUE : FALSE, (LPARAM)&m_ti);
-	return S_OK;
-}
-
 STDMETHODIMP Tooltip::Activate()
 {
 	SendMessage(m_wndtooltip, TTM_ACTIVATE, TRUE, 0);
@@ -2408,12 +2377,6 @@ STDMETHODIMP Tooltip::Activate()
 STDMETHODIMP Tooltip::Deactivate()
 {
 	SendMessage(m_wndtooltip, TTM_ACTIVATE, FALSE, 0);
-	return S_OK;
-}
-
-STDMETHODIMP Tooltip::SetMaxWidth(int width)
-{
-	SendMessage(m_wndtooltip, TTM_SETMAXTIPWIDTH, 0, width);
 	return S_OK;
 }
 
@@ -2434,11 +2397,48 @@ STDMETHODIMP Tooltip::SetDelayTime(int type, int time)
 	return S_OK;
 }
 
+STDMETHODIMP Tooltip::SetMaxWidth(int width)
+{
+	SendMessage(m_wndtooltip, TTM_SETMAXTIPWIDTH, 0, width);
+	return S_OK;
+}
+
 STDMETHODIMP Tooltip::TrackPosition(int x, int y)
 {
 	POINT pt = { x, y };
 	ClientToScreen(m_wndparent, &pt);
 	SendMessage(m_wndtooltip, TTM_TRACKPOSITION, 0, MAKELONG(pt.x, pt.y));
+	return S_OK;
+}
+
+STDMETHODIMP Tooltip::get_Text(BSTR* p)
+{
+	if (!p) return E_POINTER;
+
+	*p = SysAllocString(m_tip_buffer);
+	return S_OK;
+}
+
+STDMETHODIMP Tooltip::put_Text(BSTR text)
+{
+	SysReAllocString(&m_tip_buffer, text);
+	m_ti.lpszText = m_tip_buffer;
+	SendMessage(m_wndtooltip, TTM_SETTOOLINFO, 0, (LPARAM)& m_ti);
+	return S_OK;
+}
+
+STDMETHODIMP Tooltip::put_TrackActivate(VARIANT_BOOL activate)
+{
+	if (activate)
+	{
+		m_ti.uFlags |= TTF_TRACK | TTF_ABSOLUTE;
+	}
+	else
+	{
+		m_ti.uFlags &= ~(TTF_TRACK | TTF_ABSOLUTE);
+	}
+
+	SendMessage(m_wndtooltip, TTM_TRACKACTIVATE, activate != VARIANT_FALSE ? TRUE : FALSE, (LPARAM)& m_ti);
 	return S_OK;
 }
 
