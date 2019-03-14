@@ -1375,7 +1375,38 @@ interface IWindow {
 					*/
 
 					TrackPosition(x, y); (void)
-					// Check x, y positions have changed from last time otherwise it will flicker
+					/*
+					Check x, y positions have changed from last time otherwise it will flicker
+					If making the tooltip text relative to the mouse position, it's recommended to add offsets
+					so there is no danger of it being behind the mouse pointer. Do not try it on purpose. Bad
+					things will happen!
+
+					Example:
+					var g_tooltip = window.CreateTooltip();
+					var g_trackingMouse = false;
+					var g_oldX, g_oldY;
+
+					function on_mouse_move(x, y) {
+						if (!g_trackingMouse) {
+							g_tooltip.Activate();
+							g_tooltip.TrackActivate = true;
+							g_trackingMouse = true;
+						}
+						
+						// Make sure the position is changed
+						if (g_oldX != x || g_oldY != y) {
+							g_tooltip.Text = "x:" + x + ", y:" + y;
+							g_tooltip.TrackPosition(x + 20, y + 20); // add offsets here
+							g_oldX = x;
+							g_oldY = y;
+						}
+					}
+
+					function on_mouse_leave() {
+						g_trackingMouse = false;
+						g_tooltip.TrackActivate = false;
+					}
+					*/
 			}
 
 		window.GetColourCUI(type); (int)
