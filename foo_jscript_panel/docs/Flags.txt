@@ -84,7 +84,7 @@ var IDC_APPSTARTING = 32650;
 var IDC_HAND = 32649;
 var IDC_HELP = 32651;
 
-// Used in utils.Glob()
+// Used with utils.Glob()
 // For more information, see: http://msdn.microsoft.com/en-us/library/ee332330%28VS.85%29.aspx
 var FILE_ATTRIBUTE_READONLY            = 0x00000001;
 var FILE_ATTRIBUTE_HIDDEN              = 0x00000002;
@@ -100,7 +100,7 @@ var FILE_ATTRIBUTE_COMPRESSED          = 0x00000800;
 var FILE_ATTRIBUTE_OFFLINE             = 0x00001000;
 var FILE_ATTRIBUTE_NOT_CONTENT_INDEXED = 0x00002000;
 var FILE_ATTRIBUTE_ENCRYPTED           = 0x00004000;
-//var FILE_ATTRIBUTE_VIRTUAL           = 0x00010000; // do not use
+// var FILE_ATTRIBUTE_VIRTUAL           = 0x00010000; // do not use
 
 // Used with utils.IsKeyPressed()
 var VK_BACK = 0x08;

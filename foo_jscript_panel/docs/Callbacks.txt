@@ -1,5 +1,5 @@
 function on_always_on_top_changed(state) {}
-// Called when "Always On Top" state changes from using the menu, Alt + A, fb.AlwaysOnTop, etc
+// Called when "Always On Top" state is changed.
 // state: boolean.
 
 function on_char(code) {}
@@ -11,7 +11,7 @@ function on_colours_changed() {}
 
 function on_cursor_follow_playback_changed(state) {}
 // Called when "cursor follow playback" state is changed.
-// state: boolean. Reflects current "cursor follow playback" value.
+// state: boolean.
 
 function on_drag_drop(action, x, y, mask) {}
 function on_drag_enter(action, x, y, mask) {}
@@ -133,8 +133,8 @@ function on_paint(gr) {}
 // See interfaces.txt for all the methods used with gr.
 
 function on_playback_follow_cursor_changed(state) {}
-// Called when "playback follow cursor" state is changed
-// state: boolean, reflects current "playback follow cursor" value.
+// Called when "playback follow cursor" state is changed.
+// state: boolean.
 
 function on_playback_dynamic_info() {}
 // dynamic info (VBR bitrate etc) change.
@@ -166,7 +166,7 @@ new_order_index:
 */
 
 function on_playback_pause(state) {}
-// state: boolean, true when paused, false when unpaused.
+// state: boolean.
 
 function on_playback_queue_changed(origin) {}
 // origin: 0 user_added, 1 user_removed, 2 playback advance
@@ -195,8 +195,8 @@ function on_playlist_items_selection_change() {}
 // Workaround for some 3rd party playlist viewers not working with on_selection_changed().
 
 function on_playlist_stop_after_current_changed(state) {}
-// Called when "stop after current" is enabled/disabled.
-// state: boolean, reflects "stop after current" value, either true or false.
+// Called when "stop after current" state is changed.
+// state: boolean.
 
 function on_playlist_switch() {}
 

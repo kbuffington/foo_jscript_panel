@@ -193,7 +193,7 @@ interface IFb {
 		/*
 		Returns an empty handle list or a list containing a single item if you pass the optional
 		handle argument.
-		
+
 		Example:
 		var items = fb.CreateHandleList(fb.GetFocusItem());
 		items.AttachImage(...); // quick way to use handle list only method with a single item
@@ -499,7 +499,7 @@ interface IFb {
 
 		fb.Stop(); (void)
 
-		fb.TitleFormat(expression); (ITitleFormat)
+		fb.TitleFormat(pattern); (ITitleFormat)
 
 			interface ITitleFormat {
 				/*
@@ -526,7 +526,9 @@ interface IFb {
 					EvalWithMetadb(handle); (string)
 					/*
 					Example:
-					console.log(tfo.EvalWithMetadb(fb.GetFocusItem()));
+					var artist = tfo.EvalWithMetadb(fb.GetFocusItem());
+					If possible, avoid using while looping a handle list. Using EvalWithMetadbs below
+					should be much faster.
 					*/
 
 					EvalWithMetadbs(handle_list); (VBArray)
@@ -635,11 +637,13 @@ interface IPlman {
 
 		plman.AddLocations(playlistIndex, paths[, select]); (void)
 		/*
-		paths: An array of files/URLs
+		paths: An array of files/URLs.
 		select: boolean, default false.
 
 		Example:
-		plman.AddLocations(plman.ActivePlaylist, ["e:\\1.mp3"]);
+		var arr = ["e:\\1.mp3"];
+		plman.AddLocations(plman.ActivePlaylist, arr);
+
 		This operation is asynchronous and may take some time to complete if it's a large array.
 		Any code in your script directly after this line will run immediately without waiting for
 		the job to finish.
@@ -689,18 +693,20 @@ interface IPlman {
 		name: a name for the new playlist. If name is "", the name of the source playlist is used.
 		The duplicate playlist gets inserted directly after the source playlistIndex.
 		It only duplicates playlist content, not the properties of the playlist eg. Autoplaylist
+
+		Returns playlistIndex of newly created playlist.
 		*/
 
 		plman.EnsurePlaylistItemVisible(playlistIndex, playlistItemIndex); (void)
+
+		plman.ExecutePlaylistDefaultAction(playlistIndex, playlistItemIndex); (boolean)
+		// Starts playback by executing default doubleclick/enter action unless overridden by a lock to do something else.
 
 		plman.FindOrCreatePlaylist(name, unlocked); (uint)
 		/*
 		Returns playlistIndex of named playlist or that of a newly created one if not found.
 		unlocked: boolean. If true, locked playlists are ignored when looking for existing playlists.
 		*/
-
-		plman.ExecutePlaylistDefaultAction(playlistIndex, playlistItemIndex); (boolean)
-		// Starts playback by executing default doubleclick/enter action unless overridden by a lock to do something else.
 
 		plman.FindPlaylist(name); (int)
 		// Case insensitive. Returns playlistIndex or -1 on failure.
@@ -859,7 +865,7 @@ interface IPlman {
 		/*
 		Example:
 		var ap = plman.ActivePlaylist;
-		var handle = plman.GetPlaylistItems(ap).Item(1); // 2nd item in playlist
+		var handle = plman.GetPlaylistItems(ap).Item(1);
 		plman.SetPlaylistFocusItemByHandle(ap, handle);
 		*/
 
@@ -867,8 +873,10 @@ interface IPlman {
 		/*
 		affectedItems: An array of item indexes.
 		state: boolean.
+
 		Example:
-		plman.SetPlaylistSelection(plman.ActivePlaylist, [0, 2, 4], true);
+		var arr = [0, 2, 4];
+		plman.SetPlaylistSelection(plman.ActivePlaylist, arr, true);
 		Selects first, third and fifth tracks in playlist. This does not affect other selected items.
 		*/
 
@@ -1013,7 +1021,7 @@ interface IUtils {
 
 		Example:
 		var colour = utils.ColourPicker(window.ID, RGB(255, 0, 0));
-		See docs\helpers.txt for RGB function.
+		See Helpers.txt for RGB function.
 		*/
 
 		utils.FileTest(path, mode); (VARIANT)
@@ -1118,7 +1126,7 @@ interface IUtils {
 		utils.Glob(pattern[, exc_mask, inc_mask]); (VBArray)
 		/*
 		exc_mask: default FILE_ATTRIBUTE_DIRECTORY
-		See Flags.txt > Used in utils.Glob()
+		See Flags.txt > Used with utils.Glob()
 		inc_mask: default 0xffffffff
 		Returns a VBArray so you need to use .toArray() on the result.
 
@@ -1187,7 +1195,7 @@ interface IUtils {
 
 		There should be no issue at all with UTF8/UTF16-LE files as these are
 		automatically detected.
-		
+
 		Example:
 		var text = utils.ReadTextFile("E:\\some text file.txt");
 		*/
@@ -1225,13 +1233,13 @@ interface IUtils {
 
 interface IWindow {
 	Properties:
-		window.ID; (read) (int)
+		window.ID; (uint) (read)
 		/*
 		Required in fb.CheckClipboardContents, fb.GetClipboardContents, utils.ColourPicker, utils.GetAlbumArtAsync,
 		utils.InputBox, utils.LoadImageAsync, etc.
 		*/
 
-		window.InstanceType; (uint)
+		window.InstanceType; (uint) (read)
 		/*
 		Returns 0 if using Columns UI, 1 if using default UI.
 		You need this to determine which GetFontXXX and GetColourXXX methods to use, assuming you want to support both interfaces.
@@ -1275,7 +1283,7 @@ interface IWindow {
 				Methods:
 					AppendMenuItem(flags, item_id, text); (void)
 					/*
-					flags: See Flags.txt > Used in AppendMenuItem()
+					flags: See Flags.txt > Used with AppendMenuItem()
 					item_id: integer greater than 0. Each menu item needs a unique id.
 					*/
 
@@ -1291,7 +1299,7 @@ interface IWindow {
 					Dispose(); (void)
 
 					TrackPopupMenu(x, y[, flags]); (int)
-					// flags: default 0. See Flags.txt > Used in TrackPopupMenu()
+					// flags: default 0. See Flags.txt > Used with TrackPopupMenu()
 			}
 
 		window.CreateThemeManager(class_list); (IThemeManager)
@@ -1362,7 +1370,7 @@ interface IWindow {
 
 					GetDelayTime(type); (int)
 					SetDelayTime(type, time); (void)
-					// type. See Flags.txt > Used in ITooltip.GetDelayTime() and ITooltip.SetDelayTime()
+					// type. See Flags.txt > Used with ITooltip.GetDelayTime() and ITooltip.SetDelayTime()
 
 					SetMaxWidth(width); (void)
 					/*
@@ -1392,7 +1400,7 @@ interface IWindow {
 							g_tooltip.TrackActivate = true;
 							g_trackingMouse = true;
 						}
-						
+
 						// Make sure the position is changed
 						if (g_oldX != x || g_oldY != y) {
 							g_tooltip.Text = "x:" + x + ", y:" + y;
@@ -1464,7 +1472,7 @@ interface IWindow {
 		*/
 
 		window.Reload(); (void)
-		// reload panel
+		// Reloads panel.
 
 		window.Repaint([force]); (void)
 		// force: boolean, default false.
@@ -1479,7 +1487,7 @@ interface IWindow {
 
 		window.SetCursor(id); (void)
 		/*
-		id: See Flags.txt > Used in window.SetCursor()
+		id: See Flags.txt > Used with window.SetCursor()
 		This would usually be used inside the on_mouse_move callback. Use -1 if you want to hide the cursor.
 		*/
 
@@ -1557,8 +1565,8 @@ interface IGdiFont {
 
 interface IGdiBitmap {
 	Properties:
-		Height (int) (read)
-		Width (int) (read)
+		Height (uint) (read)
+		Width (uint) (read)
 
 	Methods:
 		ApplyAlpha(alpha); (IGdiBitmap)
@@ -1574,8 +1582,8 @@ interface IGdiBitmap {
 
 			interface IGdiRawBitmap {
 				Properties:
-					Width; (int) (read)
-					Height; (int) (read)
+					Width; (uint) (read)
+					Height; (uint) (read)
 
 				Methods:
 					Dispose(); (void)
@@ -1602,13 +1610,13 @@ interface IGdiBitmap {
 
 		console.log(toRGB(colours[0].col)); // [192, 0, 0]
 
-		See docs\helpers.txt for "toRGB" function.
+		See Helpers.txt for "toRGB" function.
 		*/
 
-		GetGraphics();
+		GetGraphics(); (IGdiGraphics)
 		// Don't forget to use ReleaseGraphics() after operations on IGdiGraphics interface is done.
 
-		ReleaseGraphics(IGdiGraphics); (IGdiGraphics)
+		ReleaseGraphics(IGdiGraphics); (void)
 
 		Resize(w, h[, interpolation_mode]); (IGdiBitmap)
 		/*
@@ -1653,7 +1661,7 @@ interface IGdiGraphics {
 	Typically used inside on_paint(gr)
 	There are many different ways to get colours.
 	Use window.GetColourDUI/window.GetColourCUI,
-	RGB function from helpers.txt, utils.ColourPicker,
+	RGB function from Helpers.txt, utils.ColourPicker,
 	etc.
 	*/
 
@@ -1674,18 +1682,18 @@ interface IGdiGraphics {
 		gr.DrawLine(x1, y1, x2, y2, line_width, colour); (void)
 
 		gr.DrawPolygon(colour, line_width, points); (void)
-		// points: An array.
-
-		gr.DrawString(str, IGdiFont, colour, x, y, w, h[, flags]); (void)
-		// flags: default 0. See Flags.txt > StringFormatFlags
+		// points: An array of x, y co-ordinate pairs. Must be an even number in length.
 
 		gr.DrawRect(x, y, w, h, line_width, colour); (void)
 
 		gr.DrawRoundRect(x, y, w, h, arc_width, arc_height, line_width, colour); (void)
 
+		gr.DrawString(str, IGdiFont, colour, x, y, w, h[, flags]); (void)
+		// flags: default 0. See Flags.txt > StringFormatFlags
+
 		gr.EstimateLineWrap(str, IGdiFont, max_width); (VBArray)
 		/*
-		returns a VBArray so you need to use .toArray() on the result.
+		Returns a VBArray so you need to use .toArray() on the result.
 		index | meaning
 		[0] text line 1
 		[1] width of text line 1 (in pixel)
@@ -1709,7 +1717,7 @@ interface IGdiGraphics {
 
 		gr.FillPolygon(colour, fillmode, points); (void)
 		// fillmode: 0 alternate, 1 winding.
-		// points: An array.
+		// points: An array of x, y co-ordinate pairs. Must be an even number in length.
 
 		gr.FillRoundRect(x, y, w, h, arc_width, arc_height, colour); (void)
 
@@ -1722,7 +1730,7 @@ interface IGdiGraphics {
 		// Always faster than DrawImage, does not support alpha channel.
 
 		gr.GdiDrawText(str, IGdiFont, colour, x, y, w, h[, format]); (void)
-		// format: default 0. See Flags.txt > DT_*
+		// format: default 0. See Flags.txt > Used with GdiDrawText()
 
 		gr.MeasureString(str, IGdiFont, x, y, w, h[, flags]); (IMeasureStringInfo)
 		// flags: default 0. See Flags.txt > StringFormatFlags
@@ -2009,8 +2017,8 @@ interface IMetadbHandleList {
 
 		BSearch(handle); (int)
 		/*
-		Must be sorted, faster than Find()
-		Returns - 1 on failure.
+		Must be sorted with Sort() first, faster than Find().
+		Returns -1 on failure.
 		*/
 
 		CalcTotalDuration(); (double)
@@ -2080,7 +2088,7 @@ interface IMetadbHandleList {
 
 		MakeDifference(handle_list); (void)
 		/*
-		Must be sorted.
+		Must be sorted with Sort() first.
 
 		Example:
 		var one = plman.GetPlaylistItems(0);
@@ -2095,7 +2103,7 @@ interface IMetadbHandleList {
 
 		MakeIntersection(handle_list); (void)
 		/*
-		Must be sorted.
+		Must be sorted with Sort() first.
 
 		Example:
 		var one = plman.GetPlaylistItems(0);
@@ -2110,7 +2118,7 @@ interface IMetadbHandleList {
 
 		MakeUnion(handle_list); (void)
 		/*
-		Must be sorted.
+		Must be sorted with Sort() first.
 
 		Example:
 		var one = plman.GetPlaylistItems(0);
