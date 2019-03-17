@@ -1402,7 +1402,7 @@ oBrowser = function (name) {
 	this.rows = [];
 	this.SHIFT_start_id = null;
 	this.SHIFT_count = 0;
-	this.scrollbar = new oScrollbar(themed = cScrollBar.themed);
+	this.scrollbar = new oScrollbar(cScrollBar.themed);
 	this.keypressed = false;
 	this.selectedIndex = -1;
 
@@ -1411,9 +1411,9 @@ oBrowser = function (name) {
 	this.launch_populate = function () {
 		var launch_timer = window.SetTimeout(function () {
 				// populate browser with items
-				brw.populate(is_first_populate = true);
+				brw.populate(true);
 				// populate playlist popup panel list
-				pman.populate(exclude_active = false, reset_scroll = true);
+				pman.populate(false, true);
 				// kill Timeout
 				launch_timer && window.ClearTimeout(launch_timer);
 				launch_timer = false;
@@ -3023,8 +3023,7 @@ function on_size() {
 };
 
 function on_paint(gr) {
-
-	if (!ww || !wh || ww < 10 || wh < 10)
+	if (ww < 10 || wh < 10)
 		return;
 
 	//gr.FillSolidRect(0, 0, ww, wh, RGBA(210,210,215,255));
@@ -3761,15 +3760,15 @@ function on_playback_time(time) {
 
 //=================================================// Library Callbacks
 function on_library_items_added() {
-	brw.populate(is_first_populate = false);
+	brw.populate(false);
 };
 
 function on_library_items_removed() {
-	brw.populate(is_first_populate = false);
+	brw.populate(false);
 };
 
 function on_library_items_changed() {
-	brw.populate(is_first_populate = false);
+	brw.populate(false);
 };
 
 //=================================================// Playlist Callbacks
@@ -3781,7 +3780,7 @@ function on_playlists_changed() {
 	};
 
 	// refresh playlists list
-	pman.populate(exclude_active = false, reset_scroll = false);
+	pman.populate(false, false);
 };
 
 function on_playlist_switch() {
@@ -3800,11 +3799,11 @@ function on_playlist_switch() {
 	g_active_playlist = plman.ActivePlaylist;
 	if (ppt.sourceMode == 1) {
 		scroll = scroll_ = 0;
-		brw.populate(is_first_populate = true);
+		brw.populate(true);
 	};
 
 	// refresh playlists list
-	pman.populate(exclude_active = false, reset_scroll = false);
+	pman.populate(false, false);
 };
 
 function on_playlist_items_added(playlist_idx) {
@@ -3816,7 +3815,7 @@ function on_playlist_items_added(playlist_idx) {
 
 	if (ppt.sourceMode == 1) {
 		if (playlist_idx == g_active_playlist) {
-			brw.populate(is_first_populate = false);
+			brw.populate(false);
 		};
 	};
 };
@@ -3831,7 +3830,7 @@ function on_playlist_items_removed(playlist_idx, new_count) {
 
 	if (ppt.sourceMode == 1) {
 		if (playlist_idx == g_active_playlist) {
-			brw.populate(is_first_populate = true);
+			brw.populate(true);
 		};
 	};
 };
@@ -3839,7 +3838,7 @@ function on_playlist_items_removed(playlist_idx, new_count) {
 function on_playlist_items_reordered(playlist_idx) {
 	if (ppt.sourceMode == 1) {
 		if (playlist_idx == g_active_playlist) {
-			brw.populate(is_first_populate = true);
+			brw.populate(true);
 		};
 	};
 };
@@ -3870,9 +3869,9 @@ function on_metadb_changed() {
 	// rebuild list
 	if (ppt.sourceMode == 1) {
 		if (filter_text.length > 0) {
-			brw.populate(is_first_populate = true);
+			brw.populate(true);
 		} else {
-			brw.populate(is_first_populate = false);
+			brw.populate(false);
 		};
 	};
 };

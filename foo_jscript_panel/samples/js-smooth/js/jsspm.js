@@ -760,7 +760,7 @@ oBrowser = function (name) {
 	this.rows = [];
 	this.SHIFT_start_id = null;
 	this.SHIFT_count = 0;
-	this.scrollbar = new oScrollbar(themed = cScrollBar.themed);
+	this.scrollbar = new oScrollbar(cScrollBar.themed);
 	this.keypressed = false;
 	this.inputbox = null;
 	this.inputboxID = -1;
@@ -768,7 +768,7 @@ oBrowser = function (name) {
 
 	this.launch_populate = function () {
 		var launch_timer = window.SetTimeout(function () {
-				brw.populate(is_first_populate = true, reset_scroll = true);
+				brw.populate(true, true);
 				launch_timer && window.ClearTimeout(launch_timer);
 				launch_timer = false;
 			}, 5);
@@ -1780,7 +1780,6 @@ function on_size() {
 };
 
 function on_paint(gr) {
-
 	if (!ww)
 		return;
 
@@ -2480,7 +2479,7 @@ function on_playlists_changed() {
 			g_filterbox.clearInputbox();
 	};
 
-	brw.populate(is_first_populate = false, reset_scroll = false);
+	brw.populate(false, false);
 
 	if (brw.selectedRow > brw.rowsCount)
 		brw.selectedRow = plman.ActivePlaylist;
