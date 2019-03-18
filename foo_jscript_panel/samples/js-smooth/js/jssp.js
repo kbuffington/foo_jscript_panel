@@ -1,3 +1,5 @@
+var need_repaint = false;
+
 ppt = {
 	tf_artist: fb.TitleFormat("%artist%"),
 	tf_albumartist: fb.TitleFormat("%album artist%"),
@@ -11,8 +13,7 @@ ppt = {
 	rowHeight: window.GetProperty("_PROPERTY: Row Height", 35),
 	rowScrollStep: 3,
 	scrollSmoothness: 2.5,
-	refreshRate: 35,
-	refreshRateCover: 5,
+	refreshRate: 40,
 	extraRowsNumber: window.GetProperty("_PROPERTY: Number of Extra Rows per Group", 0),
 	minimumRowsNumberPerGroup: window.GetProperty("_PROPERTY: Number minimum of Rows per Group", 0),
 	groupHeaderRowsNumber: window.GetProperty("_PROPERTY: Number of Rows for Group Header", 2),
@@ -189,7 +190,7 @@ function on_load_image_done(tid, image) {
 				if (k < brw.groups.length && brw.groups[k].rowId >= g_start_ && brw.groups[k].rowId <= g_end_) {
 					if (!timers.coverDone) {
 						timers.coverDone = window.SetTimeout(function () {
-							brw.cover_repaint();
+							brw.repaint();
 							timers.coverDone && window.ClearTimeout(timers.coverDone);
 							timers.coverDone = false;
 						}, 5);
@@ -209,7 +210,7 @@ function on_get_album_art_done(metadb, art_id, image, image_path) {
 			if (i < brw.groups.length && i >= g_start_ && i <= g_end_) {
 				if (!timers.coverDone) {
 					timers.coverDone = window.SetTimeout(function () {
-							brw.cover_repaint();
+							brw.repaint();
 							timers.coverDone && window.ClearTimeout(timers.coverDone);
 							timers.coverDone = false;
 						}, 5);
@@ -1407,15 +1408,7 @@ oBrowser = function (name) {
 	};
 
 	this.repaint = function () {
-		if (!window.IsVisible)
-			return;
-		repaint_main1 = repaint_main2;
-	};
-
-	this.cover_repaint = function () {
-		if (!window.IsVisible)
-			return;
-		repaint_cover1 = repaint_cover2;
+		need_repaint = true;
 	};
 
 	this.setSize = function (x, y, w, h) {
@@ -1863,10 +1856,6 @@ oBrowser = function (name) {
 		var arr_g = [];
 		var arr_t = [];
 		var arr_e = [];
-
-		if (repaint_main || !repaintforced) {
-			repaint_main = false;
-			repaintforced = false;
 
 			if (this.rows.length > 0) {
 
@@ -2324,7 +2313,6 @@ oBrowser = function (name) {
 					console.log(">> debug: cScrollBar.width=" + cScrollBar.width + " /boxText=" + boxText + " /ppt.headerBarHeight=" + ppt.headerBarHeight + " /g_fsize=" + g_fsize);
 				};
 			};
-		};
 	};
 
 	this.selectGroupTracks = function (aId) { // fixed!
@@ -2662,46 +2650,10 @@ oBrowser = function (name) {
 		};
 	};
 
-	if (this.g_timeCover) {
-		window.ClearInterval(this.g_timeCover);
-		this.g_timeCover = false;
-	};
-	this.g_timeCover = window.SetInterval(function () {
-			if (!window.IsVisible) {
-				window_visible = false;
-				return;
-			};
-
-			var repaint_1 = false;
-
-			if (repaint_cover1 == repaint_cover2) {
-				repaint_cover2 = !repaint_cover1;
-				repaint_1 = true;
-			};
-
-			if (repaint_1) {
-				repaintforced = true;
-				repaint_main = true;
-				images.loading_angle = (images.loading_angle + 30) % 360;
-				window.Repaint();
-			};
-
-		}, ppt.refreshRateCover);
-
-	if (this.g_time) {
-		window.ClearInterval(this.g_time);
-		this.g_time = false;
-	};
 	this.g_time = window.SetInterval(function () {
 			if (!window.IsVisible) {
-				window_visible = false;
+				need_repaint = true;
 				return;
-			};
-
-			var repaint_1 = false;
-
-			if (!window_visible) {
-				window_visible = true;
 			};
 
 			if (!g_first_populate_launched) {
@@ -2718,15 +2670,10 @@ oBrowser = function (name) {
 				brw.activeRow = -1;
 			};
 
-			if (repaint_main1 == repaint_main2) {
-				repaint_main2 = !repaint_main1;
-				repaint_1 = true;
-			};
-
 			scroll = check_scroll(scroll);
 			if (Math.abs(scroll - scroll_) >= 1) {
 				scroll_ += (scroll - scroll_) / ppt.scrollSmoothness;
-				repaint_1 = true;
+				need_repaint = true;
 				isScrolling = true;
 				//
 				if (scroll_prev != scroll)
@@ -2736,15 +2683,13 @@ oBrowser = function (name) {
 					if (scroll_ < 1)
 						scroll_ = 0;
 					isScrolling = false;
-					repaint_1 = true;
+					need_repaint = true;
 				};
 			};
-
-			if (repaint_1) {
+			if (need_repaint) {
 				if (isScrolling && brw.rows.length > 0)
 					brw.gettags(false);
-				repaintforced = true;
-				repaint_main = true;
+				need_repaint = false;
 				images.loading_angle = (images.loading_angle + 30) % 360;
 				window.Repaint();
 			};
@@ -3195,13 +3140,7 @@ var g_total_duration_text = "";
 var g_first_populate_done = false;
 var g_first_populate_launched = false;
 //
-var repaintforced = false;
-var form_text = "";
-var repaint_cover = true, repaint_cover1 = true, repaint_cover2 = true;
-var repaint_main = true, repaint_main1 = true, repaint_main2 = true;
-var window_visible = false;
 var scroll_ = 0, scroll = 0, scroll_prev = 0;
-var time222;
 var g_start_ = 0, g_end_ = 0;
 var g_wallpaperImg = null;
 
@@ -3748,8 +3687,6 @@ function on_colours_changed() {
 function on_script_unload() {
 	brw.g_time && window.ClearInterval(brw.g_time);
 	brw.g_time = false;
-	brw.g_timeCover && window.ClearInterval(brw.g_timeCover);
-	brw.g_timeCover = false;
 };
 
 //=================================================// Keyboard Callbacks

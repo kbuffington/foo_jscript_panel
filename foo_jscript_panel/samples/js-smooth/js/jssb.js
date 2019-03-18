@@ -1,3 +1,5 @@
+var need_repaint = false;
+
 images = {
 	path: fb.ComponentPath + "samples\\js-smooth\\images\\",
 	glass_reflect: null,
@@ -39,7 +41,6 @@ ppt = {
 	rowScrollStep: 1,
 	scrollSmoothness: 2.5,
 	refreshRate: 40,
-	refreshRateCover: 2,
 	showHeaderBar: window.GetProperty("_DISPLAY: Show Top Bar", true),
 	defaultHeaderBarHeight: 25,
 	headerBarHeight: 25,
@@ -176,7 +177,7 @@ function on_load_image_done(tid, image) {
 				if (k < brw.groups.length && k >= g_start_ && k <= g_end_) {
 					if (!timers.coverDone) {
 						timers.coverDone = window.SetTimeout(function () {
-							brw.cover_repaint();
+							brw.repaint();
 							timers.coverDone && window.ClearTimeout(timers.coverDone);
 							timers.coverDone = false;
 						}, 5);
@@ -203,7 +204,7 @@ function on_get_album_art_done(metadb, art_id, image, image_path) {
 			if (i < brw.groups.length && i >= g_start_ && i <= g_end_) {
 				if (!timers.coverDone) {
 					timers.coverDone = window.SetTimeout(function () {
-							brw.cover_repaint();
+							brw.repaint();
 							timers.coverDone && window.ClearTimeout(timers.coverDone);
 							timers.coverDone = false;
 						}, 5);
@@ -1421,11 +1422,7 @@ oBrowser = function (name) {
 	};
 
 	this.repaint = function () {
-		repaint_main1 = repaint_main2;
-	};
-
-	this.cover_repaint = function () {
-		repaint_cover1 = repaint_cover2;
+		need_repaint = true;
 	};
 
 	this.update = function () {
@@ -2013,10 +2010,6 @@ oBrowser = function (name) {
 
 		this.getlimits();
 
-		if (repaint_main || !repaintforced) {
-			repaint_main = false;
-			repaintforced = false;
-
 			// draw visible stamps (loop)
 			for (var i = g_start_; i < g_end_; i++) {
 				row = Math.floor(i / this.totalColumns);
@@ -2382,8 +2375,6 @@ oBrowser = function (name) {
 					console.log(">> debug: cScrollBar.width=" + cScrollBar.width + " /boxText=" + boxText + " /ppt.headerBarHeight=" + ppt.headerBarHeight + " /g_fsize=" + g_fsize);
 				};
 			};
-
-		};
 	};
 
 	this._isHover = function (x, y) {
@@ -2532,91 +2523,49 @@ oBrowser = function (name) {
 		};
 	};
 
-	if (this.g_timeCover) {
-		window.ClearInterval(this.g_timeCover);
-		this.g_timeCover = false;
-	};
-	this.g_timeCover = window.SetInterval(function () {
-			if (!window.IsVisible) {
-				window_visible = false;
-				return;
-			};
-
-			var repaint_1 = false;
-
-			if (repaint_cover1 == repaint_cover2) {
-				repaint_cover2 = !repaint_cover1;
-				repaint_1 = true;
-			};
-
-			if (repaint_1) {
-				repaintforced = true;
-				repaint_main = true;
-				images.loading_angle = (images.loading_angle + 30) % 360;
-				window.Repaint();
-			};
-
-		}, ppt.refreshRateCover);
-
-	if (this.g_time) {
-		window.ClearInterval(this.g_time);
-		this.g_time = false;
-	};
 	this.g_time = window.SetInterval(function () {
-			if (!window.IsVisible) {
-				window_visible = false;
-				return;
+		if (!window.IsVisible) {
+			need_repaint = true;
+			return;
+		};
+
+		if (!g_first_populate_launched) {
+			if (isNaN(scroll) || isNaN(scroll_)) {
+				scroll = scroll_ = 0;
 			};
+			g_first_populate_launched = true;
+			brw.launch_populate();
+		};
 
-			var repaint_1 = false;
-
-			if (!window_visible) {
-				window_visible = true;
+		scroll = check_scroll(scroll);
+		if (Math.abs(scroll - scroll_) >= 1) {
+			scroll_ += (scroll - scroll_) / ppt.scrollSmoothness;
+			isScrolling = true;
+			need_repaint = true;
+			if (scroll_prev != scroll)
+				brw.scrollbar.updateScrollbar();
+		} else {
+			if (scroll_ != scroll) {
+				scroll_ = scroll; // force to scroll_ value to fixe the 5.5 stop value for expanding album action
+				need_repaint = true;
 			};
-
-			if (!g_first_populate_launched) {
-				if (isNaN(scroll) || isNaN(scroll_)) {
-					scroll = scroll_ = 0;
-				};
-				g_first_populate_launched = true;
-				brw.launch_populate();
+			if (isScrolling) {
+				if (scroll_ < 1)
+					scroll_ = 0;
+				isScrolling = false;
+				need_repaint = true;
 			};
+		};
 
-			if (repaint_main1 == repaint_main2) {
-				repaint_main2 = !repaint_main1;
-				repaint_1 = true;
-			};
+		if (need_repaint) {
+			need_repaint = false;
+			images.loading_angle = (images.loading_angle + 30) % 360;
+			window.Repaint();
+		};
 
-			scroll = check_scroll(scroll);
-			if (Math.abs(scroll - scroll_) >= 1) {
-				scroll_ += (scroll - scroll_) / ppt.scrollSmoothness;
-				isScrolling = true;
-				repaint_1 = true;
-				if (scroll_prev != scroll)
-					brw.scrollbar.updateScrollbar();
-			} else {
-				if (scroll_ != scroll) {
-					scroll_ = scroll; // force to scroll_ value to fixe the 5.5 stop value for expanding album action
-					repaint_1 = true;
-				};
-				if (isScrolling) {
-					if (scroll_ < 1)
-						scroll_ = 0;
-					isScrolling = false;
-					repaint_1 = true;
-				};
-			};
+		scroll_prev = scroll;
 
-			if (repaint_1) {
-				repaintforced = true;
-				repaint_main = true;
-				images.loading_angle = (images.loading_angle + 30) % 360;
-				window.Repaint();
-			};
-
-			scroll_prev = scroll;
-
-		}, ppt.refreshRate);
+	}, ppt.refreshRate);
 
 	this.item_context_menu = function (x, y, albumIndex) {
 		var _menu = window.CreatePopupMenu();
@@ -2976,13 +2925,7 @@ var g_total_duration_text = "";
 var g_first_populate_done = false;
 var g_first_populate_launched = false;
 
-var repaintforced = false;
-var form_text = "";
-var repaint_main = true, repaint_main1 = true, repaint_main2 = true;
-var repaint_cover = true, repaint_cover1 = true, repaint_cover2 = true;
-var window_visible = false;
 var scroll_ = 0, scroll = 0, scroll_prev = 0;
-var time222;
 var g_start_ = 0, g_end_ = 0;
 var g_wallpaperImg = null;
 
@@ -3526,8 +3469,6 @@ function on_colours_changed() {
 function on_script_unload() {
 	brw.g_time && window.ClearInterval(brw.g_time);
 	brw.g_time = false;
-	brw.g_timeCover && window.ClearInterval(brw.g_timeCover);
-	brw.g_timeCover = false;
 };
 
 //=================================================// Keyboard Callbacks

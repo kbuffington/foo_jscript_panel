@@ -1,9 +1,11 @@
+var need_repaint = false;
+
 ppt = {
 	defaultRowHeight: window.GetProperty("_PROPERTY: Row Height", 35),
 	rowHeight: window.GetProperty("_PROPERTY: Row Height", 35),
 	rowScrollStep: 3,
 	scrollSmoothness: 3.0,
-	refreshRate: 20,
+	refreshRate: 40,
 	showHeaderBar: window.GetProperty("_DISPLAY: Show Top Bar", true),
 	defaultHeaderBarHeight: 25,
 	headerBarHeight: 25,
@@ -775,9 +777,7 @@ oBrowser = function (name) {
 	};
 
 	this.repaint = function () {
-		if (!window.IsVisible)
-			return;
-		repaint_main1 = repaint_main2;
+		need_repaint = true;
 	};
 
 	this.setSize = function (x, y, w, h) {
@@ -914,10 +914,6 @@ oBrowser = function (name) {
 			window.SetCursor(IDC_ARROW);
 			cPlaylistManager.playlist_switch_pending = false;
 		};
-
-		if (repaint_main || !repaintforced) {
-			repaint_main = false;
-			repaintforced = false;
 
 			if (this.rows.length > 0) {
 
@@ -1091,7 +1087,6 @@ oBrowser = function (name) {
 					console.log(">> debug: cScrollBar.width=" + cScrollBar.width + " /boxText=" + boxText + " /ppt.headerBarHeight=" + ppt.headerBarHeight + " /g_fsize=" + g_fsize);
 				};
 			};
-		};
 	};
 
 	this._isHover = function (x, y) {
@@ -1309,20 +1304,10 @@ oBrowser = function (name) {
 		};
 	};
 
-	if (this.g_time) {
-		window.ClearInterval(this.g_time);
-		this.g_time = false;
-	};
 	this.g_time = window.SetInterval(function () {
 			if (!window.IsVisible) {
-				window_visible = false;
+				need_repaint = true;
 				return;
-			};
-
-			var repaint_1 = false;
-
-			if (!window_visible) {
-				window_visible = true;
 			};
 
 			if (!g_first_populate_launched) {
@@ -1339,15 +1324,10 @@ oBrowser = function (name) {
 				brw.activeRow = -1;
 			};
 
-			if (repaint_main1 == repaint_main2) {
-				repaint_main2 = !repaint_main1;
-				repaint_1 = true;
-			};
-
 			scroll = check_scroll(scroll);
 			if (Math.abs(scroll - scroll_) >= 1) {
 				scroll_ += (scroll - scroll_) / ppt.scrollSmoothness;
-				repaint_1 = true;
+				need_repaint = true;
 				isScrolling = true;
 				//
 				if (scroll_prev != scroll)
@@ -1357,15 +1337,14 @@ oBrowser = function (name) {
 					if (scroll_ < 1)
 						scroll_ = 0;
 					isScrolling = false;
-					repaint_1 = true;
+					need_repaint = true;
 				};
 			};
 
-			if (repaint_1) {
+			if (need_repaint) {
 				if (brw.rows.length > 0)
 					brw.getlimits();
-				repaintforced = true;
-				repaint_main = true;
+				need_repaint = false;
 				window.Repaint();
 			};
 
@@ -1738,12 +1717,7 @@ var g_avoid_on_playlist_items_reordered = false;
 var g_first_populate_done = false;
 var g_first_populate_launched = false;
 //
-var repaintforced = false;
-var form_text = "";
-var repaint_main = true, repaint_main1 = true, repaint_main2 = true;
-var window_visible = false;
 var scroll_ = 0, scroll = 0, scroll_prev = 0;
-var time222;
 var g_start_ = 0, g_end_ = 0;
 var g_wallpaperImg = null;
 
