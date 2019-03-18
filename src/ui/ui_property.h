@@ -52,5 +52,6 @@ public:
 private:
 	CPropertyListCtrl m_properties;
 	panel_window* m_parent;
+	pfc::string8_fast m_caption;
 	prop_kv_config::t_map m_dup_prop_map;
 };

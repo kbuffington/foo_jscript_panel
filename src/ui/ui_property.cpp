@@ -1,11 +1,18 @@
 #include "stdafx.h"
 #include "ui_property.h"
 
-CDialogProperty::CDialogProperty(panel_window* p_parent) : m_parent(p_parent) {}
+CDialogProperty::CDialogProperty(panel_window* p_parent) : m_parent(p_parent)
+{
+	m_caption << JSP_NAME " Properties (id:" << m_parent->m_script_info.id << ")";
+}
+
 CDialogProperty::~CDialogProperty() {}
 
 BOOL CDialogProperty::OnInitDialog(HWND hwndFocus, LPARAM lParam)
 {
+	// Set caption text
+	uSetWindowText(m_hWnd, m_caption);
+
 	DlgResize_Init();
 
 	m_properties.SubclassWindow(GetDlgItem(IDC_LIST_PROPERTIES));
