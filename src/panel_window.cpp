@@ -367,11 +367,11 @@ LRESULT panel_window::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 		return 0;
 
 	case UWM_SHOW_CONFIGURE:
-		show_configure_popup(m_hwnd);
+		show_configure_popup();
 		return 0;
 
 	case UWM_SHOW_PROPERTIES:
-		show_property_popup(m_hwnd);
+		show_property_popup();
 		return 0;
 
 	case UWM_TIMER:
@@ -427,6 +427,18 @@ bool panel_window::on_mouse_button_up(UINT msg, WPARAM wp, LPARAM lp)
 
 	ReleaseCapture();
 	return ret;
+}
+
+bool panel_window::show_configure_popup()
+{
+	modal_dialog_scope scope;
+	if (scope.can_create())
+	{
+		scope.initialize(m_hwnd);
+		CDialogConf dlg(this);
+		return dlg.DoModal(m_hwnd) == IDOK;
+	}
+	return false;
 }
 
 ui_helpers::container_window::class_data& panel_window::get_class_data() const
@@ -494,10 +506,10 @@ void panel_window::execute_context_menu_command(int id, int id_base)
 		update_script();
 		break;
 	case 2:
-		show_property_popup(m_hwnd);
+		show_property_popup();
 		break;
 	case 3:
-		show_configure_popup(m_hwnd);
+		show_configure_popup();
 		break;
 	}
 }
@@ -1151,25 +1163,14 @@ void panel_window::script_unload()
 	m_selection_holder.release();
 }
 
-void panel_window::show_configure_popup(HWND parent)
+void panel_window::show_property_popup()
 {
 	modal_dialog_scope scope;
 	if (scope.can_create())
 	{
-		scope.initialize(parent);
-		CDialogConf dlg(this);
-		dlg.DoModal(parent);
-	}
-}
-
-void panel_window::show_property_popup(HWND parent)
-{
-	modal_dialog_scope scope;
-	if (scope.can_create())
-	{
-		scope.initialize(parent);
+		scope.initialize(m_hwnd);
 		CDialogProperty dlg(this);
-		dlg.DoModal(parent);
+		dlg.DoModal(m_hwnd);
 	}
 }
 

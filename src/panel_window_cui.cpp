@@ -79,9 +79,19 @@ LRESULT panel_window_cui::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 	return panel_window::on_message(hwnd, msg, wp, lp);
 }
 
+bool panel_window_cui::have_config_popup() const
+{
+	return true;
+}
+
 bool panel_window_cui::is_available(const uie::window_host_ptr& p) const
 {
 	return true;
+}
+
+bool panel_window_cui::show_config_popup(HWND parent)
+{
+	return show_configure_popup();
 }
 
 const GUID& panel_window_cui::get_extension_guid() const
