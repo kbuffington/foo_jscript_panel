@@ -1,5 +1,5 @@
 function drawImage(gr, img, src_x, src_y, src_w, src_h, auto_fill, border, alpha) {
-	if (!img || !src_x || !src_y || !src_w || !src_h) {
+	if (!img || !src_w || !src_h) {
 		return;
 	}
 	gr.SetInterpolationMode(7);
