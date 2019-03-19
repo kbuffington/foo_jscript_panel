@@ -65,7 +65,7 @@ private:
 };
 
 // DUI panel instance
-static service_factory_t<my_ui_element_impl<panel_window_dui>> g_js_panel_wndow_dui;
+static service_factory_t<my_ui_element_impl<panel_window_dui>> g_panel_window_dui;
 
 panel_window_dui::panel_window_dui(ui_element_config::ptr cfg, ui_element_instance_callback::ptr callback) : m_callback(callback)
 {
@@ -161,7 +161,7 @@ ui_element_config::ptr panel_window_dui::g_get_default_configuration()
 {
 	ui_element_config_builder builder;
 	abort_callback_dummy abort;
-	js_panel_vars vars;
+	panel_vars vars;
 
 	vars.reset_config();
 	vars.save_config(&builder.m_stream, abort);

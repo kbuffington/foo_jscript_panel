@@ -38,10 +38,10 @@ public:
 	t_map m_map;
 };
 
-class js_panel_vars
+class panel_vars
 {
 public:
-	js_panel_vars();
+	panel_vars();
 
 	static pfc::string8_fast get_default_script_code();
 	void load_config(stream_reader* reader, t_size size, abort_callback& abort);

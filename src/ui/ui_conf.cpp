@@ -263,7 +263,7 @@ LRESULT CDialogConf::OnReset(WORD wNotifyCode, WORD wID, HWND hWndCtl)
 	uButton_SetCheck(m_hWnd, IDC_CHECK_PSEUDO_TRANSPARENT, false);
 	uButton_SetCheck(m_hWnd, IDC_CHECK_GRABFOCUS, true);
 
-	m_editorctrl.SetContent(js_panel_vars::get_default_script_code());
+	m_editorctrl.SetContent(panel_vars::get_default_script_code());
 	return 0;
 }
 

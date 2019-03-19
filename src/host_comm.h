@@ -73,7 +73,7 @@ struct t_script_info
 	t_size id;
 };
 
-class host_comm : public js_panel_vars
+class host_comm : public panel_vars
 {
 protected:
 	host_comm();

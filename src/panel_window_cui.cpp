@@ -3,7 +3,7 @@
 #include "panel_window_cui.h"
 
 // CUI panel instance
-static uie::window_factory<panel_window_cui> g_js_panel_wndow_cui;
+static uie::window_factory<panel_window_cui> g_panel_window_cui;
 
 DWORD panel_window_cui::get_colour_ui(t_size type)
 {

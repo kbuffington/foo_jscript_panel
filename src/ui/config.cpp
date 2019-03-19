@@ -199,19 +199,19 @@ void prop_kv_config::set_config_item(const char* p_key, const VARIANT& p_val)
 	}
 }
 
-js_panel_vars::js_panel_vars()
+panel_vars::panel_vars()
 {
 	reset_config();
 }
 
-pfc::string8_fast js_panel_vars::get_default_script_code()
+pfc::string8_fast panel_vars::get_default_script_code()
 {
 	puResource pures = uLoadResource(core_api::get_my_instance(), uMAKEINTRESOURCE(IDR_SCRIPT), "TEXT");
 	pfc::string8_fast content(static_cast<const char*>(pures->GetPointer()), pures->GetSize());
 	return content;
 }
 
-void js_panel_vars::load_config(stream_reader* reader, t_size size, abort_callback& abort)
+void panel_vars::load_config(stream_reader* reader, t_size size, abort_callback& abort)
 {
 	reset_config();
 
@@ -240,7 +240,7 @@ void js_panel_vars::load_config(stream_reader* reader, t_size size, abort_callba
 	}
 }
 
-void js_panel_vars::reset_config()
+void panel_vars::reset_config()
 {
 	m_script_engine_str = "Chakra";
 	m_script_code = get_default_script_code();
@@ -250,7 +250,7 @@ void js_panel_vars::reset_config()
 	m_edge_style = NO_EDGE;
 }
 
-void js_panel_vars::save_config(stream_writer* writer, abort_callback& abort) const
+void panel_vars::save_config(stream_writer* writer, abort_callback& abort) const
 {
 	const t_size ver = 123;
 
