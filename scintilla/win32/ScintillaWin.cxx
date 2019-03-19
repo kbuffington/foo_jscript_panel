@@ -9,7 +9,6 @@
 #include <cstdlib>
 #include <cassert>
 #include <cstring>
-#include <cctype>
 #include <cstdio>
 #include <cmath>
 #include <climits>
@@ -429,7 +428,7 @@ private:
 	int sysCaretHeight;
 };
 
-HINSTANCE ScintillaWin::hInstance = 0;
+HINSTANCE ScintillaWin::hInstance {};
 ATOM ScintillaWin::scintillaClassAtom = 0;
 ATOM ScintillaWin::callClassAtom = 0;
 
@@ -474,7 +473,7 @@ ScintillaWin::ScintillaWin(HWND hwnd) {
 	sysCaretHeight = 0;
 
 #if defined(USE_D2D)
-	pRenderTarget = 0;
+	pRenderTarget = nullptr;
 	renderTargetValid = true;
 #endif
 
@@ -604,7 +603,7 @@ void ScintillaWin::EnsureRenderTarget(HDC hdc) {
 void ScintillaWin::DropRenderTarget() {
 	if (pRenderTarget) {
 		pRenderTarget->Release();
-		pRenderTarget = 0;
+		pRenderTarget = nullptr;
 	}
 }
 
@@ -1681,7 +1680,7 @@ sptr_t ScintillaWin::WndProc(unsigned int iMessage, uptr_t wParam, sptr_t lParam
 			if (lParam) {
 				*reinterpret_cast<int *>(lParam) = static_cast<int>(SelectionEnd().Position());
 			}
-			return MAKELONG(SelectionStart().Position(), SelectionEnd().Position());
+			return MAKELRESULT(SelectionStart().Position(), SelectionEnd().Position());
 
 		case EM_EXGETSEL: {
 				if (lParam == 0) {
@@ -1996,14 +1995,16 @@ bool ScintillaWin::ModifyScrollBars(Sci::Line nMax, Sci::Line nPage) {
 
 void ScintillaWin::NotifyChange() {
 	::SendMessage(::GetParent(MainHWND()), WM_COMMAND,
-	        MAKELONG(GetCtrlID(), SCEN_CHANGE),
+	        MAKEWPARAM(GetCtrlID(), SCEN_CHANGE),
 		reinterpret_cast<LPARAM>(MainHWND()));
 }
 
 void ScintillaWin::NotifyFocus(bool focus) {
-	::SendMessage(::GetParent(MainHWND()), WM_COMMAND,
-	        MAKELONG(GetCtrlID(), focus ? SCEN_SETFOCUS : SCEN_KILLFOCUS),
-		reinterpret_cast<LPARAM>(MainHWND()));
+	if (commandEvents) {
+		::SendMessage(::GetParent(MainHWND()), WM_COMMAND,
+			MAKEWPARAM(GetCtrlID(), focus ? SCEN_SETFOCUS : SCEN_KILLFOCUS),
+			reinterpret_cast<LPARAM>(MainHWND()));
+	}
 	Editor::NotifyFocus(focus);
 }
 
@@ -2183,12 +2184,12 @@ bool ScintillaWin::CanPaste() {
 namespace {
 
 class GlobalMemory {
-	HGLOBAL hand;
+	HGLOBAL hand {};
 public:
-	void *ptr;
-	GlobalMemory() : hand(0), ptr(0) {
+	void *ptr {};
+	GlobalMemory() {
 	}
-	explicit GlobalMemory(HGLOBAL hand_) : hand(hand_), ptr(0) {
+	explicit GlobalMemory(HGLOBAL hand_) : hand(hand_) {
 		if (hand) {
 			ptr = ::GlobalLock(hand);
 		}
@@ -2221,7 +2222,7 @@ public:
 		::SetClipboardData(uFormat, Unlock());
 	}
 	operator bool() const {
-		return ptr != 0;
+		return ptr != nullptr;
 	}
 	SIZE_T Size() {
 		return ::GlobalSize(hand);
@@ -2468,7 +2469,7 @@ static VFunction *vtDropSource[] = {
 
 DropSource::DropSource() {
 	vtbl = vtDropSource;
-	sci = 0;
+	sci = nullptr;
 }
 
 /// Implement IUnkown
@@ -2594,7 +2595,7 @@ static VFunction *vtDataObject[] = {
 
 DataObject::DataObject() {
 	vtbl = vtDataObject;
-	sci = 0;
+	sci = nullptr;
 }
 
 /// Implement IUnknown
@@ -2657,7 +2658,7 @@ static VFunction *vtDropTarget[] = {
 
 DropTarget::DropTarget() {
 	vtbl = vtDropTarget;
-	sci = 0;
+	sci = nullptr;
 }
 
 /**
@@ -3314,7 +3315,7 @@ LRESULT PASCAL ScintillaWin::CTWndProc(
 	ScintillaWin *sciThis = static_cast<ScintillaWin *>(PointerFromWindow(hWnd));
 	try {
 		// ctp will be zero if WM_CREATE not seen yet
-		if (sciThis == 0) {
+		if (sciThis == nullptr) {
 			if (iMessage == WM_CREATE) {
 				// Associate CallTip object with window
 				CREATESTRUCT *pCreate = static_cast<CREATESTRUCT *>(PtrFromSPtr(lParam));
@@ -3428,7 +3429,7 @@ LRESULT PASCAL ScintillaWin::SWndProc(
 	// Find C++ object associated with window.
 	ScintillaWin *sci = static_cast<ScintillaWin *>(PointerFromWindow(hWnd));
 	// sci will be zero if WM_CREATE not seen yet
-	if (sci == 0) {
+	if (sci == nullptr) {
 		try {
 			if (iMessage == WM_CREATE) {
 				// Create C++ object associated with window

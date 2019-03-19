@@ -27,6 +27,8 @@
 #include "Style.h"
 #include "ViewStyle.h"
 
+#define CARETSTYLE_INS_MASK 0xF
+
 using namespace Scintilla;
 
 MarginStyle::MarginStyle(int style_, int width_, int mask_) :
@@ -404,7 +406,7 @@ void ViewStyle::ResetDefaultStyle() {
 
 void ViewStyle::ClearStyles() {
 	// Reset all styles to be like the default style
-	for (unsigned int i=0; i<styles.size(); i++) {
+	for (size_t i=0; i<styles.size(); i++) {
 		if (i != STYLE_DEFAULT) {
 			styles[i].ClearTo(styles[STYLE_DEFAULT]);
 		}
@@ -572,6 +574,19 @@ bool ViewStyle::SetWrapIndentMode(int wrapIndentMode_) {
 	return changed;
 }
 
+bool ViewStyle::IsBlockCaretStyle() const noexcept {
+	return (caretStyle == CARETSTYLE_BLOCK) || (caretStyle & CARETSTYLE_OVERSTRIKE_BLOCK) != 0;
+}
+
+ViewStyle::CaretShape ViewStyle::CaretShapeForMode(bool inOverstrike) const noexcept {
+	if (inOverstrike) {
+		return (caretStyle & CARETSTYLE_OVERSTRIKE_BLOCK) ? CaretShape::block : CaretShape::bar;
+	}
+
+	const int caret = caretStyle & CARETSTYLE_INS_MASK;
+	return (caret <= CARETSTYLE_BLOCK) ? static_cast<CaretShape>(caret) : CaretShape::line;
+}
+
 void ViewStyle::AllocStyles(size_t sizeNew) {
 	size_t i=styles.size();
 	styles.resize(sizeNew);
@@ -601,7 +616,7 @@ FontRealised *ViewStyle::Find(const FontSpecification &fs) {
 		// Should always reach here since map was just set for all styles
 		return it->second.get();
 	}
-	return 0;
+	return nullptr;
 }
 
 void ViewStyle::FindMaxAscentDescent() {

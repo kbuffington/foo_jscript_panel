@@ -126,11 +126,11 @@ struct StyledText {
 
 class HighlightDelimiter {
 public:
-	HighlightDelimiter() : isEnabled(false) {
+	HighlightDelimiter() noexcept : isEnabled(false) {
 		Clear();
 	}
 
-	void Clear() {
+	void Clear() noexcept {
 		beginFoldBlock = -1;
 		endFoldBlock = -1;
 		firstChangeableLineBefore = -1;
@@ -164,7 +164,7 @@ public:
 	bool isEnabled;
 };
 
-inline int LevelNumber(int level) noexcept {
+constexpr int LevelNumber(int level) noexcept {
 	return level & SC_FOLDLEVELNUMBERMASK;
 }
 
@@ -174,19 +174,39 @@ protected:
 	ILexer4 *instance;
 	bool performingStyle;	///< Prevent reentrance
 public:
-	explicit LexInterface(Document *pdoc_) : pdoc(pdoc_), instance(nullptr), performingStyle(false) {
+	explicit LexInterface(Document *pdoc_) noexcept : pdoc(pdoc_), instance(nullptr), performingStyle(false) {
 	}
 	virtual ~LexInterface() {
 	}
 	void Colourise(Sci::Position start, Sci::Position end);
 	virtual int LineEndTypesSupported();
-	bool UseContainerLexing() const {
+	bool UseContainerLexing() const noexcept {
 		return instance == nullptr;
 	}
 };
 
 struct RegexError : public std::runtime_error {
 	RegexError() : std::runtime_error("regex failure") {}
+};
+
+/**
+ * The ActionDuration class stores the average time taken for some action such as styling or
+ * wrapping a line. It is used to decide how many repetitions of that action can be performed
+ * on idle to maximize efficiency without affecting application responsiveness.
+ * The duration changes if the time for the action changes. For example, if a simple lexer is
+ * changed to a complex lexer. Changes are damped and clamped to avoid short periods of easy
+ * or difficult processing moving the value too far leading to inefficiency or poor user
+ * experience.
+ */
+
+class ActionDuration {
+	double duration;
+	const double minDuration;
+	const double maxDuration;
+public:
+	ActionDuration(double duration_, double minDuration_, double maxDuration_) noexcept;
+	void AddSample(size_t numberActions, double durationOfActions) noexcept;
+	double Duration() const noexcept;
 };
 
 /**
@@ -259,7 +279,7 @@ public:
 	bool useTabs;
 	bool tabIndents;
 	bool backspaceUnindents;
-	double durationStyleOneLine;
+	ActionDuration durationStyleOneLine;
 
 	std::unique_ptr<IDecorationList> decorations;
 
@@ -487,6 +507,11 @@ public:
 			pdoc->BeginUndoAction();
 		}
 	}
+	// Deleted so UndoGroup objects can not be copied.
+	UndoGroup(const UndoGroup &) = delete;
+	UndoGroup(UndoGroup &&) = delete;
+	void operator=(const UndoGroup &) = delete;
+	UndoGroup &operator=(UndoGroup &&) = delete;
 	~UndoGroup() {
 		if (groupNeeded) {
 			pdoc->EndUndoAction();
@@ -553,7 +578,7 @@ public:
 	virtual void NotifyModifyAttempt(Document *doc, void *userData) = 0;
 	virtual void NotifySavePoint(Document *doc, void *userData, bool atSavePoint) = 0;
 	virtual void NotifyModified(Document *doc, DocModification mh, void *userData) = 0;
-	virtual void NotifyDeleted(Document *doc, void *userData) = 0;
+	virtual void NotifyDeleted(Document *doc, void *userData) noexcept = 0;
 	virtual void NotifyStyleNeeded(Document *doc, void *userData, Sci::Position endPos) = 0;
 	virtual void NotifyLexerChanged(Document *doc, void *userData) = 0;
 	virtual void NotifyErrorOccurred(Document *doc, void *userData, int status) = 0;
