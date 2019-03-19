@@ -1130,7 +1130,7 @@ oScrollbar = function (themed) {
 		};
 		// set cursor y pos
 		this.setCursorY();
-		if (this.cursorh != prev_cursorh)
+		if (this.cursorw && this.cursorh && this.cursorh != prev_cursorh)
 			this.setCursorButton();
 	};
 

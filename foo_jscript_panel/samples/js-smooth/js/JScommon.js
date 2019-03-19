@@ -1,5 +1,5 @@
 function drawImage(gr, img, src_x, src_y, src_w, src_h, auto_fill, border, alpha) {
-	if (!img) {
+	if (!img || !src_x || !src_y || !src_w || !src_h) {
 		return;
 	}
 	gr.SetInterpolationMode(7);
@@ -396,6 +396,7 @@ function drawBlurbox(w, h, bgcolor, boxcolor, radius, iteration) {
 };
 
 function num(strg, nb) {
+	if (!strg) return "";
 	var i;
 	var str = strg.toString();
 	var k = nb - str.length;

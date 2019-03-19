@@ -146,7 +146,7 @@ _.mixin({
 		});
 	},
 	drawImage : function (gr, img, src_x, src_y, src_w, src_h, aspect, border, alpha) {
-		if (!img) {
+		if (!img || !src_x || !src_y || !src_w || !src_h) {
 			return [];
 		}
 		gr.SetInterpolationMode(7);
