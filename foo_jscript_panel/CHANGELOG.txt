@@ -1,3 +1,11 @@
+v2.2.1.1
+- CHG: Restore access to the Configuration Window via the Columns UI 
+       Preferences layout tab. Although buggy, access needs to remain to recover
+       from installing bad scripts.
+- FIX: Fix various sample problems reported on the fooobar2000 forums such as
+       main menu Edit items not always being available and some JS-Smooth "overflow"
+       errors.
+
 v2.2.1
 - FIX: Revert all timer related changes made in v2.2.0.2-v2.2.0.3. Although tested
        and working fine on my main machine, it caused crashes on Windows XP and

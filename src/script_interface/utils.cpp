@@ -470,6 +470,6 @@ STDMETHODIMP Utils::get_Version(UINT* v)
 {
 	if (!v) return E_POINTER;
 
-	*v = 2210;
+	*v = 2211;
 	return S_OK;
 }
