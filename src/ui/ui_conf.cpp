@@ -355,20 +355,18 @@ LRESULT CDialogConf::OnUwmKeyDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL&
 
 bool CDialogConf::FindNext(HWND hWnd, HWND hWndEdit, t_size flags, const char* which)
 {
-	::SendMessage(::GetAncestor(hWndEdit, GA_PARENT), UWM_FIND_TEXT_CHANGED, flags, reinterpret_cast<LPARAM>(which));
-
+	SendMessage(::GetAncestor(hWndEdit, GA_PARENT), UWM_FIND_TEXT_CHANGED, flags, reinterpret_cast<LPARAM>(which));
 	SendMessage(hWndEdit, SCI_CHARRIGHT, 0, 0);
 	SendMessage(hWndEdit, SCI_SEARCHANCHOR, 0, 0);
-	int pos = ::SendMessage(hWndEdit, SCI_SEARCHNEXT, flags, reinterpret_cast<LPARAM>(which));
+	int pos = SendMessage(hWndEdit, SCI_SEARCHNEXT, flags, reinterpret_cast<LPARAM>(which));
 	return FindResult(hWnd, hWndEdit, pos, which);
 }
 
 bool CDialogConf::FindPrevious(HWND hWnd, HWND hWndEdit, t_size flags, const char* which)
 {
-	::SendMessage(::GetAncestor(hWndEdit, GA_PARENT), UWM_FIND_TEXT_CHANGED, flags, reinterpret_cast<LPARAM>(which));
-
+	SendMessage(::GetAncestor(hWndEdit, GA_PARENT), UWM_FIND_TEXT_CHANGED, flags, reinterpret_cast<LPARAM>(which));
 	SendMessage(hWndEdit, SCI_SEARCHANCHOR, 0, 0);
-	int pos = ::SendMessage(hWndEdit, SCI_SEARCHPREV, flags, reinterpret_cast<LPARAM>(which));
+	int pos = SendMessage(hWndEdit, SCI_SEARCHPREV, flags, reinterpret_cast<LPARAM>(which));
 	return FindResult(hWnd, hWndEdit, pos, which);
 }
 
@@ -377,7 +375,7 @@ bool CDialogConf::FindResult(HWND hWnd, HWND hWndEdit, int pos, const char* whic
 	if (pos != -1)
 	{
 		// Scroll to view
-		::SendMessage(hWndEdit, SCI_SCROLLCARET, 0, 0);
+		SendMessage(hWndEdit, SCI_SCROLLCARET, 0, 0);
 		return true;
 	}
 
