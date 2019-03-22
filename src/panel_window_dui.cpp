@@ -140,7 +140,6 @@ LRESULT panel_window_dui::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 		if (m_callback->is_edit_mode_enabled())
 			return DefWindowProc(hwnd, msg, wp, lp);
 		break;
-
 	case WM_GETDLGCODE:
 		return DLGC_WANTALLKEYS;
 	}

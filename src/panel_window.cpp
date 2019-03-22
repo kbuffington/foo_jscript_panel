@@ -30,7 +30,6 @@ LRESULT panel_window::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 			script_load();
 		}
 		return 0;
-
 	case WM_DESTROY:
 		script_unload();
 		panel_manager::instance().remove_window(m_hwnd);
@@ -41,19 +40,16 @@ LRESULT panel_window::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 		delete_context();
 		ReleaseDC(m_hwnd, m_hdc);
 		return 0;
-
 	case WM_DISPLAYCHANGE:
 	case WM_THEMECHANGED:
 		update_script();
 		return 0;
-
 	case WM_ERASEBKGND:
 		if (m_pseudo_transparent)
 		{
 			PostMessage(m_hwnd, UWM_REFRESHBK, 0, 0);
 		}
 		return 1;
-
 	case WM_PAINT:
 		{
 			if (m_suppress_drawing)
@@ -74,7 +70,6 @@ LRESULT panel_window::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 			m_paint_pending = false;
 		}
 		return 0;
-
 	case WM_SIZE:
 		{
 			RECT rc;
@@ -86,7 +81,6 @@ LRESULT panel_window::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 				repaint();
 		}
 		return 0;
-
 	case WM_GETMINMAXINFO:
 		{
 			LPMINMAXINFO pmmi = reinterpret_cast<LPMINMAXINFO>(lp);
@@ -94,49 +88,39 @@ LRESULT panel_window::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 			memcpy(&pmmi->ptMinTrackSize, &m_min_size, sizeof(POINT));
 		}
 		return 0;
-
 	case WM_LBUTTONDOWN:
 	case WM_MBUTTONDOWN:
 	case WM_RBUTTONDOWN:
 		on_mouse_button_down(msg, wp, lp);
 		break;
-
 	case WM_LBUTTONUP:
 	case WM_MBUTTONUP:
 	case WM_RBUTTONUP:
 		if (on_mouse_button_up(msg, wp, lp))
 			return 0;
 		break;
-
 	case WM_LBUTTONDBLCLK:
 	case WM_MBUTTONDBLCLK:
 	case WM_RBUTTONDBLCLK:
 		on_mouse_button_dblclk(msg, wp, lp);
 		break;
-
 	case WM_CONTEXTMENU:
 		on_context_menu(GET_X_LPARAM(lp), GET_Y_LPARAM(lp));
 		return 1;
-
 	case WM_MOUSEMOVE:
 		on_mouse_move(wp, lp);
 		break;
-
 	case WM_MOUSELEAVE:
 		on_mouse_leave();
 		break;
-
 	case WM_MOUSEWHEEL:
 		on_mouse_wheel(wp);
 		break;
-
 	case WM_MOUSEHWHEEL:
 		on_mouse_wheel_h(wp);
 		break;
-
 	case WM_SETCURSOR:
 		return 1;
-
 	case WM_SYSKEYDOWN:
 	case WM_KEYDOWN:
 		{
@@ -146,7 +130,6 @@ LRESULT panel_window::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 			script_invoke(callback_id::on_key_down, args, _countof(args));
 		}
 		return 0;
-
 	case WM_KEYUP:
 		{
 			VARIANTARG args[1];
@@ -155,7 +138,6 @@ LRESULT panel_window::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 			script_invoke(callback_id::on_key_up, args, _countof(args));
 		}
 		return 0;
-
 	case WM_CHAR:
 		{
 			VARIANTARG args[1];
@@ -164,7 +146,6 @@ LRESULT panel_window::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 			script_invoke(callback_id::on_char, args, _countof(args));
 		}
 		return 0;
-
 	case WM_SETFOCUS:
 		{
 			m_selection_holder = ui_selection_manager::get()->acquire();
@@ -175,7 +156,6 @@ LRESULT panel_window::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 			script_invoke(callback_id::on_focus, args, _countof(args));
 		}
 		break;
-
 	case WM_KILLFOCUS:
 		{
 			m_selection_holder.release();
@@ -186,171 +166,129 @@ LRESULT panel_window::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 			script_invoke(callback_id::on_focus, args, _countof(args));
 		}
 		break;
-
 	case callback_id::on_always_on_top_changed:
 		on_always_on_top_changed(wp);
 		return 0;
-
 	case callback_id::on_colours_changed:
 		on_colours_changed();
 		return 0;
-
 	case callback_id::on_cursor_follow_playback_changed:
 		on_cursor_follow_playback_changed(wp);
 		return 0;
-
 	case callback_id::on_dsp_preset_changed:
 		on_dsp_preset_changed();
 		return 0;
-
 	case callback_id::on_font_changed:
 		on_font_changed();
 		return 0;
-
 	case callback_id::on_get_album_art_done:
 		on_get_album_art_done(wp);
 		return 0;
-
 	case callback_id::on_item_focus_change:
 		on_item_focus_change(wp);
 		return 0;
-
 	case callback_id::on_item_played:
 		on_item_played(wp);
 		return 0;
-
 	case callback_id::on_library_items_added:
 		on_library_items_added(wp);
 		return 0;
-
 	case callback_id::on_library_items_changed:
 		on_library_items_changed(wp);
 		return 0;
-
 	case callback_id::on_library_items_removed:
 		on_library_items_removed(wp);
 		return 0;
-
 	case callback_id::on_load_image_done:
 		on_load_image_done(wp);
 		return 0;
-
 	case callback_id::on_main_menu:
 		on_main_menu(wp);
 		return 0;
-
 	case callback_id::on_metadb_changed:
 		on_metadb_changed(wp);
 		return 0;
-
 	case callback_id::on_notify_data:
 		on_notify_data(wp);
 		return 0;
-
 	case callback_id::on_output_device_changed:
 		on_output_device_changed();
 		return 0;
-
 	case callback_id::on_playback_dynamic_info:
 		on_playback_dynamic_info();
 		return 0;
-
 	case callback_id::on_playback_dynamic_info_track:
 		on_playback_dynamic_info_track();
 		return 0;
-
 	case callback_id::on_playback_edited:
 		on_playback_edited(wp);
 		return 0;
-
 	case callback_id::on_playback_follow_cursor_changed:
 		on_playback_follow_cursor_changed(wp);
 		return 0;
-
 	case callback_id::on_playback_new_track:
 		on_playback_new_track(wp);
 		return 0;
-
 	case callback_id::on_playback_order_changed:
 		on_playback_order_changed(wp);
 		return 0;
-
 	case callback_id::on_playback_pause:
 		on_playback_pause(wp);
 		return 0;
-
 	case callback_id::on_playback_queue_changed:
 		on_playback_queue_changed(wp);
 		return 0;
-
 	case callback_id::on_playback_seek:
 		on_playback_seek(wp);
 		return 0;
-
 	case callback_id::on_playback_starting:
 		on_playback_starting(wp, lp);
 		return 0;
-
 	case callback_id::on_playback_stop:
 		on_playback_stop(wp);
 		return 0;
-
 	case callback_id::on_playback_time:
 		on_playback_time(wp);
 		return 0;
-
 	case callback_id::on_playlist_item_ensure_visible:
 		on_playlist_item_ensure_visible(wp, lp);
 		return 0;
-
 	case callback_id::on_playlist_items_added:
 		on_playlist_items_added(wp);
 		return 0;
-
 	case callback_id::on_playlist_items_removed:
 		on_playlist_items_removed(wp, lp);
 		return 0;
-
 	case callback_id::on_playlist_items_reordered:
 		on_playlist_items_reordered(wp);
 		return 0;
-
 	case callback_id::on_playlist_items_selection_change:
 		on_playlist_items_selection_change();
 		return 0;
-
 	case callback_id::on_playlist_stop_after_current_changed:
 		on_playlist_stop_after_current_changed(wp);
 		return 0;
-
 	case callback_id::on_playlist_switch:
 		on_playlist_switch();
 		return 0;
-
 	case callback_id::on_playlists_changed:
 		on_playlists_changed();
 		return 0;
-
 	case callback_id::on_replaygain_mode_changed:
 		on_replaygain_mode_changed(wp);
 		return 0;
-
 	case callback_id::on_selection_changed:
 		on_selection_changed();
 		return 0;
-
 	case callback_id::on_volume_change:
 		on_volume_change(wp);
 		return 0;
-
 	case UWM_REFRESHBK:
 		redraw();
 		return 0;
-
 	case UWM_RELOAD:
 		update_script();
 		return 0;
-
 	case UWM_SCRIPT_ERROR:
 		{
 			const auto& tooltip_param = panel_tooltip();
@@ -361,24 +299,19 @@ LRESULT panel_window::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 			script_unload();
 		}
 		return 0;
-
 	case UWM_SCRIPT_TERM:
 		script_unload();
 		return 0;
-
 	case UWM_SHOW_CONFIGURE:
 		show_configure_popup();
 		return 0;
-
 	case UWM_SHOW_PROPERTIES:
 		show_property_popup();
 		return 0;
-
 	case UWM_TIMER:
 		host_timer_dispatcher::instance().invoke_message(wp);
 		return 0;
 	}
-
 	return uDefWindowProc(hwnd, msg, wp, lp);
 }
 
