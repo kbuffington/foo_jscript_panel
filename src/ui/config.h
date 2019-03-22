@@ -1,27 +1,5 @@
 #pragma once
 
-enum t_edge_style : char
-{
-	NO_EDGE = 0,
-	SUNKEN_EDGE,
-	GREY_EDGE,
-};
-
-inline DWORD edge_style_from_config(t_edge_style edge_style)
-{
-	switch (edge_style)
-	{
-	case SUNKEN_EDGE:
-		return WS_EX_CLIENTEDGE;
-
-	case GREY_EDGE:
-		return WS_EX_STATICEDGE;
-
-	default:
-		return 0;
-	}
-}
-
 class prop_kv_config
 {
 public:
@@ -36,23 +14,4 @@ public:
 	void set_config_item(const char* p_key, const VARIANT& p_val);
 
 	t_map m_map;
-};
-
-class panel_vars
-{
-public:
-	panel_vars();
-
-	static pfc::string8_fast get_default_script_code();
-	void load_config(stream_reader* reader, t_size size, abort_callback& abort);
-	void reset_config();
-	void save_config(stream_writer* writer, abort_callback& abort) const;
-
-	WINDOWPLACEMENT m_wndpl;
-	bool m_grab_focus;
-	bool m_pseudo_transparent;
-	pfc::string8_fast m_script_code;
-	pfc::string8_fast m_script_engine_str;
-	prop_kv_config m_config_prop;
-	t_edge_style m_edge_style;
 };

@@ -452,7 +452,7 @@ ui_helpers::container_window::class_data& panel_window::get_class_data() const
 		false,
 		0,
 		WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN,
-		edge_style_from_config(m_edge_style),
+		get_edge_style(),
 		CS_DBLCLKS,
 		true, true, true, IDC_ARROW
 	};
@@ -1115,7 +1115,7 @@ void panel_window::script_load()
 
 	DWORD extstyle = GetWindowLongPtr(m_hwnd, GWL_EXSTYLE);
 	extstyle &= ~WS_EX_CLIENTEDGE & ~WS_EX_STATICEDGE;
-	extstyle |= edge_style_from_config(m_edge_style);
+	extstyle |= get_edge_style();
 	SetWindowLongPtr(m_hwnd, GWL_EXSTYLE, extstyle);
 	SetWindowPos(m_hwnd, nullptr, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
 

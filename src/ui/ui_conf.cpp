@@ -263,7 +263,7 @@ LRESULT CDialogConf::OnReset(WORD wNotifyCode, WORD wID, HWND hWndCtl)
 	uButton_SetCheck(m_hWnd, IDC_CHECK_PSEUDO_TRANSPARENT, false);
 	uButton_SetCheck(m_hWnd, IDC_CHECK_GRABFOCUS, true);
 
-	m_editorctrl.SetContent(panel_vars::get_default_script_code());
+	m_editorctrl.SetContent(host_comm::get_default_script_code());
 	return 0;
 }
 
@@ -391,7 +391,7 @@ void CDialogConf::Apply()
 {
 	// Save panel settings
 	uGetWindowText(GetDlgItem(IDC_COMBO_ENGINE), m_parent->m_script_engine_str);
-	m_parent->m_edge_style = static_cast<t_edge_style>(ComboBox_GetCurSel(GetDlgItem(IDC_COMBO_EDGE)));
+	m_parent->m_edge_style = static_cast<host_comm::t_edge_style>(ComboBox_GetCurSel(GetDlgItem(IDC_COMBO_EDGE)));
 	m_parent->m_grab_focus = uButton_GetCheck(m_hWnd, IDC_CHECK_GRABFOCUS);
 	m_parent->m_pseudo_transparent = uButton_GetCheck(m_hWnd, IDC_CHECK_PSEUDO_TRANSPARENT);
 

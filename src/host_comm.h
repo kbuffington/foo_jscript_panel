@@ -73,7 +73,7 @@ struct t_script_info
 	t_size id;
 };
 
-class host_comm : public panel_vars
+class host_comm
 {
 protected:
 	host_comm();
@@ -98,21 +98,40 @@ public:
 		KInstanceTypeDUI,
 	};
 
+	enum t_edge_style : char
+	{
+		NO_EDGE = 0,
+		SUNKEN_EDGE,
+		GREY_EDGE,
+	};
+
+	DWORD get_edge_style() const;
 	HDC get_hdc();
 	HWND get_hwnd();
 	int get_height();
 	int get_width();
 	panel_tooltip_param_ptr& panel_tooltip();
+	static pfc::string8_fast get_default_script_code();
 	t_size get_instance_type();
 	virtual DWORD get_colour_ui(t_size type) = 0;
 	virtual HFONT get_font_ui(t_size type) = 0;
 	virtual void notify_size_limit_changed() = 0;
+	void load_config(stream_reader* reader, t_size size, abort_callback& abort);
 	void redraw();
 	void refresh_background(LPRECT lprcUpdate = nullptr);
 	void repaint(bool force = false);
 	void repaint_rect(int x, int y, int w, int h, bool force = false);
+	void reset_config();
+	void save_config(stream_writer* writer, abort_callback& abort) const;
 
 	POINT m_max_size;
 	POINT m_min_size;
+	WINDOWPLACEMENT m_wndpl;
+	bool m_grab_focus;
+	bool m_pseudo_transparent;
+	pfc::string8_fast m_script_code;
+	pfc::string8_fast m_script_engine_str;
+	prop_kv_config m_config_prop;
+	t_edge_style m_edge_style;
 	t_script_info m_script_info;
 };

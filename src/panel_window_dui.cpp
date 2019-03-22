@@ -160,11 +160,6 @@ pfc::string8_fast panel_window_dui::g_get_description()
 ui_element_config::ptr panel_window_dui::g_get_default_configuration()
 {
 	ui_element_config_builder builder;
-	abort_callback_dummy abort;
-	panel_vars vars;
-
-	vars.reset_config();
-	vars.save_config(&builder.m_stream, abort);
 	return builder.finish(g_get_guid());
 }
 
