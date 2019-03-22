@@ -67,6 +67,11 @@ pfc::string8_fast host_comm::get_default_script_code()
 	return content;
 }
 
+pfc::string8_fast host_comm::get_default_script_engine_str()
+{
+	return helpers::supports_chakra() ? "Chakra" : "JScript";
+}
+
 t_size host_comm::get_instance_type()
 {
 	return m_instance_type;
@@ -207,7 +212,7 @@ void host_comm::repaint_rect(int x, int y, int w, int h, bool force)
 
 void host_comm::reset_config()
 {
-	m_script_engine_str = "Chakra";
+	m_script_engine_str = get_default_script_engine_str();
 	m_script_code = get_default_script_code();
 	m_pseudo_transparent = false;
 	m_wndpl.length = 0;
