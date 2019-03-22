@@ -1,7 +1,7 @@
 #include "stdafx.h"
-#include "config.h"
+#include "properties.h"
 
-bool prop_kv_config::get_config_item(const char* p_key, VARIANT& p_out)
+bool properties::get_config_item(const char* p_key, VARIANT& p_out)
 {
 	_variant_t val;
 
@@ -20,7 +20,7 @@ bool prop_kv_config::get_config_item(const char* p_key, VARIANT& p_out)
 	return false;
 }
 
-int prop_kv_config::g_get_sizeof(VARTYPE p_vt)
+int properties::g_get_sizeof(VARTYPE p_vt)
 {
 	switch (p_vt)
 	{
@@ -51,7 +51,7 @@ int prop_kv_config::g_get_sizeof(VARTYPE p_vt)
 	}
 }
 
-void prop_kv_config::g_load(t_map& data, stream_reader* reader, abort_callback& abort) throw()
+void properties::g_load(t_map& data, stream_reader* reader, abort_callback& abort) throw()
 {
 	t_size count;
 	data.remove_all();
@@ -89,7 +89,7 @@ void prop_kv_config::g_load(t_map& data, stream_reader* reader, abort_callback& 
 	catch (...) {}
 }
 
-void prop_kv_config::g_save(const t_map& data, stream_writer* writer, abort_callback& abort) throw()
+void properties::g_save(const t_map& data, stream_writer* writer, abort_callback& abort) throw()
 {
 	try
 	{
@@ -114,17 +114,17 @@ void prop_kv_config::g_save(const t_map& data, stream_writer* writer, abort_call
 	catch (...) {}
 }
 
-void prop_kv_config::load(stream_reader* reader, abort_callback& abort) throw()
+void properties::load(stream_reader* reader, abort_callback& abort) throw()
 {
 	g_load(m_map, reader, abort);
 }
 
-void prop_kv_config::save(stream_writer* writer, abort_callback& abort) const throw()
+void properties::save(stream_writer* writer, abort_callback& abort) const throw()
 {
 	g_save(m_map, writer, abort);
 }
 
-void prop_kv_config::set_config_item(const char* p_key, const VARIANT& p_val)
+void properties::set_config_item(const char* p_key, const VARIANT& p_val)
 {
 	if (g_get_sizeof(p_val.vt) != 0)
 	{

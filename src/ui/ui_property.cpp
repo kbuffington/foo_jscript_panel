@@ -77,7 +77,7 @@ LRESULT CDialogProperty::OnExportBnClicked(WORD wNotifyCode, WORD wID, HWND hWnd
 		try
 		{
 			filesystem::g_open_write_new(io, path, abort);
-			prop_kv_config::g_save(m_dup_prop_map, io.get_ptr(), abort);
+			properties::g_save(m_dup_prop_map, io.get_ptr(), abort);
 		}
 		catch (...) {}
 	}
@@ -96,7 +96,7 @@ LRESULT CDialogProperty::OnImportBnClicked(WORD wNotifyCode, WORD wID, HWND hWnd
 		try
 		{
 			filesystem::g_open_read(io, path, abort);
-			prop_kv_config::g_load(m_dup_prop_map, io.get_ptr(), abort);
+			properties::g_load(m_dup_prop_map, io.get_ptr(), abort);
 			LoadProperties(false);
 		}
 		catch (...) {}
@@ -140,7 +140,7 @@ void CDialogProperty::LoadProperties(bool reload)
 		m_dup_prop_map = m_parent->m_config_prop.m_map;
 	}
 
-	for (prop_kv_config::t_map::const_iterator iter = m_dup_prop_map.first(); iter.is_valid(); ++iter)
+	for (properties::t_map::const_iterator iter = m_dup_prop_map.first(); iter.is_valid(); ++iter)
 	{
 		string_wide_from_utf8_fast wname(iter->m_key);
 		HPROPERTY hProp = nullptr;

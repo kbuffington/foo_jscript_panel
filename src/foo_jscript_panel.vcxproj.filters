@@ -51,9 +51,6 @@
     <ClInclude Include="script_interface\window.h">
       <Filter>Header Files\script_interface</Filter>
     </ClInclude>
-    <ClInclude Include="ui\config.h">
-      <Filter>Header Files\ui</Filter>
-    </ClInclude>
     <ClInclude Include="ui\editorctrl.h">
       <Filter>Header Files\ui</Filter>
     </ClInclude>
@@ -129,6 +126,9 @@
     <ClInclude Include="thread_pool.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ui\properties.h">
+      <Filter>Header Files\ui</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="script_interface\console.cpp">
@@ -151,9 +151,6 @@
     </ClCompile>
     <ClCompile Include="script_interface\window.cpp">
       <Filter>Source Files\script_interface</Filter>
-    </ClCompile>
-    <ClCompile Include="ui\config.cpp">
-      <Filter>Source Files\ui</Filter>
     </ClCompile>
     <ClCompile Include="ui\editorctrl.cpp">
       <Filter>Source Files\ui</Filter>
@@ -226,6 +223,9 @@
     </ClCompile>
     <ClCompile Include="foo_jscript_panel.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\properties.cpp">
+      <Filter>Source Files\ui</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
