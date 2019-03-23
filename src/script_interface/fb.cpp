@@ -141,17 +141,14 @@ STDMETHODIMP Fb::GetClipboardContents(UINT window_id, IMetadbHandleList** pp)
 	pfc::com_ptr_t<IDataObject> pDO;
 	metadb_handle_list items;
 
-	HRESULT hr = OleGetClipboard(pDO.receive_ptr());
-	if (SUCCEEDED(hr))
+	if (SUCCEEDED(OleGetClipboard(pDO.receive_ptr())))
 	{
 		DWORD drop_effect = DROPEFFECT_COPY;
 		bool native;
-		hr = api->check_dataobject(pDO, drop_effect, native);
-		if (SUCCEEDED(hr))
+		if (SUCCEEDED(api->check_dataobject(pDO, drop_effect, native)))
 		{
 			dropped_files_data_impl data;
-			hr = api->parse_dataobject(pDO, data);
-			if (SUCCEEDED(hr))
+			if (SUCCEEDED(api->parse_dataobject(pDO, data)))
 			{
 				data.to_handles(items, native, (HWND)window_id);
 			}
@@ -179,7 +176,7 @@ STDMETHODIMP Fb::GetDSPPresets(BSTR* p)
 		j.push_back({
 			{ "active", api->get_selected_preset() == i },
 			{ "name", name.get_ptr() }
-			});
+		});
 	}
 	*p = SysAllocString(string_wide_from_utf8_fast((j.dump()).c_str()));
 	return S_OK;

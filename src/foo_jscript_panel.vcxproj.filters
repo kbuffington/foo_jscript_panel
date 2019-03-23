@@ -99,15 +99,6 @@
     <ClInclude Include="panel_window.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="panel_window_cui.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="panel_window_dui.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="mainmenu.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="panel_manager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
