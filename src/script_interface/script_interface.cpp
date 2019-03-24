@@ -1373,7 +1373,7 @@ STDMETHODIMP MetadbHandle::RefreshStats()
 	metadb_index_hash hash;
 	if (stats::hashHandle(m_handle, hash))
 	{
-		stats::theAPI()->dispatch_refresh(g_guid_jsp_metadb_index, hash);
+		stats::theAPI()->dispatch_refresh(jsp_guids::metadb_index, hash);
 	}
 	return S_OK;
 }
@@ -1825,7 +1825,7 @@ STDMETHODIMP MetadbHandleList::RefreshStats()
 		const metadb_index_hash hash = *iter;
 		hashes += hash;
 	}
-	stats::theAPI()->dispatch_refresh(g_guid_jsp_metadb_index, hashes);
+	stats::theAPI()->dispatch_refresh(jsp_guids::metadb_index, hashes);
 	return S_OK;
 }
 

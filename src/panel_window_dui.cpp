@@ -17,7 +17,7 @@ public:
 
 	static GUID g_get_guid()
 	{
-		return g_guid_jsp_window_dui;
+		return jsp_guids::window_dui;
 	}
 
 	static GUID g_get_subclass()

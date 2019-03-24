@@ -93,7 +93,7 @@ protected:
 
 	const GUID& get_extension_guid() const override
 	{
-		return g_guid_jsp_window_cui;
+		return jsp_guids::window_cui;
 	}
 
 	t_size get_type() const override

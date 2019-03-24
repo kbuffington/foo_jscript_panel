@@ -30,11 +30,11 @@ namespace stats
 				g_cachedAPI = api;
 				try
 				{
-					api->add(g_client, g_guid_jsp_metadb_index, system_time_periods::week * 4);
+					api->add(g_client, jsp_guids::metadb_index, system_time_periods::week * 4);
 				}
 				catch (std::exception const& e)
 				{
-					api->remove(g_guid_jsp_metadb_index);
+					api->remove(jsp_guids::metadb_index);
 					FB2K_console_formatter() << JSP_NAME " stats: Critical initialisation failure: " << e;
 					return;
 				}
@@ -187,7 +187,7 @@ namespace stats
 	fields get(metadb_index_hash hash)
 	{
 		mem_block_container_impl temp;
-		theAPI()->get_user_data(g_guid_jsp_metadb_index, hash, temp);
+		theAPI()->get_user_data(jsp_guids::metadb_index, hash, temp);
 		if (temp.get_size() > 0)
 		{
 			try
@@ -221,6 +221,6 @@ namespace stats
 		writer << f.first_played;
 		writer << f.last_played;
 		writer << f.rating;
-		theAPI()->set_user_data(g_guid_jsp_metadb_index, hash, writer.m_buffer.get_ptr(), writer.m_buffer.get_size());
+		theAPI()->set_user_data(jsp_guids::metadb_index, hash, writer.m_buffer.get_ptr(), writer.m_buffer.get_size());
 	}
 }

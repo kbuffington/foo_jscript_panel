@@ -156,7 +156,7 @@ void CDialogPref::reset()
 
 GUID my_preferences_page_v3::get_guid()
 {
-	return g_guid_jsp_ui_pref;
+	return jsp_guids::ui_pref;
 }
 
 GUID my_preferences_page_v3::get_parent_guid()

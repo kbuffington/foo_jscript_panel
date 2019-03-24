@@ -24,7 +24,7 @@ const t_prop_set_init_table prop_sets_init_table[] =
 	{0, 0},
 };
 
-cfg_sci_prop_sets g_sci_prop_sets(g_guid_jsp_prop_sets, prop_sets_init_table);
+cfg_sci_prop_sets g_sci_prop_sets(jsp_guids::prop_sets, prop_sets_init_table);
 
 cfg_sci_prop_sets::cfg_sci_prop_sets(const GUID& p_guid, const t_prop_set_init_table* p_default) : cfg_var(p_guid)
 {
