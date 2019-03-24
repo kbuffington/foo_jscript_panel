@@ -227,8 +227,9 @@ public:
 
 	t_size get_flags() override
 	{
-		return flag_on_items_added | flag_on_items_reordered | flag_on_items_removed | flag_on_item_focus_change | flag_on_playlist_activate | flag_on_playlist_created |
-			flag_on_playlists_reorder | flag_on_playlists_removed | flag_on_playlist_renamed | flag_on_playback_order_changed | flag_on_playlist_locked;
+		return flag_on_item_ensure_visible | flag_on_item_focus_change | flag_on_items_added | flag_on_items_removed | flag_on_items_reordered |
+			flag_on_items_selection_change | flag_on_playback_order_changed | flag_on_playlist_activate | flag_on_playlist_created |
+			flag_on_playlist_locked | flag_on_playlists_removed | flag_on_playlist_renamed | flag_on_playlists_reorder;
 	}
 
 	void on_item_ensure_visible(t_size p_playlist, t_size p_idx) override
@@ -271,42 +272,31 @@ public:
 	{
 		if (p_old != p_new)
 		{
-			on_playlist_switch();
+			panel_manager::instance().post_msg_to_all(callback_id::on_playlist_switch);
 		}
 	}
 
 	void on_playlist_created(t_size p_index, const char* p_name, t_size p_name_len) override
 	{
-		on_playlists_changed();
+		panel_manager::instance().post_msg_to_all(callback_id::on_playlists_changed);
 	}
 
 	void on_playlist_locked(t_size p_playlist, bool p_locked) override
 	{
-		on_playlists_changed();
+		panel_manager::instance().post_msg_to_all(callback_id::on_playlists_changed);
 	}
 
 	void on_playlist_renamed(t_size p_index, const char* p_new_name, t_size p_new_name_len) override
 	{
-		on_playlists_changed();
+		panel_manager::instance().post_msg_to_all(callback_id::on_playlists_changed);
 	}
 
 	void on_playlists_removed(const pfc::bit_array& p_mask, t_size p_old_count, t_size p_new_count) override
 	{
-		on_playlists_changed();
+		panel_manager::instance().post_msg_to_all(callback_id::on_playlists_changed);
 	}
 
 	void on_playlists_reorder(const t_size* p_order, t_size p_count) override
-	{
-		on_playlists_changed();
-	}
-
-private:
-	void on_playlist_switch()
-	{
-		panel_manager::instance().post_msg_to_all(callback_id::on_playlist_switch);
-	}
-
-	void on_playlists_changed()
 	{
 		panel_manager::instance().post_msg_to_all(callback_id::on_playlists_changed);
 	}

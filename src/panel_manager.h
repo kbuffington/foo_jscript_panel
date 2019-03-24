@@ -55,7 +55,6 @@ public:
 	panel_manager();
 
 	static panel_manager& instance();
-	t_size get_count();
 	void add_window(HWND p_wnd);
 	void post_msg_to_all(UINT p_msg, WPARAM p_wp = 0, LPARAM p_lp = 0);
 	void post_msg_to_all_pointer(UINT p_msg, pfc::refcounted_object_root* p_param);
