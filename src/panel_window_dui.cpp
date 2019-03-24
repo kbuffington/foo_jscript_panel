@@ -41,7 +41,7 @@ public:
 		out = JSP_NAME;
 	}
 
-	DWORD get_colour_ui(t_size type)
+	DWORD get_colour_ui(t_size type) override
 	{
 		const GUID* guids[] = {
 			&ui_color_text,
