@@ -376,21 +376,7 @@ bool panel_window::show_configure_popup()
 
 ui_helpers::container_window::class_data& panel_window::get_class_data() const
 {
-	static class_data my_class_data =
-	{
-		JSP_NAME L" Class",
-		L"",
-		0,
-		false,
-		false,
-		0,
-		WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN,
-		get_edge_style(),
-		CS_DBLCLKS,
-		true, true, true, IDC_ARROW
-	};
-
-	return my_class_data;
+	__implement_get_class_data_ex(JSP_NAME L" Class", L"", false, 0, WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN, get_edge_style(), CS_DBLCLKS);
 }
 
 void panel_window::build_context_menu(HMENU menu, int x, int y, int id_base)
