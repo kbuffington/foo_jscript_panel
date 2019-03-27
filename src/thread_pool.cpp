@@ -1,11 +1,6 @@
 #include "stdafx.h"
 #include "thread_pool.h"
 
-void simple_thread_task::run()
-{
-	PFC_ASSERT(!"Should not get here");
-}
-
 simple_thread_worker::simple_thread_worker() {}
 
 simple_thread_worker::~simple_thread_worker()

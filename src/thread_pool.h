@@ -3,7 +3,7 @@
 class simple_thread_task
 {
 public:
-	virtual void run();
+	virtual void run() = 0;
 };
 
 class simple_thread_worker : public pfc::thread
