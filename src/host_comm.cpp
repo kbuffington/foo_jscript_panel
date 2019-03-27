@@ -7,14 +7,19 @@ host_comm::host_comm()
 	, m_width(0)
 	, m_height(0)
 	, m_gr_bmp(nullptr)
+	, m_gr_bmp_bk(nullptr)
+	, m_grab_focus(false)
+	, m_pseudo_transparent(false)
 	, m_suppress_drawing(false)
 	, m_paint_pending(false)
+	, m_edge_style(NO_EDGE)
 	, m_instance_type(KInstanceTypeCUI)
 	, m_script_info()
 	, m_panel_tooltip_param_ptr(new panel_tooltip_param)
+	, m_max_size { INT_MAX, INT_MAX }
+	, m_min_size { 0, 0 }
+	, m_wndpl {}
 {
-	m_max_size = { INT_MAX, INT_MAX };
-	m_min_size = { 0, 0 };
 	reset_config();
 }
 

@@ -6,9 +6,9 @@ CDialogGoto::CDialogGoto(HWND p_hedit) : m_hedit(p_hedit) {}
 BOOL CDialogGoto::OnInitDialog(HWND hwndFocus, LPARAM lParam)
 {
 	int cur_pos = SendMessage(m_hedit, SCI_GETCURRENTPOS, 0, 0);
-	int cur_line = SendMessage(m_hedit, SCI_LINEFROMPOSITION, cur_pos, 0);
+	int cur_line = SendMessage(m_hedit, SCI_LINEFROMPOSITION, cur_pos, 0) + 1;
 
-	uSetWindowText(GetDlgItem(IDC_EDIT_LINENUMBER), pfc::format_int(cur_line + 1).get_ptr());
+	uSetWindowText(GetDlgItem(IDC_EDIT_LINENUMBER), pfc::format_int(cur_line).get_ptr());
 
 	return TRUE;
 }

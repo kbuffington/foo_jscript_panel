@@ -5,15 +5,12 @@
 #include "ui_goto.h"
 #include "ui_replace.h"
 
-CDialogConf::CDialogConf(panel_window* p_parent) : m_parent(p_parent), m_dlgfind(nullptr), m_dlgreplace(nullptr), m_lastSearchText(""), m_lastFlags(0)
+CDialogConf::CDialogConf(panel_window* p_parent) : m_parent(p_parent), m_dlgfind(nullptr), m_dlgreplace(nullptr), m_lastFlags(0)
 {
 	m_caption << JSP_NAME " Configuration (id:" << m_parent->m_script_info.id << ")";
 }
 
-CDialogConf::~CDialogConf()
-{
-	m_hWnd = nullptr;
-}
+CDialogConf::~CDialogConf() {}
 
 BOOL CDialogConf::OnInitDialog(HWND hwndFocus, LPARAM lParam)
 {

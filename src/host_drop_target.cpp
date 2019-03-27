@@ -175,7 +175,7 @@ STDMETHODIMP IDropTargetImpl::Drop(IDataObject* pDataObj, DWORD grfKeyState, POI
 	return hr;
 }
 
-host_drop_target::host_drop_target(panel_window* host) : IDropTargetImpl(host->get_hwnd()), m_host(host), m_action(new com_object_impl_t<DropSourceAction, true>()) {}
+host_drop_target::host_drop_target(panel_window* host) : IDropTargetImpl(host->get_hwnd()), m_host(host), m_allowed_effect(DROPEFFECT_NONE), m_action(new com_object_impl_t<DropSourceAction, true>()) {}
 
 host_drop_target::~host_drop_target()
 {
