@@ -6,7 +6,6 @@ _.mixin({
 			}
 			this.metadb = metadb;
 			this.time_elapsed = 0;
-			this.timestamp = _.ts();
 			this.target_time = this.properties.listenbrainz.enabled ? Math.min(Math.ceil(fb.PlaybackLength / 2), 240) : -1;
 		}
 		
@@ -55,7 +54,7 @@ _.mixin({
 			};
 			
 			if (single) {
-				payload.listened_at = this.timestamp;
+				payload.listened_at = _.ts();
 				
 				payload.track_metadata.additional_info = {
 					// must be arrays
@@ -285,7 +284,6 @@ _.mixin({
 		this.xmlhttp = new ActiveXObject('Microsoft.XMLHTTP');
 		this.time_elapsed = 0;
 		this.target_time = 0;
-		this.timestamp = 0;
 		this.max_listens = 50;
 		this.mapping = {
 			'acoustid id' : 'acoustid_id',
