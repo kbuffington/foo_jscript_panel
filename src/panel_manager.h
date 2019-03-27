@@ -55,6 +55,7 @@ public:
 	panel_manager();
 
 	static panel_manager& instance();
+
 	void add_window(HWND p_wnd);
 	void post_msg_to_all(UINT p_msg, WPARAM p_wp = 0, LPARAM p_lp = 0);
 	void post_msg_to_all_pointer(UINT p_msg, pfc::refcounted_object_root* p_param);
@@ -63,8 +64,9 @@ public:
 	void send_msg_to_others_pointer(HWND p_wnd_except, UINT p_msg, pfc::refcounted_object_root* p_param);
 
 private:
-	pfc::list_t<HWND> m_hwnds;
 	static panel_manager instance_;
+
+	pfc::list_t<HWND> m_hwnds;
 
 	PFC_CLASS_NOT_COPYABLE_EX(panel_manager)
 };

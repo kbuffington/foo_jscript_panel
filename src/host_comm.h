@@ -5,7 +5,7 @@
 
 struct t_script_info
 {
-	t_script_info() {}
+	t_script_info() : dragdrop(false), id(0) {}
 
 	struct
 	{
@@ -105,14 +105,15 @@ public:
 		GREY_EDGE,
 	};
 
+	static pfc::string8_fast get_default_script_code();
+	static pfc::string8_fast get_default_script_engine_str();
+
 	DWORD get_edge_style() const;
 	HDC get_hdc();
 	HWND get_hwnd();
 	int get_height();
 	int get_width();
 	panel_tooltip_param_ptr& panel_tooltip();
-	static pfc::string8_fast get_default_script_code();
-	static pfc::string8_fast get_default_script_engine_str();
 	t_size get_instance_type();
 	virtual DWORD get_colour_ui(t_size type) = 0;
 	virtual HFONT get_font_ui(t_size type) = 0;

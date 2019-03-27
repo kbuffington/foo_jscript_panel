@@ -10,9 +10,10 @@ public:
 	host_timer(HWND hwnd, t_size id, t_size delay, bool isRepeated);
 	~host_timer();
 
+	static VOID CALLBACK timerProc(PVOID lpParameter, BOOLEAN TimerOrWaitFired);
+
 	HWND get_hwnd() const;
 	bool start(HANDLE hTimerQueue);
-	static VOID CALLBACK timerProc(PVOID lpParameter, BOOLEAN TimerOrWaitFired);
 	void stop();
 
 private:
@@ -48,6 +49,7 @@ public:
 	~host_timer_dispatcher();
 
 	static host_timer_dispatcher& instance();
+
 	t_size set_interval(HWND hwnd, t_size delay, IDispatch* pDisp);
 	t_size set_timeout(HWND hwnd, t_size delay, IDispatch* pDisp);
 	void kill_timer(t_size timerId);

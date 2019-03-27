@@ -48,6 +48,10 @@ public:
 		IDD = IDD_DIALOG_CONF
 	};
 
+	static bool FindNext(HWND hWnd, HWND hWndEdit, t_size flags, const char* which);
+	static bool FindPrevious(HWND hWnd, HWND hWndEdit, t_size flags, const char* which);
+	static bool FindResult(HWND hWnd, HWND hWndEdit, int pos, const char* which);
+
 	BOOL OnInitDialog(HWND hwndFocus, LPARAM lParam);
 	LRESULT OnCloseCmd(WORD wNotifyCode, WORD wID, HWND hWndCtl);
 	LRESULT OnDocs(WORD wNotifyCode, WORD wID, HWND hWndCtl);
@@ -60,9 +64,6 @@ public:
 	LRESULT OnSamples(WORD wNotifyCode, WORD wID, HWND hWndCtl);
 	LRESULT OnUwmFindTextChanged(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 	LRESULT OnUwmKeyDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-	static bool FindNext(HWND hWnd, HWND hWndEdit, t_size flags, const char* which);
-	static bool FindPrevious(HWND hWnd, HWND hWndEdit, t_size flags, const char* which);
-	static bool FindResult(HWND hWnd, HWND hWndEdit, int pos, const char* which);
 	void Apply();
 	void OpenFindDialog();
 

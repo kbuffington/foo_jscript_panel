@@ -24,10 +24,11 @@ public:
 	simple_thread_pool();
 	~simple_thread_pool();
 
+	static simple_thread_pool& instance();
+
 	bool enqueue(simple_thread_task* task);
 	bool is_queue_empty();
 	simple_thread_task* acquire_task();
-	static simple_thread_pool& instance();
 	void exit();
 	void track(simple_thread_task* task);
 	void untrack(simple_thread_task* task);
@@ -39,11 +40,12 @@ private:
 
 	using t_task_list = pfc::chain_list_v2_t<simple_thread_task*>;
 
+	static simple_thread_pool instance_;
+
 	HANDLE empty_worker_;
 	HANDLE exiting_;
 	HANDLE have_task_;
 	critical_section cs_;
-	static simple_thread_pool instance_;
 	t_task_list task_list_;
 	volatile LONG num_workers_;
 

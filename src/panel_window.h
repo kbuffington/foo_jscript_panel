@@ -18,7 +18,7 @@ public:
 
 protected:
 	bool show_configure_popup();
-	static void build_context_menu(HMENU menu, int x, int y, int id_base);
+	void build_context_menu(HMENU menu, int x, int y, int id_base);
 	void execute_context_menu_command(int id, int id_base);
 	void show_property_popup();
 
