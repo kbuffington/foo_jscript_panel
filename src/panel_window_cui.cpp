@@ -88,7 +88,7 @@ protected:
 
 	bool show_config_popup(HWND parent) override
 	{
-		return show_configure_popup();
+		return show_configure_popup(parent);
 	}
 
 	const GUID& get_extension_guid() const override

@@ -17,10 +17,10 @@ public:
 	void update_script();
 
 protected:
-	bool show_configure_popup();
+	bool show_configure_popup(HWND parent);
 	void build_context_menu(HMENU menu, int x, int y, int id_base);
 	void execute_context_menu_command(int id, int id_base);
-	void show_property_popup();
+	void show_property_popup(HWND parent);
 
 private:
 	bool on_mouse_button_up(UINT msg, WPARAM wp, LPARAM lp);
