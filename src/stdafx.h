@@ -1,4 +1,5 @@
 #pragma once
+#pragma warning(disable:4100)
 
 #define _WIN32_WINNT _WIN32_WINNT_WINXP
 #define WINVER _WIN32_WINNT_WINXP
@@ -8,7 +9,12 @@
 
 #include <WinSock2.h>
 #include <Windows.h>
+
+#pragma warning(push)
+#pragma warning(disable:4458)
 #include <GdiPlus.h>
+#pragma warning(pop)
+
 #include <ActivScp.h>
 #include <activdbg.h>
 #include <ComDef.h>
@@ -28,8 +34,11 @@
 #include <Scintilla.h>
 #include <SciLexer.h>
 
+#pragma warning(push)
+#pragma warning(disable:4245)
 #include "../foobar2000/SDK/foobar2000.h"
 #include "../columns_ui-sdk/ui_extension.h"
+#pragma warning(pop)
 
 #ifdef _INC_WINDOWSX
 #undef SubclassWindow

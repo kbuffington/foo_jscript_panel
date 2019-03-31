@@ -49,8 +49,8 @@ public:
 		return id_point;
 	}
 
-	void setCluster(int id_cluster) {
-		this->id_cluster = id_cluster;
+	void setCluster(int cluster) {
+		this->id_cluster = cluster;
 	}
 
 	int getCluster() {

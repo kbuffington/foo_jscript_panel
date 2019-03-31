@@ -84,7 +84,7 @@ static bool IsBraceChar(int ch)
 
 static bool IsIdentifierChar(int ch)
 {
-	return __iswcsym(ch);
+	return __iswcsym((wint_t)ch);
 }
 
 static bool IsSymIncludes(const StyleAndWords& symbols, const SString value)
@@ -820,7 +820,7 @@ void CScriptEditorCtrl::AutoMarginWidth()
 		SetMarginWidthN(0, marginwidth);
 }
 
-void CScriptEditorCtrl::AutomaticIndentation(char ch)
+void CScriptEditorCtrl::AutomaticIndentation(int ch)
 {
 	Sci_CharacterRange crange = GetSelection();
 	int selStart = crange.cpMin;
@@ -1203,7 +1203,6 @@ void CScriptEditorCtrl::SetContent(const char* text, bool clear_undo_buffer)
 	if (clear_undo_buffer)
 		EmptyUndoBuffer();
 
-	Colourise(0, -1);
 	GrabFocus();
 	TrackWidth();
 }
@@ -1223,7 +1222,6 @@ void CScriptEditorCtrl::SetJScript()
 	SetLexer(SCLEX_CPP);
 	SetKeyWords(0, js_keywords);
 	SetAllStylesFromTable(js_style_table);
-	Colourise(0, -1);
 }
 
 void CScriptEditorCtrl::SetIndentation(int line, int indent)

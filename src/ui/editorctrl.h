@@ -62,7 +62,7 @@ public:
 	pfc::string8_fast GetCurrentLine();
 	t_size GetLinePartsInStyle(int line, int style1, int style2, SString sv[], int len);
 	void AutoMarginWidth();
-	void AutomaticIndentation(char ch);
+	void AutomaticIndentation(int ch);
 	void ContinueCallTip();
 	void FillFunctionDefinition(int pos = -1);
 	void Init();

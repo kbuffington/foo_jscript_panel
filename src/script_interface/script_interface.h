@@ -196,7 +196,7 @@ protected:
 	mainmenu_manager::ptr m_mm;
 
 public:
-	STDMETHODIMP BuildMenu(IMenuObj* p, int base_id, int count) override;
+	STDMETHODIMP BuildMenu(IMenuObj* p, UINT base_id, int count) override;
 	STDMETHODIMP ExecuteByID(UINT id, VARIANT_BOOL* p) override;
 	STDMETHODIMP Init(BSTR root_name) override;
 };

@@ -72,4 +72,4 @@ public:
 };
 
 static service_factory_single_t<my_mainmenu_commands> g_my_mainmenu_commands;
-static mainmenu_group_popup_factory g_my_mainmenu_group(jsp_guids::mainmenu_group_id, mainmenu_groups::file, mainmenu_commands::sort_priority_dontcare, JSP_NAME);
+static mainmenu_group_popup_factory g_my_mainmenu_group(jsp_guids::mainmenu_group_id, mainmenu_groups::file, mainmenu_commands::sort_priority_base, JSP_NAME);

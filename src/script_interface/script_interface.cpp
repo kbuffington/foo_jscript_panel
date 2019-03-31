@@ -375,10 +375,10 @@ STDMETHODIMP GdiBitmap::GetColourSchemeJSON(UINT count, BSTR* p)
 	Gdiplus::BitmapData bmpdata;
 	int w = min(m_ptr->GetWidth(), 220), h = min(m_ptr->GetHeight(), 220);
 	Gdiplus::Bitmap* bitmap = new Gdiplus::Bitmap(w, h, PixelFormat32bppPARGB);
-	Gdiplus::Graphics g(bitmap);
+	Gdiplus::Graphics gb(bitmap);
 	Gdiplus::Rect rect(0, 0, w, h);
-	g.SetInterpolationMode((Gdiplus::InterpolationMode)6);
-	g.DrawImage(m_ptr, 0, 0, w, h);
+	gb.SetInterpolationMode((Gdiplus::InterpolationMode)6);
+	gb.DrawImage(m_ptr, 0, 0, w, h);
 
 	if (bitmap->LockBits(&rect, Gdiplus::ImageLockModeRead, PixelFormat32bppARGB, &bmpdata) != Gdiplus::Ok)
 		return E_POINTER;
@@ -416,8 +416,8 @@ STDMETHODIMP GdiBitmap::GetColourSchemeJSON(UINT count, BSTR* p)
 		BYTE b = (it->first & 0xff);
 
 		std::vector<t_size> values = { r, g, b };
-		Point p(idx, values, it->second);
-		points.push_back(p);
+		Point pt(idx, values, it->second);
+		points.push_back(pt);
 	}
 
 	KMeans kmeans(count, colour_counters.size(), 12);
@@ -1102,7 +1102,7 @@ void MainMenuManager::FinalRelease()
 	m_mm.release();
 }
 
-STDMETHODIMP MainMenuManager::BuildMenu(IMenuObj* p, int base_id, int count)
+STDMETHODIMP MainMenuManager::BuildMenu(IMenuObj* p, UINT base_id, int count)
 {
 	if (m_mm.is_empty()) return E_POINTER;
 

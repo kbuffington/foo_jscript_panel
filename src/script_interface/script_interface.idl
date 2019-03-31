@@ -310,7 +310,7 @@ library foo_jscript_panel
 		uuid(4a357221-1b75-4379-8de7-6a865bbfad10)
 	]
 	interface IMainMenuManager : IDisposable {
-		HRESULT BuildMenu(IMenuObj* p, int base_id, [defaultvalue(-1)] int count);
+		HRESULT BuildMenu(IMenuObj* p, UINT base_id, [defaultvalue(-1)] int count);
 		HRESULT ExecuteByID(UINT id, [out, retval] VARIANT_BOOL* p);
 		HRESULT Init(BSTR root_name);
 	};
