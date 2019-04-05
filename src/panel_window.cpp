@@ -47,7 +47,7 @@ LRESULT panel_window::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 	case WM_ERASEBKGND:
 		if (m_pseudo_transparent)
 		{
-			PostMessage(m_hwnd, UWM_REFRESHBK, 0, 0);
+			redraw();
 		}
 		return 1;
 	case WM_PAINT:
@@ -76,7 +76,7 @@ LRESULT panel_window::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 			GetClientRect(m_hwnd, &rc);
 			on_size(rc.right - rc.left, rc.bottom - rc.top);
 			if (m_pseudo_transparent)
-				PostMessage(m_hwnd, UWM_REFRESHBK, 0, 0);
+				redraw();
 			else
 				repaint();
 		}
@@ -282,9 +282,6 @@ LRESULT panel_window::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 		return 0;
 	case callback_id::on_volume_change:
 		on_volume_change(wp);
-		return 0;
-	case UWM_REFRESHBK:
-		redraw();
 		return 0;
 	case UWM_RELOAD:
 		update_script();
@@ -1058,7 +1055,7 @@ void panel_window::script_load()
 	on_size(m_width, m_height);
 	if (m_pseudo_transparent)
 	{
-		PostMessage(m_hwnd, UWM_REFRESHBK, 0, 0);
+		redraw();
 	}
 	else
 	{
