@@ -56,17 +56,16 @@
 
 //ui_replace
 #define IDD_DIALOG_REPLACE              180
-#define IDC_EDIT_FINDWHAT               181
-#define IDC_EDIT_REPLACE                182
+#define IDC_EDIT_FIND_TEXT              181
+#define IDC_EDIT_REPLACE_TEXT           182
 #define IDC_CHECK_MATCHCASE             183
 #define IDC_CHECK_WHOLEWORD             184
 #define IDC_CHECK_WORDSTART             185
 #define IDC_CHECK_REGEXP                186
-#define IDC_FINDDOWN                    187
-#define IDC_FINDUP                      188
-#define IDC_FINDNEXT                    189
-#define IDC_REPLACE                     190
-#define IDC_REPLACEALL                  191
+#define IDC_FIND_NEXT                   187
+#define IDC_FIND_PREVIOUS               188
+#define IDC_REPLACE                     189
+#define IDC_REPLACE_ALL                 190
 
 //menu
 #define IDR_MENU                        200

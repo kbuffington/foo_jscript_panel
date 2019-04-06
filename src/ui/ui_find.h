@@ -1,25 +1,17 @@
 #pragma once
 
-class CDialogFind : public CDialogImpl<CDialogFind>, public CDialogResize<CDialogFind>
+class CDialogFind : public CDialogImpl<CDialogFind>
 {
 public:
 	CDialogFind(HWND p_hedit);
 
-	BEGIN_DLGRESIZE_MAP(CDialogFind)
-		DLGRESIZE_CONTROL(IDC_EDIT_FINDWHAT, DLSZ_SIZE_X)
-		DLGRESIZE_CONTROL(IDC_FINDUP, DLSZ_MOVE_X)
-		DLGRESIZE_CONTROL(IDC_FINDDOWN, DLSZ_MOVE_X)
-		DLGRESIZE_CONTROL(IDCANCEL, DLSZ_MOVE_X)
-	END_DLGRESIZE_MAP()
-
 	BEGIN_MSG_MAP(CDialogFind)
 		MSG_WM_INITDIALOG(OnInitDialog)
-		COMMAND_ID_HANDLER_EX(IDC_FINDUP, OnFindUp)
-		COMMAND_ID_HANDLER_EX(IDC_FINDDOWN, OnFindDown)
-		COMMAND_HANDLER_EX(IDC_EDIT_FINDWHAT, EN_CHANGE, OnEditFindWhatEnChange)
-		COMMAND_RANGE_HANDLER_EX(IDC_CHECK_MATCHCASE, IDC_CHECK_REGEXP, OnFlagCommand)
+		COMMAND_ID_HANDLER_EX(IDC_FIND_NEXT, OnFindNext)
+		COMMAND_ID_HANDLER_EX(IDC_FIND_PREVIOUS, OnFindPrevious)
 		COMMAND_ID_HANDLER_EX(IDCANCEL, OnCancel)
-		CHAIN_MSG_MAP(CDialogResize<CDialogFind>)
+		COMMAND_HANDLER_EX(IDC_EDIT_FIND_TEXT, EN_CHANGE, OnFindTextChange)
+		COMMAND_RANGE_HANDLER_EX(IDC_CHECK_MATCHCASE, IDC_CHECK_REGEXP, OnFlagCommand)
 	END_MSG_MAP()
 
 	enum
@@ -29,9 +21,9 @@ public:
 
 	BOOL OnInitDialog(HWND hwndFocus, LPARAM lParam);
 	LRESULT OnCancel(WORD wNotifyCode, WORD wID, HWND hWndCtl);
-	LRESULT OnEditFindWhatEnChange(WORD wNotifyCode, WORD wID, HWND hWndCtl);
-	LRESULT OnFindDown(WORD wNotifyCode, WORD wID, HWND hWndCtl);
-	LRESULT OnFindUp(WORD wNotifyCode, WORD wID, HWND hWndCtl);
+	LRESULT OnFindNext(WORD wNotifyCode, WORD wID, HWND hWndCtl);
+	LRESULT OnFindPrevious(WORD wNotifyCode, WORD wID, HWND hWndCtl);
+	LRESULT OnFindTextChange(WORD wNotifyCode, WORD wID, HWND hWndCtl);
 	LRESULT OnFlagCommand(WORD wNotifyCode, WORD wID, HWND hWndCtl);
 	void OnFinalMessage(HWND hWnd) override;
 

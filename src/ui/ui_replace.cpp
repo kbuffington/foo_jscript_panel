@@ -7,36 +7,14 @@ CDialogReplace::CDialogReplace(HWND p_hedit) : m_hedit(p_hedit), m_flags(0), m_h
 BOOL CDialogReplace::OnInitDialog(HWND hwndFocus, LPARAM lParam)
 {
 	modeless_dialog_manager::g_add(m_hWnd);
-	DlgResize_Init();
-	m_replace.SubclassWindow(GetDlgItem(IDC_EDIT_FINDWHAT), m_hWnd);
-	m_find.SubclassWindow(GetDlgItem(IDC_EDIT_REPLACE), m_hWnd);
+	m_replace.SubclassWindow(GetDlgItem(IDC_EDIT_FIND_TEXT), m_hWnd);
+	m_find.SubclassWindow(GetDlgItem(IDC_EDIT_REPLACE_TEXT), m_hWnd);
 	return TRUE;
-}
-
-CHARRANGE CDialogReplace::GetSelection()
-{
-	CHARRANGE cr;
-
-	cr.cpMin = SendMessage(m_hedit, SCI_GETSELECTIONSTART, 0, 0);
-	cr.cpMax = SendMessage(m_hedit, SCI_GETSELECTIONEND, 0, 0);
-	return cr;
 }
 
 LRESULT CDialogReplace::OnCancel(WORD wNotifyCode, WORD wID, HWND hWndCtl)
 {
 	ShowWindow(SW_HIDE);
-	return 0;
-}
-
-LRESULT CDialogReplace::OnEditFindWhatEnChange(WORD wNotifyCode, WORD wID, HWND hWndCtl)
-{
-	uGetWindowText(GetDlgItem(IDC_EDIT_FINDWHAT), m_text);
-	return 0;
-}
-
-LRESULT CDialogReplace::OnEditReplaceEnChange(WORD wNotifyCode, WORD wID, HWND hWndCtl)
-{
-	uGetWindowText(GetDlgItem(IDC_EDIT_REPLACE), m_reptext);
 	return 0;
 }
 
@@ -46,6 +24,21 @@ LRESULT CDialogReplace::OnFindNext(WORD wNotifyCode, WORD wID, HWND hWndCtl)
 	{
 		m_havefound = CDialogConf::FindNext(m_hWnd, m_hedit, m_flags, m_text.get_ptr());
 	}
+	return 0;
+}
+
+LRESULT CDialogReplace::OnFindPrevious(WORD wNotifyCode, WORD wID, HWND hWndCtl)
+{
+	if (m_text.get_length())
+	{
+		CDialogConf::FindPrevious(m_hWnd, m_hedit, m_flags, m_text.get_ptr());
+	}
+	return 0;
+}
+
+LRESULT CDialogReplace::OnFindTextChange(WORD wNotifyCode, WORD wID, HWND hWndCtl)
+{
+	uGetWindowText(GetDlgItem(IDC_EDIT_FIND_TEXT), m_text);
 	return 0;
 }
 
@@ -85,7 +78,9 @@ LRESULT CDialogReplace::OnReplace(WORD wNotifyCode, WORD wID, HWND hWndCtl)
 {
 	if (m_havefound)
 	{
-		CHARRANGE cr = GetSelection();
+		CHARRANGE cr;
+		cr.cpMin = SendMessage(m_hedit, SCI_GETSELECTIONSTART, 0, 0);
+		cr.cpMax = SendMessage(m_hedit, SCI_GETSELECTIONEND, 0, 0);
 
 		SendMessage(m_hedit, SCI_SETTARGETSTART, cr.cpMin, 0);
 		SendMessage(m_hedit, SCI_SETTARGETEND, cr.cpMax, 0);
@@ -98,7 +93,7 @@ LRESULT CDialogReplace::OnReplace(WORD wNotifyCode, WORD wID, HWND hWndCtl)
 	return 0;
 }
 
-LRESULT CDialogReplace::OnReplaceall(WORD wNotifyCode, WORD wID, HWND hWndCtl)
+LRESULT CDialogReplace::OnReplaceAll(WORD wNotifyCode, WORD wID, HWND hWndCtl)
 {
 	SendMessage(m_hedit, SCI_BEGINUNDOACTION, 0, 0);
 	SendMessage(m_hedit, SCI_SETTARGETSTART, 0, 0);
@@ -126,6 +121,12 @@ LRESULT CDialogReplace::OnReplaceall(WORD wNotifyCode, WORD wID, HWND hWndCtl)
 	}
 
 	SendMessage(m_hedit, SCI_ENDUNDOACTION, 0, 0);
+	return 0;
+}
+
+LRESULT CDialogReplace::OnReplaceTextChange(WORD wNotifyCode, WORD wID, HWND hWndCtl)
+{
+	uGetWindowText(GetDlgItem(IDC_EDIT_REPLACE_TEXT), m_reptext);
 	return 0;
 }
 

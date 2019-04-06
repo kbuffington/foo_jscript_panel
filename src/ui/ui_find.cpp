@@ -7,8 +7,7 @@ CDialogFind::CDialogFind(HWND p_hedit) : m_hedit(p_hedit), m_flags(0) {}
 BOOL CDialogFind::OnInitDialog(HWND hwndFocus, LPARAM lParam)
 {
 	modeless_dialog_manager::g_add(m_hWnd);
-	DlgResize_Init();
-	m_find.SubclassWindow(GetDlgItem(IDC_EDIT_FINDWHAT), m_hWnd);
+	m_find.SubclassWindow(GetDlgItem(IDC_EDIT_FIND_TEXT), m_hWnd);
 	return TRUE;
 }
 
@@ -18,13 +17,7 @@ LRESULT CDialogFind::OnCancel(WORD wNotifyCode, WORD wID, HWND hWndCtl)
 	return 0;
 }
 
-LRESULT CDialogFind::OnEditFindWhatEnChange(WORD wNotifyCode, WORD wID, HWND hWndCtl)
-{
-	uGetWindowText(GetDlgItem(IDC_EDIT_FINDWHAT), m_text);
-	return 0;
-}
-
-LRESULT CDialogFind::OnFindDown(WORD wNotifyCode, WORD wID, HWND hWndCtl)
+LRESULT CDialogFind::OnFindNext(WORD wNotifyCode, WORD wID, HWND hWndCtl)
 {
 	if (m_text.get_length())
 	{
@@ -33,12 +26,18 @@ LRESULT CDialogFind::OnFindDown(WORD wNotifyCode, WORD wID, HWND hWndCtl)
 	return 0;
 }
 
-LRESULT CDialogFind::OnFindUp(WORD wNotifyCode, WORD wID, HWND hWndCtl)
+LRESULT CDialogFind::OnFindPrevious(WORD wNotifyCode, WORD wID, HWND hWndCtl)
 {
 	if (m_text.get_length())
 	{
 		CDialogConf::FindPrevious(m_hWnd, m_hedit, m_flags, m_text.get_ptr());
 	}
+	return 0;
+}
+
+LRESULT CDialogFind::OnFindTextChange(WORD wNotifyCode, WORD wID, HWND hWndCtl)
+{
+	uGetWindowText(GetDlgItem(IDC_EDIT_FIND_TEXT), m_text);
 	return 0;
 }
 
@@ -105,7 +104,7 @@ LRESULT CDialogFind::CEditWithReturn::OnKeyDown(UINT uMsg, WPARAM wParam, LPARAM
 	switch (wParam)
 	{
 	case VK_RETURN:
-		::PostMessage(m_parent, WM_COMMAND, MAKEWPARAM(IDC_FINDDOWN, BN_CLICKED), (LPARAM)m_hWnd);
+		::PostMessage(m_parent, WM_COMMAND, MAKEWPARAM(IDC_FIND_NEXT, BN_CLICKED), (LPARAM)m_hWnd);
 		return FALSE;
 
 	case VK_ESCAPE:
