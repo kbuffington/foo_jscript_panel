@@ -47,14 +47,6 @@ void panel_manager::remove_window(HWND p_wnd)
 	m_hwnds.remove_item(p_wnd);
 }
 
-void panel_manager::send_msg_to_all(UINT p_msg, WPARAM p_wp, LPARAM p_lp)
-{
-	m_hwnds.for_each([p_msg, p_wp, p_lp](const HWND& hwnd) -> void
-	{
-		SendMessage(hwnd, p_msg, p_wp, p_lp);
-	});
-}
-
 void panel_manager::send_msg_to_others_pointer(HWND p_wnd_except, UINT p_msg, pfc::refcounted_object_root* p_param)
 {
 	t_size count = m_hwnds.get_count();
@@ -71,5 +63,13 @@ void panel_manager::send_msg_to_others_pointer(HWND p_wnd_except, UINT p_msg, pf
 		{
 			SendMessage(hwnd, p_msg, reinterpret_cast<WPARAM>(p_param), 0);
 		}
+	});
+}
+
+void panel_manager::unload_all()
+{
+	m_hwnds.for_each([](const HWND& hwnd) -> void
+	{
+		SendMessage(hwnd, UWM_UNLOAD, 0, 0);
 	});
 }

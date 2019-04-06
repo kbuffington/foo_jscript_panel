@@ -296,9 +296,6 @@ LRESULT panel_window::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 			script_unload();
 		}
 		return 0;
-	case UWM_SCRIPT_TERM:
-		script_unload();
-		return 0;
 	case UWM_SHOW_CONFIGURE:
 		show_configure_popup(m_hwnd);
 		return 0;
@@ -307,6 +304,9 @@ LRESULT panel_window::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 		return 0;
 	case UWM_TIMER:
 		host_timer_dispatcher::instance().invoke_message(wp);
+		return 0;
+	case UWM_UNLOAD:
+		script_unload();
 		return 0;
 	}
 	return uDefWindowProc(hwnd, msg, wp, lp);

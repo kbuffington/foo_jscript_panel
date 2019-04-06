@@ -85,7 +85,7 @@ public:
 			output_manager_v2::get()->removeCallback(this);
 		}
 		ui_selection_manager_v2::get()->unregister_callback(this);
-		panel_manager::instance().send_msg_to_all(UWM_SCRIPT_TERM, 0, 0);
+		panel_manager::instance().unload_all();
 		simple_thread_pool::instance().exit();
 	}
 
