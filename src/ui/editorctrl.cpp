@@ -18,6 +18,14 @@ struct StringComparePartialNC
 	t_size len;
 };
 
+const char js_keywords[] = "abstract boolean break byte case catch char class const continue"
+	" debugger default delete do double else enum export extends false final"
+	" finally float for function goto if implements import in instanceof int"
+	" interface long native new null package private protected public return"
+	" short static super switch synchronized this throw throws transient true"
+	" try typeof var void while with enum byvalue cast future generic inner"
+	" operator outer rest Array Math RegExp window fb gdi utils plman console";
+
 const t_style_to_key_table js_style_table[] =
 {
 	{ STYLE_DEFAULT, "style.default" },
@@ -75,11 +83,6 @@ static DWORD ParseHex(const char* hex)
 	int b = int_from_hex_byte(hex + 5);
 
 	return RGB(r, g, b);
-}
-
-static bool IsBraceChar(int ch)
-{
-	return ch == '[' || ch == ']' || ch == '(' || ch == ')' || ch == '{' || ch == '}';
 }
 
 static bool IsIdentifierChar(int ch)
@@ -227,13 +230,13 @@ static bool ParseStyle(const char* p_definition, t_sci_editor_style& p_style)
 	return true;
 }
 
-static inline bool IsASpace(t_size ch)
-{
-	return (ch == ' ') || ((ch >= 0x09) && (ch <= 0x0d));
-}
-
 static t_size LengthWord(const char* word, char otherSeparator)
 {
+	auto IsASpace = [](t_size ch)
+	{
+		return ch == ' ' || (ch >= 0x09 && ch <= 0x0d);
+	};
+
 	const char* endWord = 0;
 
 	if (otherSeparator)
@@ -248,7 +251,7 @@ static t_size LengthWord(const char* word, char otherSeparator)
 	if (endWord > word)
 	{
 		endWord--;
-		while ((endWord > word) && (IsASpace(*endWord)))
+		while (endWord > word && IsASpace(*endWord))
 		{
 			endWord--;
 		}
@@ -447,6 +450,11 @@ Sci_CharacterRange CScriptEditorCtrl::GetSelection()
 
 bool CScriptEditorCtrl::FindBraceMatchPos(int& braceAtCaret, int& braceOpposite)
 {
+	auto IsBraceChar = [](int ch)
+	{
+		return ch == '[' || ch == ']' || ch == '(' || ch == ')' || ch == '{' || ch == '}';
+	};
+
 	bool isInside = false;
 	int caretPos = GetCurrentPos();
 
@@ -456,11 +464,11 @@ bool CScriptEditorCtrl::FindBraceMatchPos(int& braceAtCaret, int& braceOpposite)
 	char charBefore = 0;
 	int lengthDoc = GetLength();
 
-	if ((lengthDoc > 0) && (caretPos > 0))
+	if (lengthDoc > 0 && caretPos > 0)
 	{
 		int posBefore = PositionBefore(caretPos);
 
-		if (posBefore == (caretPos - 1))
+		if (posBefore == caretPos - 1)
 		{
 			charBefore = GetCharAt(posBefore);
 		}
@@ -474,7 +482,7 @@ bool CScriptEditorCtrl::FindBraceMatchPos(int& braceAtCaret, int& braceOpposite)
 	bool colonMode = false;
 	bool isAfter = true;
 
-	if (lengthDoc > 0 && (braceAtCaret < 0) && (caretPos < lengthDoc))
+	if (lengthDoc > 0 && braceAtCaret < 0 && caretPos < lengthDoc)
 	{
 		char charAfter = GetCharAt(caretPos);
 
@@ -1209,16 +1217,7 @@ void CScriptEditorCtrl::SetContent(const char* text, bool clear_undo_buffer)
 
 void CScriptEditorCtrl::SetJScript()
 {
-	const char js_keywords[] = "abstract boolean break byte case catch char class const continue"
-		" debugger default delete do double else enum export extends false final"
-		" finally float for function goto if implements import in instanceof int"
-		" interface long native new null package private protected public return"
-		" short static super switch synchronized this throw throws transient true"
-		" try typeof var void while with enum byvalue cast future generic inner"
-		" operator outer rest Array Math RegExp window fb gdi utils plman console";
-
 	RestoreDefaultStyle();
-
 	SetLexer(SCLEX_CPP);
 	SetKeyWords(0, js_keywords);
 	SetAllStylesFromTable(js_style_table);
