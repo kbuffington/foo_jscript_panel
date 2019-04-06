@@ -16,7 +16,7 @@ public:
 	};
 
 	BOOL OnInitDialog(HWND hwndFocus, LPARAM lParam);
-	LRESULT OnCloseCmd(WORD wNotifyCode, WORD wID, HWND hWndCtl);
+	void OnCloseCmd(UINT uNotifyCode, int nID, HWND wndCtl);
 
 private:
 	HWND m_hedit;

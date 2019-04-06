@@ -17,22 +17,16 @@ BOOL CInputBox::OnInitDialog(HWND hwndFocus, LPARAM lParam)
 	return FALSE;
 }
 
-LRESULT CInputBox::OnCommand(UINT codeNotify, int id, HWND hwndCtl)
-{
-	if (id == IDOK || id == IDCANCEL)
-	{
-		if (id == IDOK)
-		{
-			uGetDlgItemText(m_hWnd, IDC_INPUT_VALUE, m_value);
-		}
-
-		EndDialog(id);
-	}
-
-	return 0;
-}
-
 void CInputBox::GetValue(pfc::string_base& p_value)
 {
 	p_value = m_value;
+}
+
+void CInputBox::OnCloseCmd(UINT uNotifyCode, int nID, HWND wndCtl)
+{
+	if (nID == IDOK)
+	{
+		uGetDlgItemText(m_hWnd, IDC_INPUT_VALUE, m_value);
+	}
+	EndDialog(nID);
 }

@@ -13,16 +13,14 @@ BOOL CDialogGoto::OnInitDialog(HWND hwndFocus, LPARAM lParam)
 	return TRUE;
 }
 
-LRESULT CDialogGoto::OnCloseCmd(WORD wNotifyCode, WORD wID, HWND hWndCtl)
+void CDialogGoto::OnCloseCmd(UINT uNotifyCode, int nID, HWND wndCtl)
 {
-	if (wID == IDOK)
+	if (nID == IDOK)
 	{
 		pfc::string8_fast text;
 		uGetWindowText(GetDlgItem(IDC_EDIT_LINENUMBER), text);
 		t_size i = pfc::atoui_ex(text.get_ptr(), text.length()) - 1;
 		SendMessage(m_hedit, SCI_GOTOLINE, i, 0);
 	}
-
-	EndDialog(wID);
-	return 0;
+	EndDialog(nID);
 }

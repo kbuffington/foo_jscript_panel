@@ -7,7 +7,7 @@ public:
 
 	BEGIN_MSG_MAP(CInputBox)
 		MSG_WM_INITDIALOG(OnInitDialog)
-		MSG_WM_COMMAND(OnCommand)
+		COMMAND_RANGE_HANDLER_EX(IDOK, IDCANCEL, OnCloseCmd)
 	END_MSG_MAP()
 
 	enum
@@ -16,8 +16,8 @@ public:
 	};
 
 	BOOL OnInitDialog(HWND hwndFocus, LPARAM lParam);
-	LRESULT OnCommand(UINT codeNotify, int id, HWND hwndCtl);
 	void GetValue(pfc::string_base& p_value);
+	void OnCloseCmd(UINT uNotifyCode, int nID, HWND wndCtl);
 
 private:
 	pfc::string8_fast m_prompt;

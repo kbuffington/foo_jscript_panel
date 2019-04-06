@@ -23,15 +23,15 @@ public:
 	};
 
 	BOOL OnInitDialog(HWND hwndFocus, LPARAM lParam);
-	LRESULT OnCancel(WORD wNotifyCode, WORD wID, HWND hWndCtl);
-	LRESULT OnFindNext(WORD wNotifyCode, WORD wID, HWND hWndCtl);
-	LRESULT OnFindPrevious(WORD wNotifyCode, WORD wID, HWND hWndCtl);
-	LRESULT OnFindTextChange(WORD wNotifyCode, WORD wID, HWND hWndCtl);
-	LRESULT OnFlagCommand(WORD wNotifyCode, WORD wID, HWND hWndCtl);
-	LRESULT OnReplace(WORD wNotifyCode, WORD wID, HWND hWndCtl);
-	LRESULT OnReplaceAll(WORD wNotifyCode, WORD wID, HWND hWndCtl);
-	LRESULT OnReplaceTextChange(WORD wNotifyCode, WORD wID, HWND hWndCtl);
+	void OnCancel(UINT uNotifyCode, int nID, HWND wndCtl);
 	void OnFinalMessage(HWND hWnd) override;
+	void OnFindNext(UINT uNotifyCode, int nID, HWND wndCtl);
+	void OnFindPrevious(UINT uNotifyCode, int nID, HWND wndCtl);
+	void OnFindTextChange(UINT uNotifyCode, int nID, HWND wndCtl);
+	void OnFlagCommand(UINT uNotifyCode, int nID, HWND wndCtl);
+	void OnReplace(UINT uNotifyCode, int nID, HWND wndCtl);
+	void OnReplaceAll(UINT uNotifyCode, int nID, HWND wndCtl);
+	void OnReplaceTextChange(UINT uNotifyCode, int nID, HWND wndCtl);
 
 private:
 	class CEditWithReturn : public CWindowImpl<CEditWithReturn, CEdit>

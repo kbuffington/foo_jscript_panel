@@ -40,14 +40,14 @@ public:
 	};
 
 	BOOL OnInitDialog(HWND hwndFocus, LPARAM lParam);
-	LRESULT OnClearBnClicked(WORD wNotifyCode, WORD wID, HWND hWndCtl);
-	LRESULT OnCloseCmd(WORD wNotifyCode, WORD wID, HWND hWndCtl);
-	LRESULT OnDelBnClicked(WORD wNotifyCode, WORD wID, HWND hWndCtl);
-	LRESULT OnExportBnClicked(WORD wNotifyCode, WORD wID, HWND hWndCtl);
-	LRESULT OnImportBnClicked(WORD wNotifyCode, WORD wID, HWND hWndCtl);
 	LRESULT OnPinItemChanged(LPNMHDR pnmh);
 	void Apply();
 	void LoadProperties(bool reload = true);
+	void OnClearBnClicked(UINT uNotifyCode, int nID, HWND wndCtl);
+	void OnCloseCmd(UINT uNotifyCode, int nID, HWND wndCtl);
+	void OnDelBnClicked(UINT uNotifyCode, int nID, HWND wndCtl);
+	void OnExportBnClicked(UINT uNotifyCode, int nID, HWND wndCtl);
+	void OnImportBnClicked(UINT uNotifyCode, int nID, HWND wndCtl);
 
 private:
 	CPropertyListCtrl m_properties;

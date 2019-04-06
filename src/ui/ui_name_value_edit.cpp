@@ -14,22 +14,16 @@ BOOL CNameValueEdit::OnInitDialog(HWND hwndFocus, LPARAM lParam)
 	return FALSE;
 }
 
-LRESULT CNameValueEdit::OnCommand(UINT codeNotify, int id, HWND hwndCtl)
-{
-	if (id == IDOK || id == IDCANCEL)
-	{
-		if (id == IDOK)
-		{
-			uGetDlgItemText(m_hWnd, IDC_EDIT_VALUE, m_value);
-		}
-
-		EndDialog(id);
-	}
-
-	return 0;
-}
-
 void CNameValueEdit::GetValue(pfc::string_base& p_value)
 {
 	p_value = m_value;
+}
+
+void CNameValueEdit::OnCloseCmd(UINT uNotifyCode, int nID, HWND wndCtl)
+{
+	if (nID == IDOK)
+	{
+		uGetDlgItemText(m_hWnd, IDC_EDIT_VALUE, m_value);
+	}
+	EndDialog(nID);
 }

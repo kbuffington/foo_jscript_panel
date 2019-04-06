@@ -24,12 +24,12 @@ public:
 
 	BOOL OnInitDialog(HWND hwndFocus, LPARAM lParam);
 	HWND get_wnd() override;
-	LRESULT OnExportBnClicked(WORD wNotifyCode, WORD wID, HWND hWndCtl);
-	LRESULT OnImportBnClicked(WORD wNotifyCode, WORD wID, HWND hWndCtl);
-	LRESULT OnPresetsBnClicked(WORD wNotifyCode, WORD wID, HWND hWndCtl);
 	LRESULT OnPropDblClk(LPNMHDR pnmh);
 	t_size get_state() override;
 	void LoadProps(bool reset = false);
+	void OnExportBnClicked(UINT uNotifyCode, int nID, HWND wndCtl);
+	void OnImportBnClicked(UINT uNotifyCode, int nID, HWND wndCtl);
+	void OnPresetsBnClicked(UINT uNotifyCode, int nID, HWND wndCtl);
 	void uGetItemText(int nItem, int nSubItem, pfc::string_base& out);
 	void apply() override;
 	void reset() override;

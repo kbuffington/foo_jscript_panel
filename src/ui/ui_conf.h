@@ -53,18 +53,18 @@ public:
 	static bool FindResult(HWND hWnd, HWND hWndEdit, int pos, const char* which);
 
 	BOOL OnInitDialog(HWND hwndFocus, LPARAM lParam);
-	LRESULT OnCloseCmd(WORD wNotifyCode, WORD wID, HWND hWndCtl);
-	LRESULT OnDocs(WORD wNotifyCode, WORD wID, HWND hWndCtl);
-	LRESULT OnFileSave(WORD wNotifyCode, WORD wID, HWND hWndCtl);
-	LRESULT OnFileImport(WORD wNotifyCode, WORD wID, HWND hWndCtl);
-	LRESULT OnFileExport(WORD wNotifyCode, WORD wID, HWND hWndCtl);
-	LRESULT OnLinks(WORD wNotifyCode, WORD wID, HWND hWndCtl);
 	LRESULT OnNotify(int idCtrl, LPNMHDR pnmh);
-	LRESULT OnReset(WORD wNotifyCode, WORD wID, HWND hWndCtl);
-	LRESULT OnSamples(WORD wNotifyCode, WORD wID, HWND hWndCtl);
 	LRESULT OnUwmFindTextChanged(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 	LRESULT OnUwmKeyDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 	void Apply();
+	void OnCloseCmd(UINT uNotifyCode, int nID, HWND wndCtl);
+	void OnDocs(UINT uNotifyCode, int nID, HWND wndCtl);
+	void OnFileSave(UINT uNotifyCode, int nID, HWND wndCtl);
+	void OnFileImport(UINT uNotifyCode, int nID, HWND wndCtl);
+	void OnFileExport(UINT uNotifyCode, int nID, HWND wndCtl);
+	void OnLinks(UINT uNotifyCode, int nID, HWND wndCtl);
+	void OnReset(UINT uNotifyCode, int nID, HWND wndCtl);
+	void OnSamples(UINT uNotifyCode, int nID, HWND wndCtl);
 	void OpenFindDialog();
 
 private:

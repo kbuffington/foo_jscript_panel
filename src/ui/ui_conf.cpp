@@ -145,92 +145,6 @@ BOOL CDialogConf::OnInitDialog(HWND hwndFocus, LPARAM lParam)
 	return FALSE;
 }
 
-LRESULT CDialogConf::OnCloseCmd(WORD wNotifyCode, WORD wID, HWND hWndCtl)
-{
-	switch (wID)
-	{
-	case IDOK:
-		Apply();
-		EndDialog(IDOK);
-		break;
-
-	case IDC_APPLY:
-		Apply();
-		break;
-
-	case IDCANCEL:
-		if (m_editorctrl.GetModify())
-		{
-			int ret = uMessageBox(m_hWnd, "Unsaved changes will be lost. Are you sure?", JSP_NAME, MB_ICONWARNING | MB_SETFOREGROUND | MB_YESNO);
-
-			switch (ret)
-			{
-			case IDYES:
-				break;
-
-			default:
-				return 0;
-			}
-		}
-
-		EndDialog(IDCANCEL);
-	}
-
-	return 0;
-}
-
-LRESULT CDialogConf::OnDocs(WORD wNotifyCode, WORD wID, HWND hWndCtl)
-{
-	pfc::string8_fast tmp = file_path_display(m_docs[wID - ID_DOCS_BEGIN]).get_ptr();
-	string_wide_from_utf8_fast path(tmp);
-	ShellExecute(nullptr, L"open", path, nullptr, nullptr, SW_SHOW);
-	return 0;
-}
-
-LRESULT CDialogConf::OnFileSave(WORD wNotifyCode, WORD wID, HWND hWndCtl)
-{
-	Apply();
-	return 0;
-}
-
-LRESULT CDialogConf::OnFileImport(WORD wNotifyCode, WORD wID, HWND hWndCtl)
-{
-	pfc::string8_fast filename;
-	if (uGetOpenFileName(m_hWnd, "Text files|*.txt|JScript files|*.js|All files|*.*", 0, "txt", "Import from", nullptr, filename, FALSE))
-	{
-		m_editorctrl.SetContent(helpers::read_file(filename));
-	}
-	return 0;
-}
-
-LRESULT CDialogConf::OnFileExport(WORD wNotifyCode, WORD wID, HWND hWndCtl)
-{
-	pfc::string8_fast filename;
-	if (uGetOpenFileName(m_hWnd, "Text files|*.txt|All files|*.*", 0, "txt", "Save as", nullptr, filename, TRUE))
-	{
-		int len = m_editorctrl.GetTextLength();
-		pfc::string8_fast text;
-
-		m_editorctrl.GetText(text.lock_buffer(len), len + 1);
-		text.unlock_buffer();
-
-		helpers::write_file(filename, text);
-	}
-	return 0;
-}
-
-LRESULT CDialogConf::OnLinks(WORD wNotifyCode, WORD wID, HWND hWndCtl)
-{
-	const wchar_t* links[] = {
-		L"https://github.com/marc2k3/foo_jscript_panel/wiki",
-		L"https://github.com/marc2k3/foo_jscript_panel/releases",
-		L"https://github.com/marc2k3/foo_jscript_panel/issues"
-	};
-
-	ShellExecute(nullptr, L"open", links[wID - ID_LINKS_BEGIN], nullptr, nullptr, SW_SHOW);
-	return 0;
-}
-
 LRESULT CDialogConf::OnNotify(int idCtrl, LPNMHDR pnmh)
 {
 	pfc::string8_fast caption = m_caption;
@@ -247,22 +161,6 @@ LRESULT CDialogConf::OnNotify(int idCtrl, LPNMHDR pnmh)
 	}
 
 	SetMsgHandled(FALSE);
-	return 0;
-}
-
-LRESULT CDialogConf::OnReset(WORD wNotifyCode, WORD wID, HWND hWndCtl)
-{
-	uComboBox_SelectString(GetDlgItem(IDC_COMBO_ENGINE), host_comm::get_default_script_engine_str());
-	ComboBox_SetCurSel(GetDlgItem(IDC_COMBO_EDGE), 0);
-	uButton_SetCheck(m_hWnd, IDC_CHECK_PSEUDO_TRANSPARENT, false);
-	uButton_SetCheck(m_hWnd, IDC_CHECK_GRABFOCUS, true);
-	m_editorctrl.SetContent(host_comm::get_default_script_code());
-	return 0;
-}
-
-LRESULT CDialogConf::OnSamples(WORD wNotifyCode, WORD wID, HWND hWndCtl)
-{
-	m_editorctrl.SetContent(helpers::read_file(file_path_display(m_samples[wID - ID_SAMPLES_BEGIN])));
 	return 0;
 }
 
@@ -399,6 +297,93 @@ void CDialogConf::Apply()
 
 	// Save point
 	m_editorctrl.SetSavePoint();
+}
+
+void CDialogConf::OnCloseCmd(UINT uNotifyCode, int nID, HWND wndCtl)
+{
+	switch (nID)
+	{
+	case IDOK:
+		Apply();
+		break;
+	case IDC_APPLY:
+		Apply();
+		return;
+	case IDCANCEL:
+		if (m_editorctrl.GetModify())
+		{
+			int ret = uMessageBox(m_hWnd, "Unsaved changes will be lost. Are you sure?", JSP_NAME, MB_ICONWARNING | MB_SETFOREGROUND | MB_YESNO);
+			switch (ret)
+			{
+			case IDYES:
+				break;
+			default:
+				return;
+			}
+		}
+	}
+	EndDialog(nID);
+}
+
+void CDialogConf::OnDocs(UINT uNotifyCode, int nID, HWND wndCtl)
+{
+	pfc::string8_fast tmp = file_path_display(m_docs[nID - ID_DOCS_BEGIN]).get_ptr();
+	string_wide_from_utf8_fast path(tmp);
+	ShellExecute(nullptr, L"open", path, nullptr, nullptr, SW_SHOW);
+}
+
+void CDialogConf::OnFileSave(UINT uNotifyCode, int nID, HWND wndCtl)
+{
+	Apply();
+}
+
+void CDialogConf::OnFileImport(UINT uNotifyCode, int nID, HWND wndCtl)
+{
+	pfc::string8_fast filename;
+	if (uGetOpenFileName(m_hWnd, "Text files|*.txt|JScript files|*.js|All files|*.*", 0, "txt", "Import from", nullptr, filename, FALSE))
+	{
+		m_editorctrl.SetContent(helpers::read_file(filename));
+	}
+}
+
+void CDialogConf::OnFileExport(UINT uNotifyCode, int nID, HWND wndCtl)
+{
+	pfc::string8_fast filename;
+	if (uGetOpenFileName(m_hWnd, "Text files|*.txt|All files|*.*", 0, "txt", "Save as", nullptr, filename, TRUE))
+	{
+		int len = m_editorctrl.GetTextLength();
+		pfc::string8_fast text;
+
+		m_editorctrl.GetText(text.lock_buffer(len), len + 1);
+		text.unlock_buffer();
+
+		helpers::write_file(filename, text);
+	}
+}
+
+void CDialogConf::OnLinks(UINT uNotifyCode, int nID, HWND wndCtl)
+{
+	const wchar_t* links[] = {
+		L"https://github.com/marc2k3/foo_jscript_panel/wiki",
+		L"https://github.com/marc2k3/foo_jscript_panel/releases",
+		L"https://github.com/marc2k3/foo_jscript_panel/issues"
+	};
+
+	ShellExecute(nullptr, L"open", links[nID - ID_LINKS_BEGIN], nullptr, nullptr, SW_SHOW);
+}
+
+void CDialogConf::OnReset(UINT uNotifyCode, int nID, HWND wndCtl)
+{
+	uComboBox_SelectString(GetDlgItem(IDC_COMBO_ENGINE), host_comm::get_default_script_engine_str());
+	ComboBox_SetCurSel(GetDlgItem(IDC_COMBO_EDGE), 0);
+	uButton_SetCheck(m_hWnd, IDC_CHECK_PSEUDO_TRANSPARENT, false);
+	uButton_SetCheck(m_hWnd, IDC_CHECK_GRABFOCUS, true);
+	m_editorctrl.SetContent(host_comm::get_default_script_code());
+}
+
+void CDialogConf::OnSamples(UINT uNotifyCode, int nID, HWND wndCtl)
+{
+	m_editorctrl.SetContent(helpers::read_file(file_path_display(m_samples[nID - ID_SAMPLES_BEGIN])));
 }
 
 void CDialogConf::OpenFindDialog()

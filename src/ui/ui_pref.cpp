@@ -27,49 +27,6 @@ HWND CDialogPref::get_wnd()
 	return m_hWnd;
 }
 
-LRESULT CDialogPref::OnExportBnClicked(WORD wNotifyCode, WORD wID, HWND hWndCtl)
-{
-	pfc::string8_fast filename;
-	if (uGetOpenFileName(m_hWnd, "Configuration files|*.cfg", 0, "cfg", "Save as", nullptr, filename, TRUE))
-	{
-		g_sci_prop_sets.export_to_file(filename);
-	}
-	return 0;
-}
-
-LRESULT CDialogPref::OnImportBnClicked(WORD wNotifyCode, WORD wID, HWND hWndCtl)
-{
-	pfc::string8_fast filename;
-	if (uGetOpenFileName(m_hWnd, "Configuration files|*.cfg|All files|*.*", 0, "cfg", "Import from", nullptr, filename, FALSE))
-	{
-		g_sci_prop_sets.import(helpers::read_file(filename));
-		LoadProps();
-	}
-	return 0;
-}
-
-LRESULT CDialogPref::OnPresetsBnClicked(WORD wNotifyCode, WORD wID, HWND hWndCtl)
-{
-	HMENU menu = CreatePopupMenu();
-
-	uAppendMenu(menu, MF_STRING, 1, "Bright");
-	uAppendMenu(menu, MF_STRING, 2, "Dark");
-	uAppendMenu(menu, MF_STRING, 3, "Ruby Blue");
-
-	RECT rc;
-	::GetWindowRect(::GetDlgItem(m_hWnd, IDC_PRESETS), &rc);
-	int idx = TrackPopupMenu(menu, TPM_RIGHTBUTTON | TPM_NONOTIFY | TPM_RETURNCMD, rc.left, rc.bottom, 0, m_hWnd, 0);
-	if (idx > 0)
-	{
-		puResource pures = uLoadResource(core_api::get_my_instance(), uMAKEINTRESOURCE(idx == 1 ? IDR_BRIGHT : idx == 2 ? IDR_DARK : IDR_RUBY), "TEXT");
-		pfc::string8_fast content(static_cast<const char*>(pures->GetPointer()), pures->GetSize());
-		g_sci_prop_sets.import(content);
-		LoadProps();
-	}
-	DestroyMenu(menu);
-	return 0;
-}
-
 LRESULT CDialogPref::OnPropDblClk(LPNMHDR pnmh)
 {
 	LPNMITEMACTIVATE pniv = (LPNMITEMACTIVATE)pnmh;
@@ -135,6 +92,46 @@ void CDialogPref::LoadProps(bool reset)
 		m_props.AddItem(i, 1, conv);
 	}
 	m_callback->on_state_changed();
+}
+
+void CDialogPref::OnExportBnClicked(UINT uNotifyCode, int nID, HWND wndCtl)
+{
+	pfc::string8_fast filename;
+	if (uGetOpenFileName(m_hWnd, "Configuration files|*.cfg", 0, "cfg", "Save as", nullptr, filename, TRUE))
+	{
+		g_sci_prop_sets.export_to_file(filename);
+	}
+}
+
+void CDialogPref::OnImportBnClicked(UINT uNotifyCode, int nID, HWND wndCtl)
+{
+	pfc::string8_fast filename;
+	if (uGetOpenFileName(m_hWnd, "Configuration files|*.cfg|All files|*.*", 0, "cfg", "Import from", nullptr, filename, FALSE))
+	{
+		g_sci_prop_sets.import(helpers::read_file(filename));
+		LoadProps();
+	}
+}
+
+void CDialogPref::OnPresetsBnClicked(UINT uNotifyCode, int nID, HWND wndCtl)
+{
+	HMENU menu = CreatePopupMenu();
+
+	uAppendMenu(menu, MF_STRING, 1, "Bright");
+	uAppendMenu(menu, MF_STRING, 2, "Dark");
+	uAppendMenu(menu, MF_STRING, 3, "Ruby Blue");
+
+	RECT rc;
+	::GetWindowRect(::GetDlgItem(m_hWnd, IDC_PRESETS), &rc);
+	int idx = TrackPopupMenu(menu, TPM_RIGHTBUTTON | TPM_NONOTIFY | TPM_RETURNCMD, rc.left, rc.bottom, 0, m_hWnd, 0);
+	if (idx > 0)
+	{
+		puResource pures = uLoadResource(core_api::get_my_instance(), uMAKEINTRESOURCE(idx == 1 ? IDR_BRIGHT : idx == 2 ? IDR_DARK : IDR_RUBY), "TEXT");
+		pfc::string8_fast content(static_cast<const char*>(pures->GetPointer()), pures->GetSize());
+		g_sci_prop_sets.import(content);
+		LoadProps();
+	}
+	DestroyMenu(menu);
 }
 
 void CDialogPref::uGetItemText(int nItem, int nSubItem, pfc::string_base& out)

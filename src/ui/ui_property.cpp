@@ -24,86 +24,6 @@ BOOL CDialogProperty::OnInitDialog(HWND hwndFocus, LPARAM lParam)
 	return FALSE;
 }
 
-LRESULT CDialogProperty::OnClearBnClicked(WORD wNotifyCode, WORD wID, HWND hWndCtl)
-{
-	m_dup_prop_map.remove_all();
-	m_properties.ResetContent();
-
-	return 0;
-}
-
-LRESULT CDialogProperty::OnCloseCmd(WORD wNotifyCode, WORD wID, HWND hWndCtl)
-{
-	switch (wID)
-	{
-	case IDOK:
-		Apply();
-		break;
-
-	case IDC_APPLY:
-		Apply();
-		return 0;
-	}
-
-	EndDialog(wID);
-	return 0;
-}
-
-LRESULT CDialogProperty::OnDelBnClicked(WORD wNotifyCode, WORD wID, HWND hWndCtl)
-{
-	int idx = m_properties.GetCurSel();
-
-	if (idx >= 0)
-	{
-		HPROPERTY hproperty = m_properties.GetProperty(idx);
-		string_utf8_from_wide uname = hproperty->GetName();
-
-		m_properties.DeleteItem(hproperty);
-		m_dup_prop_map.remove(uname);
-	}
-
-	return 0;
-}
-
-LRESULT CDialogProperty::OnExportBnClicked(WORD wNotifyCode, WORD wID, HWND hWndCtl)
-{
-	pfc::string8_fast path;
-
-	if (uGetOpenFileName(m_hWnd, "Property files|*.wsp", 0, "wsp", "Save as", nullptr, path, TRUE))
-	{
-		file_ptr io;
-		abort_callback_dummy abort;
-
-		try
-		{
-			filesystem::g_open_write_new(io, path, abort);
-			properties::g_save(m_dup_prop_map, io.get_ptr(), abort);
-		}
-		catch (...) {}
-	}
-	return 0;
-}
-
-LRESULT CDialogProperty::OnImportBnClicked(WORD wNotifyCode, WORD wID, HWND hWndCtl)
-{
-	pfc::string8_fast path;
-
-	if (uGetOpenFileName(m_hWnd, "Property files|*.wsp|All files|*.*", 0, "wsp", "Import from", nullptr, path, FALSE))
-	{
-		file_ptr io;
-		abort_callback_dummy abort;
-
-		try
-		{
-			filesystem::g_open_read(io, path, abort);
-			properties::g_load(m_dup_prop_map, io.get_ptr(), abort);
-			LoadProperties(false);
-		}
-		catch (...) {}
-	}
-	return 0;
-}
-
 LRESULT CDialogProperty::OnPinItemChanged(LPNMHDR pnmh)
 {
 	LPNMPROPERTYITEM pnpi = (LPNMPROPERTYITEM)pnmh;
@@ -173,5 +93,77 @@ void CDialogProperty::LoadProperties(bool reload)
 		}
 
 		m_properties.AddItem(hProp);
+	}
+}
+
+void CDialogProperty::OnClearBnClicked(UINT uNotifyCode, int nID, HWND wndCtl)
+{
+	m_dup_prop_map.remove_all();
+	m_properties.ResetContent();
+}
+
+void CDialogProperty::OnCloseCmd(UINT uNotifyCode, int nID, HWND wndCtl)
+{
+	switch (nID)
+	{
+	case IDOK:
+		Apply();
+		break;
+
+	case IDC_APPLY:
+		Apply();
+		return;
+	}
+	EndDialog(nID);
+}
+
+void CDialogProperty::OnDelBnClicked(UINT uNotifyCode, int nID, HWND wndCtl)
+{
+	int idx = m_properties.GetCurSel();
+
+	if (idx >= 0)
+	{
+		HPROPERTY hproperty = m_properties.GetProperty(idx);
+		string_utf8_from_wide uname = hproperty->GetName();
+
+		m_properties.DeleteItem(hproperty);
+		m_dup_prop_map.remove(uname);
+	}
+}
+
+void CDialogProperty::OnExportBnClicked(UINT uNotifyCode, int nID, HWND wndCtl)
+{
+	pfc::string8_fast path;
+
+	if (uGetOpenFileName(m_hWnd, "Property files|*.wsp", 0, "wsp", "Save as", nullptr, path, TRUE))
+	{
+		file_ptr io;
+		abort_callback_dummy abort;
+
+		try
+		{
+			filesystem::g_open_write_new(io, path, abort);
+			properties::g_save(m_dup_prop_map, io.get_ptr(), abort);
+		}
+		catch (...) {}
+	}
+}
+
+void CDialogProperty::OnImportBnClicked(UINT uNotifyCode, int nID, HWND wndCtl)
+{
+	pfc::string8_fast path;
+
+	if (uGetOpenFileName(m_hWnd, "Property files|*.wsp|All files|*.*", 0, "wsp", "Import from", nullptr, path, FALSE))
+	{
+		file_ptr io;
+		abort_callback_dummy abort;
+
+		try
+		{
+			filesystem::g_open_read(io, path, abort);
+			properties::g_load(m_dup_prop_map, io.get_ptr(), abort);
+			LoadProperties(false);
+		}
+		catch (...) {}
 	}
 }
