@@ -97,10 +97,7 @@ script_host::script_host(host_comm* host)
 	, m_has_error(false)
 	, m_last_source_context(0) {}
 
-script_host::~script_host()
-{
-	m_callback_map.remove_all();
-}
+script_host::~script_host() {}
 
 DWORD script_host::GenerateSourceContext(const pfc::string8_fast& path)
 {
