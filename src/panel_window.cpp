@@ -27,11 +27,11 @@ LRESULT panel_window::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 			create_context();
 			m_gr_wrap.Attach(new com_object_impl_t<GdiGraphics>(), false);
 			panel_manager::instance().add_window(m_hwnd);
-			script_load();
+			load_script();
 		}
 		return 0;
 	case WM_DESTROY:
-		script_unload();
+		unload_script();
 		panel_manager::instance().remove_window(m_hwnd);
 		if (m_gr_wrap)
 		{
@@ -293,7 +293,7 @@ LRESULT panel_window::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 				SendMessage(tooltip_param->tooltip_hwnd, TTM_ACTIVATE, FALSE, 0);
 
 			repaint();
-			script_unload();
+			unload_script();
 		}
 		return 0;
 	case UWM_SHOW_CONFIGURE:
@@ -306,7 +306,7 @@ LRESULT panel_window::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 		host_timer_dispatcher::instance().invoke_message(wp);
 		return 0;
 	case UWM_UNLOAD:
-		script_unload();
+		unload_script();
 		return 0;
 	}
 	return uDefWindowProc(hwnd, msg, wp, lp);
@@ -428,6 +428,47 @@ void panel_window::execute_context_menu_command(int id, int id_base)
 		show_configure_popup(m_hwnd);
 		break;
 	}
+}
+
+void panel_window::load_script()
+{
+	pfc::hires_timer timer;
+	timer.start();
+
+	DWORD extstyle = GetWindowLongPtr(m_hwnd, GWL_EXSTYLE);
+	extstyle &= ~WS_EX_CLIENTEDGE & ~WS_EX_STATICEDGE;
+	extstyle |= get_edge_style();
+	SetWindowLongPtr(m_hwnd, GWL_EXSTYLE, extstyle);
+	SetWindowPos(m_hwnd, nullptr, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
+
+	m_max_size = { INT_MAX, INT_MAX };
+	m_min_size = { 0, 0 };
+	notify_size_limit_changed();
+
+	if (FAILED(m_script_host->Initialise()))
+	{
+		return;
+	}
+
+	if (m_script_info.dragdrop)
+	{
+		m_drop_target.Attach(new com_object_impl_t<host_drop_target>(this));
+		m_drop_target->RegisterDragDrop();
+		m_is_droptarget_registered = true;
+	}
+
+	// HACK: Script update will not call on_size, so invoke it explicitly
+	on_size(m_width, m_height);
+	if (m_pseudo_transparent)
+	{
+		redraw();
+	}
+	else
+	{
+		repaint();
+	}
+
+	FB2K_console_formatter() << m_script_info.build_info_string() << ": initialised in " << (int)(timer.query() * 1000) << " ms";
 }
 
 void panel_window::on_always_on_top_changed(WPARAM wp)
@@ -1024,61 +1065,6 @@ void panel_window::on_volume_change(WPARAM wp)
 	script_invoke(callback_id::on_volume_change, args, _countof(args));
 }
 
-void panel_window::script_load()
-{
-	pfc::hires_timer timer;
-	timer.start();
-
-	DWORD extstyle = GetWindowLongPtr(m_hwnd, GWL_EXSTYLE);
-	extstyle &= ~WS_EX_CLIENTEDGE & ~WS_EX_STATICEDGE;
-	extstyle |= get_edge_style();
-	SetWindowLongPtr(m_hwnd, GWL_EXSTYLE, extstyle);
-	SetWindowPos(m_hwnd, nullptr, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
-
-	m_max_size = { INT_MAX, INT_MAX };
-	m_min_size = { 0, 0 };
-	notify_size_limit_changed();
-
-	if (FAILED(m_script_host->Initialise()))
-	{
-		return;
-	}
-
-	if (m_script_info.dragdrop)
-	{
-		m_drop_target.Attach(new com_object_impl_t<host_drop_target>(this));
-		m_drop_target->RegisterDragDrop();
-		m_is_droptarget_registered = true;
-	}
-
-	// HACK: Script update will not call on_size, so invoke it explicitly
-	on_size(m_width, m_height);
-	if (m_pseudo_transparent)
-	{
-		redraw();
-	}
-	else
-	{
-		repaint();
-	}
-
-	FB2K_console_formatter() << m_script_info.build_info_string() << ": initialised in " << (int)(timer.query() * 1000) << " ms";
-}
-
-void panel_window::script_unload()
-{
-	m_script_host->Finalise();
-
-	if (m_is_droptarget_registered)
-	{
-		m_drop_target->RevokeDragDrop();
-		m_is_droptarget_registered = false;
-	}
-
-	host_timer_dispatcher::instance().script_unload(m_hwnd);
-	m_selection_holder.release();
-}
-
 void panel_window::show_property_popup(HWND parent)
 {
 	modal_dialog_scope scope;
@@ -1090,8 +1076,22 @@ void panel_window::show_property_popup(HWND parent)
 	}
 }
 
+void panel_window::unload_script()
+{
+	m_script_host->Finalise();
+
+	if (m_is_droptarget_registered)
+	{
+		m_drop_target->RevokeDragDrop();
+		m_is_droptarget_registered = false;
+	}
+
+	host_timer_dispatcher::instance().kill_timers(m_hwnd);
+	m_selection_holder.release();
+}
+
 void panel_window::update_script()
 {
-	script_unload();
-	script_load();
+	unload_script();
+	load_script();
 }

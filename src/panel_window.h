@@ -26,6 +26,7 @@ private:
 	bool on_mouse_button_up(UINT msg, WPARAM wp, LPARAM lp);
 	void create_context();
 	void delete_context();
+	void load_script();
 	void on_always_on_top_changed(WPARAM wp);
 	void on_colours_changed();
 	void on_context_menu(int x, int y);
@@ -76,8 +77,7 @@ private:
 	void on_selection_changed();
 	void on_size(int w, int h);
 	void on_volume_change(WPARAM wp);
-	void script_load();
-	void script_unload();
+	void unload_script();
 
 	CComPtr<IDropTargetImpl> m_drop_target;
 	IGdiGraphicsPtr m_gr_wrap;

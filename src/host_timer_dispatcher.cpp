@@ -177,6 +177,14 @@ void host_timer_dispatcher::create_thread()
 	m_thread = new std::thread(&host_timer_dispatcher::thread_main, this);
 }
 
+void host_timer_dispatcher::invoke_message(t_size timerId)
+{
+	if (m_task_map.end() != m_task_map.find(timerId))
+	{
+		m_task_map[timerId]->invoke();
+	}
+}
+
 void host_timer_dispatcher::kill_timer(t_size timerId)
 {
 	{
@@ -196,15 +204,7 @@ void host_timer_dispatcher::kill_timer(t_size timerId)
 	}
 }
 
-void host_timer_dispatcher::invoke_message(t_size timerId)
-{
-	if (m_task_map.end() != m_task_map.find(timerId))
-	{
-		m_task_map[timerId]->invoke();
-	}
-}
-
-void host_timer_dispatcher::script_unload(HWND hwnd)
+void host_timer_dispatcher::kill_timers(HWND hwnd)
 {
 	std::list<t_size> timersToDelete;
 

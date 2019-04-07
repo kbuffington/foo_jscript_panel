@@ -110,8 +110,6 @@ DWORD script_host::GenerateSourceContext(const pfc::string8_fast& path)
 
 HRESULT script_host::Initialise()
 {
-	Finalise();
-
 	m_has_error = false;
 
 	IActiveScriptParsePtr parser;
