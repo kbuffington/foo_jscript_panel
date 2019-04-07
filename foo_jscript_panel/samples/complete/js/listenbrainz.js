@@ -48,13 +48,14 @@ _.mixin({
 			var payload = {
 				track_metadata : {
 					artist_name : _.first(tags.artist),
-					release_name : _.first(tags.album),
 					track_name : _.first(tags.title)
 				}
 			};
 			
 			if (single) {
 				payload.listened_at = _.ts();
+				
+				payload.track_metadata.release_name = _.first(tags.album);
 				
 				payload.track_metadata.additional_info = {
 					// must be arrays
