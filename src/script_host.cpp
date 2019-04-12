@@ -107,8 +107,6 @@ DWORD script_host::GenerateSourceContext(const pfc::string8_fast& path)
 
 HRESULT script_host::Initialise()
 {
-	m_has_error = false;
-
 	IActiveScriptParsePtr parser;
 	ProcessScriptInfo(m_host->m_script_info);
 
@@ -134,6 +132,7 @@ HRESULT script_host::Initialise()
 	if (SUCCEEDED(hr))
 	{
 		m_engine_inited = true;
+		m_has_error = false;
 	}
 	else
 	{
@@ -317,7 +316,7 @@ STDMETHODIMP script_host::OnScriptError(IActiveScriptError* err)
 	ULONG line = 0;
 	_bstr_t sourceline;
 	pfc::string_formatter formatter;
-	
+
 	formatter << m_host->m_script_info.build_info_string() << "\n";
 
 	if (SUCCEEDED(err->GetExceptionInfo(&excep)))

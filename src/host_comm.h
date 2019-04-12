@@ -12,9 +12,9 @@ struct t_script_info
 		std::string which;
 		std::string path;
 	} expand_table[3] = {
-		{ "%fb2k_path%", helpers::get_fb2k_path().get_ptr() },
-		{ "%fb2k_component_path%", helpers::get_fb2k_component_path().get_ptr() },
 		{ "%fb2k_profile_path%", helpers::get_profile_path().get_ptr() },
+		{ "%fb2k_component_path%", helpers::get_fb2k_component_path().get_ptr() },
+		{ "%fb2k_path%", helpers::get_fb2k_path().get_ptr() },
 	};
 
 	pfc::string8_fast build_info_string() const

@@ -14,8 +14,8 @@ Directives should be started with "@", and placed into a single comment.
 
 IMPORT
 @import "path"
-Load external script from "path".
-You can place %fb2k_path%, %fb2k_component_path% and %fb2k_profile_path% into "path", they
+Load external script from "path". These files should be UTF8 only (with or without BOM).
+You can place %fb2k_path%, %fb2k_component_path% and %fb2k_profile_path% in to "path", they
 will be expanded while parsing.
 
 FEATURE
@@ -39,4 +39,6 @@ Example:
 // @author "marc"
 // @version "0.1"
 // @feature "dragdrop"
+// @import "%fb2k_component_path%docs\flags.txt"
+// @import "%fb2k_component_path%docs\helpers.txt"
 // ==/PREPROCESSOR==
