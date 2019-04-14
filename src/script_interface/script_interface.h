@@ -97,7 +97,6 @@ public:
 	STDMETHODIMP ApplyMask(IGdiBitmap* mask, VARIANT_BOOL* p) override;
 	STDMETHODIMP Clone(float x, float y, float w, float h, IGdiBitmap** pp) override;
 	STDMETHODIMP CreateRawBitmap(IGdiRawBitmap** pp) override;
-	STDMETHODIMP GetColourScheme(UINT count, VARIANT* p) override;
 	STDMETHODIMP GetColourSchemeJSON(UINT count, BSTR* p) override;
 	STDMETHODIMP GetGraphics(IGdiGraphics** pp) override;
 	STDMETHODIMP ReleaseGraphics(IGdiGraphics* p) override;

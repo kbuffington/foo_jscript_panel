@@ -94,7 +94,6 @@ library foo_jscript_panel
 		HRESULT ApplyMask(IGdiBitmap* mask, [out, retval] VARIANT_BOOL* p);
 		HRESULT Clone(float x, float y, float w, float h, [out, retval] IGdiBitmap** pp);
 		HRESULT CreateRawBitmap([out, retval] IGdiRawBitmap** pp);
-		HRESULT GetColourScheme(UINT count, [out, retval] VARIANT* p);
 		HRESULT GetColourSchemeJSON(UINT count, [out, retval] BSTR* p);
 		HRESULT GetGraphics([out, retval] IGdiGraphics** pp);
 		HRESULT ReleaseGraphics(IGdiGraphics* p);

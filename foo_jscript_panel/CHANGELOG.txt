@@ -1,3 +1,11 @@
+v2.2.2
+- FIX: Fix broken colour handling in IGdiBitmap GetColourSchemeJSON. The original code
+       by kbuffington aka MordredKLB was good but I broke it so apologies for that.
+- CHG: IGdiBitmap GetColourScheme has been removed. See this page for how to use the
+       better JSON method mentioned above.
+
+https://github.com/marc2k3/foo_jscript_panel/wiki/Breaking-Changes
+
 v2.2.1.1
 - CHG: Restore access to the Configuration Window via the Columns UI 
        Preferences layout tab. Although buggy, access needs to remain to recover

@@ -307,67 +307,6 @@ STDMETHODIMP GdiBitmap::CreateRawBitmap(IGdiRawBitmap** pp)
 	return S_OK;
 }
 
-STDMETHODIMP GdiBitmap::GetColourScheme(UINT count, VARIANT* p)
-{
-	if (!m_ptr || !p) return E_POINTER;
-
-	Gdiplus::BitmapData bmpdata;
-	Gdiplus::Rect rect(0, 0, m_ptr->GetWidth(), m_ptr->GetHeight());
-
-	if (m_ptr->LockBits(&rect, Gdiplus::ImageLockModeRead, PixelFormat32bppARGB, &bmpdata) != Gdiplus::Ok) return E_POINTER;
-
-	std::map<t_size, int> color_counters;
-	const t_size colors_length = bmpdata.Width * bmpdata.Height;
-	const t_size* colors = (const t_size*)bmpdata.Scan0;
-
-	for (t_size i = 0; i < colors_length; ++i)
-	{
-		t_size color = colors[i];
-		BYTE r = (color >> 16) & 0xff;
-		BYTE g = (color >> 8) & 0xff;
-		BYTE b = (color) & 0xff;
-
-		r = (r + 16) & 0xffffffe0;
-		g = (g + 16) & 0xffffffe0;
-		b = (b + 16) & 0xffffffe0;
-
-		if (r > 0xff) r = 0xff;
-		if (g > 0xff) g = 0xff;
-		if (b > 0xff) b = 0xff;
-
-		++color_counters[Gdiplus::Color::MakeARGB(0xff, r, g, b)];
-	}
-
-	m_ptr->UnlockBits(&bmpdata);
-
-	using sort_vec_pair_t = std::pair<t_size, int>;
-	std::vector<sort_vec_pair_t> sort_vec(color_counters.begin(), color_counters.end());
-	count = min(count, sort_vec.size());
-	std::partial_sort(
-		sort_vec.begin(),
-		sort_vec.begin() + count,
-		sort_vec.end(),
-		[](const sort_vec_pair_t& a, const sort_vec_pair_t& b)
-		{
-			return a.second > b.second;
-		});
-
-	helpers::com_array helper;
-	if (!helper.create(count)) return E_OUTOFMEMORY;
-
-	for (LONG i = 0; i < helper.get_count(); ++i)
-	{
-		_variant_t var;
-		var.vt = VT_UI4;
-		var.ulVal = sort_vec[i].first;
-
-		if (!helper.put_item(i, var)) return E_OUTOFMEMORY;
-	}
-	p->vt = VT_ARRAY | VT_VARIANT;
-	p->parray = helper.get_ptr();
-	return S_OK;
-}
-
 STDMETHODIMP GdiBitmap::GetColourSchemeJSON(UINT count, BSTR* p)
 {
 	if (!m_ptr || !p) return E_POINTER;
