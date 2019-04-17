@@ -377,7 +377,7 @@ STDMETHODIMP GdiBitmap::GetColourSchemeJSON(UINT count, BSTR* p)
 		j.push_back({
 			{ "col", colour },
 			{ "freq", frequency }
-			});
+		});
 	}
 	*p = SysAllocString(string_wide_from_utf8_fast((j.dump()).c_str()));
 	return S_OK;
