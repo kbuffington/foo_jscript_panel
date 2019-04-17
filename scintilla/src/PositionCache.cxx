@@ -25,6 +25,7 @@
 #include "ILexer.h"
 #include "Scintilla.h"
 
+#include "CharacterCategory.h"
 #include "Position.h"
 #include "UniqueString.h"
 #include "SplitVector.h"
@@ -348,7 +349,7 @@ XYPOSITION ScreenLine::RepresentationWidth(size_t position) const {
 }
 
 XYPOSITION ScreenLine::TabPositionAfter(XYPOSITION xPosition) const {
-	return (floor((xPosition + TabWidthMinimumPixels()) / TabWidth()) + 1) * TabWidth();
+	return (std::floor((xPosition + TabWidthMinimumPixels()) / TabWidth()) + 1) * TabWidth();
 }
 
 LineLayoutCache::LineLayoutCache() :

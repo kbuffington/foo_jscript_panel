@@ -67,6 +67,7 @@ IDWriteFactory *pIDWriteFactory = nullptr;
 ID2D1Factory *pD2DFactory = nullptr;
 IDWriteRenderingParams *defaultRenderingParams = nullptr;
 IDWriteRenderingParams *customClearTypeRenderingParams = nullptr;
+D2D1_DRAW_TEXT_OPTIONS d2dDrawTextOptions = D2D1_DRAW_TEXT_OPTIONS_NONE;
 
 static HMODULE hDLLD2D {};
 static HMODULE hDLLDWrite {};
@@ -105,9 +106,20 @@ bool LoadD2D() {
 		if (hDLLDWrite) {
 			DWriteCFSig fnDWCF = reinterpret_cast<DWriteCFSig>(::GetProcAddress(hDLLDWrite, "DWriteCreateFactory"));
 			if (fnDWCF) {
-				fnDWCF(DWRITE_FACTORY_TYPE_SHARED,
-					__uuidof(IDWriteFactory),
+				const GUID IID_IDWriteFactory2 = // 0439fc60-ca44-4994-8dee-3a9af7b732ec
+				{ 0x0439fc60, 0xca44, 0x4994, { 0x8d, 0xee, 0x3a, 0x9a, 0xf7, 0xb7, 0x32, 0xec } };
+
+				const HRESULT hr = fnDWCF(DWRITE_FACTORY_TYPE_SHARED,
+					IID_IDWriteFactory2,
 					reinterpret_cast<IUnknown**>(&pIDWriteFactory));
+				if (SUCCEEDED(hr)) {
+					// D2D1_DRAW_TEXT_OPTIONS_ENABLE_COLOR_FONT
+					d2dDrawTextOptions = static_cast<D2D1_DRAW_TEXT_OPTIONS>(0x00000004);
+				} else {
+					fnDWCF(DWRITE_FACTORY_TYPE_SHARED,
+						__uuidof(IDWriteFactory),
+						reinterpret_cast<IUnknown**>(&pIDWriteFactory));
+				}
 			}
 		}
 
@@ -278,7 +290,7 @@ constexpr D2D1_TEXT_ANTIALIAS_MODE DWriteMapFontQuality(int extraFontFlag) noexc
 void SetLogFont(LOGFONTW &lf, const char *faceName, int characterSet, float size, int weight, bool italic, int extraFontFlag) {
 	lf = LOGFONTW();
 	// The negative is to allow for leading
-	lf.lfHeight = -(abs(lround(size)));
+	lf.lfHeight = -(std::abs(std::lround(size)));
 	lf.lfWeight = weight;
 	lf.lfItalic = italic ? 1 : 0;
 	lf.lfCharSet = static_cast<BYTE>(characterSet);
@@ -296,12 +308,10 @@ FontID CreateFontFromParameters(const FontParameters &fp) {
 	} else {
 #if defined(USE_D2D)
 		IDWriteTextFormat *pTextFormat = nullptr;
-		const int faceSize = 200;
-		WCHAR wszFace[faceSize] = L"";
-		UTF16FromUTF8(fp.faceName, wszFace, faceSize);
+		const std::wstring wsFace = WStringFromUTF8(fp.faceName);
 		const FLOAT fHeight = fp.size;
 		const DWRITE_FONT_STYLE style = fp.italic ? DWRITE_FONT_STYLE_ITALIC : DWRITE_FONT_STYLE_NORMAL;
-		HRESULT hr = pIDWriteFactory->CreateTextFormat(wszFace, nullptr,
+		HRESULT hr = pIDWriteFactory->CreateTextFormat(wsFace.c_str(), nullptr,
 			static_cast<DWRITE_FONT_WEIGHT>(fp.weight),
 			style,
 			DWRITE_FONT_STRETCH_NORMAL, fHeight, L"en-us", &pTextFormat);
@@ -751,10 +761,10 @@ void SurfaceGDI::DrawRGBAImage(PRectangle rc, int width, int height, const unsig
 	if (rc.Width() > 0) {
 		HDC hMemDC = ::CreateCompatibleDC(hdc);
 		if (rc.Width() > width)
-			rc.left += floor((rc.Width() - width) / 2);
+			rc.left += std::floor((rc.Width() - width) / 2);
 		rc.right = rc.left + width;
 		if (rc.Height() > height)
-			rc.top += floor((rc.Height() - height) / 2);
+			rc.top += std::floor((rc.Height() - height) / 2);
 		rc.bottom = rc.top + height;
 
 		const BITMAPINFO bpih = {{sizeof(BITMAPINFOHEADER), width, height, 1, 32, BI_RGB, 0, 0, 0, 0, 0},
@@ -1184,7 +1194,7 @@ void SurfaceD2D::SetFont(Font &font_) {
 	yDescent = pfm->yDescent;
 	yInternalLeading = pfm->yInternalLeading;
 	codePageText = codePage;
-	if (pfm->characterSet) {
+	if (!unicodeMode && pfm->characterSet) {
 		codePageText = Scintilla::CodePageFromCharSet(pfm->characterSet, codePage);
 	}
 	if (pRenderTarget) {
@@ -1232,14 +1242,14 @@ void SurfaceD2D::LineTo(int x_, int y_) {
 			// Horizontal or vertical lines can be more precisely drawn as a filled rectangle
 			const int xEnd = x_ - xDelta;
 			const int left = std::min(x, xEnd);
-			const int width = abs(x - xEnd) + 1;
+			const int width = std::abs(x - xEnd) + 1;
 			const int yEnd = y_ - yDelta;
 			const int top = std::min(y, yEnd);
-			const int height = abs(y - yEnd) + 1;
+			const int height = std::abs(y - yEnd) + 1;
 			const D2D1_RECT_F rectangle1 = D2D1::RectF(static_cast<float>(left), static_cast<float>(top),
 				static_cast<float>(left+width), static_cast<float>(top+height));
 			pRenderTarget->FillRectangle(&rectangle1, pBrush);
-		} else if ((abs(xDiff) == abs(yDiff))) {
+		} else if ((std::abs(xDiff) == std::abs(yDiff))) {
 			// 45 degree slope
 			pRenderTarget->DrawLine(D2D1::Point2F(x + 0.5f, y + 0.5f),
 				D2D1::Point2F(x_ + 0.5f - xDelta, y_ + 0.5f - yDelta), pBrush);
@@ -1284,7 +1294,7 @@ void SurfaceD2D::Polygon(Point *pts, size_t npts, ColourDesired fore, ColourDesi
 
 void SurfaceD2D::RectangleDraw(PRectangle rc, ColourDesired fore, ColourDesired back) {
 	if (pRenderTarget) {
-		const D2D1_RECT_F rectangle1 = D2D1::RectF(round(rc.left) + 0.5f, rc.top+0.5f, round(rc.right) - 0.5f, rc.bottom-0.5f);
+		const D2D1_RECT_F rectangle1 = D2D1::RectF(std::round(rc.left) + 0.5f, rc.top+0.5f, std::round(rc.right) - 0.5f, rc.bottom-0.5f);
 		D2DPenColour(back);
 		pRenderTarget->FillRectangle(&rectangle1, pBrush);
 		D2DPenColour(fore);
@@ -1295,7 +1305,7 @@ void SurfaceD2D::RectangleDraw(PRectangle rc, ColourDesired fore, ColourDesired 
 void SurfaceD2D::FillRectangle(PRectangle rc, ColourDesired back) {
 	if (pRenderTarget) {
 		D2DPenColour(back);
-        const D2D1_RECT_F rectangle1 = D2D1::RectF(round(rc.left), rc.top, round(rc.right), rc.bottom);
+        const D2D1_RECT_F rectangle1 = D2D1::RectF(std::round(rc.left), rc.top, std::round(rc.right), rc.bottom);
         pRenderTarget->FillRectangle(&rectangle1, pBrush);
 	}
 }
@@ -1345,23 +1355,23 @@ void SurfaceD2D::AlphaRectangle(PRectangle rc, int cornerSize, ColourDesired fil
 	if (pRenderTarget) {
 		if (cornerSize == 0) {
 			// When corner size is zero, draw square rectangle to prevent blurry pixels at corners
-			const D2D1_RECT_F rectFill = D2D1::RectF(round(rc.left) + 1.0f, rc.top + 1.0f, round(rc.right) - 1.0f, rc.bottom - 1.0f);
+			const D2D1_RECT_F rectFill = D2D1::RectF(std::round(rc.left) + 1.0f, rc.top + 1.0f, std::round(rc.right) - 1.0f, rc.bottom - 1.0f);
 			D2DPenColour(fill, alphaFill);
 			pRenderTarget->FillRectangle(rectFill, pBrush);
 
-			const D2D1_RECT_F rectOutline = D2D1::RectF(round(rc.left) + 0.5f, rc.top + 0.5f, round(rc.right) - 0.5f, rc.bottom - 0.5f);
+			const D2D1_RECT_F rectOutline = D2D1::RectF(std::round(rc.left) + 0.5f, rc.top + 0.5f, std::round(rc.right) - 0.5f, rc.bottom - 0.5f);
 			D2DPenColour(outline, alphaOutline);
 			pRenderTarget->DrawRectangle(rectOutline, pBrush);
 		} else {
 			const float cornerSizeF = static_cast<float>(cornerSize);
 			D2D1_ROUNDED_RECT roundedRectFill = {
-				D2D1::RectF(round(rc.left) + 1.0f, rc.top + 1.0f, round(rc.right) - 1.0f, rc.bottom - 1.0f),
+				D2D1::RectF(std::round(rc.left) + 1.0f, rc.top + 1.0f, std::round(rc.right) - 1.0f, rc.bottom - 1.0f),
 				cornerSizeF, cornerSizeF};
 			D2DPenColour(fill, alphaFill);
 			pRenderTarget->FillRoundedRectangle(roundedRectFill, pBrush);
 
 			D2D1_ROUNDED_RECT roundedRect = {
-				D2D1::RectF(round(rc.left) + 0.5f, rc.top + 0.5f, round(rc.right) - 0.5f, rc.bottom - 0.5f),
+				D2D1::RectF(std::round(rc.left) + 0.5f, rc.top + 0.5f, std::round(rc.right) - 0.5f, rc.bottom - 0.5f),
 				cornerSizeF, cornerSizeF};
 			D2DPenColour(outline, alphaOutline);
 			pRenderTarget->DrawRoundedRectangle(roundedRect, pBrush);
@@ -1410,7 +1420,7 @@ void SurfaceD2D::GradientRectangle(PRectangle rc, const std::vector<ColourStop> 
 		hr = pRenderTarget->CreateLinearGradientBrush(
 			lgbp, pGradientStops, &pBrushLinear);
 		if (SUCCEEDED(hr)) {
-			const D2D1_RECT_F rectangle = D2D1::RectF(round(rc.left), rc.top, round(rc.right), rc.bottom);
+			const D2D1_RECT_F rectangle = D2D1::RectF(std::round(rc.left), rc.top, std::round(rc.right), rc.bottom);
 			pRenderTarget->FillRectangle(&rectangle, pBrushLinear);
 			pBrushLinear->Release();
 		}
@@ -1421,10 +1431,10 @@ void SurfaceD2D::GradientRectangle(PRectangle rc, const std::vector<ColourStop> 
 void SurfaceD2D::DrawRGBAImage(PRectangle rc, int width, int height, const unsigned char *pixelsImage) {
 	if (pRenderTarget) {
 		if (rc.Width() > width)
-			rc.left += floor((rc.Width() - width) / 2);
+			rc.left += std::floor((rc.Width() - width) / 2);
 		rc.right = rc.left + width;
 		if (rc.Height() > height)
-			rc.top += floor((rc.Height() - height) / 2);
+			rc.top += std::floor((rc.Height() - height) / 2);
 		rc.bottom = rc.top + height;
 
 		std::vector<unsigned char> image(height * width * 4);
@@ -1896,7 +1906,7 @@ void SurfaceD2D::DrawTextCommon(PRectangle rc, Font &font_, XYPOSITION ybase, st
 				rc.Width(), rc.Height(), &pTextLayout);
 		if (SUCCEEDED(hr)) {
 			D2D1_POINT_2F origin = {rc.left, ybase-yAscent};
-			pRenderTarget->DrawTextLayout(origin, pTextLayout, pBrush, D2D1_DRAW_TEXT_OPTIONS_NONE);
+			pRenderTarget->DrawTextLayout(origin, pTextLayout, pBrush, d2dDrawTextOptions);
 			pTextLayout->Release();
 		}
 
@@ -2011,7 +2021,7 @@ void SurfaceD2D::MeasureWidths(Font &font_, std::string_view text, XYPOSITION *p
 		while (i<text.length()) {
 			positions[i++] = lastPos;
 		}
-	} else if (codePageText == 0) {
+	} else if (!IsDBCSCodePage(codePageText)) {
 
 		// One char per position
 		PLATFORM_ASSERT(text.length() == static_cast<size_t>(tbuf.tlen));
@@ -2039,17 +2049,17 @@ void SurfaceD2D::MeasureWidths(Font &font_, std::string_view text, XYPOSITION *p
 
 XYPOSITION SurfaceD2D::Ascent(Font &font_) {
 	SetFont(font_);
-	return ceil(yAscent);
+	return std::ceil(yAscent);
 }
 
 XYPOSITION SurfaceD2D::Descent(Font &font_) {
 	SetFont(font_);
-	return ceil(yDescent);
+	return std::ceil(yDescent);
 }
 
 XYPOSITION SurfaceD2D::InternalLeading(Font &font_) {
 	SetFont(font_);
-	return floor(yInternalLeading);
+	return std::floor(yInternalLeading);
 }
 
 XYPOSITION SurfaceD2D::Height(Font &font_) {
@@ -2797,9 +2807,7 @@ void ListBoxX::ResizeToCursor() {
 	PRectangle rc = GetPosition();
 	POINT ptw;
 	::GetCursorPos(&ptw);
-	Point pt = Point::FromInts(ptw.x, ptw.y);
-	pt.x += dragOffset.x;
-	pt.y += dragOffset.y;
+	const Point pt = Point::FromInts(ptw.x, ptw.y) + dragOffset;
 
 	switch (resizeHit) {
 		case HTLEFT:
@@ -3143,7 +3151,7 @@ LRESULT ListBoxX::WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam
 		return ::DefWindowProc(hWnd, iMessage, wParam, lParam);
 	case WM_MOUSEWHEEL:
 		wheelDelta -= GET_WHEEL_DELTA_WPARAM(wParam);
-		if (abs(wheelDelta) >= WHEEL_DELTA) {
+		if (std::abs(wheelDelta) >= WHEEL_DELTA) {
 			const int nRows = GetVisibleRows();
 			int linesToScroll = 1;
 			if (nRows > 1) {

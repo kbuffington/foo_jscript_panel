@@ -30,6 +30,7 @@
 #include "Scintilla.h"
 
 #include "CharacterSet.h"
+#include "CharacterCategory.h"
 #include "Position.h"
 #include "IntegerRectangle.h"
 #include "UniqueString.h"
@@ -700,7 +701,7 @@ Range EditView::RangeDisplayLine(Surface *surface, const EditModel &model, Sci::
 SelectionPosition EditView::SPositionFromLocation(Surface *surface, const EditModel &model, PointDocument pt, bool canReturnInvalid,
 	bool charPosition, bool virtualSpace, const ViewStyle &vs, const PRectangle rcClient) {
 	pt.x = pt.x - vs.textStart;
-	Sci::Line visibleLine = static_cast<int>(floor(pt.y / vs.lineHeight));
+	Sci::Line visibleLine = static_cast<int>(std::floor(pt.y / vs.lineHeight));
 	if (!canReturnInvalid && (visibleLine < 0))
 		visibleLine = 0;
 	const Sci::Line lineDoc = model.pcs->DocFromDisplay(visibleLine);
@@ -878,7 +879,7 @@ static void DrawTextBlob(Surface *surface, const ViewStyle &vsDraw, PRectangle r
 		surface->FillRectangle(rcSegment, textBack);
 	}
 	FontAlias ctrlCharsFont = vsDraw.styles[STYLE_CONTROLCHAR].font;
-	const int normalCharHeight = static_cast<int>(ceil(vsDraw.styles[STYLE_CONTROLCHAR].capitalHeight));
+	const int normalCharHeight = static_cast<int>(std::ceil(vsDraw.styles[STYLE_CONTROLCHAR].capitalHeight));
 	PRectangle rcCChar = rcSegment;
 	rcCChar.left = rcCChar.left + 1;
 	rcCChar.top = rcSegment.top + vsDraw.maxAscent - normalCharHeight;
@@ -1047,7 +1048,7 @@ void EditView::DrawEOL(Surface *surface, const EditModel &model, const ViewStyle
 		rcSegment.left = rcLine.left;
 	rcSegment.right = rcLine.right;
 
-	const bool fillRemainder = !lastSubLine || model.foldDisplayTextStyle == SC_FOLDDISPLAYTEXT_HIDDEN || !model.pcs->GetFoldDisplayTextShown(line);
+	const bool fillRemainder = !lastSubLine || !model.GetFoldDisplayText(line);
 	if (fillRemainder) {
 		// Fill the remainder of the line
 		FillLineRemainder(surface, model, vsDraw, ll, line, rcSegment, subLine);
@@ -1195,11 +1196,12 @@ void EditView::DrawFoldDisplayText(Surface *surface, const EditModel &model, con
 	if (!lastSubLine)
 		return;
 
-	if ((model.foldDisplayTextStyle == SC_FOLDDISPLAYTEXT_HIDDEN) || !model.pcs->GetFoldDisplayTextShown(line))
+	const char *text = model.GetFoldDisplayText(line);
+	if (!text)
 		return;
 
 	PRectangle rcSegment = rcLine;
-	const std::string_view foldDisplayText = model.pcs->GetFoldDisplayText(line);
+	const std::string_view foldDisplayText(text);
 	FontAlias fontText = vsDraw.styles[STYLE_FOLDDISPLAYTEXT].font;
 	const int widthFoldDisplayText = static_cast<int>(surface->WidthText(fontText, foldDisplayText));
 
@@ -1218,7 +1220,6 @@ void EditView::DrawFoldDisplayText(Surface *surface, const EditModel &model, con
 	rcSegment.right = rcSegment.left + static_cast<XYPOSITION>(widthFoldDisplayText);
 
 	const ColourOptional background = vsDraw.Background(model.pdoc->GetMark(line), model.caret.active, ll->containsCaret);
-	FontAlias textFont = vsDraw.styles[STYLE_FOLDDISPLAYTEXT].font;
 	ColourDesired textFore = vsDraw.styles[STYLE_FOLDDISPLAYTEXT].fore;
 	if (eolInSelection && (vsDraw.selColours.fore.isSet)) {
 		textFore = (eolInSelection == 1) ? vsDraw.selColours.fore : vsDraw.selAdditionalForeground;
@@ -1247,11 +1248,11 @@ void EditView::DrawFoldDisplayText(Surface *surface, const EditModel &model, con
 
 	if (phase & drawText) {
 		if (phasesDraw != phasesOne) {
-			surface->DrawTextTransparent(rcSegment, textFont,
+			surface->DrawTextTransparent(rcSegment, fontText,
 				rcSegment.top + vsDraw.maxAscent, foldDisplayText,
 				textFore);
 		} else {
-			surface->DrawTextNoClip(rcSegment, textFont,
+			surface->DrawTextNoClip(rcSegment, fontText,
 				rcSegment.top + vsDraw.maxAscent, foldDisplayText,
 				textFore, textBack);
 		}
@@ -1261,8 +1262,8 @@ void EditView::DrawFoldDisplayText(Surface *surface, const EditModel &model, con
 		if (model.foldDisplayTextStyle == SC_FOLDDISPLAYTEXT_BOXED) {
 			surface->PenColour(textFore);
 			PRectangle rcBox = rcSegment;
-			rcBox.left = round(rcSegment.left);
-			rcBox.right = round(rcSegment.right);
+			rcBox.left = std::round(rcSegment.left);
+			rcBox.right = std::round(rcSegment.right);
 			const IntegerRectangle ircBox(rcBox);
 			surface->MoveTo(ircBox.left, ircBox.top);
 			surface->LineTo(ircBox.left, ircBox.bottom);
@@ -1479,7 +1480,7 @@ void EditView::DrawCarets(Surface *surface, const EditModel &model, const ViewSt
 				const ViewStyle::CaretShape caretShape = drawDrag ? ViewStyle::CaretShape::line : vsDraw.CaretShapeForMode(model.inOverstrike);
 				if (drawDrag) {
 					/* Dragging text, use a line caret */
-					rcCaret.left = round(xposCaret - caretWidthOffset);
+					rcCaret.left = std::round(xposCaret - caretWidthOffset);
 					rcCaret.right = rcCaret.left + vsDraw.caretWidth;
 				} else if ((caretShape == ViewStyle::CaretShape::bar) && drawOverstrikeCaret) {
 					/* Overstrike (insert mode), use a modified bar caret */
@@ -1497,7 +1498,7 @@ void EditView::DrawCarets(Surface *surface, const EditModel &model, const ViewSt
 					}
 				} else {
 					/* Line caret */
-					rcCaret.left = round(xposCaret - caretWidthOffset);
+					rcCaret.left = std::round(xposCaret - caretWidthOffset);
 					rcCaret.right = rcCaret.left + vsDraw.caretWidth;
 				}
 				const ColourDesired caretColour = mainCaret ? vsDraw.caretcolour : vsDraw.additionalCaretColour;
@@ -1841,7 +1842,7 @@ void EditView::DrawForeground(Surface *surface, const EditModel &model, const Vi
 							indentCount <= (ll->positions[i + 1] - epsilon) / indentWidth;
 							indentCount++) {
 							if (indentCount > 0) {
-								const XYPOSITION xIndent = floor(indentCount * indentWidth);
+								const XYPOSITION xIndent = std::floor(indentCount * indentWidth);
 								DrawIndentGuide(surface, lineVisible, vsDraw.lineHeight, xIndent + xStart, rcSegment,
 									(ll->xHighlightGuide == xIndent));
 							}
@@ -1920,7 +1921,7 @@ void EditView::DrawForeground(Surface *surface, const EditModel &model, const Vi
 									indentCount <= (ll->positions[cpos + ts.start + 1] - epsilon) / indentWidth;
 									indentCount++) {
 									if (indentCount > 0) {
-										const XYPOSITION xIndent = floor(indentCount * indentWidth);
+										const XYPOSITION xIndent = std::floor(indentCount * indentWidth);
 										DrawIndentGuide(surface, lineVisible, vsDraw.lineHeight, xIndent + xStart, rcSegment,
 											(ll->xHighlightGuide == xIndent));
 									}
@@ -1997,7 +1998,7 @@ void EditView::DrawIndentGuidesOverEmpty(Surface *surface, const EditModel &mode
 		}
 
 		for (int indentPos = model.pdoc->IndentSize(); indentPos < indentSpace; indentPos += model.pdoc->IndentSize()) {
-			const XYPOSITION xIndent = floor(indentPos * vsDraw.spaceWidth);
+			const XYPOSITION xIndent = std::floor(indentPos * vsDraw.spaceWidth);
 			if (xIndent < xStartText) {
 				DrawIndentGuide(surface, lineVisible, vsDraw.lineHeight, xIndent + xStart, rcLine,
 					(ll->xHighlightGuide == xIndent));

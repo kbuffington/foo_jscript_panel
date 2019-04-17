@@ -260,7 +260,7 @@ protected:	// ScintillaBase subclass needs access to much of Editor
 	Editor(Editor &&) = delete;
 	Editor &operator=(const Editor &) = delete;
 	Editor &operator=(Editor &&) = delete;
-	~Editor() override;
+	// ~Editor() in public section
 	virtual void Initialise() = 0;
 	virtual void Finalise();
 
@@ -522,6 +522,9 @@ protected:	// ScintillaBase subclass needs access to much of Editor
 	Sci::Position PositionAfterMaxStyling(Sci::Position posMax, bool scrolling) const;
 	void StartIdleStyling(bool truncatedLastStyling);
 	void StyleAreaBounded(PRectangle rcArea, bool scrolling);
+	constexpr bool SynchronousStylingToVisible() const noexcept {
+		return (idleStyling == SC_IDLESTYLING_NONE) || (idleStyling == SC_IDLESTYLING_AFTERVISIBLE);
+	}
 	void IdleStyling();
 	virtual void IdleWork();
 	virtual void QueueIdleWork(WorkNeeded::workItems items, Sci::Position upTo=0);
@@ -596,6 +599,8 @@ protected:	// ScintillaBase subclass needs access to much of Editor
 	static sptr_t BytesResult(sptr_t lParam, const unsigned char *val, size_t len) noexcept;
 
 public:
+	~Editor() override;
+
 	// Public so the COM thunks can access it.
 	bool IsUnicodeMode() const noexcept;
 	// Public so scintilla_send_message can use it.
