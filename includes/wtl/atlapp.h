@@ -596,6 +596,12 @@ public:
 	ATL::CSimpleArray<CIdleHandler*> m_aIdleHandler;
 	MSG m_msg;
 
+	CMessageLoop()
+	{ }
+
+	virtual ~CMessageLoop()
+	{ }
+
 // Message filter operations
 	BOOL AddMessageFilter(CMessageFilter* pMessageFilter)
 	{

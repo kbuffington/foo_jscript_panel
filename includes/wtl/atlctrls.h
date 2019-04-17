@@ -3789,7 +3789,10 @@ public:
 
 		BOOL bRet = SetItemState(nIndex, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
 		if(bRet)
+		{
+			SetSelectionMark(nIndex);
 			bRet = EnsureVisible(nIndex, FALSE);
+		}
 
 		return bRet;
 	}

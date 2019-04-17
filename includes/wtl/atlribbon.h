@@ -715,6 +715,9 @@ public:
 	CtrlImpl() : m_pWndRibbon(T::pWndRibbon)
 	{ }
 
+	virtual ~CtrlImpl()
+	{ }
+
 	WndRibbon& GetWndRibbon()
 	{
 		return *m_pWndRibbon;
@@ -2131,7 +2134,7 @@ public:
 		ATLASSERT(SUCCEEDED(hr));
 	}
 
-	~CRibbonImpl()
+	virtual ~CRibbonImpl()
 	{
 		::GlobalFree(m_hgRibbonSettings);
 		m_pIUIFramework.Release();

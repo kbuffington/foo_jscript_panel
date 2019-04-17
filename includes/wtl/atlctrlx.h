@@ -1998,6 +1998,22 @@ public:
 		return TRUE;
 	}
 
+#ifdef __ATLSTR_H__
+	BOOL GetPaneText(int nPaneID, ATL::CString& strText, int* pcchLength = NULL, int* pnType = NULL) const
+	{
+		ATLASSERT(::IsWindow(this->m_hWnd));
+		int nIndex  = GetPaneIndexFromID(nPaneID);
+		if(nIndex == -1)
+			return FALSE;
+
+		int nLength = this->GetText(nIndex, strText, pnType);
+		if(pcchLength != NULL)
+			*pcchLength = nLength;
+
+		return TRUE;
+	}
+#endif // __ATLSTR_H__
+
 	BOOL SetPaneText(int nPaneID, LPCTSTR lpstrText, int nType = 0)
 	{
 		ATLASSERT(::IsWindow(this->m_hWnd));
