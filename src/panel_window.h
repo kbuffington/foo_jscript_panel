@@ -14,13 +14,13 @@ public:
 	HRESULT script_invoke(t_size callbackId, VARIANTARG* argv = nullptr, t_size argc = 0, VARIANT* ret = nullptr);
 	LRESULT on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp) override;
 	class_data& get_class_data() const override;
-	void update_script();
+	bool show_configure_popup(HWND parent) override;
+	void show_property_popup(HWND parent) override;
+	void update_script() override;
 
 protected:
-	bool show_configure_popup(HWND parent);
 	void build_context_menu(HMENU menu, int x, int y, int id_base);
 	void execute_context_menu_command(int id, int id_base);
-	void show_property_popup(HWND parent);
 
 private:
 	bool on_mouse_button_up(UINT msg, WPARAM wp, LPARAM lp);

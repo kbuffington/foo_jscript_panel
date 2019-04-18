@@ -169,7 +169,7 @@ STDMETHODIMP Window::NotifyOthers(BSTR name, VARIANT info)
 
 STDMETHODIMP Window::Reload()
 {
-	PostMessage(m_host->get_hwnd(), UWM_RELOAD, 0, 0);
+	m_host->update_script();
 	return S_OK;
 }
 
@@ -215,13 +215,17 @@ STDMETHODIMP Window::SetTimeout(IDispatch* func, int delay, UINT* p)
 
 STDMETHODIMP Window::ShowConfigure()
 {
-	PostMessage(m_host->get_hwnd(), UWM_SHOW_CONFIGURE, 0, 0);
+	fb2k::inMainThread([&] {
+		m_host->show_configure_popup(m_host->get_hwnd());
+	});
 	return S_OK;
 }
 
 STDMETHODIMP Window::ShowProperties()
 {
-	PostMessage(m_host->get_hwnd(), UWM_SHOW_PROPERTIES, 0, 0);
+	fb2k::inMainThread([&] {
+		m_host->show_property_popup(m_host->get_hwnd());
+	});
 	return S_OK;
 }
 

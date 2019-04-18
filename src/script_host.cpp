@@ -360,7 +360,10 @@ STDMETHODIMP script_host::OnScriptError(IActiveScriptError* err)
 	}
 
 	FB2K_console_formatter() << formatter;
-	main_thread_callback_add(fb2k::service_new<helpers::popup_msg>(formatter, JSP_NAME_VERSION));
+
+	fb2k::inMainThread([=] {
+		popup_message::g_show(formatter, JSP_NAME_VERSION);
+	});
 
 	if (excep.bstrSource) SysFreeString(excep.bstrSource);
 	if (excep.bstrDescription) SysFreeString(excep.bstrDescription);

@@ -283,9 +283,6 @@ LRESULT panel_window::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 	case callback_id::on_volume_change:
 		on_volume_change(wp);
 		return 0;
-	case UWM_RELOAD:
-		update_script();
-		return 0;
 	case UWM_SCRIPT_ERROR:
 		{
 			const auto& tooltip_param = panel_tooltip();
@@ -295,12 +292,6 @@ LRESULT panel_window::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 			repaint();
 			unload_script();
 		}
-		return 0;
-	case UWM_SHOW_CONFIGURE:
-		show_configure_popup(m_hwnd);
-		return 0;
-	case UWM_SHOW_PROPERTIES:
-		show_property_popup(m_hwnd);
 		return 0;
 	case UWM_TIMER:
 		host_timer_dispatcher::instance().invoke_message(wp);

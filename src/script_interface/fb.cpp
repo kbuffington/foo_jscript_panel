@@ -509,7 +509,11 @@ STDMETHODIMP Fb::ShowLibrarySearchUI(BSTR query)
 
 STDMETHODIMP Fb::ShowPopupMessage(BSTR msg, BSTR title)
 {
-	main_thread_callback_add(fb2k::service_new<helpers::popup_msg>(string_utf8_from_wide(msg).get_ptr(), string_utf8_from_wide(title).get_ptr()));
+	string_utf8_from_wide umsg(msg);
+	string_utf8_from_wide utitle(title);
+	fb2k::inMainThread([=] {
+		popup_message::g_show(umsg, utitle);
+	});
 	return S_OK;
 }
 
