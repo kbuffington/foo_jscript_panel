@@ -82,6 +82,36 @@ t_size host_comm::get_instance_type()
 	return m_instance_type;
 }
 
+void host_comm::create_context()
+{
+	if (m_gr_bmp || m_gr_bmp_bk)
+	{
+		delete_context();
+	}
+
+	m_gr_bmp = CreateCompatibleBitmap(m_hdc, m_width, m_height);
+
+	if (m_pseudo_transparent)
+	{
+		m_gr_bmp_bk = CreateCompatibleBitmap(m_hdc, m_width, m_height);
+	}
+}
+
+void host_comm::delete_context()
+{
+	if (m_gr_bmp)
+	{
+		DeleteBitmap(m_gr_bmp);
+		m_gr_bmp = nullptr;
+	}
+
+	if (m_gr_bmp_bk)
+	{
+		DeleteBitmap(m_gr_bmp_bk);
+		m_gr_bmp_bk = nullptr;
+	}
+}
+
 void host_comm::load_config(stream_reader* reader, t_size size, abort_callback& abort)
 {
 	reset_config();

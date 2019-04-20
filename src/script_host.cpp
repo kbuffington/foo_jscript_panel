@@ -371,7 +371,13 @@ STDMETHODIMP script_host::OnScriptError(IActiveScriptError* err)
 	if (m_script_engine) m_script_engine->SetScriptState(SCRIPTSTATE_DISCONNECTED);
 
 	MessageBeep(MB_ICONASTERISK);
-	SendMessage(m_host->get_hwnd(), UWM_SCRIPT_ERROR, 0, 0);
+
+	const auto& tooltip_param = m_host->panel_tooltip();
+	if (tooltip_param && tooltip_param->tooltip_hwnd)
+		SendMessage(tooltip_param->tooltip_hwnd, TTM_ACTIVATE, FALSE, 0);
+
+	m_host->repaint();
+	m_host->unload_script();
 	return S_OK;
 }
 

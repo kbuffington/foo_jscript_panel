@@ -283,16 +283,6 @@ LRESULT panel_window::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 	case callback_id::on_volume_change:
 		on_volume_change(wp);
 		return 0;
-	case UWM_SCRIPT_ERROR:
-		{
-			const auto& tooltip_param = panel_tooltip();
-			if (tooltip_param && tooltip_param->tooltip_hwnd)
-				SendMessage(tooltip_param->tooltip_hwnd, TTM_ACTIVATE, FALSE, 0);
-
-			repaint();
-			unload_script();
-		}
-		return 0;
 	case UWM_TIMER:
 		host_timer_dispatcher::instance().invoke_message(wp);
 		return 0;
@@ -373,36 +363,6 @@ void panel_window::build_context_menu(HMENU menu, int x, int y, int id_base)
 	uAppendMenu(menu, MF_SEPARATOR, 0, 0);
 	uAppendMenu(menu, MF_STRING, id_base + 2, "&Properties");
 	uAppendMenu(menu, MF_STRING, id_base + 3, "&Configure...");
-}
-
-void panel_window::create_context()
-{
-	if (m_gr_bmp || m_gr_bmp_bk)
-	{
-		delete_context();
-	}
-
-	m_gr_bmp = CreateCompatibleBitmap(m_hdc, m_width, m_height);
-
-	if (m_pseudo_transparent)
-	{
-		m_gr_bmp_bk = CreateCompatibleBitmap(m_hdc, m_width, m_height);
-	}
-}
-
-void panel_window::delete_context()
-{
-	if (m_gr_bmp)
-	{
-		DeleteBitmap(m_gr_bmp);
-		m_gr_bmp = nullptr;
-	}
-
-	if (m_gr_bmp_bk)
-	{
-		DeleteBitmap(m_gr_bmp_bk);
-		m_gr_bmp_bk = nullptr;
-	}
 }
 
 void panel_window::execute_context_menu_command(int id, int id_base)

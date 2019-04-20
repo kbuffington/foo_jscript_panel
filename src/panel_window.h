@@ -16,6 +16,7 @@ public:
 	class_data& get_class_data() const override;
 	bool show_configure_popup(HWND parent) override;
 	void show_property_popup(HWND parent) override;
+	void unload_script() override;
 	void update_script() override;
 
 protected:
@@ -24,8 +25,6 @@ protected:
 
 private:
 	bool on_mouse_button_up(UINT msg, WPARAM wp, LPARAM lp);
-	void create_context();
-	void delete_context();
 	void load_script();
 	void on_always_on_top_changed(WPARAM wp);
 	void on_colours_changed();
@@ -77,7 +76,6 @@ private:
 	void on_selection_changed();
 	void on_size(int w, int h);
 	void on_volume_change(WPARAM wp);
-	void unload_script();
 
 	CComPtr<IDropTargetImpl> m_drop_target;
 	IGdiGraphicsPtr m_gr_wrap;

@@ -40,7 +40,6 @@ enum t_user_message
 {
 	UWM_FIND_TEXT_CHANGED = WM_USER + 10,
 	UWM_KEYDOWN,
-	UWM_SCRIPT_ERROR,
 	UWM_TIMER,
 	UWM_UNLOAD
 };

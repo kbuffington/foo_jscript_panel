@@ -79,6 +79,14 @@ protected:
 	host_comm();
 	virtual ~host_comm();
 
+	void create_context();
+	void delete_context();
+	void load_config(stream_reader* reader, t_size size, abort_callback& abort);
+	void redraw();
+	void refresh_background(LPRECT lprcUpdate = nullptr);
+	void reset_config();
+	void save_config(stream_writer* writer, abort_callback& abort) const;
+
 	HBITMAP m_gr_bmp;
 	HBITMAP m_gr_bmp_bk;
 	HDC m_hdc;
@@ -120,14 +128,10 @@ public:
 	virtual bool show_configure_popup(HWND parent) = 0;
 	virtual void notify_size_limit_changed() = 0;
 	virtual void show_property_popup(HWND parent) = 0;
+	virtual void unload_script() = 0;
 	virtual void update_script() = 0;
-	void load_config(stream_reader* reader, t_size size, abort_callback& abort);
-	void redraw();
-	void refresh_background(LPRECT lprcUpdate = nullptr);
 	void repaint(bool force = false);
 	void repaint_rect(int x, int y, int w, int h, bool force = false);
-	void reset_config();
-	void save_config(stream_writer* writer, abort_callback& abort) const;
 
 	POINT m_max_size;
 	POINT m_min_size;
