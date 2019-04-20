@@ -122,12 +122,7 @@ HRESULT script_host::Initialise()
 	if (SUCCEEDED(hr)) hr = m_script_engine->AddNamedItem(L"console", SCRIPTITEM_ISVISIBLE);
 	if (SUCCEEDED(hr)) hr = m_script_engine->SetScriptState(SCRIPTSTATE_CONNECTED);
 	if (SUCCEEDED(hr)) hr = m_script_engine->GetScriptDispatch(nullptr, &m_script_root);
-	if (SUCCEEDED(hr)) hr = ProcessImportedScripts(parser);
-	if (SUCCEEDED(hr))
-	{
-		DWORD source_context = GenerateSourceContext("<main>");
-		hr = parser->ParseScriptText(string_wide_from_utf8_fast(m_host->m_script_code), nullptr, nullptr, nullptr, source_context, 0, SCRIPTTEXT_HOSTMANAGESSOURCE | SCRIPTTEXT_ISVISIBLE, nullptr, nullptr);
-	}
+	if (SUCCEEDED(hr)) hr = ProcessScripts(parser);
 	if (SUCCEEDED(hr)) hr = InitCallbackMap();
 	if (SUCCEEDED(hr))
 	{
@@ -196,31 +191,40 @@ HRESULT script_host::InvokeCallback(t_size callbackId, VARIANTARG* argv, t_size 
 	return m_script_root->Invoke(m_callback_map[callbackId], IID_NULL, LOCALE_USER_DEFAULT, DISPATCH_METHOD, &param, ret, nullptr, nullptr);
 }
 
-HRESULT script_host::ProcessImportedScripts(IActiveScriptParsePtr& parser)
+HRESULT script_host::ProcessScripts(IActiveScriptParsePtr& parser)
 {
+	HRESULT hr = S_OK;
 	pfc::string_formatter error_text;
+	pfc::string8_fast path, code;
 	const t_size count = m_host->m_script_info.imports.get_count();
-	for (t_size i = 0; i < count; ++i)
-	{
-		pfc::string8_fast path = m_host->m_script_info.expand_import(i);
-		pfc::string8_fast code = helpers::read_file(path);
-		if (code.get_length())
-		{
-			DWORD source_context = GenerateSourceContext(path);
-			HRESULT hr = parser->ParseScriptText(string_wide_from_utf8_fast(code), nullptr, nullptr, nullptr, source_context, 0, SCRIPTTEXT_HOSTMANAGESSOURCE | SCRIPTTEXT_ISVISIBLE, nullptr, nullptr);
-			if (FAILED(hr)) return hr;
-		}
-		else
-		{
-			error_text << "\nError: Failed to load " << path;
-		}
-	}
 
-	if (error_text.get_length())
+	for (t_size i = 0; i <= count; ++i)
 	{
-		FB2K_console_formatter() << m_host->m_script_info.build_info_string() << error_text;
+		if (i < count) // import
+		{
+			path = m_host->m_script_info.expand_import(i);
+			code = helpers::read_file(path);
+			if (code.is_empty())
+			{
+				error_text << "\nError: Failed to load " << path;
+			}
+		}
+		else // main
+		{
+			if (error_text.get_length())
+			{
+				FB2K_console_formatter() << m_host->m_script_info.build_info_string() << error_text;
+			}
+
+			path = "<main>";
+			code = m_host->m_script_code;
+		}
+
+		DWORD source_context = GenerateSourceContext(path);
+		hr = parser->ParseScriptText(string_wide_from_utf8_fast(code), nullptr, nullptr, nullptr, source_context, 0, SCRIPTTEXT_HOSTMANAGESSOURCE | SCRIPTTEXT_ISVISIBLE, nullptr, nullptr);
+		if (FAILED(hr)) break;
 	}
-	return S_OK;
+	return hr;
 }
 
 STDMETHODIMP script_host::EnableModeless(BOOL fEnable)
