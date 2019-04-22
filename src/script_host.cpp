@@ -194,7 +194,7 @@ HRESULT script_host::InvokeCallback(t_size callbackId, VARIANTARG* argv, t_size 
 HRESULT script_host::ProcessScripts(IActiveScriptParsePtr& parser)
 {
 	HRESULT hr = S_OK;
-	pfc::string_formatter error_text;
+	bool import_error = false;
 	pfc::string8_fast path, code;
 	const t_size count = m_host->m_script_info.imports.get_count();
 
@@ -206,16 +206,16 @@ HRESULT script_host::ProcessScripts(IActiveScriptParsePtr& parser)
 			code = helpers::read_file(path);
 			if (code.is_empty())
 			{
-				error_text << "\nError: Failed to load " << path;
+				if (!import_error)
+				{
+					import_error = true;
+					FB2K_console_formatter() << m_host->m_script_info.build_info_string();
+				}
+				FB2K_console_formatter() << "Error: Failed to load " << path;
 			}
 		}
 		else // main
 		{
-			if (error_text.get_length())
-			{
-				FB2K_console_formatter() << m_host->m_script_info.build_info_string() << error_text;
-			}
-
 			path = "<main>";
 			code = m_host->m_script_code;
 		}
