@@ -734,10 +734,10 @@ STDMETHODIMP GdiGraphics::EstimateLineWrap(BSTR str, IGdiFont* font, int max_wid
 	SelectFont(dc, oldfont);
 	m_ptr->ReleaseHDC(dc);
 
-	const LONG count = result.get_count() * 2;
+	const LONG count = result.get_count();
 	helpers::com_array helper;
-	if (!helper.create(count)) return E_OUTOFMEMORY;
-	for (LONG i = 0; i < count / 2; ++i)
+	if (!helper.create(count * 2)) return E_OUTOFMEMORY;
+	for (LONG i = 0; i < count; ++i)
 	{
 		_variant_t var1, var2;
 		var1.vt = VT_BSTR;
@@ -1272,7 +1272,7 @@ STDMETHODIMP MetadbHandle::GetAlbumArt(UINT art_id, VARIANT_BOOL need_stub, VARI
 	if (m_handle.is_empty() || !p) return E_POINTER;
 
 	pfc::string8_fast image_path;
-	IGdiBitmap* bitmap = helpers::get_album_art(m_handle, art_id, need_stub != VARIANT_FALSE, image_path);
+	IGdiBitmap* bitmap = helpers::get_album_art(m_handle, art_id, need_stub != VARIANT_FALSE, false, image_path);
 
 	_variant_t var1, var2;
 	var1.vt = VT_DISPATCH;
@@ -2281,8 +2281,6 @@ Tooltip::Tooltip(HWND p_wndparent, const panel_tooltip_param_ptr& p_param_ptr) :
 	SendMessage(m_wndtooltip, WM_SETFONT, (WPARAM)font, MAKELPARAM(FALSE, 0));
 
 	m_panel_tooltip_param_ptr->tooltip_hwnd = m_wndtooltip;
-	m_panel_tooltip_param_ptr->tooltip_size.cx = -1;
-	m_panel_tooltip_param_ptr->tooltip_size.cy = -1;
 }
 
 Tooltip::~Tooltip() {}

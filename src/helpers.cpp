@@ -15,14 +15,13 @@ namespace helpers
 		return GetRValue(color) << RED_SHIFT | GetGValue(color) << GREEN_SHIFT | GetBValue(color) << BLUE_SHIFT | 0xff000000;
 	}
 
-	IGdiBitmap* get_album_art(const metadb_handle_ptr& handle, t_size art_id, bool need_stub, pfc::string_base& image_path, bool no_load)
+	IGdiBitmap* get_album_art(const metadb_handle_ptr& handle, t_size art_id, bool need_stub, bool no_load, pfc::string_base& image_path)
 	{
 		const GUID what = convert_artid_to_guid(art_id);
 		abort_callback_dummy abort;
 		auto api = album_art_manager_v2::get();
 		album_art_extractor_instance_v2::ptr ptr;
 		album_art_data_ptr data;
-		Gdiplus::Bitmap* bitmap = nullptr;
 		IGdiBitmap* ret = nullptr;
 
 		try
@@ -45,9 +44,9 @@ namespace helpers
 
 		if (data.is_valid())
 		{
-			if (!no_load && read_album_art_into_bitmap(data, &bitmap))
+			if (!no_load)
 			{
-				ret = new com_object_impl_t<GdiBitmap>(bitmap);
+				ret = read_album_art_into_bitmap(data);
 			}
 			album_art_path_list::ptr pathlist = ptr->query_paths(what, abort);
 			if (pathlist->get_count() > 0)
@@ -60,26 +59,20 @@ namespace helpers
 
 	IGdiBitmap* get_album_art_embedded(const pfc::string8_fast& rawpath, t_size art_id)
 	{
+		album_art_extractor_instance_ptr aaep;
+		const GUID what = convert_artid_to_guid(art_id);
+		abort_callback_dummy abort;
+		album_art_extractor::ptr ptr;
+		album_art_data_ptr data;
 		IGdiBitmap* ret = nullptr;
 
-		album_art_extractor::ptr ptr;
 		if (album_art_extractor::g_get_interface(ptr, rawpath))
 		{
-			album_art_extractor_instance_ptr aaep;
-			const GUID what = convert_artid_to_guid(art_id);
-			abort_callback_dummy abort;
-
 			try
 			{
 				aaep = ptr->open(nullptr, rawpath, abort);
-
-				album_art_data_ptr data = aaep->query(what, abort);
-				Gdiplus::Bitmap* bitmap = nullptr;
-
-				if (read_album_art_into_bitmap(data, &bitmap))
-				{
-					ret = new com_object_impl_t<GdiBitmap>(bitmap);
-				}
+				data = aaep->query(what, abort);
+				ret = read_album_art_into_bitmap(data);
 			}
 			catch (...) {}
 		}
@@ -89,11 +82,11 @@ namespace helpers
 	IGdiBitmap* load_image(BSTR path)
 	{
 		IGdiBitmap* ret = nullptr;
-		IStreamPtr pStream;
-		if (SUCCEEDED(SHCreateStreamOnFileEx(path, STGM_READ | STGM_SHARE_DENY_WRITE, GENERIC_READ, FALSE, nullptr, &pStream)))
+		IStream* stream;
+		if (SUCCEEDED(SHCreateStreamOnFileEx(path, STGM_READ | STGM_SHARE_DENY_WRITE, GENERIC_READ, FALSE, nullptr, &stream)))
 		{
-			auto img = new Gdiplus::Bitmap(pStream, TRUE);
-			if (helpers::ensure_gdiplus_object(img))
+			auto img = new Gdiplus::Bitmap(stream, TRUE);
+			if (ensure_gdiplus_object(img))
 			{
 				ret = new com_object_impl_t<GdiBitmap>(img);
 			}
@@ -101,6 +94,34 @@ namespace helpers
 			{
 				if (img) delete img;
 				img = nullptr;
+			}
+		}
+		return ret;
+	}
+
+	IGdiBitmap* read_album_art_into_bitmap(const album_art_data_ptr& data)
+	{
+		IGdiBitmap* ret = nullptr;
+
+		if (!data.is_valid())
+			return ret;
+
+		IStream* stream;
+		if (SUCCEEDED(CreateStreamOnHGlobal(nullptr, TRUE, &stream)))
+		{
+			ULONG bytes_written = 0;
+			if (SUCCEEDED(stream->Write(data->get_ptr(), data->get_size(), &bytes_written)) && bytes_written == data->get_size())
+			{
+				auto img = new Gdiplus::Bitmap(stream, TRUE);
+				if (ensure_gdiplus_object(img))
+				{
+					ret = new com_object_impl_t<GdiBitmap>(img);
+				}
+				else
+				{
+					if (img) delete img;
+					img = nullptr;
+				}
 			}
 		}
 		return ret;
@@ -259,35 +280,26 @@ namespace helpers
 		return false;
 	}
 
-	bool read_album_art_into_bitmap(const album_art_data_ptr& data, Gdiplus::Bitmap** bitmap)
+	bool is_wrap_char(wchar_t current, wchar_t next)
 	{
-		*bitmap = nullptr;
-		bool ret = false;
+		if (iswpunct(current))
+			return false;
 
-		if (!data.is_valid())
-			return ret;
+		if (next == '\0')
+			return true;
 
-		IStreamPtr is;
-		if (SUCCEEDED(CreateStreamOnHGlobal(nullptr, TRUE, &is)) && is)
+		if (iswspace(current))
+			return true;
+
+		int currentAlphaNum = iswalnum(current);
+
+		if (currentAlphaNum)
 		{
-			ULONG bytes_written = 0;
-			if (SUCCEEDED(is->Write(data->get_ptr(), data->get_size(), &bytes_written)) && bytes_written == data->get_size())
-			{
-				auto bmp = new Gdiplus::Bitmap(is, TRUE);
-
-				if (ensure_gdiplus_object(bmp))
-				{
-					*bitmap = bmp;
-					ret = true;
-				}
-				else
-				{
-					if (bmp) delete bmp;
-					bmp = nullptr;
-				}
-			}
+			if (iswpunct(next))
+				return false;
 		}
-		return ret;
+
+		return currentAlphaNum == 0 || iswalnum(next) == 0;
 	}
 
 	bool read_file_wide(t_size codepage, const wchar_t* path, pfc::array_t<wchar_t>& content)
@@ -472,28 +484,6 @@ namespace helpers
 		SIZE size;
 		GetTextExtentPoint32(hdc, text, len, &size);
 		return size.cx;
-	}
-
-	int is_wrap_char(wchar_t current, wchar_t next)
-	{
-		if (iswpunct(current))
-			return false;
-
-		if (next == '\0')
-			return true;
-
-		if (iswspace(current))
-			return true;
-
-		int currentAlphaNum = iswalnum(current);
-
-		if (currentAlphaNum)
-		{
-			if (iswpunct(next))
-				return false;
-		}
-
-		return currentAlphaNum == 0 || iswalnum(next) == 0;
 	}
 
 	pfc::string8_fast get_fb2k_component_path()

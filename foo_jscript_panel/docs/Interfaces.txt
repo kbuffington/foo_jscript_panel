@@ -1075,7 +1075,7 @@ interface IUtils {
 		4: artist
 
 		need_stub: boolean, default true.
-		only_embed: boolean, default false.
+		only_embed: boolean, default false. If true, "need_stub" and "no_load" are ignored.
 		no_load: boolean, default false. If true, "image" parameter will be null in on_get_album_art_done callback.
 		See samples\basic\GetAlbumArtAsync.txt
 		*/

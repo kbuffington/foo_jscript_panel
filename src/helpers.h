@@ -22,14 +22,15 @@ namespace helpers
 
 	COLORREF convert_argb_to_colorref(DWORD argb);
 	DWORD convert_colorref_to_argb(COLORREF color);
-	IGdiBitmap* get_album_art(const metadb_handle_ptr& handle, t_size art_id, bool need_stub, pfc::string_base& image_path, bool no_load = false);
+	IGdiBitmap* get_album_art(const metadb_handle_ptr& handle, t_size art_id, bool need_stub, bool no_load, pfc::string_base& image_path);
 	IGdiBitmap* get_album_art_embedded(const pfc::string8_fast& rawpath, t_size art_id);
 	IGdiBitmap* load_image(BSTR path);
+	IGdiBitmap* read_album_art_into_bitmap(const album_art_data_ptr& data);
 	bool execute_context_command_by_name(const char* p_command, metadb_handle_list_cref p_handles, t_size flags);
 	bool execute_context_command_recur(const char* p_command, pfc::string_base& p_path, contextmenu_node* p_parent);
 	bool execute_mainmenu_command_by_name(const char* p_command);
 	bool execute_mainmenu_command_recur(const char* p_command, pfc::string8_fast path, mainmenu_node::ptr node);
-	bool read_album_art_into_bitmap(const album_art_data_ptr& data, Gdiplus::Bitmap** bitmap);
+	bool is_wrap_char(wchar_t current, wchar_t next);
 	bool read_file_wide(t_size codepage, const wchar_t* path, pfc::array_t<wchar_t>& content);
 	bool supports_chakra();
 	bool write_file(const pfc::string8_fast& path, const pfc::string8_fast& content, bool write_bom = false);
@@ -37,7 +38,6 @@ namespace helpers
 	int get_encoder_clsid(const wchar_t* format, CLSID* pClsid);
 	int get_text_height(HDC hdc, const wchar_t* text, int len);
 	int get_text_width(HDC hdc, const wchar_t* text, int len);
-	int is_wrap_char(wchar_t current, wchar_t next);
 	pfc::string8_fast get_fb2k_component_path();
 	pfc::string8_fast get_fb2k_path();
 	pfc::string8_fast get_profile_path();
@@ -55,7 +55,7 @@ namespace helpers
 		return ((obj) && (obj->GetLastStatus() == Gdiplus::Ok));
 	}
 
-	template<int direction>
+	template <int direction>
 	static int custom_sort_compare(const custom_sort_data& elem1, const custom_sort_data& elem2)
 	{
 		int ret = direction * StrCmpLogicalW(elem1.text, elem2.text);
@@ -141,35 +141,6 @@ namespace helpers
 	public:
 		album_art_async(HWND p_wnd, metadb_handle* handle, t_size art_id, bool need_stub, bool only_embed, bool no_load) : m_hwnd(p_wnd), m_handle(handle), m_art_id(art_id), m_need_stub(need_stub), m_only_embed(only_embed), m_no_load(no_load) {}
 
-		void run() override
-		{
-			IGdiBitmap* bitmap = nullptr;
-			MetadbHandle* handle = nullptr;
-			pfc::string8_fast image_path;
-
-			if (m_handle.is_valid())
-			{
-				if (m_only_embed)
-				{
-					pfc::string8_fast rawpath = m_handle->get_path();
-					bitmap = get_album_art_embedded(rawpath, m_art_id);
-					if (bitmap)
-					{
-						image_path = file_path_display(rawpath);
-					}
-				}
-				else
-				{
-					bitmap = get_album_art(m_handle, m_art_id, m_need_stub, image_path, m_no_load);
-				}
-
-				handle = new com_object_impl_t<MetadbHandle>(m_handle);
-			}
-
-			t_param param(handle, m_art_id, bitmap, SysAllocString(string_wide_from_utf8_fast(image_path)));
-			SendMessage(m_hwnd, callback_id::on_get_album_art_done, (WPARAM)&param, 0);
-		}
-
 		struct t_param
 		{
 			t_param(IMetadbHandle* p_handle, t_size p_art_id, IGdiBitmap* p_bitmap, BSTR p_path) : handle(p_handle), art_id(p_art_id), bitmap(p_bitmap), path(p_path) {}
@@ -193,6 +164,35 @@ namespace helpers
 			t_size art_id;
 		};
 
+		void run() override
+		{
+			IGdiBitmap* bitmap = nullptr;
+			IMetadbHandle* handle = nullptr;
+			pfc::string8_fast image_path;
+
+			if (m_handle.is_valid())
+			{
+				if (m_only_embed)
+				{
+					pfc::string8_fast rawpath = m_handle->get_path();
+					bitmap = get_album_art_embedded(rawpath, m_art_id);
+					if (bitmap)
+					{
+						image_path = file_path_display(rawpath);
+					}
+				}
+				else
+				{
+					bitmap = get_album_art(m_handle, m_art_id, m_need_stub, m_no_load, image_path);
+				}
+
+				handle = new com_object_impl_t<MetadbHandle>(m_handle);
+			}
+
+			t_param param(handle, m_art_id, bitmap, SysAllocString(string_wide_from_utf8_fast(image_path)));
+			SendMessage(m_hwnd, callback_id::on_get_album_art_done, (WPARAM)&param, 0);
+		}
+
 	private:
 		HWND m_hwnd;
 		bool m_need_stub;
@@ -206,13 +206,6 @@ namespace helpers
 	{
 	public:
 		load_image_async(HWND p_wnd, BSTR path) : m_hwnd(p_wnd), m_path(path) {}
-
-		void run() override
-		{
-			IGdiBitmap* bitmap = load_image(m_path);
-			t_param param(reinterpret_cast<t_size>(this), bitmap, m_path);
-			SendMessage(m_hwnd, callback_id::on_load_image_done, (WPARAM)&param, 0);
-		}
 
 		struct t_param
 		{
@@ -230,6 +223,13 @@ namespace helpers
 			_bstr_t path;
 			t_size cookie;
 		};
+
+		void run() override
+		{
+			IGdiBitmap* bitmap = load_image(m_path);
+			t_param param(reinterpret_cast<t_size>(this), bitmap, m_path);
+			SendMessage(m_hwnd, callback_id::on_load_image_done, (WPARAM)&param, 0);
+		}
 
 	private:
 		HWND m_hwnd;

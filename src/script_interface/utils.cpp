@@ -218,7 +218,7 @@ STDMETHODIMP Utils::GetAlbumArtV2(IMetadbHandle* handle, UINT art_id, VARIANT_BO
 	if (!ptr) return E_INVALIDARG;
 
 	pfc::string8_fast dummy;
-	*pp = helpers::get_album_art(ptr, art_id, need_stub != VARIANT_FALSE, dummy);
+	*pp = helpers::get_album_art(ptr, art_id, need_stub != VARIANT_FALSE, false, dummy);
 	return S_OK;
 }
 
