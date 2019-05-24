@@ -1666,7 +1666,6 @@ oList = function (object_name, playlist) {
 		var arr_pl,
 		fin,
 		fin2;
-		var t1 = fb.CreateProfiler("Init Groups");
 
 		// update group key TF pattern
 		if (properties.showgroupheaders) {
@@ -1716,51 +1715,31 @@ oList = function (object_name, playlist) {
 			handle = this.handleList.Item(i);
 			length = fb2k_length(handle);
 			current = properties.showgroupheaders ? tf_group_key.EvalWithMetadb(handle) : handle.Path;
-			if (i == 0) {
-				if (this.count == 1) {
-					count++;
-					total_time_length += length;
-					global_time += length;
-					this.groups.push(new oGroup(this.groups.length, start, count, total_time_length, this.focusedTrackId, iscollapsed));
-				} else {
-					previous = current;
-				};
+			
+			if (previous != current) {
+				if (i > 0) {
+					this.groups.push(new oGroup(this.groups.length, start, count, total_time_length, this.focusedTrackId, iscollapsed))
+				}
+				previous = current;
+				start = i;
+				count = 1;
+				total_time_length = length;
 			} else {
-				if (current != previous || i == this.count - 1) {
-					if (current != previous) {
-						if (i == this.count - 1) {
-							this.groups.push(new oGroup(this.groups.length, start, count, total_time_length, this.focusedTrackId, iscollapsed));
-							start = i;
-							count = 1;
-							total_time_length = length;
-							this.groups.push(new oGroup(this.groups.length, start, count, total_time_length, this.focusedTrackId, iscollapsed));
-						} else {
-							this.groups.push(new oGroup(this.groups.length, start, count, total_time_length, this.focusedTrackId, iscollapsed));
-						};
-					} else {
-						total_time_length += length;
-						count++;
-						this.groups.push(new oGroup(this.groups.length, start, count, total_time_length, this.focusedTrackId, iscollapsed));
-					};
-					count = 0;
-					total_time_length = 0;
-					start = i;
-					previous = current;
-				};
-			};
-			if (this.count > 1) {
 				count++;
 				total_time_length += length;
-				global_time += length;
-			};
+			}
+			
+			if (i == this.count - 1) {
+				this.groups.push(new oGroup(this.groups.length, start, count, total_time_length, this.focusedTrackId, iscollapsed));
+			}
+			
+			global_time += length;
 		};
 		// calc total rows for this total handles + groups
 		this.totalRows = this.getTotalRows();
 
 		// total seconds playlist for playlist header panel
 		g_total_duration_text = utils.FormatDuration(global_time);
-
-		t1 = null;
 	};
 
 	this.updateHandleList = function (playlist, iscollapsed) {
