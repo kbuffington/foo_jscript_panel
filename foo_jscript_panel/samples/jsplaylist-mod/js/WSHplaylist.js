@@ -1656,6 +1656,7 @@ oList = function (object_name, playlist) {
 
 	this.init_groups = function (iscollapsed) {
 		var handle;
+		var length;
 		var current;
 		var previous;
 		var count = 0;
@@ -1713,12 +1714,13 @@ oList = function (object_name, playlist) {
 		this.groups.splice(0, this.groups.length);
 		for (var i = 0; i < this.count; i++) {
 			handle = this.handleList.Item(i);
+			length = fb2k_length(handle);
 			current = properties.showgroupheaders ? tf_group_key.EvalWithMetadb(handle) : handle.Path;
 			if (i == 0) {
 				if (this.count == 1) {
 					count++;
-					total_time_length += handle.Length;
-					global_time += handle.Length;
+					total_time_length += length;
+					global_time += length;
 					this.groups.push(new oGroup(this.groups.length, start, count, total_time_length, this.focusedTrackId, iscollapsed));
 				} else {
 					previous = current;
@@ -1730,13 +1732,13 @@ oList = function (object_name, playlist) {
 							this.groups.push(new oGroup(this.groups.length, start, count, total_time_length, this.focusedTrackId, iscollapsed));
 							start = i;
 							count = 1;
-							total_time_length = handle.Length;
+							total_time_length = length;
 							this.groups.push(new oGroup(this.groups.length, start, count, total_time_length, this.focusedTrackId, iscollapsed));
 						} else {
 							this.groups.push(new oGroup(this.groups.length, start, count, total_time_length, this.focusedTrackId, iscollapsed));
 						};
 					} else {
-						total_time_length += handle.Length;
+						total_time_length += length;
 						count++;
 						this.groups.push(new oGroup(this.groups.length, start, count, total_time_length, this.focusedTrackId, iscollapsed));
 					};
@@ -1748,8 +1750,8 @@ oList = function (object_name, playlist) {
 			};
 			if (this.count > 1) {
 				count++;
-				total_time_length += handle.Length;
-				global_time += handle.Length;
+				total_time_length += length;
+				global_time += length;
 			};
 		};
 		// calc total rows for this total handles + groups

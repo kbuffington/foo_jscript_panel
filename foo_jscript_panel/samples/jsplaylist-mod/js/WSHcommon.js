@@ -879,3 +879,7 @@ function gdi_font(name, size, style) {
 	}
 	return fonts[id];
 }
+
+function fb2k_length(h) {
+	return Math.max(h.Length, 0);
+}
