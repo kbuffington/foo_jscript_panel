@@ -211,34 +211,22 @@ LRESULT CDialogConf::OnUwmKeyDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL&
 			break;
 		}
 	}
-	else if (modifiers == 0)
+	else if (wParam == VK_F3 && (modifiers == 0 || modifiers == SCMOD_SHIFT))
 	{
-		if (wParam == VK_F3)
+		if (m_lastSearchText.get_length())
 		{
-			// Find next one
-			if (m_lastSearchText.get_length())
+			if (modifiers == 0) // Next
 			{
 				FindNext(m_hWnd, m_editorctrl.m_hWnd, m_lastFlags, m_lastSearchText);
 			}
-			else
-			{
-				OpenFindDialog();
-			}
-		}
-	}
-	else if (modifiers == SCMOD_SHIFT)
-	{
-		if (wParam == VK_F3)
-		{
-			// Find previous one
-			if (m_lastSearchText.get_length())
+			else if (modifiers == SCMOD_SHIFT) // Previous
 			{
 				FindPrevious(m_hWnd, m_editorctrl.m_hWnd, m_lastFlags, m_lastSearchText);
 			}
-			else
-			{
-				OpenFindDialog();
-			}
+		}
+		else
+		{
+			OpenFindDialog();
 		}
 	}
 	return 0;
@@ -310,16 +298,9 @@ void CDialogConf::OnCloseCmd(UINT uNotifyCode, int nID, HWND wndCtl)
 		Apply();
 		return;
 	case IDCANCEL:
-		if (m_editorctrl.GetModify())
+		if (m_editorctrl.GetModify() && uMessageBox(m_hWnd, "Unsaved changes will be lost. Are you sure?", JSP_NAME, MB_ICONWARNING | MB_SETFOREGROUND | MB_YESNO) != IDYES)
 		{
-			int ret = uMessageBox(m_hWnd, "Unsaved changes will be lost. Are you sure?", JSP_NAME, MB_ICONWARNING | MB_SETFOREGROUND | MB_YESNO);
-			switch (ret)
-			{
-			case IDYES:
-				break;
-			default:
-				return;
-			}
+			return;
 		}
 	}
 	EndDialog(nID);
