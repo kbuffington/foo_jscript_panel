@@ -17,8 +17,6 @@ namespace
 
 	VALIDATE_COMPONENT_FILENAME(JSP_DLL_NAME);
 
-	CAppModule _Module;
-
 	extern "C" BOOL WINAPI DllMain(HINSTANCE ins, DWORD reason, LPVOID lp)
 	{
 		switch (reason)
@@ -30,14 +28,10 @@ namespace
 				if (FAILED(LoadTypeLibEx(string_wide_from_utf8_fast(path), REGKIND_NONE, &g_typelib))) return FALSE;
 
 				Scintilla_RegisterClasses(ins);
-				_Module.Init(nullptr, ins);
 			}
 			break;
 		case DLL_PROCESS_DETACH:
-			{
-				_Module.Term();
-				Scintilla_ReleaseResources();
-			}
+			Scintilla_ReleaseResources();
 			break;
 		}
 		return TRUE;
