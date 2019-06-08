@@ -303,7 +303,7 @@ interface IFb {
 		/*
 		Returns the handle of the currently selected item or null on failure.
 
-		The previously optional "force" parameter was removed in v2.3.0.
+		The previously optional "force" parameter was removed in v2.2.3.
 		*/
 
 		fb.GetLibraryItems(); (IMetadbHandleList)
