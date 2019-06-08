@@ -299,11 +299,11 @@ interface IFb {
 		fb.SetDSPPreset(1); // changes to the 2nd entry in the example above
 		*/
 
-		fb.GetFocusItem([force]); (IMetadbHandle)
+		fb.GetFocusItem(); (IMetadbHandle)
 		/*
-		force: boolean, default true.
-		When true, it will use the first item of the active playlist if it is unable to get the focus item.
-		Returns null on failure.
+		Returns the handle of the currently selected item or null on failure.
+
+		The previously optional "force" parameter was removed in v2.3.0.
 		*/
 
 		fb.GetLibraryItems(); (IMetadbHandleList)

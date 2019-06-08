@@ -186,18 +186,8 @@ STDMETHODIMP Fb::GetFocusItem(VARIANT_BOOL force, IMetadbHandle** pp)
 {
 	if (!pp) return E_POINTER;
 
-	*pp = nullptr;
 	metadb_handle_ptr metadb;
-	auto api = playlist_manager::get();
-
-	if (!api->activeplaylist_get_focus_item_handle(metadb) && force != VARIANT_FALSE)
-	{
-		api->activeplaylist_get_item_handle(metadb, 0);
-	}
-	if (metadb.is_valid())
-	{
-		*pp = new com_object_impl_t<MetadbHandle>(metadb);
-	}
+	*pp = playlist_manager::get()->activeplaylist_get_focus_item_handle(metadb) ? new com_object_impl_t<MetadbHandle>(metadb) : nullptr;
 	return S_OK;
 }
 
@@ -232,12 +222,8 @@ STDMETHODIMP Fb::GetNowPlaying(IMetadbHandle** pp)
 {
 	if (!pp) return E_POINTER;
 
-	*pp = nullptr;
 	metadb_handle_ptr metadb;
-	if (playback_control::get()->get_now_playing(metadb))
-	{
-		*pp = new com_object_impl_t<MetadbHandle>(metadb);
-	}
+	*pp = playback_control::get()->get_now_playing(metadb) ? new com_object_impl_t<MetadbHandle>(metadb) : nullptr;
 	return S_OK;
 }
 
@@ -299,14 +285,9 @@ STDMETHODIMP Fb::GetSelection(IMetadbHandle** pp)
 {
 	if (!pp) return E_POINTER;
 
-	*pp = nullptr;
 	metadb_handle_list items;
 	ui_selection_manager::get()->get_selection(items);
-
-	if (items.get_count())
-	{
-		*pp = new com_object_impl_t<MetadbHandle>(items[0]);
-	}
+	*pp = items.get_count() ? new com_object_impl_t<MetadbHandle>(items[0]) : nullptr;
 	return S_OK;
 }
 
