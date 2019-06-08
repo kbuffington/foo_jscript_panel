@@ -1744,7 +1744,7 @@ function on_selection_changed(metadb) {};
 
 function on_item_focus_change(playlist, from, to) {
 	if (!g_avoid_on_item_focus_change) {
-		g_metadb = (fb.IsPlaying || fb.IsPaused) ? fb.GetNowPlaying() : plman.PlaylistItemCount(plman.ActivePlaylist) > 0 ? fb.GetFocusItem() : false;
+		g_metadb = fb.IsPlaying ? fb.GetNowPlaying() : fb.GetFocusItem();
 		if (g_metadb) {
 			on_metadb_changed();
 		} else {
