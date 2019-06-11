@@ -1,6 +1,7 @@
 v2.2.3
-- CHG: Remove optional "force" argument from fb.GetFocusItem. No errors will be thrown
-       if present but it will be ignored.
+- CHG: Remove optional "force" argument from fb.GetFocusItem as it had no effect.
+       No errors will be thrown if present but it will be ignored. See
+       docs\interfaces.txt.
 - FIX: Various sample fixes.
 
 v2.2.2
