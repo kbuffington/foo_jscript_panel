@@ -8,6 +8,9 @@ namespace pfc {
 	// Reverse winPrefixPath
 	void winUnPrefixPath(pfc::string_base & out, const char * p_path);
 
+	string8 winPrefixPath( const char * in );
+	string8 winUnPrefixPath( const char * in );
+
 	class LastErrorRevertScope {
 	public:
 		LastErrorRevertScope() : m_val(GetLastError()) {}
@@ -99,8 +102,15 @@ private:
 	CGlobalLockScope m_scope;
 };
 
+//! Resigns active window status passing it to the parent window, if wnd or a child popup of is active. \n
+//! Use this to mitigate Windows 10 1809 active window handling bugs - call prior to DestroyWindow()
+void ResignActiveWindow(HWND wnd);
+//! Is point inside a control?
 bool IsPointInsideControl(const POINT& pt, HWND wnd);
+//! Is <child> a control inside <parent> window? Also returns true if child==parent.
 bool IsWindowChildOf(HWND child, HWND parent);
+//! Is <child> window a child (popup or control) of <parent> window? Also returns true if child==parent.
+bool IsPopupWindowChildOf(HWND child, HWND parent);
 
 class win32_menu {
 public:

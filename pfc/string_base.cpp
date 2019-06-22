@@ -117,6 +117,24 @@ string_filename_ext::string_filename_ext(const char * fn)
 	set_string(fn,ptr-fn);
 }
 
+size_t find_extension_offset(const char * src) {
+	const char * start = src + pfc::scan_filename(src);
+	const char * end = start + strlen(start);
+	const char * ptr = end - 1;
+	while (ptr > start && *ptr != '.')
+	{
+		if (*ptr == '?') end = ptr;
+		ptr--;
+	}
+
+	if (ptr >= start && *ptr == '.')
+	{
+		return ptr - src;
+	}
+
+	return SIZE_MAX;
+}
+
 string_extension::string_extension(const char * src)
 {
 	buffer[0]=0;
