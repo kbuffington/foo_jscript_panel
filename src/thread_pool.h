@@ -53,14 +53,3 @@ private:
 
 	PFC_CLASS_NOT_COPYABLE_EX(simple_thread_pool)
 };
-
-class simple_thread_worker_remover : public main_thread_callback
-{
-public:
-	simple_thread_worker_remover(simple_thread_worker* worker);
-
-	void callback_run() override;
-
-private:
-	simple_thread_worker* worker_;
-};
