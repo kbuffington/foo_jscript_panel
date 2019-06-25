@@ -1,6 +1,4 @@
 #pragma once
-#include <OleIdl.h>
-#include <ShlObj.h>
 
 class panel_window;
 

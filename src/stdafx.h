@@ -10,7 +10,6 @@
 #include <Windows.h>
 #include <GdiPlus.h>
 #include <ActivScp.h>
-#include <activdbg.h>
 #include <ComDef.h>
 #include <StrSafe.h>
 
