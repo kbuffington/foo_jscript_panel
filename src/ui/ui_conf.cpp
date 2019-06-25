@@ -48,7 +48,7 @@ BOOL CDialogConf::OnInitDialog(HWND hwndFocus, LPARAM lParam)
 		uAppendMenu(samples, MF_STRING | MF_POPUP, (UINT_PTR)sub, path_split[path_split.get_count() - 1]);
 	}
 
-	m_menu.AppendMenu(MF_STRING | MF_POPUP, (UINT_PTR)samples, L"Samples");
+	uAppendMenu(m_menu, MF_STRING | MF_POPUP, (UINT_PTR)samples, "Samples");
 
 	// Generate docs menu
 	HMENU docs = CreateMenu();
@@ -63,14 +63,14 @@ BOOL CDialogConf::OnInitDialog(HWND hwndFocus, LPARAM lParam)
 		uAppendMenu(docs, MF_STRING, ID_DOCS_BEGIN + i, display);
 	}
 
-	m_menu.AppendMenu(MF_STRING | MF_POPUP, (UINT_PTR)docs, L"Docs");
+	uAppendMenu(m_menu, MF_STRING | MF_POPUP, (UINT_PTR)docs, "Docs");
 
 	// Generate links menu
 	HMENU links = CreateMenu();
 	uAppendMenu(links, MF_STRING, ID_LINKS_BEGIN, "Wiki");
 	uAppendMenu(links, MF_STRING, ID_LINKS_BEGIN + 1, "Releases");
 	uAppendMenu(links, MF_STRING, ID_LINKS_BEGIN + 2, "Report an issue");
-	m_menu.AppendMenu(MF_STRING | MF_POPUP, (UINT_PTR)links , L"Links");
+	uAppendMenu(m_menu, MF_STRING | MF_POPUP, (UINT_PTR)links , "Links");
 
 	// Set caption text
 	uSetWindowText(m_hWnd, m_caption);
