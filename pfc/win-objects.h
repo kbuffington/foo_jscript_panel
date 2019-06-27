@@ -19,6 +19,11 @@ namespace pfc {
 	private:
 		const DWORD m_val;
 	};
+
+	string8 getWindowText(HWND wnd);
+	void setWindowText(HWND wnd, const char * txt); 
+	string8 getWindowClassName( HWND wnd );
+	HWND findOwningPopup(HWND wnd);
 }
 
 
@@ -45,7 +50,8 @@ private:
 	pfc::string_formatter m_buffer;
 };
 
-struct exception_win32 : public std::exception {
+class exception_win32 : public std::exception {
+public:
 	exception_win32(DWORD p_code) : std::exception(format_win32_error(p_code)), m_code(p_code) {}
 	DWORD get_code() const {return m_code;}
 private:
@@ -265,10 +271,10 @@ template<typename TBase> class ImplementCOMRefCounter : public TBase {
 public:
     template<typename ... arg_t> ImplementCOMRefCounter(arg_t && ... arg) : TBase(std::forward<arg_t>(arg) ...) {}
 
-	ULONG STDMETHODCALLTYPE AddRef() {
+	ULONG STDMETHODCALLTYPE AddRef() override {
 		return ++m_refcounter;
 	}
-	ULONG STDMETHODCALLTYPE Release() {
+	ULONG STDMETHODCALLTYPE Release() override {
 		long val = --m_refcounter;
 		if (val == 0) delete this;
 		return val;
@@ -300,7 +306,6 @@ namespace pfc {
     bool isCtrlKeyPressed();
     bool isAltKeyPressed();
 
-
 	class winHandle {
 	public:
 		winHandle(HANDLE h_ = INVALID_HANDLE_VALUE) : h(h_) {}
@@ -324,5 +329,13 @@ namespace pfc {
     void winSleep( double seconds );
     void sleepSeconds(double seconds);
     void yield();
-}
 
+#ifdef PFC_WINDOWS_DESKTOP_APP
+	void winSetThreadDescription(HANDLE hThread, const wchar_t * desc);
+
+#if PFC_DEBUG
+#define PFC_SET_THREAD_DESCRIPTION(msg) ::pfc::winSetThreadDescription(GetCurrentThread(), L##msg);
+#define PFC_SET_THREAD_DESCRIPTION_SUPPORTED
+#endif // PFC_DEBUG
+#endif // PFC_WINDOWS_DESKTOP_APP
+}

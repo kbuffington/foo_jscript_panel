@@ -1,5 +1,28 @@
 #include "foobar2000.h"
 
+namespace {
+	struct sysColorMapping_t {
+		GUID guid; int idx;
+	};
+	static const sysColorMapping_t sysColorMapping[] = {
+		{ ui_color_text, COLOR_WINDOWTEXT },
+		{ ui_color_background, COLOR_WINDOW },
+		{ ui_color_highlight, COLOR_HOTLIGHT },
+		{ui_color_selection, COLOR_HIGHLIGHT},
+	};
+}
+int ui_color_to_sys_color_index(const GUID & p_guid) {
+	for( unsigned i = 0; i < PFC_TABSIZE( sysColorMapping ); ++ i ) {
+		if ( p_guid == sysColorMapping[i].guid ) return sysColorMapping[i].idx;
+	}
+	return -1;
+}
+GUID ui_color_from_sys_color_index(int idx) {
+	for (unsigned i = 0; i < PFC_TABSIZE(sysColorMapping); ++i) {
+		if (idx == sysColorMapping[i].idx) return sysColorMapping[i].guid;
+	}
+	return pfc::guid_null;
+}
 
 namespace {
 	class ui_element_config_impl : public ui_element_config {
@@ -88,6 +111,13 @@ t_ui_color ui_element_instance_callback::query_std_color(const GUID & p_what) {
 #error portme
 #endif
 }
+#ifdef _WIN32
+t_ui_color ui_element_instance_callback::getSysColor(int sysColorIndex) {
+	GUID guid = ui_color_from_sys_color_index( sysColorIndex );
+	if ( guid != pfc::guid_null ) return query_std_color(guid);
+	return GetSysColor(sysColorIndex);
+}
+#endif
 
 bool ui_element::g_find(service_ptr_t<ui_element> & out, const GUID & id) {
 	return service_by_guid(out, id);

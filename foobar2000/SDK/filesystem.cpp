@@ -872,6 +872,8 @@ PFC_NORETURN void foobar2000_io::exception_io_from_win32(DWORD p_code) {
 	case ERROR_UNEXP_NET_ERR:
 		// QNAP threw this when messing with very long file paths and concurrent conversion, probably SMB daemon crashed
 		throw exception_io("Unexpected netwrok error");
+	case ERROR_EFS_NOT_ALLOWED_IN_TRANSACTION:
+		throw exception_io("Transacted updates of encrypted content are not supported");
 	default:
 		throw exception_io_win32_ex(p_code);
 	}
@@ -1008,6 +1010,17 @@ bool foobar2000_io::extract_native_path_ex(const char * p_fspath, pfc::string_ba
 		p_native = p_fspath;
 	}
 	return true;
+}
+
+bool foobar2000_io::extract_native_path_archive_aware(const char * in, pfc::string_base & out) {
+	if (foobar2000_io::extract_native_path(in, out)) return true;
+	if (archive_impl::g_is_unpack_path(in)) {
+		pfc::string8 arc, dummy;
+		if (archive_impl::g_parse_unpack_path(in, arc, dummy)) {
+			return foobar2000_io::extract_native_path(arc, out);
+		}
+	}
+	return false;
 }
 
 pfc::string stream_reader::read_string(abort_callback & p_abort) {
@@ -1356,6 +1369,7 @@ void filesystem::rewrite_file(const char * path, abort_callback & abort, double 
 			{
 				auto f = this->openWriteNew( temp, abort, opTimeout );
 				worker(f);
+				f->flushFileBuffers_( abort );
 			}
 
 			retryOnSharingViolation(opTimeout, abort, [&] {
@@ -1470,7 +1484,37 @@ bool filesystem::commit_if_transacted(abort_callback &abort) {
 	return rv;
 }
 
+t_filestats filesystem::get_stats(const char * path, abort_callback & abort) {
+	t_filestats s; bool dummy;
+	this->get_stats(path, s, dummy, abort);
+	return s;
+}
+
 bool file_dynamicinfo_v2::get_dynamic_info(class file_info & p_out) {
 	t_filesize dummy = 0;
 	return this->get_dynamic_info_v2(p_out, dummy);
+}
+
+void file::flushFileBuffers_(abort_callback&a) {
+	file_lowLevelIO::ptr f;
+	if ( f &= this ) f->flushFileBuffers(a);
+}
+
+size_t file::lowLevelIO_(const GUID & guid, size_t arg1, void * arg2, size_t arg2size, abort_callback & abort) {
+	size_t retval = 0;
+	file_lowLevelIO::ptr f;
+	if (f &= this) retval = f->lowLevelIO(guid, arg1, arg2, arg2size, abort);
+	return retval;
+}
+
+bool file_lowLevelIO::flushFileBuffers(abort_callback & abort) {
+	return this->lowLevelIO( guid_flushFileBuffers, 0, nullptr, 0, abort) != 0;
+}
+
+bool file_lowLevelIO::getFileTimes(filetimes_t & out, abort_callback & a) {
+	return this->lowLevelIO(guid_getFileTimes, 0, &out, sizeof(out), a) != 0;
+}
+
+bool file_lowLevelIO::setFileTimes(filetimes_t const & in, abort_callback & a) {
+	return this->lowLevelIO(guid_setFileTimes, 0, (void*)&in, sizeof(in), a) != 0;
 }

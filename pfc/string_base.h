@@ -206,6 +206,7 @@ namespace pfc {
 		
 		inline bool is_empty() const {return *get_ptr()==0;}
 		
+		void skip_trailing_chars( const char * lstChars );
 		void skip_trailing_char(unsigned c = ' ');
 
 		bool is_valid_utf8() const {return pfc::is_valid_utf8(get_ptr());}
@@ -250,7 +251,12 @@ namespace pfc {
 		void truncate_to_parent_path();
 		void add_filename( const char * fn ) {end_with_slash(); *this += fn; }
 
-        t_size replace_string ( const char * replace, const char * replaceWith, t_size start = 0);
+		//! Replaces one string with another. Returns the number of occurances - zero if the string was not altered.
+        size_t replace_string ( const char * replace, const char * replaceWith, t_size start = 0);
+		//! Replaces one string with another, writing the output to another string object. \n
+		//! Returns the number of occurances replaced. \n
+		//! Special: returns zero if no occurances were found - and the target string is NOT modified if so. Use with care!
+		size_t replace_string_ex( pfc::string_base & target, const char * replace, const char * replaceWith, t_size start = 0) const;
 
         string_base & _formatter() const {return const_cast<string_base&>(*this);}
         
@@ -1095,4 +1101,6 @@ namespace pfc {
 
 
 	char * strDup(const char * src); // POSIX strdup() clone, prevent MSVC complaining
+
+	string8 lineEndingsToWin( const char * str );
 }

@@ -155,11 +155,11 @@ static const char * const specialIllegalNames[] = {
 };
 
 enum { maxPathComponent = 255 };
-static unsigned safeTruncat( const char * str, unsigned maxLen ) {
-	unsigned i = 0;
-	unsigned ret = 0;
+static size_t safeTruncat( const char * str, size_t maxLen ) {
+	size_t i = 0;
+	size_t ret = 0;
 	for( ; i < maxLen; ++ i ) {
-		unsigned d = pfc::utf8_char_len( str + ret );
+		auto d = pfc::utf8_char_len( str + ret );
 		if ( d == 0 ) break;
 		ret += d;
 	}
@@ -169,7 +169,7 @@ static unsigned safeTruncat( const char * str, unsigned maxLen ) {
 static size_t utf8_length( const char * str ) {
 	size_t ret = 0;
 	for (; ++ret;) {
-		unsigned d = pfc::utf8_char_len( str );
+		size_t d = pfc::utf8_char_len( str );
 		if ( d == 0 ) break;
 		str += d;
 	}
@@ -193,7 +193,7 @@ static string truncatePathComponent( string name, bool preserveExt ) {
 		}
 	}
 
-	unsigned truncat = safeTruncat( name.c_str(), maxPathComponent );
+	size_t truncat = safeTruncat( name.c_str(), maxPathComponent );
 	return name.subString(0, truncat);
 }
 

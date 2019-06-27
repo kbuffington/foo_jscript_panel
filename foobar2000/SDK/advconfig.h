@@ -24,7 +24,7 @@ public:
 	}
 
 	static const GUID guid_root;
-	static const GUID guid_branch_tagging,guid_branch_decoding,guid_branch_tools,guid_branch_playback,guid_branch_display,guid_branch_debug;
+	static const GUID guid_branch_tagging,guid_branch_decoding,guid_branch_tools,guid_branch_playback,guid_branch_display,guid_branch_debug, guid_branch_tagging_general;
 
 	FB2K_MAKE_SERVICE_INTERFACE_ENTRYPOINT(advconfig_entry);
 };

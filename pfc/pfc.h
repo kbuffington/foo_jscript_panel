@@ -17,12 +17,6 @@
 #endif
 
 
-#define PFC_DLL_EXPORT
-
-// Suppress this line when using PFC outside classic foobar2000
-// When enabled, certain shared.dll methods are referenced
-#define PFC_FOOBAR2000_CLASSIC
-
 #ifdef _WINDOWS
 
 #ifndef STRICT
@@ -187,7 +181,7 @@ namespace pfc {
 #include "bit_array_impl_part2.h"
 #include "timers.h"
 #include "guid.h"
-#include "byte_order_helper.h"
+#include "byte_order.h"
 #include "other.h"
 #include "chain_list_v2.h"
 #include "rcptr.h"
@@ -223,5 +217,9 @@ namespace pfc {
 #include "filehandle.h"
 
 #define PFC_INCLUDED 1
+
+#ifndef PFC_SET_THREAD_DESCRIPTION
+#define PFC_SET_THREAD_DESCRIPTION(X)
+#endif
 
 #endif //___PFC_H___

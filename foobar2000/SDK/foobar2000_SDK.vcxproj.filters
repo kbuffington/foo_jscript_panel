@@ -460,5 +460,8 @@
     <ClCompile Include="foosort.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="track_property.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

@@ -1,4 +1,5 @@
 #include "pfc.h"
+#include <set>
 
 namespace pfc {
 
@@ -7,6 +8,40 @@ void string_receiver::add_char(t_uint32 p_char)
 	char temp[8];
 	t_size len = utf8_encode_char(p_char,temp);
 	if (len>0) add_string(temp,len);
+}
+
+void string_base::skip_trailing_chars( const char * lstCharsStr ) {
+    std::set<unsigned> lstChars;
+    for ( ;; ) {
+        unsigned c;
+        auto delta = utf8_decode_char( lstCharsStr, c );
+        if ( delta == 0 ) break;
+        lstCharsStr += delta;
+        lstChars.insert( c );
+    }
+    
+    const char * str = get_ptr();
+    t_size ptr,trunc = 0;
+    bool need_trunc = false;
+    for(ptr=0;str[ptr];)
+    {
+        unsigned c;
+        t_size delta = utf8_decode_char(str+ptr,c);
+        if (delta==0) break;
+        if ( lstChars.count( c ) > 0 )
+        {
+            if (!need_trunc) {
+                need_trunc = true;
+                trunc = ptr;
+            }
+        }
+        else
+        {
+            need_trunc = false;
+        }
+        ptr += delta;
+    }
+    if (need_trunc) truncate(trunc);
 }
 
 void string_base::skip_trailing_char(unsigned skip)
@@ -1075,8 +1110,13 @@ void string_base::truncate_to_parent_path() {
 	this->truncate( at );
 }
 
-t_size string_base::replace_string ( const char * replace, const char * replaceWith, t_size start) {
-    string_formatter temp;
+size_t string_base::replace_string(const char * replace, const char * replaceWith, t_size start) {
+	string_formatter temp;
+	size_t ret = replace_string_ex(temp, replace, replaceWith, start);
+	if ( ret > 0 ) * this = temp;
+	return ret;
+}
+size_t string_base::replace_string_ex (string_base & temp, const char * replace, const char * replaceWith, t_size start) const {
     size_t srcDone = 0, walk = start;
     size_t occurances = 0;
     const char * const source = this->get_ptr();
@@ -1099,10 +1139,9 @@ t_size string_base::replace_string ( const char * replace, const char * replaceW
         walk += replaceLen;
         srcDone = walk;
     }
-    this->set_string( temp );
     return occurances;
-    
 }
+
 void urlEncodeAppendRaw(pfc::string_base & out, const char * in, t_size inSize) {
 	for(t_size walk = 0; walk < inSize; ++walk) {
 		const char c = in[walk];
@@ -1146,7 +1185,7 @@ uint32_t charLower(uint32_t param)
 	}
 #ifdef PFC_WINDOWS_DESKTOP_APP
 	else if (param<0x10000) {
-		return (unsigned)CharLowerW((WCHAR*)param);
+		return (uint32_t)(size_t)CharLowerW((WCHAR*)(size_t)param);
 	}
 #endif
 	else return param;
@@ -1160,7 +1199,7 @@ uint32_t charUpper(uint32_t param)
 	}
 #ifdef PFC_WINDOWS_DESKTOP_APP
 	else if (param<0x10000) {
-		return (unsigned)CharUpperW((WCHAR*)param);
+		return (uint32_t)(size_t)CharUpperW((WCHAR*)(size_t)param);
 	}
 #endif
 	else return param;
@@ -1290,4 +1329,22 @@ void string_base::fix_dir_separator(char c) {
 		return equals(make(str) );
 	}
 
+	string8 lineEndingsToWin(const char * str) {
+		string8 ret;
+		const char * walk = str;
+		for( ;; ) {
+			const char * eol = strchr( walk, '\n' );
+			if ( eol == nullptr ) {
+				ret += walk; break;
+			}
+			const char * next = eol + 1;
+			if ( eol > walk ) {
+				if (eol[-1] == '\r') --eol;
+				if ( eol > walk ) ret.add_string_nc(walk, eol-walk);
+			}
+			ret.add_string_nc("\r\n",2);
+			walk = next;
+		}
+		return ret;
+	}
 } //namespace pfc

@@ -12,8 +12,8 @@ public:
 
 	inline t_size get_size() const {return get_count();}
 
-	inline T get_item(t_size n) const {T temp; get_item_ex(temp,n); return std::move(temp);}
-	inline T operator[](t_size n) const {T temp; get_item_ex(temp,n); return std::move(temp);}
+	inline T get_item(t_size n) const {T temp; get_item_ex(temp,n); return temp;}
+	inline T operator[](t_size n) const {T temp; get_item_ex(temp,n); return temp;}
 
 	template<typename t_compare>
 	t_size find_duplicates_sorted_t(t_compare p_compare,bit_array_var & p_out) const

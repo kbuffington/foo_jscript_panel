@@ -178,6 +178,8 @@ namespace pfc {
 		void set(t_size n, bool val);
 
 		bool get(t_size n) const;
+
+		size_t size() const {return m_count;}
 	};
 
 

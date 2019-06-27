@@ -98,23 +98,9 @@ static const GUID ui_font_statusbar = { 0xc7fd555b, 0xbd15, 0x4f74, { 0x93, 0xe,
 static const GUID ui_font_console = { 0xb08c619d, 0xd3d1, 0x4089, { 0x93, 0xb2, 0xd5, 0xb, 0x87, 0x2d, 0x1a, 0x25 } };
 
 
-
-
 //! @returns -1 when the GUID is unknown / unmappable, index that can be passed over to GetSysColor() otherwise.
-static int ui_color_to_sys_color_index(const GUID & p_guid) {
-	if (p_guid == ui_color_text) {
-		return COLOR_WINDOWTEXT;
-	} else if (p_guid == ui_color_background) {
-		return COLOR_WINDOW;
-	} else if (p_guid == ui_color_highlight) {
-		return COLOR_HOTLIGHT;
-	} else if (p_guid == ui_color_selection) {
-		return COLOR_HIGHLIGHT;
-	} else {
-		return -1;
-	}
-}
-
+int ui_color_to_sys_color_index(const GUID & p_guid);
+GUID ui_color_from_sys_color_index( int idx );
 
 struct ui_element_min_max_info {
 	ui_element_min_max_info() : m_min_width(0), m_max_width(~0), m_min_height(0), m_max_height(~0) {}
@@ -154,6 +140,9 @@ public:
 
 	//! Helper - a wrapper around query_color(), if the color is not user-overridden, returns relevant system color.
 	t_ui_color query_std_color(const GUID & p_what);
+#ifdef _WIN32
+	t_ui_color getSysColor( int sysColorIndex );
+#endif
 
 	bool is_elem_visible_(service_ptr_t<class ui_element_instance> elem);
 
@@ -527,14 +516,6 @@ public:
 	
 	//! Highlights the element, creating an overlay window above it. Caller is responsible for destroying the overlay.
 	virtual HWND highlight_element( HWND wndElem ) = 0;
-};
-
-class NOVTABLE ui_element_typable_window_manager : public service_base {
-	FB2K_MAKE_SERVICE_COREAPI(ui_element_typable_window_manager)
-public:
-	virtual void add(HWND wnd) = 0;
-	virtual void remove(HWND wnd) = 0;
-	virtual bool is_registered(HWND wnd) = 0;
 };
 
 //! Dispatched through ui_element_instance::notify() when host changes color settings. Other parameters are not used and should be set to zero.
