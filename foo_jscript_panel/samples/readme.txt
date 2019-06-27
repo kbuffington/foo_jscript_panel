@@ -10,7 +10,7 @@ All these should work fine on any system.
 samples\complete
 ================
 
-All these scripts should work on any system with IE8 or later installed. 
+All these scripts should work on any system with IE8 or later installed.
 
 There are three exceptions:
 
