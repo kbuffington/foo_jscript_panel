@@ -115,12 +115,12 @@ _.mixin({
 	cc : function (name) {
 		return utils.CheckComponent(name);
 	},
-	chrToImg : function (chr, colour) {
+	chrToImg : function (chr, colour, font) {
 		var size = 96;
 		var temp_bmp = gdi.CreateImage(size, size);
 		var temp_gr = temp_bmp.GetGraphics();
 		temp_gr.SetTextRenderingHint(4);
-		temp_gr.DrawString(chr, fontawesome, colour, 0, 0, size, size, SF_CENTRE);
+		temp_gr.DrawString(chr, font || fontawesome, colour, 0, 0, size, size, SF_CENTRE);
 		temp_bmp.ReleaseGraphics(temp_gr);
 		temp_gr = null;
 		return temp_bmp;
