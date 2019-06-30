@@ -29,7 +29,7 @@ _.mixin({
 			if (this.trace(x, y)) {
 				x -= this.x;
 				var pos = x < 0 ? 0 : x > this.w ? 1 : x / this.w;
-				this.drag_vol = 50 * Math.log(0.99 * pos + 0.01) / Math.LN10;
+				this.drag_vol = Math.max(-100, 10 * Math.log(pos) / Math.LN2);
 				_.tt(this.drag_vol.toFixed(2) + ' dB');
 				if (this.drag) {
 					fb.Volume = this.drag_vol;
@@ -68,7 +68,7 @@ _.mixin({
 		}
 		
 		this.pos = function (type) {
-			return Math.ceil((type == 'h' ? this.h : this.w) * (Math.pow(10, fb.Volume / 50) - 0.01) / 0.99);
+			return Math.ceil((type == 'h' ? this.h : this.w) * Math.pow(2, fb.Volume / 10));
 		}
 		
 		this.x = x;
