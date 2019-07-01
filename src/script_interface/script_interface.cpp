@@ -1857,8 +1857,7 @@ STDMETHODIMP MetadbHandleList::UpdateFileInfoFromJSON(BSTR str)
 		json obj = is_array ? j[i] : j;
 		if (!obj.is_object() || obj.size() == 0) return E_INVALIDARG;
 
-		metadb_handle_ptr item = m_handles[i];
-		item->get_info(info[i]);
+		info[i] = m_handles[i]->get_info_ref()->info();
 
 		for (json::iterator it = obj.begin(); it != obj.end(); ++it)
 		{
