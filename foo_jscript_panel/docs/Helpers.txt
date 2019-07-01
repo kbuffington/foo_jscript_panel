@@ -70,16 +70,12 @@ function StringFormat() {
 	return ((h_align << 28) | (v_align << 24) | (trimming << 20) | flags);
 }
 
-// Based on human hearing curve
-// 0 <= pos <= 1
-// return a value value: -100 <= vol <= 0
 function pos2vol(pos) {
-	return 50 * Math.log(0.99 * pos + 0.01) / Math.LN10;
+	return Math.max(-100, 10 * Math.log(pos) / Math.LN2);
 }
 
-// Inverse function of pos2vol()
 function vol2pos(v){
-	return (Math.pow(10, v / 50) - 0.01) / 0.99;
+	return Math.pow(2, fb.Volume / 10);
 }
 
 // pre-calculated colours
