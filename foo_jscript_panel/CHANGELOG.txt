@@ -2,8 +2,9 @@ v2.2.3
 - CHG: Remove optional "force" argument from fb.GetFocusItem as it had no effect.
        No errors will be thrown if present but it will be ignored. See
        docs\interfaces.txt.
-- FIX: Various sample fixes.
-- CHG: Compiled with latest foobar2000 SDK (2019-06-17).
+- FIX: Various sample fixes. Volume now scales at the same rate as the
+       Default UI volume slider.
+- CHG: Compiled with latest foobar2000 SDK.
 
 v2.2.2
 - FIX: Fix broken colour handling in IGdiBitmap GetColourSchemeJSON. The original code
