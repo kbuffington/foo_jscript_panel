@@ -2,9 +2,6 @@
 
 #define _WIN32_WINNT _WIN32_WINNT_WINXP
 #define WINVER _WIN32_WINNT_WINXP
-#define _WIN32_IE _WIN32_IE_IE60
-
-#define TO_VARIANT_BOOL(v) ((v) ? (VARIANT_TRUE) : (VARIANT_FALSE))
 
 #include <WinSock2.h>
 #include <Windows.h>

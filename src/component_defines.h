@@ -16,6 +16,8 @@
 #define JSP_VERSION JSP_VERSION_NUMBER JSP_VERSION_TEST JSP_VERSION_DEBUG_SUFFIX
 #define JSP_NAME_VERSION JSP_NAME " v" JSP_VERSION
 
+#define TO_VARIANT_BOOL(v) ((v) ? (VARIANT_TRUE) : (VARIANT_FALSE))
+
 namespace jsp_guids
 {
 	constexpr GUID ui_pref = { 0x19681d48, 0xd90e, 0x4cb6,{ 0xbb, 0x6, 0x69, 0x5f, 0x42, 0x57, 0xbe, 0x23 } };
