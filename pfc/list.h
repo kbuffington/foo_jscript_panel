@@ -232,8 +232,16 @@ public:
 		int compare(const T& p_item1,const T& p_item2) {return ::pfc::compare_t(p_item1,p_item2);}
 	};
 
-	void sort() {sort(sort_callback_auto());}
-	template<typename t_compare> void sort_t(t_compare p_compare) {sort(sort_callback_impl_t<t_compare>(p_compare));}
+	void sort()
+	{
+		sort_callback_auto p_callback;
+		sort(p_callback);
+	}
+	template<typename t_compare> void sort_t(t_compare p_compare)
+	{
+		sort_callback_impl_t<t_compare> p_callback(p_compare);
+		sort(p_callback);
+	}
 	template<typename t_compare> void sort_stable_t(t_compare p_compare) {sort_stable(sort_callback_impl_t<t_compare>(p_compare));}
 
 	template<typename t_compare> void sort_remove_duplicates_t(t_compare p_compare)
