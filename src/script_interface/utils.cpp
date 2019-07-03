@@ -10,15 +10,14 @@ STDMETHODIMP Utils::CheckComponent(BSTR name, VARIANT_BOOL is_dll, VARIANT_BOOL*
 {
 	if (!p) return E_POINTER;
 
-	service_enum_t<componentversion> e;
-	componentversion::ptr ptr;
 	string_utf8_from_wide uname(name);
 	pfc::string8_fast temp;
 
 	*p = VARIANT_FALSE;
 
-	while (e.next(ptr))
+	for (auto e = service_enum_t<componentversion>(); !e.finished(); ++e)
 	{
+		auto ptr = *e;
 		if (is_dll != VARIANT_FALSE)
 		{
 			ptr->get_file_name(temp);

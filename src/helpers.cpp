@@ -181,22 +181,15 @@ namespace helpers
 	{
 		pfc::map_t<GUID, mainmenu_group::ptr> group_guid_map;
 
+		for (auto e = service_enum_t<mainmenu_group>(); !e.finished(); ++e)
 		{
-			service_enum_t<mainmenu_group> e;
-			mainmenu_group::ptr ptr;
-
-			while (e.next(ptr))
-			{
-				GUID guid = ptr->get_guid();
-				group_guid_map.find_or_add(guid) = ptr;
-			}
+			auto ptr = *e;
+			group_guid_map.find_or_add(ptr->get_guid()) = ptr;
 		}
 
-		service_enum_t<mainmenu_commands> e;
-		mainmenu_commands::ptr ptr;
-
-		while (e.next(ptr))
+		for (auto e = service_enum_t<mainmenu_commands>(); !e.finished(); ++e)
 		{
+			auto ptr = *e;
 			for (t_size i = 0; i < ptr->get_command_count(); ++i)
 			{
 				pfc::string8_fast path;
