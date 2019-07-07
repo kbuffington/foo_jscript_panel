@@ -519,7 +519,9 @@ _.mixin({
 		
 		this.success = function (base) {
 			_(_.getElementsByTagName(this.xmlhttp.responseText, 'img'))
-				.filter({className : 'image-list-image'})
+				.filter(function (item) {
+					return item.src.indexOf('https://lastfm-img2.akamaized.net/i/u/avatar170s/') == 0;
+				})
 				.take(this.properties.limit.value)
 				.forEach(function (item) {
 					var url = item.src.replace('avatar170s/', '');

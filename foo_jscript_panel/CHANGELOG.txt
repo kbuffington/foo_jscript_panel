@@ -3,7 +3,8 @@ v2.2.3
        No errors will be thrown if present but it will be ignored. See
        docs\interfaces.txt.
 - FIX: Various sample fixes. Volume now scales at the same rate as the
-       Default UI volume slider.
+       Default UI volume slider. Thumbs has been fixed to work with Last.fm
+       site update.
 - CHG: Compiled with latest foobar2000 SDK.
 
 v2.2.2
