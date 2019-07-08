@@ -18,7 +18,6 @@ namespace helpers
 	IGdiBitmap* get_album_art(const metadb_handle_ptr& handle, t_size art_id, bool need_stub, bool no_load, pfc::string_base& image_path)
 	{
 		const GUID what = convert_artid_to_guid(art_id);
-		abort_callback_dummy abort;
 		auto api = album_art_manager_v2::get();
 		album_art_extractor_instance_v2::ptr ptr;
 		album_art_data_ptr data;
@@ -26,8 +25,8 @@ namespace helpers
 
 		try
 		{
-			ptr = api->open(pfc::list_single_ref_t<metadb_handle_ptr>(handle), pfc::list_single_ref_t<GUID>(what), abort);
-			data = ptr->query(what, abort);
+			ptr = api->open(pfc::list_single_ref_t<metadb_handle_ptr>(handle), pfc::list_single_ref_t<GUID>(what), fb2k::noAbort);
+			data = ptr->query(what, fb2k::noAbort);
 		}
 		catch (...)
 		{
@@ -35,8 +34,8 @@ namespace helpers
 			{
 				try
 				{
-					ptr = api->open_stub(abort);
-					data = ptr->query(what, abort);
+					ptr = api->open_stub(fb2k::noAbort);
+					data = ptr->query(what, fb2k::noAbort);
 				}
 				catch (...) {}
 			}
@@ -48,7 +47,7 @@ namespace helpers
 			{
 				ret = read_album_art_into_bitmap(data);
 			}
-			album_art_path_list::ptr pathlist = ptr->query_paths(what, abort);
+			album_art_path_list::ptr pathlist = ptr->query_paths(what, fb2k::noAbort);
 			if (pathlist->get_count() > 0)
 			{
 				image_path.set_string(file_path_display(pathlist->get_path(0)));
@@ -61,7 +60,6 @@ namespace helpers
 	{
 		album_art_extractor_instance_ptr aaep;
 		const GUID what = convert_artid_to_guid(art_id);
-		abort_callback_dummy abort;
 		album_art_extractor::ptr ptr;
 		album_art_data_ptr data;
 		IGdiBitmap* ret = nullptr;
@@ -70,8 +68,8 @@ namespace helpers
 		{
 			try
 			{
-				aaep = ptr->open(nullptr, rawpath, abort);
-				data = aaep->query(what, abort);
+				aaep = ptr->open(nullptr, rawpath, fb2k::noAbort);
+				data = aaep->query(what, fb2k::noAbort);
 				ret = read_album_art_into_bitmap(data);
 			}
 			catch (...) {}
@@ -564,9 +562,8 @@ namespace helpers
 		try
 		{
 			file_ptr io;
-			abort_callback_dummy abort;
-			filesystem::g_open_read(io, fileName, abort);
-			io->read_string_raw(text, abort);
+			filesystem::g_open_read(io, fileName, fb2k::noAbort);
+			io->read_string_raw(text, fb2k::noAbort);
 			textSize = text.get_length();
 			if (pfc::is_valid_utf8(text)) return 65001;
 		}
@@ -694,7 +691,6 @@ namespace helpers
 
 	void list(const char* path, bool files, bool recur, pfc::string_list_impl& out)
 	{
-		abort_callback_dummy abort;
 		pfc::string8_fast folder;
 		filesystem::g_get_canonical_path(path, folder);
 
@@ -704,16 +700,16 @@ namespace helpers
 			{
 				if (recur)
 				{
-					foobar2000_io::listFilesRecur(folder, out, abort);
+					foobar2000_io::listFilesRecur(folder, out, fb2k::noAbort);
 				}
 				else
 				{
-					foobar2000_io::listFiles(folder, out, abort);
+					foobar2000_io::listFiles(folder, out, fb2k::noAbort);
 				}
 			}
 			else
 			{
-				foobar2000_io::listDirectories(folder, out, abort);
+				foobar2000_io::listDirectories(folder, out, fb2k::noAbort);
 			}
 		}
 		catch (...) {}

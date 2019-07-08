@@ -1485,12 +1485,11 @@ STDMETHODIMP MetadbHandleList::AttachImage(BSTR image_path, UINT art_id)
 		if (!filesystem::g_is_remote_or_unrecognized(path))
 		{
 			file::ptr file;
-			abort_callback_dummy abort;
-			filesystem::g_open(file, path, filesystem::open_mode_read, abort);
+			filesystem::g_open(file, path, filesystem::open_mode_read, fb2k::noAbort);
 			if (file.is_valid())
 			{
 				auto tmp = fb2k::service_new<album_art_data_impl>();
-				tmp->from_stream(file.get_ptr(), t_size(file->get_size_ex(abort)), abort);
+				tmp->from_stream(file.get_ptr(), t_size(file->get_size_ex(fb2k::noAbort)), fb2k::noAbort);
 				data = tmp;
 			}
 		}
