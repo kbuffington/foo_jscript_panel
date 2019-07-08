@@ -300,7 +300,11 @@ bool filesystem::g_relative_path_parse(const char * relative_path,const char * p
 	return false;
 }
 
-
+bool archive::is_our_archive( const char * path ) {
+	archive_v2::ptr v2;
+	if ( v2 &= this ) return v2->is_our_archive( path );
+	return true; // accept all files
+}
 
 bool archive_impl::get_canonical_path(const char * path,pfc::string_base & out)
 {
@@ -547,8 +551,7 @@ namespace {
 					file::g_transfer_object(r_src,r_dst,size,p_abort);
 				} catch(...) {
 					r_dst.release();
-                    abort_callback_dummy dummy;
-					try {m_fs->remove(dst,dummy);} catch(...) {}
+                    try {m_fs->remove(dst,fb2k::noAbort);} catch(...) {}
 					throw;
 				}
 			}
@@ -609,8 +612,7 @@ void filesystem::g_copy(const char * src,const char * dst,abort_callback & p_abo
 			file::g_transfer_object(r_src,r_dst,size,p_abort);
 		} catch(...) {
 			r_dst.release();
-            abort_callback_dummy dummy;
-			try {g_remove(dst,dummy);} catch(...) {}
+			try {g_remove(dst,fb2k::noAbort);} catch(...) {}
 			throw;
 		}
 	}
@@ -673,8 +675,7 @@ void filesystem::g_open_tempmem(service_ptr_t<file> & p_out,abort_callback & p_a
 }
 
 file::ptr filesystem::g_open_tempmem() {
-    abort_callback_dummy aborter;
-	file::ptr f; g_open_tempmem(f, aborter); return f;
+	file::ptr f; g_open_tempmem(f, fb2k::noAbort); return f;
 }
 
 void archive_impl::list_directory(const char * p_path,directory_callback & p_out,abort_callback & p_abort) {
@@ -783,10 +784,7 @@ namespace {
 
 	class exception_io_win32_ex : public exception_io_win32 {
 	public:
-		exception_io_win32_ex(DWORD p_code) {
-			pfc::string_formatter formatter;
-			m_msg = formatter << "I/O error (win32 #" << (t_uint32)p_code << ")";
-		}
+		exception_io_win32_ex(DWORD p_code) : m_msg(PFC_string_formatter() << "I/O error (win32 #" << (t_uint32)p_code << ")") {}
 		exception_io_win32_ex(const exception_io_win32_ex & p_other) {*this = p_other;}
 		const char * what() const throw() {return m_msg;}
 	private:
@@ -804,8 +802,7 @@ PFC_NORETURN void foobar2000_io::win32_file_write_failure(DWORD p_code, const ch
 
 PFC_NORETURN void foobar2000_io::exception_io_from_win32(DWORD p_code) {
 #if PFC_DEBUG
-	pfc::debugLog debugLog;
-	debugLog << "exception_io_from_win32: " << p_code;
+	PFC_DEBUGLOG << "exception_io_from_win32: " << p_code;
 #endif
 	//pfc::string_fixed_t<32> debugMsg; debugMsg << "Win32 I/O error #" << (t_uint32)p_code;
 	//TRACK_CALL_TEXT(debugMsg);
@@ -1382,8 +1379,7 @@ void filesystem::rewrite_file(const char * path, abort_callback & abort, double 
 
 		} catch(...) {
 			try {
-				abort_callback_dummy noAbort;
-				retryOnSharingViolation(opTimeout, abort, [&] { this->remove(temp, noAbort); } );
+				retryOnSharingViolation(opTimeout, abort, [&] { this->remove(temp, fb2k::noAbort); } );
 			} catch(...) {}
 			throw;
 		}

@@ -109,6 +109,7 @@
     <ClInclude Include="album_art.h" />
     <ClInclude Include="album_art_helpers.h" />
     <ClInclude Include="app_close_blocker.h" />
+    <ClInclude Include="archive.h" />
     <ClInclude Include="audio_chunk.h" />
     <ClInclude Include="audio_chunk_impl.h" />
     <ClInclude Include="audio_postprocessor.h" />

@@ -34,7 +34,7 @@ public:
 //! Helper for reading data from ui_element_config.
 class ui_element_config_parser : public stream_reader_formatter<> {
 public:
-	ui_element_config_parser(ui_element_config::ptr in) : m_data(in), _m_stream(in->get_data(),in->get_data_size()), stream_reader_formatter(_m_stream,_m_abort) {}
+	ui_element_config_parser(ui_element_config::ptr in) : m_data(in), _m_stream(in->get_data(),in->get_data_size()), stream_reader_formatter(_m_stream,fb2k::noAbort) {}
 
 	void reset() {_m_stream.reset();}
 	t_size get_remaining() const {return _m_stream.get_remaining();}
@@ -43,14 +43,13 @@ public:
 	ui_element_config::ptr subelement(const GUID & id, t_size dataSize);
 private:
 	const ui_element_config::ptr m_data;
-	abort_callback_dummy _m_abort;
 	stream_reader_memblock_ref _m_stream;
 };
 
 //! Helper creating ui_element_config from your data.
 class ui_element_config_builder : public stream_writer_formatter<> {
 public:
-	ui_element_config_builder() : stream_writer_formatter(_m_stream,_m_abort) {}
+	ui_element_config_builder() : stream_writer_formatter(_m_stream,fb2k::noAbort) {}
 	ui_element_config::ptr finish(const GUID & id) {
 		return ui_element_config::g_create(id,_m_stream.m_buffer);
 	}
@@ -58,7 +57,6 @@ public:
 		_m_stream.m_buffer.set_size(0);
 	}
 private:
-	abort_callback_dummy _m_abort;
 	stream_writer_buffer_simple _m_stream;
 };
 

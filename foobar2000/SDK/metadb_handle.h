@@ -1,3 +1,5 @@
+#pragma once
+
 class titleformat_hook;
 class titleformat_text_filter;
 class titleformat_object;
@@ -248,17 +250,9 @@ inline pfc::string_base & operator<<(pfc::string_base & p_fmt,const metadb_handl
 }
 
 
-class string_format_title {
-public:
-	string_format_title(metadb_handle_ptr p_item,const char * p_script) {
-		p_item->format_title_legacy(NULL,m_data,p_script,NULL);
-	}
-	string_format_title(metadb_handle_ptr p_item,service_ptr_t<class titleformat_object> p_script) {
-		p_item->format_title(NULL,m_data,p_script,NULL);
-	}
 
-	const char * get_ptr() const {return m_data.get_ptr();}
-	operator const char * () const {return m_data.get_ptr();}
-private:
-	pfc::string8_fastalloc m_data;
-};
+namespace fb2k {
+	pfc::string_formatter formatTrackList( metadb_handle_list_cref );
+	pfc::string_formatter formatTrackTitle(metadb_handle_ptr item, const char * script = "%title%" );
+	pfc::string_formatter formatTrackTitle(metadb_handle_ptr item,service_ptr_t<class titleformat_object> script);
+}

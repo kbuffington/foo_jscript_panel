@@ -31,8 +31,7 @@ void track_property_provider_v3::enumerate_properties_v2(metadb_handle_list_cref
 }
 
 void track_property_provider_v4::enumerate_properties_v3(metadb_handle_list_cref items, track_property_provider_v3_info_source & info, track_property_callback_v2 & callback) {
-	abort_callback_dummy noAbort;
-	this->enumerate_properties_v4(items, info, callback, noAbort );
+	this->enumerate_properties_v4(items, info, callback, fb2k::noAbort );
 }
 
 void track_property_provider::enumerate_properties_helper(metadb_handle_list_cref items, track_property_provider_v3_info_source * info, track_property_callback_v2 & callback, abort_callback & abort) {

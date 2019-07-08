@@ -209,11 +209,17 @@ namespace pfc {
 			set_size(new_size);
 		}
 
-		template<typename t_append>
-		void append_single_val( t_append item ) {
+        template<typename item_t>
+        void add_item( item_t && item ) {
+            const t_size base = get_size();
+            increase_size(1);
+            m_alloc[base] = std::forward<item_t>( item );
+        }
+		template<typename item_t>
+		void append_single_val( item_t && item ) {
 			const t_size base = get_size();
 			increase_size(1);
-			m_alloc[base] = item;
+            m_alloc[base] = std::forward<item_t>( item );
 		}
 
 		template<typename t_append>
