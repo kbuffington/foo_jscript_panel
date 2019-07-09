@@ -117,9 +117,9 @@ BOOL CDialogConf::OnInitDialog(HWND hwndFocus, LPARAM lParam)
 	ComboBox_AddString(combo_edge, L"Sunken");
 	ComboBox_AddString(combo_edge, L"Grey");
 
-	if (core_version_info_v2::get()->test_version(1, 4, 0, 0) && m_parent->get_instance_type() == host_comm::KInstanceTypeDUI)
+	if (m_parent->get_instance_type() == host_comm::KInstanceTypeDUI)
 	{
-		// Disable in default UI fb2k v1.4 and above
+		// Disable in default UI as it has no effect
 		ComboBox_SetCurSel(combo_edge, 0);
 		GetDlgItem(IDC_COMBO_EDGE).EnableWindow(false);
 	}
