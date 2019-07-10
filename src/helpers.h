@@ -81,11 +81,10 @@ namespace helpers
 				album_art_editor::ptr ptr;
 				if (album_art_editor::g_get_interface(ptr, path))
 				{
-					file_lock_ptr lock = api->acquire_write(path, p_abort);
-					album_art_editor_instance_ptr aaep;
+					auto lock = api->acquire_write(path, p_abort);
 					try
 					{
-						aaep = ptr->open(nullptr, path, p_abort);
+						album_art_editor_instance_ptr aaep = ptr->open(nullptr, path, p_abort);
 						switch (m_action)
 						{
 						case attach:
@@ -117,7 +116,6 @@ namespace helpers
 						aaep->commit(p_abort);
 					}
 					catch (...) {}
-					lock.release();
 				}
 			}
 		}
