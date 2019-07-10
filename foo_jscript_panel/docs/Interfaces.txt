@@ -55,7 +55,7 @@ interface IFb {
 		0 None
 		1 Track
 		2 Album
-		3 Track/Album by Playback Order // only available in foobar2000 v1.3.8 and later
+		3 Track/Album by Playback Order
 		*/
 
 		fb.StopAfterCurrent; (boolean) (read, write)
@@ -2108,14 +2108,10 @@ interface IMetadbHandleList {
 
 		MakeUnion(handle_list); (void)
 		/*
-		Must be sorted with Sort() first.
-
 		Example:
 		var one = plman.GetPlaylistItems(0);
-		one.Sort();
 
 		var two = plman.GetPlaylistItems(1);
-		two.Sort();
 
 		one.MakeUnion(two);
 		// "one" now contains all handles from "one" AND "two" with any duplicates removed
@@ -2171,7 +2167,7 @@ interface IMetadbHandleList {
 		*/
 
 		Sort(); (void)
-		// Remove duplicates and optimise for other handle list operations
+		// Remove duplicates and optimise for other handle list operations.
 
 		UpdateFileInfoFromJSON(str); (void)
 		// See https://github.com/marc2k3/foo_jscript_panel/wiki/Breaking-Changes#v130
