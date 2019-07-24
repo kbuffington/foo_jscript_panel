@@ -44,6 +44,7 @@ public:
 
 	bool get_description(t_size p_index, pfc::string_base& p_out) override
 	{
+		p_out.reset();
 		p_out << "Invoke on_main_menu(" << (p_index + 1) << ")";
 		return true;
 	}
@@ -67,6 +68,7 @@ public:
 
 	void get_name(t_size p_index, pfc::string_base & p_out) override
 	{
+		p_out.reset();
 		p_out << (p_index + 1);
 	}
 };
