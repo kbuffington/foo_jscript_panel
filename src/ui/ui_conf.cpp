@@ -117,20 +117,25 @@ BOOL CDialogConf::OnInitDialog(HWND hwndFocus, LPARAM lParam)
 	ComboBox_AddString(combo_edge, L"Sunken");
 	ComboBox_AddString(combo_edge, L"Grey");
 
-	if (m_parent->get_instance_type() == host_comm::KInstanceTypeDUI)
+	if (m_parent->get_instance_type() == host_comm::KInstanceTypeDUI && core_version_info_v2::get()->test_version(1, 4, 0, 0))
 	{
-		// Disable edge style / pseudo transparency options in default UI
 		ComboBox_SetCurSel(combo_edge, 0);
 		GetDlgItem(IDC_COMBO_EDGE).EnableWindow(false);
-
-		uButton_SetCheck(m_hWnd, IDC_CHECK_PSEUDO_TRANSPARENT, false);
-		GetDlgItem(IDC_CHECK_PSEUDO_TRANSPARENT).EnableWindow(false);
 	}
 	else
 	{
 		ComboBox_SetCurSel(combo_edge, m_parent->m_edge_style);
+	}
 
+	// Pseudo transparency
+	if (m_parent->get_instance_type() == host_comm::KInstanceTypeCUI)
+	{
 		uButton_SetCheck(m_hWnd, IDC_CHECK_PSEUDO_TRANSPARENT, m_parent->m_pseudo_transparent);
+	}
+	else
+	{
+		uButton_SetCheck(m_hWnd, IDC_CHECK_PSEUDO_TRANSPARENT, false);
+		GetDlgItem(IDC_CHECK_PSEUDO_TRANSPARENT).EnableWindow(false);
 	}
 
 	// Grab Focus

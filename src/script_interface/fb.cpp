@@ -162,6 +162,7 @@ STDMETHODIMP Fb::GetClipboardContents(UINT window_id, IMetadbHandleList** pp)
 STDMETHODIMP Fb::GetDSPPresets(BSTR* p)
 {
 	if (!p) return E_POINTER;
+	if (!static_api_test_t<dsp_config_manager_v2>()) return E_NOTIMPL;
 
 	json j = json::array();
 	auto api = dsp_config_manager_v2::get();
@@ -229,6 +230,7 @@ STDMETHODIMP Fb::GetNowPlaying(IMetadbHandle** pp)
 STDMETHODIMP Fb::GetOutputDevices(BSTR* p)
 {
 	if (!p) return E_POINTER;
+	if (!static_api_test_t<output_manager_v2>()) return E_NOTIMPL;
 
 	json j = json::array();
 	auto api = output_manager_v2::get();
@@ -447,6 +449,8 @@ STDMETHODIMP Fb::SavePlaylist()
 
 STDMETHODIMP Fb::SetDSPPreset(UINT idx)
 {
+	if (!static_api_test_t<dsp_config_manager_v2>()) return E_NOTIMPL;
+
 	auto api = dsp_config_manager_v2::get();
 	const t_size count = api->get_preset_count();
 	if (idx < count)
@@ -459,6 +463,8 @@ STDMETHODIMP Fb::SetDSPPreset(UINT idx)
 
 STDMETHODIMP Fb::SetOutputDevice(BSTR output, BSTR device)
 {
+	if (!static_api_test_t<output_manager_v2>()) return E_NOTIMPL;
+
 	GUID output_id, device_id;
 	if (CLSIDFromString(output, &output_id) == NOERROR && CLSIDFromString(device, &device_id) == NOERROR)
 	{
