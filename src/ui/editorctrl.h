@@ -2,7 +2,6 @@
 // Copyright 1998-2005 by Neil Hodgson <neilh@scintilla.org>
 // The License.txt file describes the conditions under which this software may be distributed.
 #pragma once
-#include <SString.h>
 #include <wtlscintilla.h>
 
 enum IndentationStatus
@@ -16,7 +15,7 @@ enum IndentationStatus
 struct StyleAndWords
 {
 	int styleNumber;
-	SString words;
+	std::string words;
 	bool IsEmpty() const { return words.length() == 0; }
 	bool IsSingleChar() const { return words.length() == 1; }
 };
@@ -56,11 +55,11 @@ public:
 	bool RangeIsAllWhitespace(int start, int end);
 	bool StartAutoComplete();
 	bool StartCallTip();
-	const char* GetNearestWord(const char* wordStart, int searchLen, SString wordCharacters = nullptr, int wordIndex = -1);
+	const char* GetNearestWord(const char* wordStart, int searchLen, std::string wordCharacters = nullptr, int wordIndex = -1);
 	int GetCaretInLine();
 	int IndentOfBlock(int line);
-	pfc::string8_fast GetCurrentLine();
-	t_size GetLinePartsInStyle(int line, int style1, int style2, SString sv[], int len);
+	std::string GetCurrentLine();
+	t_size GetLinePartsInStyle(int line, int style, std::string sv[], int len);
 	void AutoMarginWidth();
 	void AutomaticIndentation(int ch);
 	void ContinueCallTip();
@@ -76,14 +75,13 @@ public:
 	void TrackWidth();
 
 private:
-	int m_nBraceCount;
-	int m_nCurrentCallTip;
-	int m_nLastPosCallTip;
-	int m_nStartCalltipWord;
-	int m_nStatementLookback;
+	int m_BraceCount;
+	int m_CurrentCallTip;
+	int m_LastPosCallTip;
+	int m_StartCalltipWord;
 	pfc::list_t<pfc::string_simple> m_apis;
-	pfc::string8_fast m_szCurrentCallTipWord;
-	pfc::string8_fast m_szFunctionDefinition;
+	pfc::string8_fast m_CurrentCallTipWord;
+	pfc::string8_fast m_FunctionDefinition;
 	StyleAndWords m_BlockEnd;
 	StyleAndWords m_BlockStart;
 	StyleAndWords m_StatementEnd;

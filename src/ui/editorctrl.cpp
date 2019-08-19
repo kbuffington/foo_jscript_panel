@@ -90,7 +90,7 @@ static bool IsIdentifierChar(int ch)
 	return __iswcsym((wint_t)ch);
 }
 
-static bool IsSymIncludes(const StyleAndWords& symbols, const SString value)
+static bool IsSymIncludes(const StyleAndWords& symbols, const std::string& value)
 {
 	if (symbols.IsEmpty())
 	{
@@ -260,7 +260,7 @@ static t_size LengthWord(const char* word, char otherSeparator)
 	return endWord - word;
 }
 
-CScriptEditorCtrl::CScriptEditorCtrl() : m_nBraceCount(0), m_nCurrentCallTip(0), m_nStartCalltipWord(0), m_nLastPosCallTip(0), m_nStatementLookback(10) {}
+CScriptEditorCtrl::CScriptEditorCtrl() : m_BraceCount(0), m_CurrentCallTip(0), m_StartCalltipWord(0), m_LastPosCallTip(0) {}
 
 BOOL CScriptEditorCtrl::SubclassWindow(HWND hWnd)
 {
@@ -292,33 +292,32 @@ DWORD CScriptEditorCtrl::GetPropertyColor(const char* key, bool* key_exist)
 IndentationStatus CScriptEditorCtrl::GetIndentState(int line)
 {
 	IndentationStatus indentState = isNone;
-	SString controlWords[20];
-	t_size parts = GetLinePartsInStyle(line, m_StatementIndent.styleNumber, -1, controlWords, _countof(controlWords));
-	t_size i;
+	std::string controlWords[20];
+	t_size i, parts = GetLinePartsInStyle(line, m_StatementIndent.styleNumber, controlWords, _countof(controlWords));
 
-	for (i = 0; i < parts; i++)
+	for (i = 0; i < parts; ++i)
 	{
 		if (IsSymIncludes(m_StatementIndent, controlWords[i]))
 			indentState = isKeyWordStart;
 	}
 
-	parts = GetLinePartsInStyle(line, m_StatementEnd.styleNumber, -1, controlWords, _countof(controlWords));
+	parts = GetLinePartsInStyle(line, m_StatementEnd.styleNumber, controlWords, _countof(controlWords));
 
-	for (i = 0; i < parts; i++)
+	for (i = 0; i < parts; ++i)
 	{
 		if (IsSymIncludes(m_StatementEnd, controlWords[i]))
 			indentState = isNone;
 	}
-	SString controlStrings[20];
+	std::string controlStrings[20];
 
-	parts = GetLinePartsInStyle(line, m_BlockEnd.styleNumber, -1, controlStrings, _countof(controlStrings));
+	parts = GetLinePartsInStyle(line, m_BlockEnd.styleNumber, controlStrings, _countof(controlStrings));
 
-	for (t_size j = 0; j < parts; j++)
+	for (i = 0; i < parts; ++i)
 	{
-		if (IsSymIncludes(m_BlockEnd, controlStrings[j]))
+		if (IsSymIncludes(m_BlockEnd, controlStrings[i]))
 			indentState = isBlockEnd;
 
-		if (IsSymIncludes(m_BlockStart, controlStrings[j]))
+		if (IsSymIncludes(m_BlockStart, controlStrings[i]))
 			indentState = isBlockStart;
 	}
 
@@ -346,15 +345,15 @@ LRESULT CScriptEditorCtrl::OnCharAdded(LPNMHDR pnmh)
 			switch (ch)
 			{
 			case ')':
-				m_nBraceCount--;
-				if (m_nBraceCount < 1)
+				m_BraceCount--;
+				if (m_BraceCount < 1)
 					CallTipCancel();
 				else
 					StartCallTip();
 				break;
 
 			case '(':
-				m_nBraceCount++;
+				m_BraceCount++;
 				StartCallTip();
 				break;
 
@@ -367,12 +366,12 @@ LRESULT CScriptEditorCtrl::OnCharAdded(LPNMHDR pnmh)
 		{
 			if (ch == '(')
 			{
-				m_nBraceCount++;
+				m_BraceCount++;
 				StartCallTip();
 			}
 			else if (ch == ')')
 			{
-				m_nBraceCount--;
+				m_BraceCount--;
 			}
 			else if (!IsIdentifierChar(ch))
 			{
@@ -386,7 +385,7 @@ LRESULT CScriptEditorCtrl::OnCharAdded(LPNMHDR pnmh)
 		{
 			if (ch == '(')
 			{
-				m_nBraceCount = 1;
+				m_BraceCount = 1;
 				StartCallTip();
 			}
 			else
@@ -568,7 +567,7 @@ bool CScriptEditorCtrl::RangeIsAllWhitespace(int start, int end)
 
 	end = min(end, GetLength());
 
-	for (int i = start; i < end; i++)
+	for (int i = start; i < end; ++i)
 	{
 		char c = GetCharAt(i);
 
@@ -581,7 +580,7 @@ bool CScriptEditorCtrl::RangeIsAllWhitespace(int start, int end)
 
 bool CScriptEditorCtrl::StartAutoComplete()
 {
-	pfc::string8_fast line = GetCurrentLine();
+	std::string line = GetCurrentLine();
 	int current = GetCaretInLine();
 
 	int startword = current;
@@ -592,7 +591,7 @@ bool CScriptEditorCtrl::StartAutoComplete()
 	}
 
 	pfc::string8_fast root;
-	root.set_string(line.get_ptr() + startword, current - startword);
+	root.set_string(line.c_str() + startword, current - startword);
 
 	if (m_apis.get_count() == 0)
 		return false;
@@ -609,9 +608,9 @@ bool CScriptEditorCtrl::StartAutoComplete()
 
 bool CScriptEditorCtrl::StartCallTip()
 {
-	m_nCurrentCallTip = 0;
-	m_szCurrentCallTipWord = "";
-	SString line = GetCurrentLine().get_ptr();
+	m_CurrentCallTip = 0;
+	m_CurrentCallTipWord = "";
+	std::string line = GetCurrentLine();
 	int current = GetCaretInLine();
 	int pos = GetCurrentPos();
 	int braces = 0;
@@ -649,23 +648,21 @@ bool CScriptEditorCtrl::StartCallTip()
 	if (current <= 0)
 		return true;
 
-	m_nStartCalltipWord = current - 1;
+	m_StartCalltipWord = current - 1;
 
-	while (m_nStartCalltipWord > 0 &&
-		(IsIdentifierChar(line[m_nStartCalltipWord - 1]) ||
-		(line[m_nStartCalltipWord - 1] == '.')))
+	while (m_StartCalltipWord > 0 && (IsIdentifierChar(line[m_StartCalltipWord - 1]) || (line[m_StartCalltipWord - 1] == '.')))
 	{
-		--m_nStartCalltipWord;
+		--m_StartCalltipWord;
 	}
 
-	line.change(current, 0);
-	m_szCurrentCallTipWord = line.c_str() + m_nStartCalltipWord;
-	m_szFunctionDefinition = "";
+	line.at(current) = '\0';
+	m_CurrentCallTipWord = line.c_str() + m_StartCalltipWord;
+	m_FunctionDefinition = "";
 	FillFunctionDefinition(pos);
 	return true;
 }
 
-const char* CScriptEditorCtrl::GetNearestWord(const char* wordStart, int searchLen, SString wordCharacters, int wordIndex)
+const char* CScriptEditorCtrl::GetNearestWord(const char* wordStart, int searchLen, std::string wordCharacters, int wordIndex)
 {
 	if (m_apis.get_count() == 0)
 		return nullptr;
@@ -692,7 +689,7 @@ const char* CScriptEditorCtrl::GetNearestWord(const char* wordStart, int searchL
 		{
 			const char* word = m_apis[i];
 
-			if (!wordCharacters.contains(word[searchLen]))
+			if (wordCharacters.find(word[searchLen]) == std::string::npos)
 			{
 				if (wordIndex <= 0)
 					return word;
@@ -724,8 +721,7 @@ int CScriptEditorCtrl::IndentOfBlock(int line)
 	int backLine = line;
 	IndentationStatus indentState = isNone;
 
-	int lineLimit = line - m_nStatementLookback;
-
+	int lineLimit = line - 10;
 	if (lineLimit < 0)
 		lineLimit = 0;
 
@@ -758,31 +754,27 @@ int CScriptEditorCtrl::IndentOfBlock(int line)
 	return indentBlock;
 }
 
-pfc::string8_fast CScriptEditorCtrl::GetCurrentLine()
+std::string CScriptEditorCtrl::GetCurrentLine()
 {
-	pfc::string8_fast buf;
-	int len = 0;
-
-	len = GetCurLine(0, 0);
-	GetCurLine(buf.lock_buffer(len), len);
-	buf.unlock_buffer();
-
-	return buf;
+	const int len = GetCurLine(0, 0);
+	std::string text(len, '\0');
+	GetCurLine(&text[0], len);
+	return text.substr(0, text.length() - 1);
 }
 
-t_size CScriptEditorCtrl::GetLinePartsInStyle(int line, int style1, int style2, SString sv[], int len)
+t_size CScriptEditorCtrl::GetLinePartsInStyle(int line, int style, std::string sv[], int len)
 {
-	for (int i = 0; i < len; i++)
+	for (int i = 0; i < len; ++i)
 		sv[i] = "";
 
-	SString s;
+	std::string s;
 	int part = 0;
 	int thisLineStart = PositionFromLine(line);
 	int nextLineStart = PositionFromLine(line + 1);
 
-	for (int pos = thisLineStart; pos < nextLineStart; pos++)
+	for (int pos = thisLineStart; pos < nextLineStart; ++pos)
 	{
-		if ((GetStyleAt(pos) == style1) || (GetStyleAt(pos) == style2))
+		if (GetStyleAt(pos) == style || GetStyleAt(pos) == -1)
 		{
 			char c[2];
 			c[0] = GetCharAt(pos);
@@ -888,9 +880,9 @@ void CScriptEditorCtrl::AutomaticIndentation(int ch)
 	}
 	else if ((ch == '\r' || ch == '\n') && (selStart == thisLineStart))
 	{
-		SString controlWords[1];
+		std::string controlWords[1];
 
-		if (GetLinePartsInStyle(curLine - 1, m_BlockEnd.styleNumber, -1, controlWords, _countof(controlWords)))
+		if (GetLinePartsInStyle(curLine - 1, m_BlockEnd.styleNumber, controlWords, _countof(controlWords)))
 		{
 			if (IsSymIncludes(m_BlockEnd, controlWords[0]))
 			{
@@ -905,12 +897,12 @@ void CScriptEditorCtrl::AutomaticIndentation(int ch)
 
 void CScriptEditorCtrl::ContinueCallTip()
 {
-	pfc::string8_fast line = GetCurrentLine();
+	std::string line = GetCurrentLine();
 	int current = GetCaretInLine();
 	int braces = 0;
 	int commas = 0;
 
-	for (int i = m_nStartCalltipWord; i < current; i++)
+	for (int i = m_StartCalltipWord; i < current; ++i)
 	{
 		if (line[i] == '(')
 			braces++;
@@ -922,30 +914,28 @@ void CScriptEditorCtrl::ContinueCallTip()
 
 	int startHighlight = 0;
 
-	while (m_szFunctionDefinition[startHighlight] && m_szFunctionDefinition[startHighlight] != '(')
+	while (m_FunctionDefinition[startHighlight] && m_FunctionDefinition[startHighlight] != '(')
 		startHighlight++;
 
-	if (m_szFunctionDefinition[startHighlight] == '(')
+	if (m_FunctionDefinition[startHighlight] == '(')
 		startHighlight++;
 
-	while (m_szFunctionDefinition[startHighlight] && commas > 0)
+	while (m_FunctionDefinition[startHighlight] && commas > 0)
 	{
-		if (m_szFunctionDefinition[startHighlight] == ',')
+		if (m_FunctionDefinition[startHighlight] == ',')
 			commas--;
-		if (m_szFunctionDefinition[startHighlight] == ')')
+		if (m_FunctionDefinition[startHighlight] == ')')
 			commas = 0;
 		else
 			startHighlight++;
 	}
 
-	if (m_szFunctionDefinition[startHighlight] == ',')
+	if (m_FunctionDefinition[startHighlight] == ',')
 		startHighlight++;
 
 	int endHighlight = startHighlight;
 
-	while (m_szFunctionDefinition[endHighlight] &&
-		m_szFunctionDefinition[endHighlight] != ',' &&
-		m_szFunctionDefinition[endHighlight] != ')')
+	while (m_FunctionDefinition[endHighlight] && m_FunctionDefinition[endHighlight] != ',' && m_FunctionDefinition[endHighlight] != ')')
 	{
 		endHighlight++;
 	}
@@ -957,39 +947,35 @@ void CScriptEditorCtrl::FillFunctionDefinition(int pos)
 {
 	if (pos > 0)
 	{
-		m_nLastPosCallTip = pos;
+		m_LastPosCallTip = pos;
 	}
 
 	if (m_apis.get_count())
 	{
 		pfc::string8_fast words;
 
-		if (!GetNearestWords(words, m_szCurrentCallTipWord.get_ptr(),
-			m_szCurrentCallTipWord.get_length(), "("))
+		if (!GetNearestWords(words, m_CurrentCallTipWord.get_ptr(), m_CurrentCallTipWord.get_length(), "("))
 		{
-			t_size calltip_pos = m_szCurrentCallTipWord.find_first(".");
+			t_size calltip_pos = m_CurrentCallTipWord.find_first(".");
 
 			if (calltip_pos == pfc_infinite)
 				return;
 
-			m_szCurrentCallTipWord.remove_chars(0, calltip_pos + 1);
+			m_CurrentCallTipWord.remove_chars(0, calltip_pos + 1);
 
-			if (!GetNearestWords(words, m_szCurrentCallTipWord.get_ptr(),
-				m_szCurrentCallTipWord.get_length(), "("))
+			if (!GetNearestWords(words, m_CurrentCallTipWord.get_ptr(), m_CurrentCallTipWord.get_length(), "("))
 			{
 				return;
 			}
 		}
 
-		const char* word = GetNearestWord(m_szCurrentCallTipWord.get_ptr(),
-			m_szCurrentCallTipWord.get_length(),
-			"_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", m_nCurrentCallTip);
+		const char* word = GetNearestWord(m_CurrentCallTipWord.get_ptr(), m_CurrentCallTipWord.get_length(), "_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", m_CurrentCallTip);
 
 		if (word)
 		{
-			m_szFunctionDefinition = word;
+			m_FunctionDefinition = word;
 
-			CallTipShow(m_nLastPosCallTip - m_szCurrentCallTipWord.get_length(), m_szFunctionDefinition.get_ptr());
+			CallTipShow(m_LastPosCallTip - m_CurrentCallTipWord.get_length(), m_FunctionDefinition.get_ptr());
 			ContinueCallTip();
 		}
 	}
@@ -1005,9 +991,7 @@ void CScriptEditorCtrl::Init()
 	UsePopUp(true);
 
 	// Disable Ctrl + some char
-	const int ctrlcode[22] = { 'Q', 'W', 'E', 'R', 'I', 'O', 'P', 'S', 'D', 'F',
-		'G', 'H', 'J', 'K', 'L', 'B', 'N', 'M', 186, 187, 226
-	};
+	const int ctrlcode[22] = { 'Q', 'W', 'E', 'R', 'I', 'O', 'P', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'B', 'N', 'M', 186, 187, 226 };
 
 	for (int i = 0; i < _countof(ctrlcode); ++i)
 	{
