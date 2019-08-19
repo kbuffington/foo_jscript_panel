@@ -44,8 +44,7 @@ public:
 
 	bool get_description(t_size p_index, pfc::string_base& p_out) override
 	{
-		p_out.reset();
-		p_out << "Invoke on_main_menu(" << (p_index + 1) << ")";
+		p_out = PFC_string_formatter() << "Invoke on_main_menu(" << (p_index + 1) << ")";
 		return true;
 	}
 
@@ -66,10 +65,9 @@ public:
 		panel_manager::instance().post_msg_to_all(callback_id::on_main_menu, p_index + 1);
 	}
 
-	void get_name(t_size p_index, pfc::string_base & p_out) override
+	void get_name(t_size p_index, pfc::string_base& p_out) override
 	{
-		p_out.reset();
-		p_out << (p_index + 1);
+		p_out = PFC_string_formatter() << (p_index + 1);
 	}
 };
 

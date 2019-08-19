@@ -127,6 +127,11 @@ namespace helpers
 			remove_all
 		};
 
+		enum
+		{
+			flags = threaded_process::flag_show_progress | threaded_process::flag_show_delayed | threaded_process::flag_show_item
+		};
+
 	private:
 		album_art_data_ptr m_data;
 		metadb_handle_list m_handles;

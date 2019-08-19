@@ -1499,7 +1499,7 @@ STDMETHODIMP MetadbHandleList::AttachImage(BSTR image_path, UINT art_id)
 	if (data.is_valid())
 	{
 		auto cb = fb2k::service_new<helpers::embed_thread>(helpers::embed_thread::attach, data, m_handles, art_id);
-		threaded_process::get()->run_modeless(cb, threaded_process::flag_show_progress | threaded_process::flag_show_delayed | threaded_process::flag_show_item, core_api::get_main_window(), "Embedding image...");
+		threaded_process::get()->run_modeless(cb, helpers::embed_thread::flags, core_api::get_main_window(), "Embedding image...");
 	}
 	return S_OK;
 }
@@ -1622,32 +1622,9 @@ STDMETHODIMP MetadbHandleList::MakeDifference(IMetadbHandleList* handles)
 	metadb_handle_list* handles_ptr = nullptr;
 	handles->get__ptr((void**)&handles_ptr);
 
-	metadb_handle_list_ref handles_ref = *handles_ptr;
-	metadb_handle_list result;
-	t_size walk1 = 0;
-	t_size walk2 = 0;
-	t_size last1 = m_handles.get_count();
-	t_size last2 = handles_ptr->get_count();
-
-	while (walk1 != last1 && walk2 != last2)
-	{
-		if (m_handles[walk1] < handles_ref[walk2])
-		{
-			result.add_item(m_handles[walk1]);
-			++walk1;
-		}
-		else if (handles_ref[walk2] < m_handles[walk1])
-		{
-			++walk2;
-		}
-		else
-		{
-			++walk1;
-			++walk2;
-		}
-	}
-
-	m_handles = result;
+	metadb_handle_list r1, r2;
+	metadb_handle_list_helper::sorted_by_pointer_extract_difference(m_handles, *handles_ptr, r1, r2);
+	m_handles = r1;
 	return S_OK;
 }
 
@@ -1783,7 +1760,7 @@ STDMETHODIMP MetadbHandleList::RemoveAttachedImage(UINT art_id)
 	if (m_handles.get_count() == 0) return E_POINTER;
 
 	auto cb = fb2k::service_new<helpers::embed_thread>(helpers::embed_thread::remove, album_art_data_ptr(), m_handles, art_id);
-	threaded_process::get()->run_modeless(cb, threaded_process::flag_show_progress | threaded_process::flag_show_delayed | threaded_process::flag_show_item, core_api::get_main_window(), "Removing images...");
+	threaded_process::get()->run_modeless(cb, helpers::embed_thread::flags, core_api::get_main_window(), "Removing images...");
 	return S_OK;
 }
 
@@ -1792,7 +1769,7 @@ STDMETHODIMP MetadbHandleList::RemoveAttachedImages()
 	if (m_handles.get_count() == 0) return E_POINTER;
 
 	auto cb = fb2k::service_new<helpers::embed_thread>(helpers::embed_thread::remove_all, album_art_data_ptr(), m_handles, 0);
-	threaded_process::get()->run_modeless(cb, threaded_process::flag_show_progress | threaded_process::flag_show_delayed | threaded_process::flag_show_item, core_api::get_main_window(), "Removing images...");
+	threaded_process::get()->run_modeless(cb, helpers::embed_thread::flags, core_api::get_main_window(), "Removing images...");
 	return S_OK;
 }
 
