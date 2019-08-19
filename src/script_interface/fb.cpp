@@ -237,7 +237,7 @@ STDMETHODIMP Fb::GetOutputDevices(BSTR* p)
 	outputCoreConfig_t config;
 	api->getCoreConfig(config);
 
-	api->listDevices([&j, &config](pfc::string8_fast&& name, auto&& output_id, auto&& device_id) {
+	api->listDevices([&](pfc::string8_fast&& name, auto&& output_id, auto&& device_id) {
 		pfc::string8_fast output_string, device_string;
 		output_string << "{" << pfc::print_guid(output_id) << "}";
 		device_string << "{" << pfc::print_guid(device_id) << "}";

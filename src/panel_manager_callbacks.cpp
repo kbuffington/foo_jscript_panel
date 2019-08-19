@@ -5,43 +5,50 @@
 class my_config_object_notify : public config_object_notify
 {
 public:
+	my_config_object_notify()
+	{
+		m_data.add_item({ &standard_config_objects::bool_playlist_stop_after_current, callback_id::on_playlist_stop_after_current_changed });
+		m_data.add_item({ &standard_config_objects::bool_cursor_follows_playback, callback_id::on_cursor_follow_playback_changed });
+		m_data.add_item({ &standard_config_objects::bool_playback_follows_cursor, callback_id::on_playback_follow_cursor_changed });
+		m_data.add_item({ &standard_config_objects::bool_ui_always_on_top, callback_id::on_always_on_top_changed });
+		m_count = m_data.get_count();
+	}
+
 	GUID get_watched_object(t_size p_index) override
 	{
-		switch (p_index)
-		{
-		case 0: return standard_config_objects::bool_playlist_stop_after_current;
-		case 1: return standard_config_objects::bool_cursor_follows_playback;
-		case 2: return standard_config_objects::bool_playback_follows_cursor;
-		case 3: return standard_config_objects::bool_ui_always_on_top;
-		default: return pfc::guid_null;
-		}
+		return p_index < m_count ? *m_data[p_index].guid : pfc::guid_null;
 	}
 
 	t_size get_watched_object_count() override
 	{
-		return 4;
+		return m_count;
 	}
 
 	void on_watched_object_changed(const config_object::ptr& p_object) override
 	{
-		GUID guid = p_object->get_guid();
-		t_size msg;
+		GUID g = p_object->get_guid();
 
-		if (guid == standard_config_objects::bool_playlist_stop_after_current)
-			msg = callback_id::on_playlist_stop_after_current_changed;
-		else if (guid == standard_config_objects::bool_cursor_follows_playback)
-			msg = callback_id::on_cursor_follow_playback_changed;
-		else if (guid == standard_config_objects::bool_playback_follows_cursor)
-			msg = callback_id::on_playback_follow_cursor_changed;
-		else if (guid == standard_config_objects::bool_ui_always_on_top)
-			msg = callback_id::on_always_on_top_changed;
-		else
-			return;
-
-		bool b;
-		p_object->get_data_bool(b);
-		panel_manager::instance().post_msg_to_all(msg, TO_VARIANT_BOOL(b));
+		m_data.for_each([=](const ids& i) -> void
+		{
+			if (*i.guid == g)
+			{
+				bool b;
+				p_object->get_data_bool(b);
+				panel_manager::instance().post_msg_to_all(i.msg, TO_VARIANT_BOOL(b));
+				return;
+			}
+		});
 	}
+
+private:
+	struct ids
+	{
+		const GUID* guid;
+		t_size msg;
+	};
+	
+	pfc::list_t<ids> m_data;
+	t_size m_count;
 };
 
 class my_dsp_config_callback : public dsp_config_callback

@@ -531,7 +531,7 @@ library foo_jscript_panel
 		HRESULT ReadTextFile(BSTR filename, [defaultvalue(0)] UINT codepage, [out, retval] BSTR* p);
 		HRESULT WriteINI(BSTR filename, BSTR section, BSTR key, VARIANT val, [out, retval] VARIANT_BOOL* p);
 		HRESULT WriteTextFile(BSTR filename, BSTR content, [defaultvalue(-1)] VARIANT_BOOL write_bom, [out, retval] VARIANT_BOOL* p);
-		[propget] HRESULT Version([out, retval] UINT* v);
+		[propget] HRESULT Version([out, retval] UINT* p);
 	};
 
 	[

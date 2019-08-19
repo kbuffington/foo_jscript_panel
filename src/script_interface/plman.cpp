@@ -406,7 +406,6 @@ STDMETHODIMP Plman::RemovePlaylist(UINT playlistIndex, VARIANT_BOOL* p)
 
 STDMETHODIMP Plman::RemovePlaylistSelection(UINT playlistIndex, VARIANT_BOOL crop)
 {
-
 	playlist_manager::get()->playlist_remove_selection(playlistIndex, crop != VARIANT_FALSE);
 	return S_OK;
 }

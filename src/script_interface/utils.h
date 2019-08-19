@@ -30,5 +30,5 @@ public:
 	STDMETHODIMP ReadTextFile(BSTR filename, UINT codepage, BSTR* p) override;
 	STDMETHODIMP WriteINI(BSTR filename, BSTR section, BSTR key, VARIANT val, VARIANT_BOOL* p) override;
 	STDMETHODIMP WriteTextFile(BSTR filename, BSTR content, VARIANT_BOOL write_bom, VARIANT_BOOL* p) override;
-	STDMETHODIMP get_Version(UINT* v) override;
+	STDMETHODIMP get_Version(UINT* p) override;
 };

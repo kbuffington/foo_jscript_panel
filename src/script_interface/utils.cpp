@@ -465,10 +465,10 @@ STDMETHODIMP Utils::WriteTextFile(BSTR filename, BSTR content, VARIANT_BOOL writ
 	return S_OK;
 }
 
-STDMETHODIMP Utils::get_Version(UINT* v)
+STDMETHODIMP Utils::get_Version(UINT* p)
 {
-	if (!v) return E_POINTER;
+	if (!p) return E_POINTER;
 
-	*v = 2222;
+	*p = 2230;
 	return S_OK;
 }

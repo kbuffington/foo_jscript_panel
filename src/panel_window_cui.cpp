@@ -6,21 +6,13 @@ class panel_window_cui : public panel_window, public uie::window, public cui::fo
 protected:
 	DWORD get_colour_ui(t_size type) override
 	{
-		if (type <= cui::colours::colour_active_item_frame)
-		{
-			cui::colours::helper helper(pfc::guid_null);
-			return helpers::convert_colorref_to_argb(helper.get_colour((cui::colours::colour_identifier_t)type));
-		}
-		return 0;
+		cui::colours::helper helper(pfc::guid_null);
+		return type <= cui::colours::colour_active_item_frame ? helpers::convert_colorref_to_argb(helper.get_colour((cui::colours::colour_identifier_t)type)) : 0;
 	}
 
 	HFONT get_font_ui(t_size type) override
 	{
-		if (type <= cui::fonts::font_type_labels)
-		{
-			return static_api_ptr_t<cui::fonts::manager>()->get_font((cui::fonts::font_type_t)type);
-		}
-		return nullptr;
+		return type <= cui::fonts::font_type_labels ? static_api_ptr_t<cui::fonts::manager>()->get_font((cui::fonts::font_type_t)type) : nullptr;
 	}
 
 	HWND create_or_transfer_window(HWND parent, const uie::window_host_ptr& host, const ui_helpers::window_position_t& p_position) override

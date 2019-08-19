@@ -24,8 +24,8 @@
 #include <Scintilla.h>
 #include <SciLexer.h>
 
-#include "../foobar2000/SDK/foobar2000.h"
-#include "../columns_ui-sdk/ui_extension.h"
+#include "../foobar2000-SDK/foobar2000/SDK/foobar2000.h"
+#include "../foobar2000-SDK/columns_ui-sdk/ui_extension.h"
 
 #ifdef _INC_WINDOWSX
 #undef SubclassWindow

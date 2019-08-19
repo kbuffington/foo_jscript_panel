@@ -50,12 +50,7 @@ public:
 			&ui_color_selection,
 		};
 
-		if (type < _countof(guids))
-		{
-			return helpers::convert_colorref_to_argb(m_callback->query_std_color(*guids[type]));
-		}
-
-		return 0;
+		return type < _countof(guids) ? helpers::convert_colorref_to_argb(m_callback->query_std_color(*guids[type])) : 0;
 	}
 
 	GUID get_guid() override
@@ -79,12 +74,7 @@ public:
 			&ui_font_console,
 		};
 
-		if (type < _countof(guids))
-		{
-			return m_callback->query_font_ex(*guids[type]);
-		}
-
-		return nullptr;
+		return type < _countof(guids) ? m_callback->query_font_ex(*guids[type]) : nullptr;
 	}
 
 	HWND get_wnd() override
