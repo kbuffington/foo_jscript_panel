@@ -1,3 +1,6 @@
+v2.2.2.3
+- FIX: Fix IMetadbHandleList MakeDifference method.
+
 v2.2.2.2
 - FIX: Fix broken descriptions for main menu items in the keyboard shortcut
        preferences. Thanks to TheQwertiest for spotting and providing the

@@ -4,7 +4,7 @@
 #define JSP_DLL_NAME "foo_jscript_panel.dll"
 
 // Remember to bump utils.version too
-#define JSP_VERSION_NUMBER "2.2.2.2"
+#define JSP_VERSION_NUMBER "2.2.2.3"
 #define JSP_VERSION_TEST ""
 
 #ifdef _DEBUG
@@ -40,7 +40,7 @@ namespace jsp_guids
 
 enum t_user_message
 {
-	UWM_FIND_TEXT_CHANGED = WM_USER + 10,
+	UWM_FIND_TEXT_CHANGED = WM_USER + 1,
 	UWM_KEYDOWN,
 	UWM_TIMER,
 	UWM_UNLOAD
@@ -48,7 +48,7 @@ enum t_user_message
 
 enum callback_id
 {
-	on_always_on_top_changed = WM_USER + 100,
+	on_always_on_top_changed = UWM_UNLOAD + 1,
 	on_char,
 	on_colours_changed,
 	on_cursor_follow_playback_changed,
