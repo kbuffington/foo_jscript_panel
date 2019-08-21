@@ -1,3 +1,8 @@
+v2.2.2.4
+- FIX: Fix bug introduced in v2.2.2.1 which prevented images loaded with
+       gdi.Image / gdi.LoadImageAsync being deleted/overwritten after
+       Dispose() had been called.
+
 v2.2.2.3
 - FIX: Fix IMetadbHandleList MakeDifference method.
 
