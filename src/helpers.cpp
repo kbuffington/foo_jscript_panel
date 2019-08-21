@@ -80,7 +80,7 @@ namespace helpers
 	IGdiBitmap* load_image(BSTR path)
 	{
 		IGdiBitmap* ret = nullptr;
-		IStream* stream;
+		CComPtr<IStream> stream;
 		if (SUCCEEDED(SHCreateStreamOnFileEx(path, STGM_READ | STGM_SHARE_DENY_WRITE, GENERIC_READ, FALSE, nullptr, &stream)))
 		{
 			auto img = new Gdiplus::Bitmap(stream, TRUE);
@@ -104,7 +104,7 @@ namespace helpers
 		if (!data.is_valid())
 			return ret;
 
-		IStream* stream;
+		CComPtr<IStream> stream;
 		if (SUCCEEDED(CreateStreamOnHGlobal(nullptr, TRUE, &stream)))
 		{
 			ULONG bytes_written = 0;
