@@ -428,8 +428,7 @@ STDMETHODIMP Fb::RunContextCommandWithMetadb(BSTR command, VARIANT handle, UINT 
 		return E_INVALIDARG;
 	}
 
-	string_utf8_from_wide ucommand(command);
-	*p = TO_VARIANT_BOOL(helpers::execute_context_command_by_name(ucommand, handle_list, flags));
+	*p = TO_VARIANT_BOOL(helpers::execute_context_command_by_name(string_utf8_from_wide(command), handle_list, flags));
 	return S_OK;
 }
 

@@ -2,8 +2,6 @@
 #include "com_tools.h"
 #include "script_interface_h.h"
 
-#include <memory>
-
 struct panel_tooltip_param
 {
 	panel_tooltip_param() : tooltip_hwnd(nullptr) {}

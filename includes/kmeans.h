@@ -1,7 +1,5 @@
 #pragma once
 
-#include <vector>
-
 #define NUM_COLOUR_COMPONENTS	3;
 
 /*

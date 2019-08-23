@@ -48,8 +48,8 @@
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)$(Configuration)\$(ProjectName)\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)$(Configuration)\$(ProjectName)\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
-    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\src;..\src\script_interface;..\src\ui;..\includes;..\includes\PropertyList;..\foobar2000-SDK\wtl;..\scintilla\include;$(IncludePath)</IncludePath>
-    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\src;..\src\script_interface;..\src\ui;..\includes;..\includes\PropertyList;..\foobar2000-SDK\wtl;..\scintilla\include;$(IncludePath)</IncludePath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\src;..\src\script_interface;..\src\ui;..\includes;..\includes\PropertyList;..\scintilla\include;..\foobar2000-SDK\wtl;$(IncludePath)</IncludePath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\src;..\src\script_interface;..\src\ui;..\includes;..\includes\PropertyList;..\scintilla\include;..\foobar2000-SDK\wtl;$(IncludePath)</IncludePath>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectName)</TargetName>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectName)</TargetName>
   </PropertyGroup>
@@ -70,6 +70,8 @@
       <AdditionalOptions>/Zc:threadSafeInit- %(AdditionalOptions)</AdditionalOptions>
       <ConformanceMode>true</ConformanceMode>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <DiagnosticsFormat>Caret</DiagnosticsFormat>
     </ClCompile>
     <Link>
       <AdditionalDependencies>GdiPlus.lib;shared.lib;shlwapi.lib;WinMM.lib;Imm32.lib;uxtheme.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -111,6 +113,8 @@ copy /Y "$(TargetDir)$(TargetName).pdb" "%component_path%\"</Command>
       <AdditionalOptions>/Zc:threadSafeInit- %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <DiagnosticsFormat>Caret</DiagnosticsFormat>
     </ClCompile>
     <ResourceCompile>
       <Culture>0x0409</Culture>
@@ -132,9 +136,9 @@ copy /Y "$(TargetPath)" "%component_path%\"
 copy /Y "$(TargetDir)$(TargetName).pdb" "%component_path%\"</Command>
     </PostBuildEvent>
     <Midl>
-      <OutputDirectory>$(SolutionDir)script_interface</OutputDirectory>
       <TypeLibraryName>$(SolutionDir)resource\$(ProjectName).tlb</TypeLibraryName>
       <HeaderFileName>%(Filename)_h.h</HeaderFileName>
+      <OutputDirectory>$(SolutionDir)script_interface</OutputDirectory>
     </Midl>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -143,15 +147,12 @@ copy /Y "$(TargetDir)$(TargetName).pdb" "%component_path%\"</Command>
     </ProjectReference>
     <ProjectReference Include="..\foobar2000-SDK\pfc\pfc.vcxproj">
       <Project>{ebfffb4e-261d-44d3-b89c-957b31a0bf9c}</Project>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
     <ProjectReference Include="..\foobar2000-SDK\foobar2000\foobar2000_component_client\foobar2000_component_client.vcxproj">
       <Project>{71ad2674-065b-48f5-b8b0-e1f9d3892081}</Project>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
     <ProjectReference Include="..\foobar2000-SDK\foobar2000\SDK\foobar2000_SDK.vcxproj">
       <Project>{e8091321-d79d-4575-86ef-064ea1a4a20d}</Project>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
     <ProjectReference Include="..\scintilla\win32\SciLexer.vcxproj">
       <Project>{fbe04237-9c7b-4973-9c60-505975998b39}</Project>
@@ -236,9 +237,6 @@ copy /Y "$(TargetDir)$(TargetName).pdb" "%component_path%\"</Command>
     <ClCompile Include="ui\ui_replace.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <Midl Include="script_interface\script_interface.idl" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="resource\cfgBright.cfg" />
     <None Include="resource\cfgDark.cfg" />
     <None Include="resource\cfgRubyBlue.cfg" />
@@ -248,6 +246,9 @@ copy /Y "$(TargetDir)$(TargetName).pdb" "%component_path%\"</Command>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resource\foo_jscript_panel.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Midl Include="script_interface\script_interface.idl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

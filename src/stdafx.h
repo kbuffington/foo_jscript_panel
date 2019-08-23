@@ -3,6 +3,13 @@
 #define _WIN32_WINNT _WIN32_WINNT_WINXP
 #define WINVER _WIN32_WINNT_WINXP
 
+#include <atomic>
+#include <list>
+#include <map>
+#include <memory>
+#include <mutex>
+#include <vector>
+
 #include <WinSock2.h>
 #include <Windows.h>
 #include <GdiPlus.h>
