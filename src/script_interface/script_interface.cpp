@@ -729,8 +729,8 @@ STDMETHODIMP GdiGraphics::EstimateLineWrap(BSTR str, IGdiFont* font, int max_wid
 	HDC dc = m_ptr->GetHDC();
 	HFONT oldfont = SelectFont(dc, hFont);
 
-	pfc::list_t<helpers::wrapped_item> result;
-	helpers::estimate_line_wrap(dc, str, SysStringLen(str), max_width, result);
+	helpers::wrapped_item_list result;
+	helpers::estimate_line_wrap(dc, str, max_width, result);
 	SelectFont(dc, oldfont);
 	m_ptr->ReleaseHDC(dc);
 

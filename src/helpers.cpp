@@ -605,14 +605,14 @@ namespace helpers
 		return codepage;
 	}
 
-	void estimate_line_wrap(HDC hdc, const wchar_t* text, int len, int width, pfc::list_t<wrapped_item>& out)
+	void estimate_line_wrap(HDC hdc, const wchar_t* text, int max_width, wrapped_item_list& out)
 	{
 		for (;;)
 		{
 			const wchar_t* next = wcschr(text, '\n');
 			if (next == nullptr)
 			{
-				estimate_line_wrap_recur(hdc, text, wcslen(text), width, out);
+				estimate_line_wrap_recur(hdc, text, wcslen(text), max_width, out);
 				break;
 			}
 
@@ -623,39 +623,35 @@ namespace helpers
 				--walk;
 			}
 
-			estimate_line_wrap_recur(hdc, text, walk - text, width, out);
+			estimate_line_wrap_recur(hdc, text, walk - text, max_width, out);
 			text = next + 1;
 		}
 	}
 
-	void estimate_line_wrap_recur(HDC hdc, const wchar_t* text, int len, int width, pfc::list_t<wrapped_item>& out)
+	void estimate_line_wrap_recur(HDC hdc, const wchar_t* text, int len, int max_width, wrapped_item_list& out)
 	{
 		int textLength = len;
 		int textWidth = get_text_width(hdc, text, len);
 
-		if (textWidth <= width || len <= 1)
+		if (textWidth <= max_width || len <= 1)
 		{
-			wrapped_item item =
-			{
-				SysAllocStringLen(text, len),
-				textWidth
-			};
+			wrapped_item item = { SysAllocStringLen(text, len), textWidth };
 			out.add_item(item);
 		}
 		else
 		{
-			textLength = (len * width) / textWidth;
+			textLength = (len * max_width) / textWidth;
 
-			if (get_text_width(hdc, text, textLength) < width)
+			if (get_text_width(hdc, text, textLength) < max_width)
 			{
-				while (get_text_width(hdc, text, min(len, textLength + 1)) <= width)
+				while (get_text_width(hdc, text, min(len, textLength + 1)) <= max_width)
 				{
 					++textLength;
 				}
 			}
 			else
 			{
-				while (get_text_width(hdc, text, textLength) > width && textLength > 1)
+				while (get_text_width(hdc, text, textLength) > max_width && textLength > 1)
 				{
 					--textLength;
 				}
@@ -674,17 +670,13 @@ namespace helpers
 					textLength = fallbackTextLength;
 				}
 
-				wrapped_item item =
-				{
-					SysAllocStringLen(text, textLength),
-					get_text_width(hdc, text, textLength)
-				};
+				wrapped_item item = { SysAllocStringLen(text, textLength), get_text_width(hdc, text, textLength) };
 				out.add_item(item);
 			}
 
 			if (textLength < len)
 			{
-				estimate_line_wrap_recur(hdc, text + textLength, len - textLength, width, out);
+				estimate_line_wrap_recur(hdc, text + textLength, len - textLength, max_width, out);
 			}
 		}
 	}

@@ -20,6 +20,8 @@ namespace helpers
 		int width;
 	};
 
+	using wrapped_item_list = pfc::list_t<wrapped_item>;
+
 	COLORREF convert_argb_to_colorref(DWORD argb);
 	DWORD convert_colorref_to_argb(COLORREF color);
 	IGdiBitmap* get_album_art(const metadb_handle_ptr& handle, t_size art_id, bool need_stub, bool no_load, pfc::string_base& image_path);
@@ -44,8 +46,8 @@ namespace helpers
 	pfc::string8_fast iterator_to_string(json::iterator j);
 	pfc::string8_fast read_file(const char* path);
 	t_size detect_charset(const char* fileName);
-	void estimate_line_wrap(HDC hdc, const wchar_t* text, int len, int width, pfc::list_t<wrapped_item>& out);
-	void estimate_line_wrap_recur(HDC hdc, const wchar_t* text, int len, int width, pfc::list_t<wrapped_item>& out);
+	void estimate_line_wrap(HDC hdc, const wchar_t* text, int max_width, wrapped_item_list& out);
+	void estimate_line_wrap_recur(HDC hdc, const wchar_t* text, int len, int max_width, wrapped_item_list& out);
 	void list_files(const char* path, bool recur, pfc::string_list_impl& out);
 	void list_folders(const char* path, pfc::string_list_impl& out);
 	wchar_t* make_sort_string(const char* in);
