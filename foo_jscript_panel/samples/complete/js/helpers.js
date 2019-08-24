@@ -6,6 +6,10 @@ this[z]=this[z].join('');}
 
 function on_script_unload() {
 	_.tt('');
+	_bmp.ReleaseGraphics(_gr);
+	_.dispose(_bmp);
+	_gr = null;
+	_bmp = null;
 }
 
 _.mixin({
@@ -338,20 +342,7 @@ _.mixin({
 		return Date.parse(fso.Getfile(file).DateLastModified);
 	},
 	lineWrap : function (value, font, width) {
-		var temp_bmp = gdi.CreateImage(1, 1);
-		var temp_gr = temp_bmp.GetGraphics();
-		var result = [];
-		_.forEach(value.split('\n'), function (paragraph) {
-			var lines = _.filter(temp_gr.EstimateLineWrap(paragraph, font, width).toArray(), function (item, i) {
-				return i % 2 == 0;
-			});
-			result.push.apply(result, _.map(lines, _.trim));
-		});
-		temp_bmp.ReleaseGraphics(temp_gr);
-		_.dispose(temp_bmp);
-		temp_gr = null;
-		temp_bmp = null;
-		return result;
+		return _.filter(_gr.EstimateLineWrap(value, font, width).toArray(), function (item, i) { return i % 2 == 0; });
 	},
 	lockSize : function (w, h) {
 		window.MinWidth = window.MaxWidth = w;
@@ -543,14 +534,7 @@ _.mixin({
 		return value != '' && value != '?';
 	},
 	textWidth : function (value, font) {
-		var temp_bmp = gdi.CreateImage(1, 1);
-		var temp_gr = temp_bmp.GetGraphics();
-		var width = temp_gr.CalcTextWidth(value, font);
-		temp_bmp.ReleaseGraphics(temp_gr);
-		_.dispose(temp_bmp);
-		temp_gr = null;
-		temp_bmp = null;
-		return width;
+		return _gr.CalcTextWidth(value, font);
 	},
 	toRGB : function (a) {
 		var b = a - 0xFF000000;
@@ -678,3 +662,6 @@ var ha_links = [
 	['Wiki', 'http://wiki.hydrogenaud.io/index.php?title=Foobar2000:Foobar2000'],
 	['Forums', 'https://hydrogenaud.io/index.php/board,28.0.html']
 ];
+
+var _bmp = gdi.CreateImage(1, 1);
+var _gr = _bmp.GetGraphics();
