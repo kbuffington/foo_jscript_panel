@@ -1,3 +1,9 @@
+v2.2.3
+- CHG: The "Grab focus" checkbox in the "Configuration Window" and the
+       "dragdrop" preprocessor have both been removed. These
+       features are now automatically enabled if relevant callbacks
+       like "on_drag_drop" or "on_key_up" are present in the script.
+
 v2.2.2.4
 - FIX: Fix bug introduced in v2.2.2.1 which prevented images loaded with
        gdi.Image / gdi.LoadImageAsync being deleted/overwritten after
