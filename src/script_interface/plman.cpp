@@ -67,8 +67,7 @@ STDMETHODIMP Plman::CreateAutoPlaylist(UINT playlistIndex, BSTR name, BSTR query
 	if (!p) return E_POINTER;
 
 	search_filter_v2::ptr filter;
-	string_utf8_from_wide uquery(query);
-	string_utf8_from_wide usort(sort);
+	auto uquery = string_utf8_from_wide(query);
 
 	try
 	{
@@ -82,7 +81,7 @@ STDMETHODIMP Plman::CreateAutoPlaylist(UINT playlistIndex, BSTR name, BSTR query
 
 	t_size pos;
 	CreatePlaylist(playlistIndex, name, &pos);
-	autoplaylist_manager::get()->add_client_simple(uquery, usort, pos, flags);
+	autoplaylist_manager::get()->add_client_simple(uquery, string_utf8_from_wide(sort), pos, flags);
 	*p = pos;
 	return S_OK;
 }
@@ -92,7 +91,7 @@ STDMETHODIMP Plman::CreatePlaylist(UINT playlistIndex, BSTR name, UINT* p)
 	if (!p) return E_POINTER;
 
 	auto api = playlist_manager::get();
-	string_utf8_from_wide uname(name);
+	auto uname = string_utf8_from_wide(name);
 
 	if (uname.length())
 	{
@@ -153,7 +152,7 @@ STDMETHODIMP Plman::FindOrCreatePlaylist(BSTR name, VARIANT_BOOL unlocked, UINT*
 	if (!p) return E_POINTER;
 
 	auto api = playlist_manager::get();
-	string_utf8_from_wide uname(name);
+	auto uname = string_utf8_from_wide(name);
 
 	if (unlocked != VARIANT_FALSE)
 	{
@@ -422,7 +421,7 @@ STDMETHODIMP Plman::RenamePlaylist(UINT playlistIndex, BSTR name, VARIANT_BOOL* 
 {
 	if (!p) return E_POINTER;
 
-	string_utf8_from_wide uname(name);
+	auto uname = string_utf8_from_wide(name);
 	*p = TO_VARIANT_BOOL(playlist_manager::get()->playlist_rename(playlistIndex, uname, uname.length()));
 	return S_OK;
 }
@@ -495,7 +494,7 @@ STDMETHODIMP Plman::SortByFormat(UINT playlistIndex, BSTR pattern, VARIANT_BOOL 
 {
 	if (!p) return E_POINTER;
 
-	string_utf8_from_wide upattern(pattern);
+	auto upattern = string_utf8_from_wide(pattern);
 	*p = TO_VARIANT_BOOL(playlist_manager::get()->playlist_sort_by_format(playlistIndex, upattern.length() ? upattern.get_ptr() : nullptr, selOnly != VARIANT_FALSE));
 	return S_OK;
 }

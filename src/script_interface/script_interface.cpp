@@ -1320,7 +1320,7 @@ STDMETHODIMP MetadbHandle::SetFirstPlayed(BSTR first_played)
 	if (stats::hashHandle(m_handle, hash))
 	{
 		stats::fields tmp = stats::get(hash);
-		string_utf8_from_wide fp(first_played);
+		auto fp = string_utf8_from_wide(first_played);
 		if (!tmp.first_played.equals(fp))
 		{
 			tmp.first_played = fp;
@@ -1338,7 +1338,7 @@ STDMETHODIMP MetadbHandle::SetLastPlayed(BSTR last_played)
 	if (stats::hashHandle(m_handle, hash))
 	{
 		stats::fields tmp = stats::get(hash);
-		string_utf8_from_wide lp(last_played);
+		auto lp = string_utf8_from_wide(last_played);
 		if (!tmp.last_played.equals(lp))
 		{
 			tmp.last_played = lp;
@@ -1473,7 +1473,7 @@ STDMETHODIMP MetadbHandleList::AddRange(IMetadbHandleList* handles)
 	return S_OK;
 }
 
-STDMETHODIMP MetadbHandleList::AttachImage(BSTR image_path, UINT art_id)
+STDMETHODIMP MetadbHandleList::AttachImage(BSTR path, UINT art_id)
 {
 	if (m_handles.get_count() == 0) return E_POINTER;
 
@@ -1481,11 +1481,11 @@ STDMETHODIMP MetadbHandleList::AttachImage(BSTR image_path, UINT art_id)
 
 	try
 	{
-		string_utf8_from_wide path(image_path);
-		if (!filesystem::g_is_remote_or_unrecognized(path))
+		auto upath = string_utf8_from_wide(path);
+		if (!filesystem::g_is_remote_or_unrecognized(upath))
 		{
 			file::ptr file;
-			filesystem::g_open(file, path, filesystem::open_mode_read, fb2k::noAbort);
+			filesystem::g_open(file, upath, filesystem::open_mode_read, fb2k::noAbort);
 			if (file.is_valid())
 			{
 				auto tmp = fb2k::service_new<album_art_data_impl>();

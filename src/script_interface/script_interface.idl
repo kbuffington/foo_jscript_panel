@@ -225,7 +225,7 @@ library foo_jscript_panel
 		HRESULT get__ptr([out, retval] void** pp);
 		HRESULT Add(IMetadbHandle* handle);
 		HRESULT AddRange(IMetadbHandleList* handles);
-		HRESULT AttachImage(BSTR image_path, [defaultvalue(0)] UINT art_id);
+		HRESULT AttachImage(BSTR path, [defaultvalue(0)] UINT art_id);
 		HRESULT BSearch(IMetadbHandle* handle, [out, retval] int* p);
 		HRESULT CalcTotalDuration([out, retval] double* p);
 		HRESULT CalcTotalSize([out, retval] LONGLONG* p);

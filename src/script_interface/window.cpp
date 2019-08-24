@@ -133,7 +133,7 @@ STDMETHODIMP Window::GetProperty(BSTR name, VARIANT defaultval, VARIANT* p)
 
 	HRESULT hr;
 	_variant_t var;
-	string_utf8_from_wide uname(name);
+	auto uname = string_utf8_from_wide(name);
 
 	if (m_host->m_config_prop.get_config_item(uname, var))
 	{

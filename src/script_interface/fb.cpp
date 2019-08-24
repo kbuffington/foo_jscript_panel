@@ -262,7 +262,7 @@ STDMETHODIMP Fb::GetQueryItems(IMetadbHandleList* handles, BSTR query, IMetadbHa
 
 	handles->get__ptr((void**)&handles_ptr);
 	dst_list = *handles_ptr;
-	string_utf8_from_wide uquery(query);
+	auto uquery = string_utf8_from_wide(query);
 
 	try
 	{
@@ -489,8 +489,8 @@ STDMETHODIMP Fb::ShowLibrarySearchUI(BSTR query)
 
 STDMETHODIMP Fb::ShowPopupMessage(BSTR msg, BSTR title)
 {
-	string_utf8_from_wide umsg(msg);
-	string_utf8_from_wide utitle(title);
+	auto umsg = string_utf8_from_wide(msg);
+	auto utitle = string_utf8_from_wide(title);
 	fb2k::inMainThread([=] {
 		popup_message::g_show(umsg, utitle);
 	});

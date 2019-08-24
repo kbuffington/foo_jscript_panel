@@ -10,24 +10,24 @@ STDMETHODIMP Utils::CheckComponent(BSTR name, VARIANT_BOOL is_dll, VARIANT_BOOL*
 {
 	if (!p) return E_POINTER;
 
-	string_utf8_from_wide uname(name);
-	pfc::string8_fast temp;
+	auto uname = string_utf8_from_wide(name);
 
 	*p = VARIANT_FALSE;
 
 	for (auto e = service_enum_t<componentversion>(); !e.finished(); ++e)
 	{
 		auto ptr = *e;
+		pfc::string8_fast str;
 		if (is_dll != VARIANT_FALSE)
 		{
-			ptr->get_file_name(temp);
+			ptr->get_file_name(str);
 		}
 		else
 		{
-			ptr->get_component_name(temp);
+			ptr->get_component_name(str);
 		}
 
-		if (_stricmp(temp, uname) == 0)
+		if (_stricmp(str, uname) == 0)
 		{
 			*p = VARIANT_TRUE;
 			break;
@@ -297,9 +297,9 @@ STDMETHODIMP Utils::InputBox(UINT window_id, BSTR prompt, BSTR caption, BSTR def
 	{
 		scope.initialize(HWND(window_id));
 
-		string_utf8_from_wide uprompt(prompt);
-		string_utf8_from_wide ucaption(caption);
-		string_utf8_from_wide udef(def);
+		auto uprompt = string_utf8_from_wide(prompt);
+		auto ucaption = string_utf8_from_wide(caption);
+		auto udef = string_utf8_from_wide(def);
 
 		CInputBox dlg(uprompt, ucaption, udef);
 		int status = dlg.DoModal(HWND(window_id));

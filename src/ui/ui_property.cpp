@@ -28,7 +28,7 @@ LRESULT CDialogProperty::OnPinItemChanged(LPNMHDR pnmh)
 {
 	LPNMPROPERTYITEM pnpi = (LPNMPROPERTYITEM)pnmh;
 
-	string_utf8_from_wide uname = pnpi->prop->GetName();
+	auto uname = string_utf8_from_wide(pnpi->prop->GetName());
 
 	if (m_dup_prop_map.have_item(uname))
 	{
@@ -124,7 +124,7 @@ void CDialogProperty::OnDelBnClicked(UINT uNotifyCode, int nID, HWND wndCtl)
 	if (idx >= 0)
 	{
 		HPROPERTY hproperty = m_properties.GetProperty(idx);
-		string_utf8_from_wide uname = hproperty->GetName();
+		auto uname = string_utf8_from_wide(hproperty->GetName());
 
 		m_properties.DeleteItem(hproperty);
 		m_dup_prop_map.remove(uname);

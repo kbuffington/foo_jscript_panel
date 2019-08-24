@@ -280,7 +280,7 @@ public:
 	STDMETHODIMP get__ptr(void** pp) override;
 	STDMETHODIMP Add(IMetadbHandle* handle) override;
 	STDMETHODIMP AddRange(IMetadbHandleList* handles) override;
-	STDMETHODIMP AttachImage(BSTR image_path, UINT art_id) override;
+	STDMETHODIMP AttachImage(BSTR path, UINT art_id) override;
 	STDMETHODIMP BSearch(IMetadbHandle* handle, int* p) override;
 	STDMETHODIMP CalcTotalDuration(double* p) override;
 	STDMETHODIMP CalcTotalSize(LONGLONG* p) override;
