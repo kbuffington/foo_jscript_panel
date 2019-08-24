@@ -395,13 +395,15 @@ void panel_window::load_script()
 	m_max_size = { INT_MAX, INT_MAX };
 	m_min_size = { 0, 0 };
 	notify_size_limit_changed();
+	m_dragdrop = false;
+	m_grabfocus = false;
 
 	if (FAILED(m_script_host->Initialise()))
 	{
 		return;
 	}
 
-	if (m_script_info.dragdrop)
+	if (m_dragdrop)
 	{
 		m_drop_target.Attach(new com_object_impl_t<host_drop_target>(this));
 		m_drop_target->RegisterDragDrop();
@@ -613,7 +615,7 @@ void panel_window::on_mouse_button_dblclk(UINT msg, WPARAM wp, LPARAM lp)
 
 void panel_window::on_mouse_button_down(UINT msg, WPARAM wp, LPARAM lp)
 {
-	if (m_grab_focus)
+	if (m_grabfocus)
 	{
 		SetFocus(m_hwnd);
 	}

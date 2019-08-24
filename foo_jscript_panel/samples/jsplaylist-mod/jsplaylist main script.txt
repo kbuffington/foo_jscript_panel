@@ -2,7 +2,6 @@
 // @name "JSPlaylist"
 // @version "2018-mod"
 // @author "Br3tt aka Falstaff"
-// @feature "dragdrop"
 // @import "%fb2k_component_path%samples\jsplaylist-mod\js\WSHcommon.js"
 // @import "%fb2k_component_path%samples\jsplaylist-mod\js\WSHinputbox.js"
 // @import "%fb2k_component_path%samples\jsplaylist-mod\js\WSHtopbar.js"

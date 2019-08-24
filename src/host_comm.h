@@ -5,7 +5,7 @@
 
 struct t_script_info
 {
-	t_script_info() : dragdrop(false), id(0) {}
+	t_script_info() : id(0) {}
 
 	struct
 	{
@@ -58,14 +58,12 @@ struct t_script_info
 	void clear()
 	{
 		imports.remove_all();
-		dragdrop = false;
 		name = "";
 		version = "";
 		author = "";
 		id = 0;
 	}
 
-	bool dragdrop;
 	pfc::string_list_impl imports;
 	pfc::string8_fast name;
 	pfc::string8_fast version;
@@ -136,7 +134,8 @@ public:
 	POINT m_max_size;
 	POINT m_min_size;
 	WINDOWPLACEMENT m_wndpl;
-	bool m_grab_focus;
+	bool m_dragdrop;
+	bool m_grabfocus;
 	bool m_pseudo_transparent;
 	pfc::string8_fast m_script_code;
 	pfc::string8_fast m_script_engine_str;

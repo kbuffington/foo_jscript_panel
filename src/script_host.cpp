@@ -139,6 +139,24 @@ HRESULT script_host::Initialise()
 
 HRESULT script_host::InitCallbackMap()
 {
+	auto check_features = [&](t_size id)
+	{
+		switch (id)
+		{
+		case callback_id::on_char:
+		case callback_id::on_key_down:
+		case callback_id::on_key_up:
+			m_host->m_grabfocus = true;
+			break;
+		case callback_id::on_drag_drop:
+		case callback_id::on_drag_enter:
+		case callback_id::on_drag_leave:
+		case callback_id::on_drag_over:
+			m_host->m_dragdrop = true;
+			break;
+		}
+	};
+
 	m_callback_map.remove_all();
 	if (!m_script_root) return E_POINTER;
 	for (const auto& i : id_names)
@@ -148,6 +166,7 @@ HRESULT script_host::InitCallbackMap()
 		if (SUCCEEDED(m_script_root->GetIDsOfNames(IID_NULL, &name, 1, LOCALE_USER_DEFAULT, &dispId)))
 		{
 			m_callback_map[i.id] = dispId;
+			check_features(i.id);
 		}
 	}
 	return S_OK;
@@ -499,10 +518,6 @@ void script_host::ProcessScriptInfo(t_script_info& info)
 		else if (line.find("@version") < argh)
 		{
 			info.version = ExtractValue(line);
-		}
-		else if (line.find("@feature") < argh && line.find("dragdrop") < argh)
-		{
-			info.dragdrop = true;
 		}
 		else if (line.find("@import") < argh)
 		{

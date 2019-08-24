@@ -24,7 +24,6 @@
 #define IDC_STATIC_EDGE                 116
 #define IDC_COMBO_EDGE                  117
 #define IDC_CHECK_PSEUDO_TRANSPARENT    118
-#define IDC_CHECK_GRABFOCUS             119
 
 //ui_find
 #define IDD_DIALOG_FIND                 120

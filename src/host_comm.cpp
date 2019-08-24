@@ -8,7 +8,8 @@ host_comm::host_comm()
 	, m_height(0)
 	, m_gr_bmp(nullptr)
 	, m_gr_bmp_bk(nullptr)
-	, m_grab_focus(false)
+	, m_dragdrop(false)
+	, m_grabfocus(false)
 	, m_pseudo_transparent(false)
 	, m_suppress_drawing(false)
 	, m_paint_pending(false)
@@ -127,7 +128,7 @@ void host_comm::load_config(stream_reader* reader, t_size size, abort_callback& 
 			reader->read_object(&m_edge_style, sizeof(m_edge_style), abort);
 			m_config_prop.load(reader, abort);
 			reader->skip_object(sizeof(false), abort); // HACK: skip over "disable before"
-			reader->read_object_t(m_grab_focus, abort);
+			reader->skip_object(sizeof(false), abort); // HACK: skip over "grab focus"
 			reader->read_object(&m_wndpl, sizeof(m_wndpl), abort);
 			reader->read_string(m_script_engine_str, abort);
 			reader->read_string(m_script_code, abort);
@@ -251,7 +252,6 @@ void host_comm::reset_config()
 	m_script_code = get_default_script_code();
 	m_pseudo_transparent = false;
 	m_wndpl.length = 0;
-	m_grab_focus = true;
 	m_edge_style = NO_EDGE;
 }
 
@@ -267,7 +267,7 @@ void host_comm::save_config(stream_writer* writer, abort_callback& abort) const
 		writer->write_object(&m_edge_style, sizeof(m_edge_style), abort);
 		m_config_prop.save(writer, abort);
 		writer->write_object_t(false, abort); // HACK: write this in place of "disable before"
-		writer->write_object_t(m_grab_focus, abort);
+		writer->write_object_t(true, abort); // HACK: write this in place of "grab focus"
 		writer->write_object(&m_wndpl, sizeof(m_wndpl), abort);
 		writer->write_string(m_script_engine_str, abort);
 		writer->write_string(m_script_code, abort);
