@@ -334,7 +334,7 @@ STDMETHODIMP Utils::ListFiles(BSTR folder, VARIANT_BOOL recur, VARIANT* p)
 	if (!p) return E_POINTER;
 
 	pfc::string_list_impl list;
-	helpers::list(string_utf8_from_wide(folder).get_ptr(), true, recur != VARIANT_FALSE, list);
+	helpers::list_files(string_utf8_from_wide(folder).get_ptr(), recur != VARIANT_FALSE, list);
 
 	const LONG count = list.get_count();
 	helpers::com_array helper;
@@ -356,7 +356,7 @@ STDMETHODIMP Utils::ListFolders(BSTR folder, VARIANT* p)
 	if (!p) return E_POINTER;
 
 	pfc::string_list_impl list;
-	helpers::list(string_utf8_from_wide(folder).get_ptr(), false, false, list);
+	helpers::list_folders(string_utf8_from_wide(folder).get_ptr(), list);
 
 	const LONG count = list.get_count();
 	helpers::com_array helper;

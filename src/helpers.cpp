@@ -689,28 +689,33 @@ namespace helpers
 		}
 	}
 
-	void list(const char* path, bool files, bool recur, pfc::string_list_impl& out)
+	void list_files(const char* path, bool recur, pfc::string_list_impl& out)
 	{
-		pfc::string8_fast folder;
-		filesystem::g_get_canonical_path(path, folder);
+		pfc::string8_fast cpath;
+		filesystem::g_get_canonical_path(path, cpath);
 
 		try
 		{
-			if (files)
+			if (recur)
 			{
-				if (recur)
-				{
-					foobar2000_io::listFilesRecur(folder, out, fb2k::noAbort);
-				}
-				else
-				{
-					foobar2000_io::listFiles(folder, out, fb2k::noAbort);
-				}
+				foobar2000_io::listFilesRecur(cpath, out, fb2k::noAbort);
 			}
 			else
 			{
-				foobar2000_io::listDirectories(folder, out, fb2k::noAbort);
+				foobar2000_io::listFiles(cpath, out, fb2k::noAbort);
 			}
+		}
+		catch (...) {}
+	}
+
+	void list_folders(const char* path, pfc::string_list_impl& out)
+	{
+		pfc::string8_fast cpath;
+		filesystem::g_get_canonical_path(path, cpath);
+
+		try
+		{
+			foobar2000_io::listDirectories(cpath, out, fb2k::noAbort);
 		}
 		catch (...) {}
 	}
