@@ -310,7 +310,7 @@ STDMETHODIMP Window::get_Name(BSTR* p)
 	{
 		name << "id:" << m_host->m_script_info.id;
 	}
-	*p = SysAllocString(string_wide_from_utf8_fast(name));
+	*p = TO_BSTR(name);
 	return S_OK;
 }
 

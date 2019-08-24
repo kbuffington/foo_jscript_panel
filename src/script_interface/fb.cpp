@@ -178,7 +178,7 @@ STDMETHODIMP Fb::GetDSPPresets(BSTR* p)
 			{ "name", name.get_ptr() }
 		});
 	}
-	*p = SysAllocString(string_wide_from_utf8_fast((j.dump()).c_str()));
+	*p = TO_BSTR((j.dump()).c_str());
 	return S_OK;
 }
 
@@ -214,7 +214,7 @@ STDMETHODIMP Fb::GetLibraryRelativePath(IMetadbHandle* handle, BSTR* p)
 	{
 		temp = "";
 	}
-	*p = SysAllocString(string_wide_from_utf8_fast(temp));
+	*p = TO_BSTR(temp);
 	return S_OK;
 }
 
@@ -249,7 +249,7 @@ STDMETHODIMP Fb::GetOutputDevices(BSTR* p)
 			{ "active", config.m_output == output_id && config.m_device == device_id }
 		});
 	});
-	*p = SysAllocString(string_wide_from_utf8_fast((j.dump()).c_str()));
+	*p = TO_BSTR((j.dump()).c_str());
 	return S_OK;
 }
 
@@ -547,7 +547,7 @@ STDMETHODIMP Fb::get_ComponentPath(BSTR* p)
 {
 	if (!p) return E_POINTER;
 
-	*p = SysAllocString(string_wide_from_utf8_fast(helpers::get_fb2k_component_path()));
+	*p = TO_BSTR(helpers::get_fb2k_component_path());
 	return S_OK;
 }
 
@@ -563,7 +563,7 @@ STDMETHODIMP Fb::get_FoobarPath(BSTR* p)
 {
 	if (!p) return E_POINTER;
 
-	*p = SysAllocString(string_wide_from_utf8_fast(helpers::get_fb2k_path()));
+	*p = TO_BSTR(helpers::get_fb2k_path());
 	return S_OK;
 }
 
@@ -611,7 +611,7 @@ STDMETHODIMP Fb::get_ProfilePath(BSTR* p)
 {
 	if (!p) return E_POINTER;
 
-	*p = SysAllocString(string_wide_from_utf8_fast(helpers::get_profile_path()));
+	*p = TO_BSTR(helpers::get_profile_path());
 	return S_OK;
 }
 

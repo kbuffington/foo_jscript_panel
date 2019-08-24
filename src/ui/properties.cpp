@@ -80,7 +80,7 @@ void properties::g_load(t_map& data, stream_reader* reader, abort_callback& abor
 			{
 				pfc::string8_fast str;
 				reader->read_string(str, abort);
-				val.bstrVal = SysAllocString(string_wide_from_utf8_fast(str));
+				val.bstrVal = TO_BSTR(str);
 			}
 
 			data[key] = val;

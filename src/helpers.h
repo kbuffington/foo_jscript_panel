@@ -192,7 +192,7 @@ namespace helpers
 				handle = new com_object_impl_t<MetadbHandle>(m_handle);
 			}
 
-			t_param param(handle, m_art_id, bitmap, SysAllocString(string_wide_from_utf8_fast(image_path)));
+			t_param param(handle, m_art_id, bitmap, TO_BSTR(image_path));
 			SendMessage(m_hwnd, callback_id::on_get_album_art_done, (WPARAM)&param, 0);
 		}
 

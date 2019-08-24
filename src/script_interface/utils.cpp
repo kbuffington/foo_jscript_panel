@@ -160,7 +160,7 @@ STDMETHODIMP Utils::FormatDuration(double seconds, BSTR* p)
 	if (!p) return E_POINTER;
 
 	pfc::string8_fast str = pfc::format_time_ex(seconds, 0).get_ptr();
-	*p = SysAllocString(string_wide_from_utf8_fast(str));
+	*p = TO_BSTR(str);
 	return S_OK;
 }
 
@@ -169,7 +169,7 @@ STDMETHODIMP Utils::FormatFileSize(LONGLONG bytes, BSTR* p)
 	if (!p) return E_POINTER;
 
 	pfc::string8_fast str = pfc::format_file_size_short(bytes);
-	*p = SysAllocString(string_wide_from_utf8_fast(str));
+	*p = TO_BSTR(str);
 	return S_OK;
 }
 
@@ -278,7 +278,7 @@ STDMETHODIMP Utils::Glob(BSTR pattern, UINT exc_mask, UINT inc_mask, VARIANT* p)
 	{
 		_variant_t var;
 		var.vt = VT_BSTR;
-		var.bstrVal = SysAllocString(string_wide_from_utf8_fast(files[i]).get_ptr());
+		var.bstrVal = TO_BSTR(files[i]);
 
 		if (!helper.put_item(i, var)) return E_OUTOFMEMORY;
 	}
@@ -307,7 +307,7 @@ STDMETHODIMP Utils::InputBox(UINT window_id, BSTR prompt, BSTR caption, BSTR def
 		{
 			pfc::string8_fast str;
 			dlg.GetValue(str);
-			*p = SysAllocString(string_wide_from_utf8_fast(str));
+			*p = TO_BSTR(str);
 		}
 		else if (status == IDCANCEL)
 		{
@@ -343,7 +343,7 @@ STDMETHODIMP Utils::ListFiles(BSTR folder, VARIANT_BOOL recur, VARIANT* p)
 	{
 		_variant_t var;
 		var.vt = VT_BSTR;
-		var.bstrVal = SysAllocString(string_wide_from_utf8_fast(file_path_display(list.get_item(i))));
+		var.bstrVal = TO_BSTR(file_path_display(list.get_item(i)));
 		if (!helper.put_item(i, var)) return E_OUTOFMEMORY;
 	}
 	p->vt = VT_ARRAY | VT_VARIANT;
@@ -368,7 +368,7 @@ STDMETHODIMP Utils::ListFolders(BSTR folder, VARIANT* p)
 
 		_variant_t var;
 		var.vt = VT_BSTR;
-		var.bstrVal = SysAllocString(string_wide_from_utf8_fast(path));
+		var.bstrVal = TO_BSTR(path);
 		if (!helper.put_item(i, var)) return E_OUTOFMEMORY;
 	}
 	p->vt = VT_ARRAY | VT_VARIANT;

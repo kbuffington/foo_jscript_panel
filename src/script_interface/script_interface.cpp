@@ -128,7 +128,7 @@ STDMETHODIMP FileInfo::InfoName(UINT idx, BSTR* p)
 
 	if (idx < m_info_ptr->info_get_count())
 	{
-		*p = SysAllocString(string_wide_from_utf8_fast(m_info_ptr->info_enum_name(idx)));
+		*p = TO_BSTR(m_info_ptr->info_enum_name(idx));
 		return S_OK;
 	}
 	return E_INVALIDARG;
@@ -140,7 +140,7 @@ STDMETHODIMP FileInfo::InfoValue(UINT idx, BSTR* p)
 
 	if (idx < m_info_ptr->info_get_count())
 	{
-		*p = SysAllocString(string_wide_from_utf8_fast(m_info_ptr->info_enum_value(idx)));
+		*p = TO_BSTR(m_info_ptr->info_enum_value(idx));
 		return S_OK;
 	}
 	return E_INVALIDARG;
@@ -160,7 +160,7 @@ STDMETHODIMP FileInfo::MetaName(UINT idx, BSTR* p)
 
 	if (idx < m_info_ptr->meta_get_count())
 	{
-		*p = SysAllocString(string_wide_from_utf8_fast(m_info_ptr->meta_enum_name(idx)));
+		*p = TO_BSTR(m_info_ptr->meta_enum_name(idx));
 		return S_OK;
 	}
 	return E_INVALIDARG;
@@ -172,7 +172,7 @@ STDMETHODIMP FileInfo::MetaValue(UINT idx, UINT vidx, BSTR* p)
 
 	if (idx < m_info_ptr->meta_get_count() && vidx < m_info_ptr->meta_enum_value_count(idx))
 	{
-		*p = SysAllocString(string_wide_from_utf8_fast(m_info_ptr->meta_enum_value(idx, vidx)));
+		*p = TO_BSTR(m_info_ptr->meta_enum_value(idx, vidx));
 		return S_OK;
 	}
 	return E_INVALIDARG;
@@ -379,7 +379,7 @@ STDMETHODIMP GdiBitmap::GetColourSchemeJSON(UINT count, BSTR* p)
 			{ "freq", frequency }
 		});
 	}
-	*p = SysAllocString(string_wide_from_utf8_fast((j.dump()).c_str()));
+	*p = TO_BSTR((j.dump()).c_str());
 	return S_OK;
 }
 
@@ -1278,7 +1278,7 @@ STDMETHODIMP MetadbHandle::GetAlbumArt(UINT art_id, VARIANT_BOOL need_stub, VARI
 	var1.vt = VT_DISPATCH;
 	var1.pdispVal = bitmap;
 	var2.vt = VT_BSTR;
-	var2.bstrVal = SysAllocString(string_wide_from_utf8_fast(image_path));
+	var2.bstrVal = TO_BSTR(image_path);
 
 	helpers::com_array helper;
 	if (!helper.create(2)) return E_OUTOFMEMORY;
@@ -1419,7 +1419,7 @@ STDMETHODIMP MetadbHandle::get_Path(BSTR* p)
 {
 	if (m_handle.is_empty() || !p) return E_POINTER;
 
-	*p = SysAllocString(string_wide_from_utf8_fast(file_path_display(m_handle->get_path())));
+	*p = TO_BSTR(file_path_display(m_handle->get_path()));
 	return S_OK;
 }
 
@@ -1427,7 +1427,7 @@ STDMETHODIMP MetadbHandle::get_RawPath(BSTR* p)
 {
 	if (m_handle.is_empty() || !p) return E_POINTER;
 
-	*p = SysAllocString(string_wide_from_utf8_fast(m_handle->get_path()));
+	*p = TO_BSTR(m_handle->get_path());
 	return S_OK;
 }
 
@@ -1591,7 +1591,7 @@ STDMETHODIMP MetadbHandleList::GetLibraryRelativePaths(VARIANT* p)
 		if (!api->get_relative_path(item, temp)) temp = "";
 		_variant_t var;
 		var.vt = VT_BSTR;
-		var.bstrVal = SysAllocString(string_wide_from_utf8_fast(temp));
+		var.bstrVal = TO_BSTR(temp);
 		if (!helper.put_item(i, var)) return E_OUTOFMEMORY;
 	}
 	p->vt = VT_ARRAY | VT_VARIANT;
@@ -2042,7 +2042,7 @@ STDMETHODIMP PlaylistRecyclerManager::get_Name(UINT index, BSTR* p)
 	{
 		pfc::string8_fast name;
 		api->recycler_get_name(index, name);
-		*p = SysAllocString(string_wide_from_utf8_fast(name));
+		*p = TO_BSTR(name);
 		return S_OK;
 	}
 	return E_INVALIDARG;
@@ -2166,7 +2166,7 @@ STDMETHODIMP TitleFormat::Eval(VARIANT_BOOL force, BSTR* p)
 		handle->format_title(nullptr, str, m_obj, nullptr);
 	}
 
-	*p = SysAllocString(string_wide_from_utf8_fast(str));
+	*p = TO_BSTR(str);
 	return S_OK;
 }
 
@@ -2180,7 +2180,7 @@ STDMETHODIMP TitleFormat::EvalWithMetadb(IMetadbHandle* handle, BSTR* p)
 
 	pfc::string8_fast str;
 	ptr->format_title(nullptr, str, m_obj, nullptr);
-	*p = SysAllocString(string_wide_from_utf8_fast(str));
+	*p = TO_BSTR(str);
 	return S_OK;
 }
 
@@ -2202,7 +2202,7 @@ STDMETHODIMP TitleFormat::EvalWithMetadbs(IMetadbHandleList* handles, VARIANT* p
 		handles_ref[i]->format_title(nullptr, str, m_obj, nullptr);
 		_variant_t var;
 		var.vt = VT_BSTR;
-		var.bstrVal = SysAllocString(string_wide_from_utf8_fast(str));
+		var.bstrVal = TO_BSTR(str);
 		if (!helper.put_item(i, var)) return E_OUTOFMEMORY;
 	}
 	p->vt = VT_ARRAY | VT_VARIANT;

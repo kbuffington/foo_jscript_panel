@@ -17,6 +17,7 @@
 #define JSP_NAME_VERSION JSP_NAME " v" JSP_VERSION
 
 #define TO_VARIANT_BOOL(v) ((v) ? (VARIANT_TRUE) : (VARIANT_FALSE))
+#define TO_BSTR(str) SysAllocString(string_wide_from_utf8_fast(str))
 
 namespace jsp_guids
 {

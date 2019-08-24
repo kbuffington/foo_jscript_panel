@@ -271,7 +271,7 @@ STDMETHODIMP Plman::GetPlaylistName(UINT playlistIndex, BSTR* p)
 
 	pfc::string8_fast str;
 	playlist_manager::get()->playlist_get_name(playlistIndex, str);
-	*p = SysAllocString(string_wide_from_utf8_fast(str));
+	*p = TO_BSTR(str);
 	return S_OK;
 }
 
