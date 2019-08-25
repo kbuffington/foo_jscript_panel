@@ -619,20 +619,31 @@ interface IPlman {
 
 		plman.PlaylistCount; (uint) (read)
 
-		plman.PlaylistRecyclerManager; (IPlaylistRecyclerManager) (read)
+		plman.RecyclerCount; (uint) (read)
+		/*
+		This provides a way of accessing the history of deleted playlists like other
+		playlist managers/tabs.
 
-			interface PlaylistRecyclerManager {
-				Properties:
-					Count; (uint) (read)
-					Name(index); (string) (read)
-					Content(index); (IMetadbHandleList) (read)
+		Example:
+		var count = plman.RecyclerCount; // Gets count of deleted playlists which can be restored.
+		if (count > 0) {
+			console.log(plman.GetRecyclerName(0)); // Output name of first deleted playlist
+			var handles = plman.GetRecyclerItems(0)); // Store handles from first deleted playlist and do something with them later??
+			plman.RecyclerRestore(0); // Restores first deleted playlist
+		}
 
-				Methods:
-					Purge(affectedItems); (void)
-					// affectedItems: An array like [1, 3, 5]
+		Example2:
+		var arr = [];
+		var count = plman.RecyclerCount;
+		for (var i = 0; i < count; i++) {
+			arr.push(i);
+		}
+		plman.RecyclerPurge(arr); // This purges all deleted playlists so they can't be restored.
 
-					Restore(index); (void)
-			}
+		If you only want to purge a single or specific playlists...
+		plman.RecyclerPurge([0]); // first only
+		plman.RecyclerPurge([0,2]); // first and third only
+		*/
 
 	Methods:
 		// In all these methods, playlistIndex is the target playlist
@@ -764,6 +775,10 @@ interface IPlman {
 		var selected_items = plman.GetPlaylistSelectedItems(plman.ActivePlaylist);
 		*/
 
+		plman.GetRecyclerItems(index); (IMetadbHandleList)
+
+		plman.GetRecyclerName(index); (string)
+
 		plman.InsertPlaylistItems(playlistIndex, base, handle_list[, select]); (void)
 		/*
 		base: position in playlist
@@ -813,6 +828,11 @@ interface IPlman {
 		console.log(plman.PlaylistItemCount(plman.PlayingPlaylist));
 		>> 12
 		*/
+
+		plman.RecyclerPurge(affectedItems); (void)
+		// affectedItems: An array like [1, 3, 5]
+
+		plman.RecyclerRestore(index); (void)
 
 		plman.RemovePlaylist(playlistIndex); (boolean)
 		/*
