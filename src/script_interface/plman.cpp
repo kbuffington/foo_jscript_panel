@@ -2,7 +2,7 @@
 #include "helpers.h"
 #include "plman.h"
 
-Plman::Plman() : m_fbPlaylistRecyclerManager(nullptr) {}
+Plman::Plman() {}
 Plman::~Plman() {}
 
 STDMETHODIMP Plman::AddItemToPlaybackQueue(IMetadbHandle* handle)
@@ -284,6 +284,36 @@ STDMETHODIMP Plman::GetPlaylistSelectedItems(UINT playlistIndex, IMetadbHandleLi
 	return S_OK;
 }
 
+STDMETHODIMP Plman::GetRecyclerItems(UINT index, IMetadbHandleList** pp)
+{
+	if (!pp) return E_POINTER;
+
+	auto api = playlist_manager_v3::get();
+	if (index < api->recycler_get_count())
+	{
+		metadb_handle_list handles;
+		api->recycler_get_content(index, handles);
+		*pp = new com_object_impl_t<MetadbHandleList>(handles);
+		return S_OK;
+	}
+	return E_INVALIDARG;
+}
+
+STDMETHODIMP Plman::GetRecyclerName(UINT index, BSTR* p)
+{
+	if (!p) return E_POINTER;
+
+	auto api = playlist_manager_v3::get();
+	if (index < api->recycler_get_count())
+	{
+		pfc::string8_fast str;
+		api->recycler_get_name(index, str);
+		*p = TO_BSTR(str);
+		return S_OK;
+	}
+	return E_INVALIDARG;
+}
+
 STDMETHODIMP Plman::InsertPlaylistItems(UINT playlistIndex, UINT base, IMetadbHandleList* handles, VARIANT_BOOL select)
 {
 	metadb_handle_list* handles_ptr = nullptr;
@@ -373,6 +403,30 @@ STDMETHODIMP Plman::PlaylistItemCount(UINT playlistIndex, UINT* p)
 
 	*p = playlist_manager::get()->playlist_get_item_count(playlistIndex);
 	return S_OK;
+}
+
+STDMETHODIMP Plman::RecyclerPurge(VARIANT affectedItems)
+{
+	auto api = playlist_manager_v3::get();
+	pfc::bit_array_bittable affected(api->recycler_get_count());
+	helpers::com_array helper;
+	if (!helper.convert_to_bit_array(affectedItems, affected)) return E_INVALIDARG;
+	if (helper.get_count())
+	{
+		api->recycler_purge(affected);
+	}
+	return S_OK;
+}
+
+STDMETHODIMP Plman::RecyclerRestore(UINT index)
+{
+	auto api = playlist_manager_v3::get();
+	if (index < api->recycler_get_count())
+	{
+		api->recycler_restore(index);
+		return S_OK;
+	}
+	return E_INVALIDARG;
 }
 
 STDMETHODIMP Plman::RemoveItemFromPlaybackQueue(UINT index)
@@ -590,23 +644,11 @@ STDMETHODIMP Plman::get_PlaylistCount(UINT* p)
 	return S_OK;
 }
 
-STDMETHODIMP Plman::get_PlaylistRecyclerManager(__interface IPlaylistRecyclerManager** pp)
+STDMETHODIMP Plman::get_RecyclerCount(UINT* p)
 {
-	try
-	{
-		if (!m_fbPlaylistRecyclerManager)
-		{
-			m_fbPlaylistRecyclerManager.Attach(new com_object_impl_t<PlaylistRecyclerManager>());
-		}
+	if (!p) return E_POINTER;
 
-		(*pp) = m_fbPlaylistRecyclerManager;
-		(*pp)->AddRef();
-	}
-	catch (...)
-	{
-		return E_FAIL;
-	}
-
+	*p = playlist_manager_v3::get()->recycler_get_count();
 	return S_OK;
 }
 

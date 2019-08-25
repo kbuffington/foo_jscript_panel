@@ -1985,69 +1985,6 @@ STDMETHODIMP PlayingItemLocation::get_PlaylistItemIndex(int* p)
 	return S_OK;
 }
 
-STDMETHODIMP PlaylistRecyclerManager::Purge(VARIANT affectedItems)
-{
-	auto api = playlist_manager_v3::get();
-	pfc::bit_array_bittable affected(api->recycler_get_count());
-	helpers::com_array helper;
-	if (!helper.convert_to_bit_array(affectedItems, affected)) return E_INVALIDARG;
-	if (helper.get_count())
-	{
-		api->recycler_purge(affected);
-	}
-	return S_OK;
-}
-
-STDMETHODIMP PlaylistRecyclerManager::Restore(UINT index)
-{
-	auto api = playlist_manager_v3::get();
-	if (index < api->recycler_get_count())
-	{
-		api->recycler_restore(index);
-		return S_OK;
-	}
-	return E_INVALIDARG;
-}
-
-STDMETHODIMP PlaylistRecyclerManager::get_Content(UINT index, IMetadbHandleList** pp)
-{
-	if (!pp) return E_POINTER;
-
-	auto api = playlist_manager_v3::get();
-	if (index < api->recycler_get_count())
-	{
-		metadb_handle_list handles;
-		api->recycler_get_content(index, handles);
-		*pp = new com_object_impl_t<MetadbHandleList>(handles);
-		return S_OK;
-	}
-	return E_INVALIDARG;
-}
-
-STDMETHODIMP PlaylistRecyclerManager::get_Count(UINT* p)
-{
-	if (!p) return E_POINTER;
-
-	*p = playlist_manager_v3::get()->recycler_get_count();
-	return S_OK;
-}
-
-STDMETHODIMP PlaylistRecyclerManager::get_Name(UINT index, BSTR* p)
-{
-	if (!p) return E_POINTER;
-
-	auto api = playlist_manager_v3::get();
-	const t_size count = api->recycler_get_count();
-	if (index < count)
-	{
-		pfc::string8_fast name;
-		api->recycler_get_name(index, name);
-		*p = TO_BSTR(name);
-		return S_OK;
-	}
-	return E_INVALIDARG;
-}
-
 Profiler::Profiler(const char* p_name) : m_name(p_name)
 {
 	m_timer.start();

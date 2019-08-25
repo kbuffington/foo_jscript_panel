@@ -1,8 +1,6 @@
 #pragma once
 #include "script_interface.h"
 
-_COM_SMARTPTR_TYPEDEF(IPlaylistRecyclerManager, __uuidof(IPlaylistRecyclerManager));
-
 class Plman : public IDispatchImpl3<IPlman>
 {
 protected:
@@ -31,6 +29,8 @@ public:
 	STDMETHODIMP GetPlaylistItems(UINT playlistIndex, IMetadbHandleList** pp) override;
 	STDMETHODIMP GetPlaylistName(UINT playlistIndex, BSTR* p) override;
 	STDMETHODIMP GetPlaylistSelectedItems(UINT playlistIndex, IMetadbHandleList** pp) override;
+	STDMETHODIMP GetRecyclerItems(UINT index, IMetadbHandleList** pp) override;
+	STDMETHODIMP GetRecyclerName(UINT index, BSTR* p) override;
 	STDMETHODIMP InsertPlaylistItems(UINT playlistIndex, UINT base, IMetadbHandleList* handles, VARIANT_BOOL select) override;
 	STDMETHODIMP InsertPlaylistItemsFilter(UINT playlistIndex, UINT base, IMetadbHandleList* handles, VARIANT_BOOL select) override;
 	STDMETHODIMP IsAutoPlaylist(UINT playlistIndex, VARIANT_BOOL* p) override;
@@ -39,6 +39,8 @@ public:
 	STDMETHODIMP MovePlaylist(UINT from, UINT to, VARIANT_BOOL* p) override;
 	STDMETHODIMP MovePlaylistSelection(UINT playlistIndex, int delta, VARIANT_BOOL* p) override;
 	STDMETHODIMP PlaylistItemCount(UINT playlistIndex, UINT* p) override;
+	STDMETHODIMP RecyclerPurge(VARIANT affectedItems) override;
+	STDMETHODIMP RecyclerRestore(UINT index) override;
 	STDMETHODIMP RemoveItemFromPlaybackQueue(UINT index) override;
 	STDMETHODIMP RemoveItemsFromPlaybackQueue(VARIANT affectedItems) override;
 	STDMETHODIMP RemovePlaylist(UINT playlistIndex, VARIANT_BOOL* p) override;
@@ -50,7 +52,7 @@ public:
 	STDMETHODIMP SetPlaylistFocusItemByHandle(UINT playlistIndex, IMetadbHandle* handle) override;
 	STDMETHODIMP SetPlaylistSelection(UINT playlistIndex, VARIANT affectedItems, VARIANT_BOOL state) override;
 	STDMETHODIMP SetPlaylistSelectionSingle(UINT playlistIndex, UINT playlistItemIndex, VARIANT_BOOL state) override;
-	STDMETHODIMP ShowAutoPlaylistUI(UINT playlistIndex, VARIANT_BOOL* pp) override;
+	STDMETHODIMP ShowAutoPlaylistUI(UINT playlistIndex, VARIANT_BOOL* p) override;
 	STDMETHODIMP SortByFormat(UINT playlistIndex, BSTR pattern, VARIANT_BOOL selOnly, VARIANT_BOOL* p) override;
 	STDMETHODIMP SortByFormatV2(UINT playlistIndex, BSTR pattern, int direction, VARIANT_BOOL* p) override;
 	STDMETHODIMP SortPlaylistsByName(int direction) override;
@@ -59,11 +61,8 @@ public:
 	STDMETHODIMP get_PlaybackOrder(UINT* p) override;
 	STDMETHODIMP get_PlayingPlaylist(int* p) override;
 	STDMETHODIMP get_PlaylistCount(UINT* p) override;
-	STDMETHODIMP get_PlaylistRecyclerManager(__interface IPlaylistRecyclerManager** pp) override;
+	STDMETHODIMP get_RecyclerCount(UINT* p) override;
 	STDMETHODIMP put_ActivePlaylist(UINT playlistIndex) override;
 	STDMETHODIMP put_PlaybackOrder(UINT order) override;
 	STDMETHODIMP put_PlayingPlaylist(UINT playlistIndex) override;
-
-private:
-	IPlaylistRecyclerManagerPtr m_fbPlaylistRecyclerManager;
 };

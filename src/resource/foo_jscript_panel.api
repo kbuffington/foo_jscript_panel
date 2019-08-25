@@ -71,7 +71,7 @@ plman.ActivePlaylist
 plman.PlaybackOrder
 plman.PlayingPlaylist
 plman.PlaylistCount
-plman.PlaylistRecyclerManager
+plman.RecyclerCount
 
 plman.AddItemToPlaybackQueue(handle)
 plman.AddLocations(playlistIndex, paths[, select])
@@ -94,6 +94,8 @@ plman.GetPlaylistFocusItemIndex(playlistIndex)
 plman.GetPlaylistItems(playlistIndex)
 plman.GetPlaylistName(playlistIndex)
 plman.GetPlaylistSelectedItems(playlistIndex)
+plman.GetRecyclerItems(idx)
+plman.GetRecyclerName(idx)
 plman.InsertPlaylistItems(playlistIndex, base, handle_list[, select])
 plman.InsertPlaylistItemsFilter(playlistIndex, base, handle_list[, select])
 plman.IsAutoPlaylist(playlistIndex)
@@ -102,6 +104,8 @@ plman.IsPlaylistLocked(playlistIndex)
 plman.MovePlaylist(from, to)
 plman.MovePlaylistSelection(playlistIndex, delta)
 plman.PlaylistItemCount(playlistIndex)
+plman.RecyclerPurge(affectedItems)
+plman.RecyclerRestore(idx)
 plman.RemoveItemFromPlaybackQueue(index)
 plman.RemoveItemsFromPlaybackQueue(affectedItems)
 plman.RemovePlaylist(playlistIndex)

@@ -364,6 +364,8 @@ library foo_jscript_panel
 		HRESULT GetPlaylistItems(UINT playlistIndex, [out, retval] IMetadbHandleList** pp);
 		HRESULT GetPlaylistName(UINT playlistIndex, [out, retval] BSTR* p);
 		HRESULT GetPlaylistSelectedItems(UINT playlistIndex, [out, retval] IMetadbHandleList** pp);
+		HRESULT GetRecyclerItems(UINT index, [out, retval] IMetadbHandleList** pp);
+		HRESULT GetRecyclerName(UINT index, [out, retval] BSTR* p);
 		HRESULT InsertPlaylistItems(UINT playlistIndex, UINT base, IMetadbHandleList* handles, [defaultvalue(0)] VARIANT_BOOL select);
 		HRESULT InsertPlaylistItemsFilter(UINT playlistIndex, UINT base, IMetadbHandleList* handles, [defaultvalue(0)] VARIANT_BOOL select);
 		HRESULT IsAutoPlaylist(UINT playlistIndex, [out, retval] VARIANT_BOOL* p);
@@ -372,6 +374,8 @@ library foo_jscript_panel
 		HRESULT MovePlaylist(UINT from, UINT to, [out, retval] VARIANT_BOOL* p);
 		HRESULT MovePlaylistSelection(UINT playlistIndex, int delta, [out, retval] VARIANT_BOOL* p);
 		HRESULT PlaylistItemCount(UINT playlistIndex, [out, retval] UINT* p);
+		HRESULT RecyclerPurge(VARIANT affectedItems);
+		HRESULT RecyclerRestore(UINT index);
 		HRESULT RemoveItemFromPlaybackQueue(UINT index);
 		HRESULT RemoveItemsFromPlaybackQueue(VARIANT affectedItems);
 		HRESULT RemovePlaylist(UINT playlistIndex, [out, retval] VARIANT_BOOL* p);
@@ -384,7 +388,7 @@ library foo_jscript_panel
 		HRESULT SetPlaylistSelection(UINT playlistIndex, VARIANT affectedItems, VARIANT_BOOL state);
 		HRESULT SetPlaylistSelectionSingle(UINT playlistIndex, UINT playlistItemIndex, VARIANT_BOOL state);
 		HRESULT ShowAutoPlaylistUI(UINT playlistIndex, [out, retval] VARIANT_BOOL* p);
-		HRESULT SortByFormat(UINT playlistIndex, BSTR pattern, [defaultvalue(0)] VARIANT_BOOL selOnly, [out, retval] VARIANT_BOOL* pp);
+		HRESULT SortByFormat(UINT playlistIndex, BSTR pattern, [defaultvalue(0)] VARIANT_BOOL selOnly, [out, retval] VARIANT_BOOL* p);
 		HRESULT SortByFormatV2(UINT playlistIndex, BSTR pattern, [defaultvalue(1)] int direction, [out, retval] VARIANT_BOOL* p);
 		HRESULT SortPlaylistsByName([defaultvalue(1)] int direction);
 		HRESULT UndoBackup(UINT playlistIndex);
@@ -392,6 +396,7 @@ library foo_jscript_panel
 		[propget] HRESULT PlaybackOrder([out, retval] UINT* p);
 		[propget] HRESULT PlayingPlaylist([out, retval] int* p);
 		[propget] HRESULT PlaylistCount([out, retval] UINT* p);
+		[propget] HRESULT RecyclerCount([out, retval] UINT* p);
 		[propput] HRESULT ActivePlaylist(UINT playlistIndex);
 		[propput] HRESULT PlaybackOrder(UINT order);
 		[propput] HRESULT PlayingPlaylist(UINT playlistIndex);

@@ -343,16 +343,6 @@ public:
 	STDMETHODIMP get_PlaylistItemIndex(int* p) override;
 };
 
-class PlaylistRecyclerManager : public IDispatchImpl3<IPlaylistRecyclerManager>
-{
-public:
-	STDMETHODIMP Purge(VARIANT affectedItems) override;
-	STDMETHODIMP Restore(UINT index) override;
-	STDMETHODIMP get_Content(UINT index, IMetadbHandleList** pp) override;
-	STDMETHODIMP get_Count(UINT* p) override;
-	STDMETHODIMP get_Name(UINT index, BSTR* p) override;
-};
-
 class Profiler : public IDispatchImpl3<IProfiler>
 {
 protected:
