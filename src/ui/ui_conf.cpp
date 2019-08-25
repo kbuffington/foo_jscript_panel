@@ -14,7 +14,11 @@ CDialogConf::~CDialogConf() {}
 
 BOOL CDialogConf::OnInitDialog(HWND hwndFocus, LPARAM lParam)
 {
+	m_edge = GetDlgItem(IDC_COMBO_EDGE);
+	m_edit = GetDlgItem(IDC_EDIT);
+	m_engine = GetDlgItem(IDC_COMBO_ENGINE);
 	m_menu = GetMenu();
+	m_pseudo = GetDlgItem(IDC_CHECK_PSEUDO_TRANSPARENT);
 
 	pfc::string8_fast base = helpers::get_fb2k_component_path();
 
@@ -90,52 +94,50 @@ BOOL CDialogConf::OnInitDialog(HWND hwndFocus, LPARAM lParam)
 	}
 
 	// Edit Control
-	m_editorctrl.SubclassWindow(GetDlgItem(IDC_EDIT));
+	m_editorctrl.SubclassWindow(m_edit);
 	m_editorctrl.SetJScript();
 	m_editorctrl.ReadAPI();
 	m_editorctrl.SetContent(m_parent->m_script_code, true);
 	m_editorctrl.SetSavePoint();
 
 	// Script Engine
-	HWND combo_engine = GetDlgItem(IDC_COMBO_ENGINE);
-	ComboBox_AddString(combo_engine, L"Chakra");
-	ComboBox_AddString(combo_engine, L"JScript");
+	m_engine.AddString(L"Chakra");
+	m_engine.AddString(L"JScript");
 
 	if (helpers::supports_chakra())
 	{
-		uComboBox_SelectString(combo_engine, m_parent->m_script_engine_str);
+		uComboBox_SelectString(m_engine, m_parent->m_script_engine_str);
 	}
 	else
 	{
-		uComboBox_SelectString(combo_engine, "JScript");
-		GetDlgItem(IDC_COMBO_ENGINE).EnableWindow(false);
+		uComboBox_SelectString(m_engine, "JScript");
+		m_engine.EnableWindow(false);
 	}
 
 	// Edge Style
-	HWND combo_edge = GetDlgItem(IDC_COMBO_EDGE);
-	ComboBox_AddString(combo_edge, L"None");
-	ComboBox_AddString(combo_edge, L"Sunken");
-	ComboBox_AddString(combo_edge, L"Grey");
+	m_edge.AddString(L"None");
+	m_edge.AddString(L"Sunken");
+	m_edge.AddString(L"Grey");
 
 	if (m_parent->get_instance_type() == host_comm::KInstanceTypeDUI && core_version_info_v2::get()->test_version(1, 4, 0, 0))
 	{
-		ComboBox_SetCurSel(combo_edge, 0);
-		GetDlgItem(IDC_COMBO_EDGE).EnableWindow(false);
+		m_edge.SetCurSel(0);
+		m_edge.EnableWindow(false);
 	}
 	else
 	{
-		ComboBox_SetCurSel(combo_edge, m_parent->m_edge_style);
+		m_edge.SetCurSel(m_parent->m_edge_style);
 	}
 
 	// Pseudo transparency
 	if (m_parent->get_instance_type() == host_comm::KInstanceTypeCUI)
 	{
-		uButton_SetCheck(m_hWnd, IDC_CHECK_PSEUDO_TRANSPARENT, m_parent->m_pseudo_transparent);
+		m_pseudo.SetCheck(m_parent->m_pseudo_transparent);
 	}
 	else
 	{
-		uButton_SetCheck(m_hWnd, IDC_CHECK_PSEUDO_TRANSPARENT, false);
-		GetDlgItem(IDC_CHECK_PSEUDO_TRANSPARENT).EnableWindow(false);
+		m_pseudo.SetCheck(false);
+		m_pseudo.EnableWindow(false);
 	}
 
 	return FALSE;
@@ -182,7 +184,7 @@ LRESULT CDialogConf::OnUwmKeyDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL&
 		case 'H':
 			if (!m_dlgreplace)
 			{
-				m_dlgreplace = new CDialogReplace(GetDlgItem(IDC_EDIT));
+				m_dlgreplace = new CDialogReplace(m_edit);
 
 				if (!m_dlgreplace || !m_dlgreplace->Create(m_hWnd))
 				{
@@ -197,7 +199,7 @@ LRESULT CDialogConf::OnUwmKeyDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL&
 		case 'G':
 			{
 				modal_dialog_scope scope(m_hWnd);
-				CDialogGoto dlg(GetDlgItem(IDC_EDIT));
+				CDialogGoto dlg(m_edit);
 				dlg.DoModal(m_hWnd);
 			}
 			break;
@@ -263,9 +265,9 @@ bool CDialogConf::FindResult(HWND hWnd, HWND hWndEdit, int pos, const char* whic
 void CDialogConf::Apply()
 {
 	// Save panel settings
-	uGetWindowText(GetDlgItem(IDC_COMBO_ENGINE), m_parent->m_script_engine_str);
-	m_parent->m_edge_style = static_cast<host_comm::t_edge_style>(ComboBox_GetCurSel(GetDlgItem(IDC_COMBO_EDGE)));
-	m_parent->m_pseudo_transparent = uButton_GetCheck(m_hWnd, IDC_CHECK_PSEUDO_TRANSPARENT);
+	uGetWindowText(m_engine, m_parent->m_script_engine_str);
+	m_parent->m_edge_style = static_cast<host_comm::t_edge_style>(m_edge.GetCurSel());
+	m_parent->m_pseudo_transparent = (bool)m_pseudo.GetCheck();
 
 	// Get script text
 	pfc::array_t<char> code;
@@ -350,9 +352,9 @@ void CDialogConf::OnLinks(UINT uNotifyCode, int nID, HWND wndCtl)
 
 void CDialogConf::OnReset(UINT uNotifyCode, int nID, HWND wndCtl)
 {
-	uComboBox_SelectString(GetDlgItem(IDC_COMBO_ENGINE), host_comm::get_default_script_engine_str());
-	ComboBox_SetCurSel(GetDlgItem(IDC_COMBO_EDGE), 0);
-	uButton_SetCheck(m_hWnd, IDC_CHECK_PSEUDO_TRANSPARENT, false);
+	uComboBox_SelectString(m_engine, host_comm::get_default_script_engine_str());
+	m_edge.SetCurSel(0);
+	m_pseudo.SetCheck(false);
 	m_editorctrl.SetContent(host_comm::get_default_script_code());
 }
 
@@ -365,7 +367,7 @@ void CDialogConf::OpenFindDialog()
 {
 	if (!m_dlgfind)
 	{
-		m_dlgfind = new CDialogFind(GetDlgItem(IDC_EDIT));
+		m_dlgfind = new CDialogFind(m_edit);
 		m_dlgfind->Create(m_hWnd);
 	}
 

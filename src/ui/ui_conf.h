@@ -67,10 +67,14 @@ public:
 	void OpenFindDialog();
 
 private:
+	CButton m_pseudo;
 	CDialogFind* m_dlgfind;
 	CDialogReplace* m_dlgreplace;
+	CComboBox m_edge;
+	CComboBox m_engine;
 	CMenu m_menu;
 	CScriptEditorCtrl m_editorctrl;
+	CWindow m_edit;
 	panel_window* m_parent;
 	pfc::string8_fast m_caption;
 	pfc::string8_fast m_lastSearchText;
