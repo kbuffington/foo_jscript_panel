@@ -68,9 +68,8 @@
 
 //menu
 #define IDR_MENU                        200
-#define ID_FILE_APPLY                   201
-#define ID_FILE_IMPORT                  203
-#define ID_FILE_EXPORT                  204
+#define ID_FILE_IMPORT                  201
+#define ID_FILE_EXPORT                  202
 
 #define ID_SAMPLES_BEGIN                300
 #define ID_SAMPLES_END                  399

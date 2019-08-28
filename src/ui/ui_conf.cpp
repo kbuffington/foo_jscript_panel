@@ -310,11 +310,6 @@ void CDialogConf::OnDocs(UINT uNotifyCode, int nID, HWND wndCtl)
 	ShellExecute(nullptr, L"open", path, nullptr, nullptr, SW_SHOW);
 }
 
-void CDialogConf::OnFileSave(UINT uNotifyCode, int nID, HWND wndCtl)
-{
-	Apply();
-}
-
 void CDialogConf::OnFileImport(UINT uNotifyCode, int nID, HWND wndCtl)
 {
 	pfc::string8_fast filename;

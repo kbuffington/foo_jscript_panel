@@ -60,8 +60,6 @@ IDR_MENU MENU
 BEGIN
     POPUP "File"
     BEGIN
-        MENUITEM "&Save\tCtrl+S", ID_FILE_APPLY
-        MENUITEM SEPARATOR
         MENUITEM "Import...", ID_FILE_IMPORT
         MENUITEM "Export...", ID_FILE_EXPORT
     END

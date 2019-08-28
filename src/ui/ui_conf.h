@@ -29,7 +29,6 @@ public:
 		MSG_WM_NOTIFY(OnNotify)
 		MESSAGE_HANDLER(UWM_KEYDOWN, OnUwmKeyDown)
 		MESSAGE_HANDLER(UWM_FIND_TEXT_CHANGED, OnUwmFindTextChanged)
-		COMMAND_ID_HANDLER_EX(ID_FILE_APPLY, OnFileSave)
 		COMMAND_ID_HANDLER_EX(ID_FILE_IMPORT, OnFileImport)
 		COMMAND_ID_HANDLER_EX(ID_FILE_EXPORT, OnFileExport)
 		COMMAND_ID_HANDLER_EX(IDC_RESET, OnReset)
@@ -58,7 +57,6 @@ public:
 	void Apply();
 	void OnCloseCmd(UINT uNotifyCode, int nID, HWND wndCtl);
 	void OnDocs(UINT uNotifyCode, int nID, HWND wndCtl);
-	void OnFileSave(UINT uNotifyCode, int nID, HWND wndCtl);
 	void OnFileImport(UINT uNotifyCode, int nID, HWND wndCtl);
 	void OnFileExport(UINT uNotifyCode, int nID, HWND wndCtl);
 	void OnLinks(UINT uNotifyCode, int nID, HWND wndCtl);
