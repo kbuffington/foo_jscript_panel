@@ -75,6 +75,14 @@ STDMETHODIMP Utils::ColourPicker(UINT window_id, int default_colour, int* p)
 	return S_OK;
 }
 
+STDMETHODIMP Utils::DateStringToTimestamp(BSTR str, UINT* p)
+{
+	if (!p) return E_POINTER;
+
+	*p = (UINT)pfc::fileTimeWtoU(filetimestamp_from_string(string_utf8_from_wide(str).get_ptr()));
+	return S_OK;
+}
+
 STDMETHODIMP Utils::FileTest(BSTR path, BSTR mode, VARIANT* p)
 {
 	if (!p) return E_POINTER;
@@ -437,6 +445,14 @@ STDMETHODIMP Utils::ReadTextFile(BSTR filename, UINT codepage, BSTR* p)
 	{
 		*p = SysAllocString(L"");
 	}
+	return S_OK;
+}
+
+STDMETHODIMP Utils::TimestampToDateString(UINT ts, BSTR* p)
+{
+	if (!p) return E_POINTER;
+
+	*p = TO_BSTR(format_filetimestamp(pfc::fileTimeUtoW(ts)));
 	return S_OK;
 }
 

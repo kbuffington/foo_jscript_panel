@@ -407,6 +407,7 @@ library foo_jscript_panel
 		HRESULT CheckComponent(BSTR name, [defaultvalue(-1)] VARIANT_BOOL is_dll, [out, retval] VARIANT_BOOL* p);
 		HRESULT CheckFont(BSTR name, [out, retval] VARIANT_BOOL* p);
 		HRESULT ColourPicker(UINT window_id, int default_colour, [out, retval] int* p);
+		HRESULT DateStringToTimestamp(BSTR str, [out, retval] UINT* p);
 		HRESULT FileTest(BSTR path, BSTR mode, [out, retval] VARIANT* p);
 		HRESULT FormatDuration(double seconds, [out, retval] BSTR* p);
 		HRESULT FormatFileSize(LONGLONG bytes, [out, retval] BSTR* p);
@@ -424,6 +425,7 @@ library foo_jscript_panel
 		HRESULT PathWildcardMatch(BSTR pattern, BSTR str, [out, retval] VARIANT_BOOL* p);
 		HRESULT ReadINI(BSTR filename, BSTR section, BSTR key, [optional] VARIANT defaultval, [out, retval] BSTR* p);
 		HRESULT ReadTextFile(BSTR filename, [defaultvalue(0)] UINT codepage, [out, retval] BSTR* p);
+		HRESULT TimestampToDateString(UINT ts, [out, retval] BSTR* p);
 		HRESULT WriteINI(BSTR filename, BSTR section, BSTR key, VARIANT val, [out, retval] VARIANT_BOOL* p);
 		HRESULT WriteTextFile(BSTR filename, BSTR content, [defaultvalue(-1)] VARIANT_BOOL write_bom, [out, retval] VARIANT_BOOL* p);
 		[propget] HRESULT Version([out, retval] UINT* p);

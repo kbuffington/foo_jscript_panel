@@ -144,6 +144,9 @@ copy /Y "$(TargetDir)$(TargetName).pdb" "%component_path%\"</Command>
     <ProjectReference Include="..\foobar2000-SDK\columns_ui-sdk\columns_ui-sdk.vcxproj">
       <Project>{93ec0ede-01cd-4fb0-b8e8-4f2a027e026e}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\foobar2000-SDK\foobar2000\helpers\foobar2000_sdk_helpers.vcxproj">
+      <Project>{ee47764e-a202-4f85-a767-abdab4aff35f}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\foobar2000-SDK\pfc\pfc.vcxproj">
       <Project>{ebfffb4e-261d-44d3-b89c-957b31a0bf9c}</Project>
     </ProjectReference>

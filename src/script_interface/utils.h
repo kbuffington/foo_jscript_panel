@@ -11,6 +11,7 @@ public:
 	STDMETHODIMP CheckComponent(BSTR name, VARIANT_BOOL is_dll, VARIANT_BOOL* p) override;
 	STDMETHODIMP CheckFont(BSTR name, VARIANT_BOOL* p) override;
 	STDMETHODIMP ColourPicker(UINT window_id, int default_colour, int* p) override;
+	STDMETHODIMP DateStringToTimestamp(BSTR str, UINT* p) override;
 	STDMETHODIMP FileTest(BSTR path, BSTR mode, VARIANT* p) override;
 	STDMETHODIMP FormatDuration(double seconds, BSTR* p) override;
 	STDMETHODIMP FormatFileSize(LONGLONG bytes, BSTR* p) override;
@@ -28,6 +29,7 @@ public:
 	STDMETHODIMP PathWildcardMatch(BSTR pattern, BSTR str, VARIANT_BOOL* p) override;
 	STDMETHODIMP ReadINI(BSTR filename, BSTR section, BSTR key, VARIANT defaultval, BSTR* p) override;
 	STDMETHODIMP ReadTextFile(BSTR filename, UINT codepage, BSTR* p) override;
+	STDMETHODIMP TimestampToDateString(UINT ts, BSTR* p) override;
 	STDMETHODIMP WriteINI(BSTR filename, BSTR section, BSTR key, VARIANT val, VARIANT_BOOL* p) override;
 	STDMETHODIMP WriteTextFile(BSTR filename, BSTR content, VARIANT_BOOL write_bom, VARIANT_BOOL* p) override;
 	STDMETHODIMP get_Version(UINT* p) override;

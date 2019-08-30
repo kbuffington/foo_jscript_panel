@@ -33,6 +33,7 @@
 
 #include "../foobar2000-SDK/foobar2000/SDK/foobar2000.h"
 #include "../foobar2000-SDK/columns_ui-sdk/ui_extension.h"
+#include "../foobar2000-SDK/foobar2000/helpers/filetimetools.h"
 
 #ifdef _INC_WINDOWSX
 #undef SubclassWindow

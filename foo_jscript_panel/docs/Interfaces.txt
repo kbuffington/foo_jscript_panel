@@ -1046,6 +1046,26 @@ interface IUtils {
 		See Helpers.txt for RGB function.
 		*/
 
+		utils.DateStringToTimestamp(str) (uint)
+		/*
+		str: string
+
+		The supplied date string must be in full YYYY-MM-DD HH:MM:SS format.
+		The return value is seconds since 00:00:00 Thursday, 1 January 1970 UTC,
+		not milliseconds like standard JavaScript timestamps. This is to maintain
+		compatibility with the JScript script engine which does not support
+		the passing of 64bit integers between the script and built-in functions.
+
+		It is expected date strings are timezone adjusted but timestamps are UTC (not adjusted).
+
+		Example;
+		var now = Math.round(new Date().getTime() / 1000);
+		var last_played_ts = utils.DateStringToTimestamp("2018-08-30 00:00:00");
+		var day = 24 * 60 * 60; // number of seconds in a day
+		console.log(Math.floor((now - last_played_ts) / day)); // number of days since last played
+		>> 365 
+		*/
+
 		utils.FileTest(path, mode); (VARIANT)
 		/*
 		mode:
@@ -1233,6 +1253,19 @@ interface IUtils {
 
 		Example:
 		var username = utils.ReadINI("e:\\my_file.ini", "Last.fm", "username");
+		*/
+
+		utils.TimestampToDateString(ts); (string)
+		/*
+		The timestamp should be the number of seconds since 00:00:00 Thursday, 1 January 1970 UTC.
+
+		The returned date string will be adjusted to your local timezone.
+
+		Example:
+
+		var now = Math.round(new Date().getTime() / 1000); // divide by 1000 here because JS timestamps are in milliseconds
+		console.log(utils.TimestampToDateString(now));
+		>> 2019-08-30 17:30:15
 		*/
 
 		utils.WriteINI(filename, section, key, val); (boolean)
