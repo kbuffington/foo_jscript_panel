@@ -1196,20 +1196,6 @@ interface IUtils {
 		utils.PathWildcardMatch(pattern, str); (boolean)
 		// Using Microsoft MS-DOS wildcards match type. eg "*.txt", "abc?.tx?"
 
-		utils.ReadTextFile(filename[, codepage]); (string)
-		/*
-		codepage: default 0. See Codepages.txt
-		Only supply a codepage as a last resort if the file content
-		appears corrupted. You may consider using utils.FileTest in
-		"chardet" mode to get a codepage but it's not always guaranteed to work.
-
-		There should be no issue at all with UTF8/UTF16-LE files as these are
-		automatically detected.
-
-		Example:
-		var text = utils.ReadTextFile("E:\\some text file.txt");
-		*/
-
 		utils.ReadINI(filename, section, key[, defaultval]); (string)
 		/*
 		An INI file should like this:
@@ -1221,6 +1207,20 @@ interface IUtils {
 
 		Example:
 		var username = utils.ReadINI("e:\\my_file.ini", "Last.fm", "username");
+		*/
+
+		utils.ReadTextFile(filename[, codepage]); (string)
+		/*
+		codepage: default 0. See Codepages.txt
+		Only supply a codepage as a last resort if the file content
+		appears corrupted. You may consider using utils.Chardet to get a codepage
+		but it's not always guaranteed to work.
+
+		There should be no issue at all with UTF8/UTF16-LE files as these are
+		automatically detected.
+
+		Example:
+		var text = utils.ReadTextFile("E:\\some text file.txt");
 		*/
 
 		utils.TimestampToDateString(ts); (string)
