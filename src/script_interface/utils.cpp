@@ -6,6 +6,14 @@
 Utils::Utils() {}
 Utils::~Utils() {}
 
+STDMETHODIMP Utils::Chardet(BSTR filename, UINT* p)
+{
+	if (!p) return E_POINTER;
+
+	*p = helpers::detect_charset(string_utf8_from_wide(filename));
+	return S_OK;
+}
+
 STDMETHODIMP Utils::CheckComponent(BSTR name, VARIANT_BOOL is_dll, VARIANT_BOOL* p)
 {
 	if (!p) return E_POINTER;
@@ -83,86 +91,6 @@ STDMETHODIMP Utils::DateStringToTimestamp(BSTR str, UINT* p)
 	return S_OK;
 }
 
-STDMETHODIMP Utils::FileTest(BSTR path, BSTR mode, VARIANT* p)
-{
-	if (!p) return E_POINTER;
-
-	if (wcscmp(mode, L"e") == 0)
-	{
-		p->vt = VT_BOOL;
-		p->boolVal = TO_VARIANT_BOOL(PathFileExists(path));
-	}
-	else if (wcscmp(mode, L"s") == 0)
-	{
-		WIN32_FILE_ATTRIBUTE_DATA data;
-		t_filesize size = 0;
-		if (GetFileAttributesEx(path, GetFileExInfoStandard, &data) && !(data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
-		{
-			size = (t_filesize)data.nFileSizeHigh << 32 | data.nFileSizeLow;
-		}
-
-		p->vt = VT_I8;
-		p->llVal = size;
-	}
-	else if (wcscmp(mode, L"d") == 0)
-	{
-		p->vt = VT_BOOL;
-		p->boolVal = TO_VARIANT_BOOL(PathIsDirectory(path));
-	}
-	else if (wcscmp(mode, L"split") == 0)
-	{
-		const wchar_t* fn = PathFindFileName(path);
-		const wchar_t* ext = PathFindExtension(fn);
-		wchar_t dir[MAX_PATH] = { 0 };
-		helpers::com_array helper;
-		_variant_t vars[3];
-
-		if (!helper.create(_countof(vars))) return E_OUTOFMEMORY;
-
-		vars[0].vt = VT_BSTR;
-		vars[0].bstrVal = nullptr;
-		vars[1].vt = VT_BSTR;
-		vars[1].bstrVal = nullptr;
-		vars[2].vt = VT_BSTR;
-		vars[2].bstrVal = nullptr;
-
-		if (PathIsFileSpec(fn))
-		{
-			StringCchCopyN(dir, _countof(dir), path, fn - path);
-			PathAddBackslash(dir);
-
-			vars[0].bstrVal = SysAllocString(dir);
-			vars[1].bstrVal = SysAllocStringLen(fn, ext - fn);
-			vars[2].bstrVal = SysAllocString(ext);
-		}
-		else
-		{
-			StringCchCopy(dir, _countof(dir), path);
-			PathAddBackslash(dir);
-
-			vars[0].bstrVal = SysAllocString(dir);
-		}
-
-		for (LONG i = 0; i < helper.get_count(); ++i)
-		{
-			if (!helper.put_item(i, vars[i])) return E_OUTOFMEMORY;
-		}
-
-		p->vt = VT_VARIANT | VT_ARRAY;
-		p->parray = helper.get_ptr();
-	}
-	else if (wcscmp(mode, L"chardet") == 0)
-	{
-		p->vt = VT_UI4;
-		p->ulVal = helpers::detect_charset(string_utf8_from_wide(path));
-	}
-	else
-	{
-		return E_INVALIDARG;
-	}
-	return S_OK;
-}
-
 STDMETHODIMP Utils::FormatDuration(double seconds, BSTR* p)
 {
 	if (!p) return E_POINTER;
@@ -226,6 +154,19 @@ STDMETHODIMP Utils::GetAlbumArtV2(IMetadbHandle* handle, UINT art_id, VARIANT_BO
 
 	pfc::string8_fast dummy;
 	*pp = helpers::get_album_art(ptr, art_id, need_stub != VARIANT_FALSE, false, dummy);
+	return S_OK;
+}
+
+STDMETHODIMP Utils::GetFileSize(BSTR filename, LONGLONG* p)
+{
+	if (!p) return E_POINTER;
+
+	*p = 0;
+	WIN32_FILE_ATTRIBUTE_DATA data;
+	if (GetFileAttributesEx(filename, GetFileExInfoStandard, &data) && !(data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
+	{
+		*p = (t_filesize)data.nFileSizeHigh << 32 | data.nFileSizeLow;
+	}
 	return S_OK;
 }
 
@@ -326,6 +267,22 @@ STDMETHODIMP Utils::InputBox(UINT window_id, BSTR prompt, BSTR caption, BSTR def
 			*p = SysAllocString(def);
 		}
 	}
+	return S_OK;
+}
+
+STDMETHODIMP Utils::IsFile(BSTR filename, VARIANT_BOOL* p)
+{
+	if (!p) return E_POINTER;
+
+	*p = TO_VARIANT_BOOL(PathFileExists(filename));
+	return S_OK;
+}
+
+STDMETHODIMP Utils::IsFolder(BSTR folder, VARIANT_BOOL* p)
+{
+	if (!p) return E_POINTER;
+
+	*p = TO_VARIANT_BOOL(PathIsDirectory(folder));
 	return S_OK;
 }
 

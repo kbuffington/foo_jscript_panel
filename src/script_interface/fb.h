@@ -24,7 +24,6 @@ public:
 	STDMETHODIMP GetDSPPresets(BSTR* p) override;
 	STDMETHODIMP GetFocusItem(VARIANT_BOOL force, IMetadbHandle** pp) override;
 	STDMETHODIMP GetLibraryItems(IMetadbHandleList** pp) override;
-	STDMETHODIMP GetLibraryRelativePath(IMetadbHandle* handle, BSTR* p) override;
 	STDMETHODIMP GetNowPlaying(IMetadbHandle** pp) override;
 	STDMETHODIMP GetOutputDevices(BSTR* p) override;
 	STDMETHODIMP GetQueryItems(IMetadbHandleList* handles, BSTR query, IMetadbHandleList** pp) override;

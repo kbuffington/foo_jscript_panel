@@ -8,20 +8,23 @@ protected:
 	~Utils();
 
 public:
+	STDMETHODIMP Chardet(BSTR filename, UINT* p) override;
 	STDMETHODIMP CheckComponent(BSTR name, VARIANT_BOOL is_dll, VARIANT_BOOL* p) override;
 	STDMETHODIMP CheckFont(BSTR name, VARIANT_BOOL* p) override;
 	STDMETHODIMP ColourPicker(UINT window_id, int default_colour, int* p) override;
 	STDMETHODIMP DateStringToTimestamp(BSTR str, UINT* p) override;
-	STDMETHODIMP FileTest(BSTR path, BSTR mode, VARIANT* p) override;
 	STDMETHODIMP FormatDuration(double seconds, BSTR* p) override;
 	STDMETHODIMP FormatFileSize(LONGLONG bytes, BSTR* p) override;
 	STDMETHODIMP GetAlbumArtAsync(UINT window_id, IMetadbHandle* handle, UINT art_id, VARIANT_BOOL need_stub, VARIANT_BOOL only_embed, VARIANT_BOOL no_load, UINT* p) override;
 	STDMETHODIMP GetAlbumArtEmbedded(BSTR rawpath, UINT art_id, IGdiBitmap** pp) override;
 	STDMETHODIMP GetAlbumArtV2(IMetadbHandle* handle, UINT art_id, VARIANT_BOOL need_stub, IGdiBitmap** pp) override;
+	STDMETHODIMP GetFileSize(BSTR filename, LONGLONG* p) override;
 	STDMETHODIMP GetSysColour(UINT index, int* p) override;
 	STDMETHODIMP GetSystemMetrics(UINT index, int* p) override;
 	STDMETHODIMP Glob(BSTR pattern, UINT exc_mask, UINT inc_mask, VARIANT* p) override;
 	STDMETHODIMP InputBox(UINT window_id, BSTR prompt, BSTR caption, BSTR def, VARIANT_BOOL error_on_cancel, BSTR* p) override;
+	STDMETHODIMP IsFile(BSTR filename, VARIANT_BOOL* p) override;
+	STDMETHODIMP IsFolder(BSTR folder, VARIANT_BOOL* p) override;
 	STDMETHODIMP IsKeyPressed(UINT vkey, VARIANT_BOOL* p) override;
 	STDMETHODIMP ListFiles(BSTR folder, VARIANT_BOOL recur, VARIANT* p) override;
 	STDMETHODIMP ListFolders(BSTR folder, VARIANT* p) override;

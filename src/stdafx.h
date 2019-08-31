@@ -15,7 +15,6 @@
 #include <GdiPlus.h>
 #include <ActivScp.h>
 #include <ComDef.h>
-#include <StrSafe.h>
 
 #include <atlstr.h>
 #include <atlwin.h>

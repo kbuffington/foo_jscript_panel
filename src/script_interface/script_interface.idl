@@ -280,7 +280,6 @@ library foo_jscript_panel
 		HRESULT GetDSPPresets([out, retval] BSTR* p);
 		HRESULT GetFocusItem([defaultvalue(-1)] VARIANT_BOOL force, [out, retval] IMetadbHandle** pp);
 		HRESULT GetLibraryItems([out, retval] IMetadbHandleList** pp);
-		HRESULT GetLibraryRelativePath(IMetadbHandle* handle, [out, retval] BSTR* p);
 		HRESULT GetNowPlaying([out, retval] IMetadbHandle** pp);
 		HRESULT GetOutputDevices([out, retval] BSTR* p);
 		HRESULT GetQueryItems(IMetadbHandleList* handles, BSTR query, [out, retval] IMetadbHandleList** pp);
@@ -404,20 +403,23 @@ library foo_jscript_panel
 
 	[object,dual,pointer_default(unique),custom(8AFCDA7F-33B7-3120-86A8-754D2C0C0578, "library_block"),uuid(d53e81cd-0157-4cfe-a618-1F88d48dc0b7)]
 	interface IUtils : IDispatch {
+		HRESULT Chardet(BSTR filename, [out, retval] UINT* p);
 		HRESULT CheckComponent(BSTR name, [defaultvalue(-1)] VARIANT_BOOL is_dll, [out, retval] VARIANT_BOOL* p);
 		HRESULT CheckFont(BSTR name, [out, retval] VARIANT_BOOL* p);
 		HRESULT ColourPicker(UINT window_id, int default_colour, [out, retval] int* p);
 		HRESULT DateStringToTimestamp(BSTR str, [out, retval] UINT* p);
-		HRESULT FileTest(BSTR path, BSTR mode, [out, retval] VARIANT* p);
 		HRESULT FormatDuration(double seconds, [out, retval] BSTR* p);
 		HRESULT FormatFileSize(LONGLONG bytes, [out, retval] BSTR* p);
 		HRESULT GetAlbumArtAsync(UINT window_id, IMetadbHandle* handle, [defaultvalue(0)] UINT art_id, [defaultvalue(-1)] VARIANT_BOOL need_stub, [defaultvalue(0)] VARIANT_BOOL only_embed, [defaultvalue(0)] VARIANT_BOOL no_load, [out, retval] UINT* p);
 		HRESULT GetAlbumArtEmbedded(BSTR rawpath, [defaultvalue(0)] UINT art_id, [out, retval] IGdiBitmap** pp);
 		HRESULT GetAlbumArtV2(IMetadbHandle* handle, [defaultvalue(0)] UINT art_id, [defaultvalue(-1)] VARIANT_BOOL need_stub, [out, retval] IGdiBitmap** pp);
+		HRESULT GetFileSize(BSTR filename, [out, retval] LONGLONG* p);
 		HRESULT GetSysColour(UINT index, [out, retval] int* p);
 		HRESULT GetSystemMetrics(UINT index, [out, retval] int* p);
 		HRESULT Glob(BSTR pattern, [defaultvalue(0x00000010)] UINT exc_mask, [defaultvalue(0xffffffff)] UINT inc_mask, [out, retval] VARIANT* p);
 		HRESULT InputBox(UINT window_id, BSTR prompt, BSTR caption, [defaultvalue("")] BSTR def, [defaultvalue(0)] VARIANT_BOOL error_on_cancel, [out, retval] BSTR* p);
+		HRESULT IsFile(BSTR filename, [out, retval] VARIANT_BOOL* p);
+		HRESULT IsFolder(BSTR folder, [out, retval] VARIANT_BOOL* p);
 		HRESULT IsKeyPressed(UINT vkey, [out, retval] VARIANT_BOOL* p);
 		HRESULT ListFiles(BSTR folder, [defaultvalue(0)] VARIANT_BOOL recur, [out, retval] VARIANT* p);
 		HRESULT ListFolders(BSTR folder, [out, retval] VARIANT* p);

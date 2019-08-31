@@ -201,23 +201,6 @@ STDMETHODIMP Fb::GetLibraryItems(IMetadbHandleList** pp)
 	return S_OK;
 }
 
-STDMETHODIMP Fb::GetLibraryRelativePath(IMetadbHandle* handle, BSTR* p)
-{
-	if (!p) return E_POINTER;
-
-	metadb_handle* ptr = nullptr;
-	handle->get__ptr((void**)&ptr);
-	if (!ptr) return E_INVALIDARG;
-
-	pfc::string8_fast temp;
-	if (!library_manager::get()->get_relative_path(ptr, temp))
-	{
-		temp = "";
-	}
-	*p = TO_BSTR(temp);
-	return S_OK;
-}
-
 STDMETHODIMP Fb::GetNowPlaying(IMetadbHandle** pp)
 {
 	if (!pp) return E_POINTER;
