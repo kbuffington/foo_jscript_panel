@@ -442,6 +442,6 @@ STDMETHODIMP Utils::get_Version(UINT* p)
 {
 	if (!p) return E_POINTER;
 
-	*p = 2224;
+	*p = 2300;
 	return S_OK;
 }
