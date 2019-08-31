@@ -274,7 +274,7 @@ STDMETHODIMP Utils::IsFile(BSTR filename, VARIANT_BOOL* p)
 {
 	if (!p) return E_POINTER;
 
-	*p = TO_VARIANT_BOOL(PathFileExists(filename));
+	*p = TO_VARIANT_BOOL(!PathIsDirectory(filename) && PathFileExists(filename));
 	return S_OK;
 }
 
