@@ -1,8 +1,17 @@
-v2.2.3
+v2.3.0
+- NEW: Add utils.DateStringFromTimestamp and utils.TimestampFromDateString
+       See docs\interfaces.txt for full details.
+- CHG: The IPlaylistRecyclerManager interface has been removed and replaced
+       with fixed "plman" methods. All previous functionality remains.
+       Look at the description for plman.RecyclerCount in docs\interfaces.txt
+       or check the" Breaking Changes" wiki page.
 - CHG: The "Grab focus" checkbox in the "Configuration Window" and the
-       "dragdrop" preprocessor have both been removed. These
-       features are now automatically enabled if relevant callbacks
-       like "on_drag_drop" or "on_key_up" are present in the script.
+       "dragdrop" preprocessor have both been removed. Both features are
+       disabled by default but are automatically enabled if relevant
+       callbacks like "on_drag_drop" or "on_key_up" are present in the
+       script.
+
+https://github.com/marc2k3/foo_jscript_panel/wiki/Breaking-Changes
 
 v2.2.2.4
 - FIX: Fix bug introduced in v2.2.2.1 which prevented images loaded with
