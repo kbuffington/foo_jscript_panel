@@ -311,22 +311,6 @@ interface IFb {
 		fb.GetLibraryItems(); (IMetadbHandleList)
 		// Returns all Media Library items as a handle list.
 
-		fb.GetLibraryRelativePath(handle); (string)
-		/*
-		Returns an empty string when used on track not in Media Library
-
-		Example:
-		The foobar2000 Media Library is configured to watch "D:\Music" and the
-		path of the now playing item is "D:\Music\Albums\Artist\Some Album\Some Song.flac"
-
-		var handle = fb.GetNowPlaying();
-		console.log(fb.GetLibraryRelativePath(handle));
-		>> Albums\Artist\Some Album\Some Song.flac
-
-		NOTE: Do not use this while looping a handle list. Use IMetadbHandleList GetLibraryRelativePaths
-		instead.
-		*/
-
 		fb.GetNowPlaying(); (IMetadbHandle)
 		// Get handle of now playing item. Returns null on failure.
 
@@ -1020,6 +1004,9 @@ interface IUtils {
 		*/
 
 	Methods:
+		utils.Chardet(filename); (uint)
+		// Guess the charset of a file and return the codepage. It may not be accurate and returns 0 if an error occurred.
+
 		utils.CheckComponent(name[, is_dll]); (boolean)
 		/*
 		is_dll: boolean, default true.
@@ -1064,31 +1051,6 @@ interface IUtils {
 		var day = 24 * 60 * 60; // number of seconds in a day
 		console.log(Math.floor((now - last_played_ts) / day)); // number of days since last played
 		>> 365 
-		*/
-
-		utils.FileTest(path, mode); (VARIANT)
-		/*
-		mode:
-		"chardet" (uint)
-		Guess the charset of a file and return the codepage. It may not be accurate and returns 0 if an error occurred.
-
-		"e" (boolean)
-		If file path exists, return true.
-
-		"s" (int64)
-		Retrieve file size, in bytes. Requires a system with IE9 or later to work properly.
-
-		"d" (boolean)
-		If path is a directory, return true.
-
-		"split" (VBArray)
-		Returns a VBArray so you need to use .toArray() on the result.
-
-		Example:
-		var arr = utils.FileTest("D:\\Somedir\\Somefile.txt", "split").toArray();
-		arr[0] <= "D:\\Somedir\\" (always includes backslash at the end)
-		arr[1] <= "Somefile"
-		arr[2] <= ".txt"
 		*/
 
 		utils.FormatDuration(seconds) (string)
@@ -1150,6 +1112,9 @@ interface IUtils {
 		See samples\basic\GetAlbumArtV2.txt
 		*/
 
+		utils.GetFileSize(filename) (int64)
+		// Retrieve file size in bytes. Requires Chakra script engine to work properly.
+
 		utils.GetSysColour(index); (uint)
 		/*
 		index: http://msdn.microsoft.com/en-us/library/ms724371%28VS.85%29.aspx
@@ -1201,6 +1166,9 @@ interface IUtils {
 			// Dialog was closed by pressing Esc, Cancel or the Close button.
 		}
 		*/
+
+		utils.IsFile(filename); (boolean)
+		utils.IsFolder(folder); (boolean)
 
 		utils.IsKeyPressed(vkey); (boolean)
 		/*
@@ -1884,7 +1852,7 @@ interface IMetadbHandle {
 		SubSong; (uint) (read)
 
 		FileSize; (int64) (read)
-		// Requires a system with IE9 or later to work properly.
+		// Requires Chakra script engine to work properly.
 
 		Length; (double) (read)
 
@@ -2077,7 +2045,7 @@ interface IMetadbHandleList {
 
 		CalcTotalSize(); (int64)
 		/*
-		Requires a system with IE9 or later to work properly.
+		Requires Chakra script engine to work properly.
 		Returns total in bytes. For display purposes, consider using utils.FormatFileSize() on the result.
 		*/
 
@@ -2118,14 +2086,20 @@ interface IMetadbHandleList {
 		/*
 		Returns a VBArray so you need to use .toArray() on the result.
 
-		See fb.GetLibraryRelativePath for a description of the action that
-		gets performed on each handle. This should be faster than looping
-		a handle list manually and using the aforementioned method.
+		This is useful for creating an "album list" like script in
+		"folder structure" mode where you'd like the monitored music
+		folder removed from the path of each handle list item.
 
 		Example:
+		The foobar2000 Media Library is configured to watch "D:\Music\" and the
+		path of the first item in the handle list is
+		"D:\Music\Albums\Artist\Some Album\Some Song.flac"
+
 		var handle_list = fb.GetLibraryItems();
 		handle_list.OrderByRelativePath();
 		var relative_paths = handle_list.GetLibraryRelativePaths().toArray();
+		console.log(relative_paths[0]); // first item
+		>> Albums\Artist\Some Album\Some Song.flac
 		*/
 
 		Insert(index, handle); (void)

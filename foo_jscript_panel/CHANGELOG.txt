@@ -5,6 +5,14 @@ v2.3.0
        with fixed "plman" methods. All previous functionality remains.
        Look at the description for plman.RecyclerCount in docs\interfaces.txt
        or check the" Breaking Changes" wiki page.
+- CHG: fb.GetLibraryRelativePath has been removed. Use IMetadbHandleList
+       GetLibraryRelativePaths instead.
+- CHG: utils.FileTest has been removed and replaced with the following 4 methods:
+       utils.Chardet(filename)
+       utils.GetFileSize(filename)
+       utils.IsFile(filename)
+       utils.IsFolder(folder)
+       There is no replacement for "split" mode.
 - CHG: The "Grab focus" checkbox in the "Configuration Window" and the
        "dragdrop" preprocessor have both been removed. Both features are
        disabled by default but are automatically enabled if relevant
