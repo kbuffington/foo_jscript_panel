@@ -468,7 +468,7 @@ _.mixin({
 		}
 	},
 	save : function (file, value) {
-		if (_.isFolder(utils.FileTest(file, 'split').toArray()[0]) && utils.WriteTextFile(file, value, false)) {
+		if (utils.WriteTextFile(file, value, false)) {
 			return true;
 		}
 		console.log('Error saving to ' + file);
