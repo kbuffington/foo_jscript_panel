@@ -267,7 +267,7 @@ void CDialogConf::Apply()
 	// Save panel settings
 	uGetWindowText(m_engine, m_parent->m_script_engine_str);
 	m_parent->m_edge_style = static_cast<host_comm::t_edge_style>(m_edge.GetCurSel());
-	m_parent->m_pseudo_transparent = (bool)m_pseudo.GetCheck();
+	m_parent->m_pseudo_transparent = m_pseudo.GetCheck() == BST_CHECKED;
 
 	// Get script text
 	pfc::array_t<char> code;
