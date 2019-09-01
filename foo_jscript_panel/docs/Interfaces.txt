@@ -262,7 +262,6 @@ interface IFb {
 
 		fb.GetDSPPresets() (string)
 		/*
-		foobar2000 v1.4 and above only. Throws a script error on v1.3.
 		Returns a JSON array in string form so you need to use JSON.parse() on the result.
 
 		Example1:
@@ -316,7 +315,6 @@ interface IFb {
 
 		fb.GetOutputDevices(); (string)
 		/*
-		foobar2000 v1.4 and above only. Throws a script error on v1.3.
 		Returns a JSON array in string form so you need to use JSON.parse() on the result.
 
 		Example:
@@ -462,16 +460,10 @@ interface IFb {
 		fb.SavePlaylist(); (void)
 
 		fb.SetDSPPreset(idx); (void)
-		/*
-		foobar2000 v1.4 and above only. Throws a script error on v1.3.
-		See fb.GetDSPPresets()
-		*/
+		// See fb.GetDSPPresets()
 
 		fb.SetOutputDevice(output, device); (void)
-		/*
-		foobar2000 v1.4 and above only. Throws a script error on v1.3.
-		See fb.GetOutputDevices()
-		*/
+		// See fb.GetOutputDevices()
 
 		fb.ShowConsole(); (void)
 

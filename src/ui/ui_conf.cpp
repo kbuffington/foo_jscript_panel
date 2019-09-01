@@ -114,30 +114,25 @@ BOOL CDialogConf::OnInitDialog(HWND hwndFocus, LPARAM lParam)
 		m_engine.EnableWindow(false);
 	}
 
-	// Edge Style
+	// Edge Style & Pseudo Transparent
 	m_edge.AddString(L"None");
 	m_edge.AddString(L"Sunken");
 	m_edge.AddString(L"Grey");
 
-	if (m_parent->get_instance_type() == host_comm::KInstanceTypeDUI && core_version_info_v2::get()->test_version(1, 4, 0, 0))
+	if (m_parent->get_instance_type() == host_comm::KInstanceTypeDUI)
 	{
+		// disable both options in DUI
 		m_edge.SetCurSel(0);
 		m_edge.EnableWindow(false);
+
+		m_pseudo.SetCheck(false);
+		m_pseudo.EnableWindow(false);
 	}
 	else
 	{
 		m_edge.SetCurSel(m_parent->m_edge_style);
-	}
 
-	// Pseudo transparency
-	if (m_parent->get_instance_type() == host_comm::KInstanceTypeCUI)
-	{
 		m_pseudo.SetCheck(m_parent->m_pseudo_transparent);
-	}
-	else
-	{
-		m_pseudo.SetCheck(false);
-		m_pseudo.EnableWindow(false);
 	}
 
 	return FALSE;
