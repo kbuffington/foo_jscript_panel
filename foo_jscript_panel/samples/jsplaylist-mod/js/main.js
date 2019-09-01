@@ -2097,7 +2097,7 @@ function on_key_down(vkey) {
 					if (cmd == "Play") {
 						plman.ExecutePlaylistDefaultAction(act_pls, p.list.focusedTrackId);
 					} else {
-						fb.RunContextCommandWithMetadb(cmd, p.list.handleList.Item(p.list.focusedTrackId), 0);
+						fb.RunContextCommandWithMetadb(cmd, p.list.handleList.Item(p.list.focusedTrackId));
 					};
 					break;
 				case VK_END:
@@ -2614,7 +2614,7 @@ function get_images() {
 
 function setWallpaperImg(path, metadb) {
 
-	var fmt_path = fb.TitleFormat(path).Eval(true);
+	var fmt_path = fb.TitleFormat(path).Eval();
 	var fmt_path_arr = utils.Glob(fmt_path).toArray();
 	if (fmt_path_arr.length > 0) {
 		var final_path = fmt_path_arr[0];

@@ -3696,7 +3696,7 @@ function on_playback_starting(cmd, is_paused) {};
 
 function on_playback_time(time) {
 	g_seconds = time;
-	g_time_remaining = ppt.tf_time_remaining.Eval(true);
+	g_time_remaining = ppt.tf_time_remaining.Eval();
 };
 
 //=================================================// Library Callbacks

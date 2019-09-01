@@ -323,7 +323,7 @@ oItem = function (playlist, row_index, type, handle, track_index, group_index, t
 						};
 						// Evaluate TF field after parsing
 						if (eval_play) {
-							tf1 = fb.TitleFormat(tf_prep).Eval(true);
+							tf1 = fb.TitleFormat(tf_prep).Eval();
 						} else {
 							tf1 = fb.TitleFormat(tf_prep).EvalWithMetadb(this.metadb);
 						};
@@ -352,7 +352,7 @@ oItem = function (playlist, row_index, type, handle, track_index, group_index, t
 							};
 							// Evaluate TF field after parsing
 							if (eval_play) {
-								tf2 = fb.TitleFormat(tf_prep).Eval(true);
+								tf2 = fb.TitleFormat(tf_prep).Eval();
 							} else {
 								tf2 = fb.TitleFormat(tf_prep).EvalWithMetadb(this.metadb);
 							};
@@ -1021,7 +1021,7 @@ oItem = function (playlist, row_index, type, handle, track_index, group_index, t
 					if (cmd == "Play") {
 						plman.ExecutePlaylistDefaultAction(p.list.playlist, this.track_index);
 					} else {
-						fb.RunContextCommandWithMetadb(cmd, this.metadb, 0);
+						fb.RunContextCommandWithMetadb(cmd, this.metadb);
 					};
 				};
 			};

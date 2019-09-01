@@ -2093,7 +2093,7 @@ oBrowser = function (name) {
 									if (this.nowplaying && this.rows[i].playlistTrackId == this.nowplaying.PlaylistItemIndex) { // now playing track
 										this.nowplaying_y = ay;
 										if (!g_time_remaining) {
-											g_time_remaining = ppt.tf_time_remaining.Eval(true);
+											g_time_remaining = ppt.tf_time_remaining.Eval();
 										};
 										track_time_part = g_time_remaining;
 										//
@@ -2162,7 +2162,7 @@ oBrowser = function (name) {
 									if (this.nowplaying && this.rows[i].playlistTrackId == this.nowplaying.PlaylistItemIndex) { // now playing track
 										this.nowplaying_y = ay;
 										if (!g_time_remaining) {
-											g_time_remaining = ppt.tf_time_remaining.Eval(true);
+											g_time_remaining = ppt.tf_time_remaining.Eval();
 										};
 										track_time_part = g_time_remaining;
 										//
@@ -4285,12 +4285,12 @@ function on_playback_starting(cmd, is_paused) {};
 
 function on_playback_time(time) {
 	g_seconds = time;
-	g_time_remaining = ppt.tf_time_remaining.Eval(true);
+	g_time_remaining = ppt.tf_time_remaining.Eval();
 
 	// radio Tags (live)
 	if (g_metadb && g_metadb.Length < 0) {
-		g_radio_title = fb.TitleFormat("%title%").Eval(true);
-		g_radio_artist = fb.TitleFormat("$if2(%artist%,%bitrate%'K')").Eval(true);
+		g_radio_title = fb.TitleFormat("%title%").Eval();
+		g_radio_artist = fb.TitleFormat("$if2(%artist%,%bitrate%'K')").Eval();
 	} else if (!g_metadb)
 		g_metadb = fb.GetNowPlaying();
 
