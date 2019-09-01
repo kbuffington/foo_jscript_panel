@@ -1,4 +1,4 @@
-v2.3.0
+v2.3.0-Beta.2
 - CHG: Drop support for foobar2000 v1.3.x. Now requires v1.4 or later.
 - NEW: Add utils.DateStringFromTimestamp and utils.TimestampFromDateString
        See docs\interfaces.txt for full details.
@@ -12,12 +12,12 @@ v2.3.0
        they are hidden or not.
        fb.RunContextCommand(command);
        fb.RunContextCommandWithMetadb(command, handle_or_handle_list);
-- CHG: plman.PlayingPlaylist is now a read-only property.
 - CHG: These previously optional parameters have been removed:
        IContextMenuManager BuildMenu "max_id"
        IMainMenuManager BuildMenu "count"
        utils.CheckComponent "is_dll"
        See docs\interfaces.txt for full details.
+- CHG: plman.PlayingPlaylist is now a read-only property.
 - CHG: The IPlaylistRecyclerManager interface has been removed and replaced
        with fixed "plman" methods. All previous functionality remains.
        Look at the description for plman.RecyclerCount in docs\interfaces.txt
