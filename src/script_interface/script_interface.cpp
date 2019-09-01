@@ -2090,19 +2090,12 @@ STDMETHODIMP TitleFormat::get__ptr(void** pp)
 	return S_OK;
 }
 
-STDMETHODIMP TitleFormat::Eval(VARIANT_BOOL force, BSTR* p)
+STDMETHODIMP TitleFormat::Eval(BSTR* p)
 {
 	if (m_obj.is_empty() || !p) return E_POINTER;
 
 	pfc::string8_fast str;
-
-	if (!playback_control::get()->playback_format_title(nullptr, str, m_obj, nullptr, playback_control::display_level_all) && force != VARIANT_FALSE)
-	{
-		metadb_handle_ptr handle;
-		metadb::get()->handle_create(handle, make_playable_location("file://C:\\________.ogg", 0));
-		handle->format_title(nullptr, str, m_obj, nullptr);
-	}
-
+	playback_control::get()->playback_format_title(nullptr, str, m_obj, nullptr, playback_control::display_level_all);
 	*p = TO_BSTR(str);
 	return S_OK;
 }

@@ -181,7 +181,7 @@ STDMETHODIMP Fb::GetDSPPresets(BSTR* p)
 	return S_OK;
 }
 
-STDMETHODIMP Fb::GetFocusItem(VARIANT_BOOL force, IMetadbHandle** pp)
+STDMETHODIMP Fb::GetFocusItem(IMetadbHandle** pp)
 {
 	if (!pp) return E_POINTER;
 
@@ -372,15 +372,15 @@ STDMETHODIMP Fb::Random()
 	return S_OK;
 }
 
-STDMETHODIMP Fb::RunContextCommand(BSTR command, UINT flags, VARIANT_BOOL* p)
+STDMETHODIMP Fb::RunContextCommand(BSTR command, VARIANT_BOOL* p)
 {
 	if (!p) return E_POINTER;
 
-	*p = TO_VARIANT_BOOL(helpers::execute_context_command_by_name(string_utf8_from_wide(command), metadb_handle_list(), flags));
+	*p = TO_VARIANT_BOOL(helpers::execute_context_command_by_name(string_utf8_from_wide(command), metadb_handle_list()));
 	return S_OK;
 }
 
-STDMETHODIMP Fb::RunContextCommandWithMetadb(BSTR command, VARIANT handle, UINT flags, VARIANT_BOOL* p)
+STDMETHODIMP Fb::RunContextCommandWithMetadb(BSTR command, VARIANT handle, VARIANT_BOOL* p)
 {
 	if (!p) return E_POINTER;
 	if (handle.vt != VT_DISPATCH || !handle.pdispVal) return E_INVALIDARG;
@@ -409,7 +409,7 @@ STDMETHODIMP Fb::RunContextCommandWithMetadb(BSTR command, VARIANT handle, UINT 
 		return E_INVALIDARG;
 	}
 
-	*p = TO_VARIANT_BOOL(helpers::execute_context_command_by_name(string_utf8_from_wide(command), handle_list, flags));
+	*p = TO_VARIANT_BOOL(helpers::execute_context_command_by_name(string_utf8_from_wide(command), handle_list));
 	return S_OK;
 }
 

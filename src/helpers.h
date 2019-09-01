@@ -28,7 +28,7 @@ namespace helpers
 	IGdiBitmap* get_album_art_embedded(const pfc::string8_fast& rawpath, t_size art_id);
 	IGdiBitmap* load_image(BSTR path);
 	IGdiBitmap* read_album_art_into_bitmap(const album_art_data_ptr& data);
-	bool execute_context_command_by_name(const char* p_command, metadb_handle_list_cref p_handles, t_size flags);
+	bool execute_context_command_by_name(const char* p_command, metadb_handle_list_cref p_handles);
 	bool execute_context_command_recur(const char* p_command, pfc::string_base& p_path, contextmenu_node* p_parent);
 	bool execute_mainmenu_command_by_name(const char* p_command);
 	bool execute_mainmenu_command_recur(const char* p_command, pfc::string8_fast path, mainmenu_node::ptr node);

@@ -173,15 +173,15 @@ STDMETHODIMP Window::Reload()
 	return S_OK;
 }
 
-STDMETHODIMP Window::Repaint(VARIANT_BOOL force)
+STDMETHODIMP Window::Repaint()
 {
-	m_host->repaint(force != VARIANT_FALSE);
+	m_host->repaint();
 	return S_OK;
 }
 
-STDMETHODIMP Window::RepaintRect(int x, int y, int w, int h, VARIANT_BOOL force)
+STDMETHODIMP Window::RepaintRect(int x, int y, int w, int h)
 {
-	m_host->repaint_rect(x, y, w, h, force != VARIANT_FALSE);
+	m_host->repaint_rect(x, y, w, h);
 	return S_OK;
 }
 

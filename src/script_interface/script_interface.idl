@@ -232,7 +232,7 @@ library foo_jscript_panel
 	[object,dual,pointer_default(unique),custom(8AFCDA7F-33B7-3120-86A8-754D2C0C0578, "library_block"),uuid(998d8666-b446-4e92-8e8f-797d3cce4b7e)]
 	interface ITitleFormat : IDisposable {
 		HRESULT get__ptr([out, retval] void** pp);
-		HRESULT Eval([defaultvalue(0)] VARIANT_BOOL force, [out, retval] BSTR* p);
+		HRESULT Eval([out, retval] BSTR* p);
 		HRESULT EvalWithMetadb(IMetadbHandle* handle, [out, retval] BSTR* p);
 		HRESULT EvalWithMetadbs(IMetadbHandleList* handles, [out, retval] VARIANT* p);
 	};
@@ -278,7 +278,7 @@ library foo_jscript_panel
 		HRESULT Exit();
 		HRESULT GetClipboardContents(UINT window_id, [out, retval] IMetadbHandleList** pp);
 		HRESULT GetDSPPresets([out, retval] BSTR* p);
-		HRESULT GetFocusItem([defaultvalue(-1)] VARIANT_BOOL force, [out, retval] IMetadbHandle** pp);
+		HRESULT GetFocusItem([out, retval] IMetadbHandle** pp);
 		HRESULT GetLibraryItems([out, retval] IMetadbHandleList** pp);
 		HRESULT GetNowPlaying([out, retval] IMetadbHandle** pp);
 		HRESULT GetOutputDevices([out, retval] BSTR* p);
@@ -295,8 +295,8 @@ library foo_jscript_panel
 		HRESULT PlayOrPause();
 		HRESULT Prev();
 		HRESULT Random();
-		HRESULT RunContextCommand(BSTR command, [defaultvalue(0)] UINT flags, [out, retval] VARIANT_BOOL* p);
-		HRESULT RunContextCommandWithMetadb(BSTR command, VARIANT handle, [defaultvalue(0)] UINT flags, [out, retval] VARIANT_BOOL* p);
+		HRESULT RunContextCommand(BSTR command, [out, retval] VARIANT_BOOL* p);
+		HRESULT RunContextCommandWithMetadb(BSTR command, VARIANT handle, [out, retval] VARIANT_BOOL* p);
 		HRESULT RunMainMenuCommand(BSTR command, [out, retval] VARIANT_BOOL* p);
 		HRESULT SavePlaylist();
 		HRESULT SetDSPPreset(UINT idx);
@@ -447,8 +447,8 @@ library foo_jscript_panel
 		HRESULT GetProperty(BSTR name, [optional] VARIANT defaultval, [out, retval] VARIANT* p);
 		HRESULT NotifyOthers(BSTR name, VARIANT info);
 		HRESULT Reload();
-		HRESULT Repaint([defaultvalue(0)] VARIANT_BOOL force);
-		HRESULT RepaintRect(int x, int y, int w, int h, [defaultvalue(0)] VARIANT_BOOL force);
+		HRESULT Repaint();
+		HRESULT RepaintRect(int x, int y, int w, int h);
 		HRESULT SetCursor(UINT id);
 		HRESULT SetInterval(IDispatch* func, int delay, [out, retval] UINT* p);
 		HRESULT SetProperty(BSTR name, VARIANT val);

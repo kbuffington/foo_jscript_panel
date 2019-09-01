@@ -125,11 +125,12 @@ namespace helpers
 		return ret;
 	}
 
-	bool execute_context_command_by_name(const char* p_command, metadb_handle_list_cref p_handles, t_size flags)
+	bool execute_context_command_by_name(const char* p_command, metadb_handle_list_cref p_handles)
 	{
 		contextmenu_manager::ptr cm;
 		contextmenu_manager::g_create(cm);
 		pfc::string8_fast path;
+		t_size flags = contextmenu_manager::flag_view_full;
 
 		if (p_handles.get_count())
 		{

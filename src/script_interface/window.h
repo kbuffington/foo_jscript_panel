@@ -22,8 +22,8 @@ public:
 	STDMETHODIMP GetProperty(BSTR name, VARIANT defaultval, VARIANT* p) override;
 	STDMETHODIMP NotifyOthers(BSTR name, VARIANT info) override;
 	STDMETHODIMP Reload() override;
-	STDMETHODIMP Repaint(VARIANT_BOOL force) override;
-	STDMETHODIMP RepaintRect(int x, int y, int w, int h, VARIANT_BOOL force) override;
+	STDMETHODIMP Repaint() override;
+	STDMETHODIMP RepaintRect(int x, int y, int w, int h) override;
 	STDMETHODIMP SetCursor(UINT id) override;
 	STDMETHODIMP SetInterval(IDispatch* func, int delay, UINT* p) override;
 	STDMETHODIMP SetProperty(BSTR name, VARIANT val) override;

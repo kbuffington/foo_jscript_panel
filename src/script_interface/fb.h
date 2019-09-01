@@ -22,7 +22,7 @@ public:
 	STDMETHODIMP Exit() override;
 	STDMETHODIMP GetClipboardContents(UINT window_id, IMetadbHandleList** pp) override;
 	STDMETHODIMP GetDSPPresets(BSTR* p) override;
-	STDMETHODIMP GetFocusItem(VARIANT_BOOL force, IMetadbHandle** pp) override;
+	STDMETHODIMP GetFocusItem(IMetadbHandle** pp) override;
 	STDMETHODIMP GetLibraryItems(IMetadbHandleList** pp) override;
 	STDMETHODIMP GetNowPlaying(IMetadbHandle** pp) override;
 	STDMETHODIMP GetOutputDevices(BSTR* p) override;
@@ -39,8 +39,8 @@ public:
 	STDMETHODIMP PlayOrPause() override;
 	STDMETHODIMP Prev() override;
 	STDMETHODIMP Random() override;
-	STDMETHODIMP RunContextCommand(BSTR command, UINT flags, VARIANT_BOOL* p) override;
-	STDMETHODIMP RunContextCommandWithMetadb(BSTR command, VARIANT handle, UINT flags, VARIANT_BOOL* p) override;
+	STDMETHODIMP RunContextCommand(BSTR command, VARIANT_BOOL* p) override;
+	STDMETHODIMP RunContextCommandWithMetadb(BSTR command, VARIANT handle, VARIANT_BOOL* p) override;
 	STDMETHODIMP RunMainMenuCommand(BSTR command, VARIANT_BOOL* p) override;
 	STDMETHODIMP SavePlaylist() override;
 	STDMETHODIMP SetDSPPreset(UINT idx) override;

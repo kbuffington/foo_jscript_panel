@@ -434,22 +434,25 @@ interface IFb {
 
 		// IMPORTANT: As of v2.2.0, the following menu methods all require the full paths to their commands.
 
-		fb.RunContextCommand(command[, flags]); (boolean)
+		fb.RunContextCommand(command); (boolean)
 		/*
+		The previously optional "flags" parameter was removed in v2.3.0. All commands are ran if they exist.
+		It no longer matters if they are hidden or not.
+
 		Now playing file only.
-		flags:
-		0 default (depends on whether SHIFT key is pressed, flag_view_reduced or flag_view_full is selected)
-		4 flag_view_reduced
-		8 flag_view_full. This can be useful if you need to run context commands the user may have hidden
-		using File>Preferences>Display>Context Menu
 
 		Example:
 		fb.RunContextCommand("Properties");
 		*/
 
-		fb.RunContextCommandWithMetadb(command, handle_or_handle_list[, flags]); (boolean)
-		// Same flags as fb.RunContextCommand. handle_or_handle_list can be something like fb.GetFocusItem()
-		// or plman.GetPlaylistSelectedItems(plman.ActivePlaylist)
+		fb.RunContextCommandWithMetadb(command, handle_or_handle_list); (boolean)
+		/* 
+		The previously optional "flags" parameter was removed in v2.3.0. All commands are ran if they exist.
+		It no longer matters if they are hidden or not.
+
+		handle_or_handle_list can be be a single item like fb.GetFocusItem() or a handle list like
+		plman.GetPlaylistItems(plman.ActivePlaylist)
+		*/
 
 		fb.RunMainMenuCommand(command); (boolean)
 		/*
@@ -488,17 +491,16 @@ interface IFb {
 				Methods:
 					Dispose(); (void)
 
-					Eval([force]); (string)
+					Eval(); (string)
 					/*
-					force: boolean, default false.
-					If true, you can process text that doesn't contain
-					title formatting even when foobar2000 isn't playing. When playing, you
-					should always get a result.
+					The previously optional "force" parameter was removed in v2.3.0.
 
 					Always use Eval when you want dynamic info such as %playback_time%, %bitrate% etc.
 					EvalWithMetadb(fb.GetNowplaying()) will not give the results you want.
 					Example:
 					console.log(tfo.Eval());
+
+					Returns an empty string if foobar2000 is not playing.
 					*/
 
 					EvalWithMetadb(handle); (string)
@@ -1489,12 +1491,12 @@ interface IWindow {
 		window.Reload(); (void)
 		// Reloads panel.
 
-		window.Repaint([force]); (void)
-		// force: boolean, default false.
+		window.Repaint(); (void)
+		// The previously optional "force" parameter was removed in v2.3.0.
 
-		window.RepaintRect(x, y, w, h[, force]); (void)
+		window.RepaintRect(x, y, w, h); (void)
 		/*
-		force: boolean, default false.
+		The previously optional "force" parameter was removed in v2.3.0.
 
 		Use this instead of window.Repaint on frequently updated areas
 		such as time, bitrate, seekbar, etc.

@@ -388,7 +388,7 @@ protected:
 
 public:
 	STDMETHODIMP get__ptr(void** pp) override;
-	STDMETHODIMP Eval(VARIANT_BOOL force, BSTR* p) override;
+	STDMETHODIMP Eval(BSTR* p) override;
 	STDMETHODIMP EvalWithMetadb(IMetadbHandle* handle, BSTR* p) override;
 	STDMETHODIMP EvalWithMetadbs(IMetadbHandleList* handles, VARIANT* p) override;
 };
