@@ -176,8 +176,9 @@ interface IFb {
 
 			interface IContextMenuManager {
 				Methods:
-					BuildMenu(IMenuObj, base_id[, max_id]); (void)
-					// max_id: optional as of v2.0.4. Default -1.
+					BuildMenu(IMenuObj, base_id); (void)
+					// The previously optional "max_id" parameter was removed in v2.3.0.
+					
 					Dispose(); (void)
 					ExecuteByID(id); (boolean)
 					InitContext(handle_list); (void)
@@ -205,8 +206,9 @@ interface IFb {
 
 			interface IMainMenuManager {
 				Methods:
-					BuildMenu(IMenuObj, base_id[, count]); (void)
-					// count: optional as of v2.2.0.3. Default -1.
+					BuildMenu(IMenuObj, base_id); (void)
+					// The previously optional "count" parameter was removed in v2.3.0.
+
 					Dispose(); (void)
 					ExecuteByID(id); (boolean)
 					Init(root_name); (void)
@@ -587,7 +589,7 @@ interface IPlman {
 		6 Shuffle (folders)
 		*/
 
-		plman.PlayingPlaylist; (int) (read, write)
+		plman.PlayingPlaylist; (int) (read)
 		/*
 		Example:
 		var pp = plman.PlayingPlaylist;
@@ -1001,10 +1003,10 @@ interface IUtils {
 		utils.Chardet(filename); (uint)
 		// Guess the charset of a file and return the codepage. It may not be accurate and returns 0 if an error occurred.
 
-		utils.CheckComponent(name[, is_dll]); (boolean)
+		utils.CheckComponent(name); (boolean)
 		/*
-		is_dll: boolean, default true.
-		If true, method checks filename instead of the internal name.
+		The previously optional "is_dll" parameter was removed in v2.3.0.
+		The filename is now always checked (equivalent to "is_dll" being true).
 
 		Example:
 		console.log(utils.CheckComponent("foo_playcount"));

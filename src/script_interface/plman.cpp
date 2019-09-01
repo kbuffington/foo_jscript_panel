@@ -673,14 +673,3 @@ STDMETHODIMP Plman::put_PlaybackOrder(UINT p)
 	}
 	return E_INVALIDARG;
 }
-
-STDMETHODIMP Plman::put_PlayingPlaylist(UINT playlistIndex)
-{
-	auto api = playlist_manager::get();
-	if (playlistIndex < api->get_playlist_count())
-	{
-		api->set_playing_playlist(playlistIndex);
-		return S_OK;
-	}
-	return E_INVALIDARG;
-}

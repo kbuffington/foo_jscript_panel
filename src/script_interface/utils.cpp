@@ -14,7 +14,7 @@ STDMETHODIMP Utils::Chardet(BSTR filename, UINT* p)
 	return S_OK;
 }
 
-STDMETHODIMP Utils::CheckComponent(BSTR name, VARIANT_BOOL is_dll, VARIANT_BOOL* p)
+STDMETHODIMP Utils::CheckComponent(BSTR name, VARIANT_BOOL* p)
 {
 	if (!p) return E_POINTER;
 
@@ -26,14 +26,7 @@ STDMETHODIMP Utils::CheckComponent(BSTR name, VARIANT_BOOL is_dll, VARIANT_BOOL*
 	{
 		auto ptr = *e;
 		pfc::string8_fast str;
-		if (is_dll != VARIANT_FALSE)
-		{
-			ptr->get_file_name(str);
-		}
-		else
-		{
-			ptr->get_component_name(str);
-		}
+		ptr->get_file_name(str);
 
 		if (_stricmp(str, uname) == 0)
 		{

@@ -64,5 +64,4 @@ public:
 	STDMETHODIMP get_RecyclerCount(UINT* p) override;
 	STDMETHODIMP put_ActivePlaylist(UINT playlistIndex) override;
 	STDMETHODIMP put_PlaybackOrder(UINT order) override;
-	STDMETHODIMP put_PlayingPlaylist(UINT playlistIndex) override;
 };

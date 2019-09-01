@@ -125,7 +125,7 @@ plman.UndoBackup(playlistIndex)
 utils.Version
 
 utils.Chardet(filename)
-utils.CheckComponent(name[, is_dll])
+utils.CheckComponent(name)
 utils.CheckFont(name)
 utils.ColourPicker(window_id, default_colour)
 utils.DateStringToTimestamp(str)

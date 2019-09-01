@@ -9,7 +9,7 @@ protected:
 
 public:
 	STDMETHODIMP Chardet(BSTR filename, UINT* p) override;
-	STDMETHODIMP CheckComponent(BSTR name, VARIANT_BOOL is_dll, VARIANT_BOOL* p) override;
+	STDMETHODIMP CheckComponent(BSTR name, VARIANT_BOOL* p) override;
 	STDMETHODIMP CheckFont(BSTR name, VARIANT_BOOL* p) override;
 	STDMETHODIMP ColourPicker(UINT window_id, int default_colour, int* p) override;
 	STDMETHODIMP DateStringToTimestamp(BSTR str, UINT* p) override;
