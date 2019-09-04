@@ -97,23 +97,7 @@ namespace helpers
 							aaep->remove(what);
 							break;
 						case remove_all:
-							{
-								album_art_editor_instance_v2::ptr v2;
-								if (aaep->cast(v2))
-								{
-									// not all file formats support this
-									v2->remove_all();
-								}
-								else
-								{
-									// m4a is one example that needs this fallback
-									aaep->remove(album_art_ids::artist);
-									aaep->remove(album_art_ids::cover_back);
-									aaep->remove(album_art_ids::cover_front);
-									aaep->remove(album_art_ids::disc);
-									aaep->remove(album_art_ids::icon);
-								}
-							}
+							aaep->remove_all_();
 							break;
 						}
 						aaep->commit(p_abort);
