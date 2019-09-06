@@ -12,7 +12,7 @@ panel_manager& panel_manager::instance()
 
 void panel_manager::add_window(HWND p_wnd)
 {
-	if (m_hwnds.find_item(p_wnd) == pfc_infinite)
+	if (m_hwnds.find_item(p_wnd) == SIZE_MAX)
 	{
 		m_hwnds.add_item(p_wnd);
 	}

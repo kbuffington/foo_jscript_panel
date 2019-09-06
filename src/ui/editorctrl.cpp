@@ -958,7 +958,7 @@ void CScriptEditorCtrl::FillFunctionDefinition(int pos)
 		{
 			t_size calltip_pos = m_CurrentCallTipWord.find_first(".");
 
-			if (calltip_pos == pfc_infinite)
+			if (calltip_pos == SIZE_MAX)
 				return;
 
 			m_CurrentCallTipWord.remove_chars(0, calltip_pos + 1);

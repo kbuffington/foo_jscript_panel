@@ -1049,7 +1049,7 @@ STDMETHODIMP MainMenuManager::BuildMenu(IMenuObj* p, UINT base_id)
 	// HACK: workaround for foo_menu_addons
 	try
 	{
-		m_mm->generate_menu_win32(menuid, base_id, pfc::infinite_size, mainmenu_manager::flag_show_shortcuts);
+		m_mm->generate_menu_win32(menuid, base_id, SIZE_MAX, mainmenu_manager::flag_show_shortcuts);
 	}
 	catch (...) {}
 
