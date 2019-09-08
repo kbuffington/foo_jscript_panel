@@ -2,6 +2,7 @@
 #include "panel_window.h"
 #include "properties.h"
 
+#include <atltheme.h>
 #include <PropertyList.h>
 
 class CDialogProperty : public CDialogImpl<CDialogProperty>, public CDialogResize<CDialogProperty>

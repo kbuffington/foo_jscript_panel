@@ -6,14 +6,15 @@
 #define IDC_STATIC -1
 #endif
 
-#define IDR_SCRIPT                      100
-#define IDR_API                         101
-#define IDR_BRIGHT                      102
-#define IDR_DARK                        103
-#define IDR_RUBY                        104
-#define IDC_APPLY                       105
-#define IDC_IMPORT                      106
-#define IDC_EXPORT                      107
+#define IDI_SCROLL                      100
+#define IDR_SCRIPT                      101
+#define IDR_API                         102
+#define IDR_BRIGHT                      103
+#define IDR_DARK                        104
+#define IDR_RUBY                        105
+#define IDC_APPLY                       106
+#define IDC_IMPORT                      107
+#define IDC_EXPORT                      108
 
 //ui_conf
 #define IDD_DIALOG_CONF                 110
@@ -36,11 +37,6 @@
 #define IDD_DIALOG_INPUT                140
 #define IDC_INPUT_PROMPT                141
 #define IDC_INPUT_VALUE                 142
-
-//ui_name_value_edit
-#define IDD_DIALOG_NAME_VALUE_EDIT      150
-#define IDC_EDIT_NAME                   151
-#define IDC_EDIT_VALUE                  152
 
 //ui_pref
 #define IDD_DIALOG_PREF                 160

@@ -69,9 +69,6 @@
     <ClInclude Include="ui\ui_input_box.h">
       <Filter>Header Files\ui</Filter>
     </ClInclude>
-    <ClInclude Include="ui\ui_name_value_edit.h">
-      <Filter>Header Files\ui</Filter>
-    </ClInclude>
     <ClInclude Include="ui\ui_pref.h">
       <Filter>Header Files\ui</Filter>
     </ClInclude>
@@ -159,9 +156,6 @@
       <Filter>Source Files\ui</Filter>
     </ClCompile>
     <ClCompile Include="ui\ui_input_box.cpp">
-      <Filter>Source Files\ui</Filter>
-    </ClCompile>
-    <ClCompile Include="ui\ui_name_value_edit.cpp">
       <Filter>Source Files\ui</Filter>
     </ClCompile>
     <ClCompile Include="ui\ui_pref.cpp">

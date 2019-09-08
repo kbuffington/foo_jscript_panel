@@ -18,27 +18,28 @@
 
 #include <atlstr.h>
 #include <atlwin.h>
+#include <atltypes.h>
 
 #include <atlapp.h>
 #include <atlframe.h>
 #include <atldlgs.h>
 #include <atlctrls.h>
-#include <atlddx.h>
 #include <atlcrack.h>
-#include <atltheme.h>
 
 #include <Scintilla.h>
 #include <SciLexer.h>
 
+#include "resource.h"
 #include "../foobar2000-SDK/foobar2000/SDK/foobar2000.h"
-#include "../foobar2000-SDK/columns_ui-sdk/ui_extension.h"
+#include "../foobar2000-SDK/foobar2000/helpers/atl-misc.h"
 #include "../foobar2000-SDK/foobar2000/helpers/filetimetools.h"
+#include "../foobar2000-SDK/libPPUI/CListControlOwnerData.h"
+#include "../foobar2000-SDK/columns_ui-sdk/ui_extension.h"
 
 #ifdef _INC_WINDOWSX
 #undef SubclassWindow
 #endif
 
 #include "component_defines.h"
-#include "resource.h"
 
 using namespace pfc::stringcvt;

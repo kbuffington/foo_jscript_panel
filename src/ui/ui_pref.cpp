@@ -1,25 +1,20 @@
 #include "stdafx.h"
 #include "helpers.h"
-#include "ui_name_value_edit.h"
-#include "ui_pref.h"
 #include "scintilla_prop_sets.h"
+#include "ui_pref.h"
 
-CDialogPref::CDialogPref(preferences_page_callback::ptr callback) : m_callback(callback) {}
+CDialogPref::CDialogPref(preferences_page_callback::ptr callback) : m_callback(callback), m_props(this) {}
 
 BOOL CDialogPref::OnInitDialog(HWND hwndFocus, LPARAM lParam)
 {
-	DoDataExchange();
+	m_props.CreateInDialog(*this, IDC_LIST_EDITOR_PROP);
 
-	SetWindowTheme(m_props.m_hWnd, L"explorer", nullptr);
+	auto DPI = m_props.GetDPI();
 
-	m_props.SetExtendedListViewStyle(LVS_EX_FULLROWSELECT | LVS_EX_DOUBLEBUFFER);
-	m_props.AddColumn(L"Name", 0);
-	m_props.SetColumnWidth(0, 150);
-	m_props.AddColumn(L"Value", 1);
-	m_props.SetColumnWidth(1, 310);
-	LoadProps();
+	m_props.AddColumn("Name", MulDiv(150, DPI.cx, 96));
+	m_props.AddColumn("Value", MulDiv(310, DPI.cx, 96));
 
-	return TRUE;
+	return FALSE;
 }
 
 HWND CDialogPref::get_wnd()
@@ -27,48 +22,31 @@ HWND CDialogPref::get_wnd()
 	return m_hWnd;
 }
 
-LRESULT CDialogPref::OnPropDblClk(LPNMHDR pnmh)
+bool CDialogPref::listIsColumnEditable(ctx_t, t_size sub_item)
 {
-	LPNMITEMACTIVATE pniv = (LPNMITEMACTIVATE)pnmh;
-
-	if (pniv->iItem >= 0)
-	{
-		t_sci_prop_set_list& prop_sets = g_sci_prop_sets.m_data;
-		pfc::string8_fast key, val;
-
-		uGetItemText(pniv->iItem, 0, key);
-		uGetItemText(pniv->iItem, 1, val);
-
-		modal_dialog_scope scope;
-		if (scope.can_create())
-		{
-			scope.initialize(m_hWnd);
-			CNameValueEdit dlg(key, val);
-
-			if (dlg.DoModal(m_hWnd) == IDOK)
-			{
-				dlg.GetValue(val);
-
-				for (t_size i = 0; i < prop_sets.get_count(); ++i)
-				{
-					if (strcmp(prop_sets[i].key, key) == 0)
-					{
-						prop_sets[i].val = val;
-						break;
-					}
-				}
-
-				m_props.SetItemText(pniv->iItem, 1, string_wide_from_utf8_fast(val));
-				DoDataExchange();
-			}
-		}
-	}
-	return 0;
+	return sub_item == 1;
 }
 
 t_size CDialogPref::get_state()
 {
 	return preferences_state::resettable;
+}
+
+t_size CDialogPref::listGetItemCount(ctx_t)
+{
+	return g_sci_prop_sets.m_data.get_count();
+}
+
+pfc::string8 CDialogPref::listGetSubItemText(ctx_t, t_size item, t_size sub_item)
+{
+	switch (sub_item)
+	{
+	case 0:
+		return g_sci_prop_sets.m_data[item].key.get_ptr();
+	case 1:
+		return g_sci_prop_sets.m_data[item].val.get_ptr();
+	}
+	return "";
 }
 
 void CDialogPref::LoadProps(bool reset)
@@ -78,20 +56,7 @@ void CDialogPref::LoadProps(bool reset)
 		g_sci_prop_sets.reset();
 	}
 
-	string_wide_from_utf8_fast conv;
-	t_sci_prop_set_list& prop_sets = g_sci_prop_sets.m_data;
-
-	m_props.DeleteAllItems();
-
-	for (t_size i = 0; i < prop_sets.get_count(); ++i)
-	{
-		conv.convert(prop_sets[i].key);
-		m_props.AddItem(i, 0, conv);
-
-		conv.convert(prop_sets[i].val);
-		m_props.AddItem(i, 1, conv);
-	}
-	m_callback->on_state_changed();
+	m_props.ReloadData();
 }
 
 void CDialogPref::OnExportBnClicked(UINT uNotifyCode, int nID, HWND wndCtl)
@@ -134,49 +99,28 @@ void CDialogPref::OnPresetsBnClicked(UINT uNotifyCode, int nID, HWND wndCtl)
 	DestroyMenu(menu);
 }
 
-void CDialogPref::uGetItemText(int nItem, int nSubItem, pfc::string_base& out)
-{
-	wchar_t buffer[1024];
-	m_props.GetItemText(nItem, nSubItem, buffer, 1024);
-	out.set_string(string_utf8_from_wide(buffer));
-}
-
 void CDialogPref::apply()
 {
 	m_callback->on_state_changed();
+}
+
+void CDialogPref::listSetEditField(ctx_t, t_size item, t_size sub_item, const char* value)
+{
+	if (sub_item == 1)
+	{
+		g_sci_prop_sets.m_data[item].val = value;
+	}
+}
+
+void CDialogPref::listSubItemClicked(ctx_t, t_size item, t_size sub_item)
+{
+	if (sub_item == 1)
+	{
+		m_props.TableEdit_Start(item, sub_item);
+	}
 }
 
 void CDialogPref::reset()
 {
 	LoadProps(true);
 }
-
-GUID my_preferences_page_v3::get_guid()
-{
-	return jsp_guids::ui_pref;
-}
-
-GUID my_preferences_page_v3::get_parent_guid()
-{
-	return preferences_page::guid_tools;
-}
-
-bool my_preferences_page_v3::get_help_url(pfc::string_base& p_out)
-{
-	p_out = "https://github.com/marc2k3/foo_jscript_panel/wiki";
-	return true;
-}
-
-const char* my_preferences_page_v3::get_name()
-{
-	return JSP_NAME;
-}
-
-preferences_page_instance::ptr my_preferences_page_v3::instantiate(HWND parent, preferences_page_callback::ptr callback)
-{
-	auto p = fb2k::service_new<CDialogPref>(callback);
-	p->Create(parent);
-	return p;
-}
-
-static service_factory_single_t<my_preferences_page_v3> g_my_preferences_page_v3;

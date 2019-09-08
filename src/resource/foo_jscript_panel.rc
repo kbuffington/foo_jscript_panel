@@ -110,19 +110,6 @@ BEGIN
     PUSHBUTTON      "Cancel", IDCANCEL, 182, 26, 50, 14
 END
 
-IDD_DIALOG_NAME_VALUE_EDIT DIALOGEX 0, 0, 242, 62
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Dialog"
-FONT 8, "Tahoma", 400, 0, 0x0
-BEGIN
-    LTEXT           "&Name:", IDC_STATIC, 7, 10, 22, 8
-    EDITTEXT        IDC_EDIT_NAME, 35, 7, 200, 14, WS_DISABLED
-    LTEXT           "&Value:", IDC_STATIC, 7, 27, 21, 8
-    EDITTEXT        IDC_EDIT_VALUE, 35, 24, 200, 14, ES_AUTOHSCROLL
-    DEFPUSHBUTTON   "OK", IDOK, 131, 41, 50, 14
-    PUSHBUTTON      "Cancel", IDCANCEL, 185, 41, 50, 14
-END
-
 IDD_DIALOG_PREF DIALOGEX 0, 0, 334, 319
 STYLE DS_SETFONT | WS_CHILD | WS_SYSMENU
 FONT 8, "Tahoma", 400, 0, 0x0
@@ -185,6 +172,15 @@ BEGIN
     PUSHBUTTON      "Replace All", IDC_REPLACE_ALL, 182, 61, 50, 14
     PUSHBUTTON      "Close", IDCANCEL, 182, 97, 50, 14
 END
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_SCROLL              ICON                    "..\\libPPUI\\IDI_SCROLL.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //

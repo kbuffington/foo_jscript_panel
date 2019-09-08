@@ -38,7 +38,6 @@ struct t_prop_set_init_table
 	const char* defaultval;
 };
 
-using t_sci_prop_set_list = pfc::list_t<t_sci_prop_set>;
 using t_str_to_str_map = pfc::map_t<pfc::string_simple, pfc::string_simple, pfc::comparator_stricmp_ascii>;
 
 class cfg_sci_prop_sets : public cfg_var
@@ -52,7 +51,7 @@ public:
 	void reset();
 	void set_data_raw(stream_reader* p_stream, t_size p_sizehint, abort_callback& p_abort) override;
 
-	t_sci_prop_set_list m_data;
+	pfc::list_t<t_sci_prop_set> m_data;
 
 private:
 	void init_data(const t_prop_set_init_table* p_default);
