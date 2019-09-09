@@ -102,11 +102,7 @@ public:
 
 	cellType_t GetCellType(t_size item, t_size sub_item) const override
 	{
-		if (sub_item == 0)
-		{
-			return &PFC_SINGLETON(CListCell_Text);
-		}
-		else if (m_data[item].is_bool)
+		if (sub_item == 1 && m_data[item].is_bool)
 		{
 			return &PFC_SINGLETON(CListCell_Checkbox);
 		}
@@ -158,9 +154,9 @@ public:
 
 	void TableEdit_SetField(t_size item, t_size sub_item, const char* value) override
 	{
-		if (sub_item == 1)
+		if (sub_item == 1 && !m_data[item].is_bool)
 		{
-			if (!m_data[item].is_bool) m_data[item].value = value;
+			m_data[item].value = value;
 			ReloadItem(item);
 		}
 	}
