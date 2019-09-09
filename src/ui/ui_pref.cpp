@@ -7,7 +7,7 @@ CDialogPref::CDialogPref(preferences_page_callback::ptr callback) : m_callback(c
 
 BOOL CDialogPref::OnInitDialog(HWND hwndFocus, LPARAM lParam)
 {
-	m_props.CreateInDialog(*this, IDC_LIST_EDITOR_PROP);
+	m_props.CreateInDialog(*this, IDC_LIST_PREFERENCES);
 
 	auto DPI = m_props.GetDPI();
 
@@ -20,6 +20,11 @@ BOOL CDialogPref::OnInitDialog(HWND hwndFocus, LPARAM lParam)
 HWND CDialogPref::get_wnd()
 {
 	return m_hWnd;
+}
+
+bool CDialogPref::listCanSelectItem(ctx_t, t_size)
+{
+	return false;
 }
 
 bool CDialogPref::listIsColumnEditable(ctx_t, t_size sub_item)
@@ -80,7 +85,7 @@ void CDialogPref::OnImportBnClicked(UINT uNotifyCode, int nID, HWND wndCtl)
 
 void CDialogPref::OnPresetsBnClicked(UINT uNotifyCode, int nID, HWND wndCtl)
 {
-	HMENU menu = CreatePopupMenu();
+	CMenu menu = CreatePopupMenu();
 
 	uAppendMenu(menu, MF_STRING, 1, "Bright");
 	uAppendMenu(menu, MF_STRING, 2, "Dark");
@@ -96,7 +101,6 @@ void CDialogPref::OnPresetsBnClicked(UINT uNotifyCode, int nID, HWND wndCtl)
 		g_sci_prop_sets.import(content);
 		LoadProps();
 	}
-	DestroyMenu(menu);
 }
 
 void CDialogPref::apply()

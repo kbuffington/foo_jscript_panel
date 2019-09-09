@@ -29,6 +29,7 @@ public:
 
 private:
 	// IListControlOwnerDataSource methods
+	bool listCanSelectItem(ctx_t, t_size) override;
 	bool listIsColumnEditable(ctx_t, t_size sub_item) override;
 	t_size listGetItemCount(ctx_t) override;
 	pfc::string8 listGetSubItemText(ctx_t, t_size item, t_size sub_item) override;
