@@ -326,10 +326,9 @@ bool panel_window::on_mouse_button_up(UINT msg, WPARAM wp, LPARAM lp)
 			_variant_t result;
 			if (SUCCEEDED(script_invoke(callback_id::on_mouse_rbtn_up, args, _countof(args), &result)))
 			{
-				result.ChangeType(VT_BOOL);
-				if (result.boolVal != VARIANT_FALSE)
+				if (SUCCEEDED(VariantChangeType(&result, &result, 0, VT_BOOL)))
 				{
-					ret = true;
+					ret = !!result.boolVal;
 				}
 			}
 		}
