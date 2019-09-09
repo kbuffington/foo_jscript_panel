@@ -1,6 +1,7 @@
 #pragma once
 #include "panel_window.h"
 #include "properties.h"
+#include "ui_property_control.h"
 
 class CDialogProperty : public CDialogImpl<CDialogProperty>, public CDialogResize<CDialogProperty>
 {
@@ -40,6 +41,7 @@ public:
 	void OnImportBnClicked(UINT uNotifyCode, int nID, HWND wndCtl);
 
 private:
+	MyCList m_properties;
 	panel_window* m_parent;
 	pfc::string8_fast m_caption;
 	properties::t_map m_dup_prop_map;

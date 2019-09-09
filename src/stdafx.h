@@ -29,17 +29,19 @@
 #include <Scintilla.h>
 #include <SciLexer.h>
 
-#include "resource.h"
-#include "../foobar2000-SDK/foobar2000/SDK/foobar2000.h"
-#include "../foobar2000-SDK/foobar2000/helpers/atl-misc.h"
-#include "../foobar2000-SDK/foobar2000/helpers/filetimetools.h"
-#include "../foobar2000-SDK/libPPUI/CListControlOwnerData.h"
-#include "../foobar2000-SDK/columns_ui-sdk/ui_extension.h"
+#include <resource.h>
+#include <foobar2000/SDK/foobar2000.h>
+#include <foobar2000/helpers/atl-misc.h>
+#include <foobar2000/helpers/filetimetools.h>
+#include <libPPUI/CListControlOwnerData.h>
+#include <libPPUI/CListControlComplete.h>
+#include <libPPUI/CListControl-Cells.h>
+#include <columns_ui-sdk/ui_extension.h>
 
 #ifdef _INC_WINDOWSX
 #undef SubclassWindow
 #endif
 
-#include "component_defines.h"
+#include <component_defines.h>
 
 using namespace pfc::stringcvt;
