@@ -11,7 +11,7 @@ public:
 
 	int OnCreate(LPCREATESTRUCT lpCreateStruct)
 	{
-		AddColumn("Name", MulDiv(300, m_dpi.cx, 96));
+		AddColumn("Name", MulDiv(360, m_dpi.cx, 96));
 		AddColumnAutoWidth("Value");
 		m_data.resize(100); // scrollbar hack
 		return 0;
@@ -164,7 +164,7 @@ public:
 	struct data_t
 	{
 		pfc::string8 key, value;
-		bool is_bool, bool_value;
+		bool is_string, is_bool, bool_value;
 	};
 
 	std::vector<data_t> m_data;

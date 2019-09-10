@@ -39,13 +39,20 @@ void CDialogProperty::Apply()
 			source.vt = VT_BSTR;
 			source.bstrVal = TO_BSTR(d.value);
 
-			if (SUCCEEDED(VariantChangeType(&dest, &source, 0, VT_R8)))
+			if (d.is_string)
 			{
-				m_dup_prop_map[d.key] = dest;
+				m_dup_prop_map[d.key] = source;
 			}
 			else
 			{
-				m_dup_prop_map[d.key] = source;
+				if (SUCCEEDED(VariantChangeType(&dest, &source, 0, VT_R8)))
+				{
+					m_dup_prop_map[d.key] = dest;
+				}
+				else
+				{
+					m_dup_prop_map[d.key] = source;
+				}
 			}
 		}
 	}
@@ -69,6 +76,7 @@ void CDialogProperty::LoadProperties(bool reload)
 		MyCList::data_t d;
 		d.key = iter->m_key;
 		d.is_bool = false;
+		d.is_string = false;
 
 		const _variant_t& v = iter->m_value;
 		_variant_t var;
@@ -93,6 +101,11 @@ void CDialogProperty::LoadProperties(bool reload)
 			break;
 
 		case VT_BSTR:
+			d.is_string = true;
+			var.ChangeType(VT_BSTR, &v);
+			d.value = PFC_string_formatter() << string_utf8_from_wide(var.bstrVal);
+			break;
+
 		default:
 			var.ChangeType(VT_BSTR, &v);
 			d.value = PFC_string_formatter() << string_utf8_from_wide(var.bstrVal);
