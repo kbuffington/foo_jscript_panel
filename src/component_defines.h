@@ -5,7 +5,7 @@
 
 // Remember to bump utils.version too
 #define JSP_VERSION_NUMBER "2.3.0"
-#define JSP_VERSION_TEST "-Beta.2"
+#define JSP_VERSION_TEST "-Beta.3"
 
 #ifdef _DEBUG
 #define JSP_VERSION_DEBUG_SUFFIX " (Debug)"

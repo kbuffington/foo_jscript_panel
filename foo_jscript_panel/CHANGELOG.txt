@@ -1,7 +1,15 @@
-v2.3.0-Beta.2
+v2.3.0-Beta.3
 - CHG: Drop support for foobar2000 v1.3.x. Now requires v1.4 or later.
 - NEW: Add utils.DateStringFromTimestamp and utils.TimestampFromDateString
        See docs\interfaces.txt for full details.
+- CHG: (Beta3) The Properties dialog has been rewritten and there is no longer
+       any "Clear" or "Delete" buttons. Now you can multi-select using your mouse
+       and combinations of Ctrl/Shift keys. There is a right click menu to Select
+       All/Select None/Invert selection and Remove. Ctrl+A and the Delete keyboard
+       shortcuts are also supported.
+- CHG: (Beta3) The list view under File>Preferences>JScript Panel now supports
+       inline editing from a single click on the value. You no longer
+       double click items to open a new dialog.
 - CHG: The following methods no longer support the previously optional "force"
        paramter.
        window.Repaint();
