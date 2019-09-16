@@ -656,8 +656,7 @@ STDMETHODIMP GdiGraphics::DrawPolygon(LONGLONG colour, float line_width, VARIANT
 	const LONG count = helper.get_count();
 	if (count % 2 != 0) return E_INVALIDARG;
 
-	std::vector<Gdiplus::PointF> point_array;
-	point_array.resize(count / 2);
+	std::vector<Gdiplus::PointF> point_array(count / 2);
 
 	for (LONG i = 0; i < count / 2; ++i)
 	{
@@ -781,8 +780,7 @@ STDMETHODIMP GdiGraphics::FillPolygon(LONGLONG colour, int fillmode, VARIANT poi
 	const LONG count = helper.get_count();
 	if (count % 2 != 0) return E_INVALIDARG;
 
-	std::vector<Gdiplus::PointF> point_array;
-	point_array.resize(count / 2);
+	std::vector<Gdiplus::PointF> point_array(count / 2);
 
 	for (LONG i = 0; i < count / 2; ++i)
 	{
@@ -1689,8 +1687,7 @@ STDMETHODIMP MetadbHandleList::OrderByRelativePath()
 	const t_size count = m_handles.get_count();
 	t_size i;
 
-	pfc::array_t<helpers::custom_sort_data> data;
-	data.set_size(count);
+	std::vector<helpers::custom_sort_data> data(count);
 
 	pfc::string8_fastalloc temp;
 	temp.prealloc(512);
@@ -2121,15 +2118,14 @@ STDMETHODIMP TitleFormat::EvalWithMetadbs(IMetadbHandleList* handles, VARIANT* p
 	metadb_handle_list* handles_ptr = nullptr;
 	handles->get__ptr((void**)&handles_ptr);
 
-	metadb_handle_list_ref handles_ref = *handles_ptr;
-	const LONG count = handles_ref.get_count();
+	const LONG count = handles_ptr->get_count();
 	helpers::com_array helper;
 	if (!helper.create(count)) return E_OUTOFMEMORY;
 
 	for (LONG i = 0; i < count; ++i)
 	{
 		pfc::string8_fast str;
-		handles_ref[i]->format_title(nullptr, str, m_obj, nullptr);
+		handles_ptr->get_item(i)->format_title(nullptr, str, m_obj, nullptr);
 		_variant_t var;
 		var.vt = VT_BSTR;
 		var.bstrVal = TO_BSTR(str);

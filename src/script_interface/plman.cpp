@@ -561,16 +561,16 @@ STDMETHODIMP Plman::SortByFormatV2(UINT playlistIndex, BSTR pattern, int directi
 
 	metadb_handle_list handles;
 	api->playlist_get_all_items(playlistIndex, handles);
+	const t_size count = handles.get_count();
 
-	pfc::array_t<t_size> order;
-	order.set_size(handles.get_count());
+	std::vector<t_size> order(count);
 
 	titleformat_object::ptr obj;
 	titleformat_compiler::get()->compile_safe(obj, string_utf8_from_wide(pattern));
 
-	metadb_handle_list_helper::sort_by_format_get_order_v2(handles, order.get_ptr(), obj, nullptr, direction, fb2k::noAbort);
+	metadb_handle_list_helper::sort_by_format_get_order_v2(handles, order.data(), obj, nullptr, direction, fb2k::noAbort);
 
-	*p = TO_VARIANT_BOOL(api->playlist_reorder_items(playlistIndex, order.get_ptr(), order.get_count()));
+	*p = TO_VARIANT_BOOL(api->playlist_reorder_items(playlistIndex, order.data(), count));
 	return S_OK;
 }
 
@@ -580,8 +580,7 @@ STDMETHODIMP Plman::SortPlaylistsByName(int direction)
 	const t_size count = api->get_playlist_count();
 	t_size i;
 
-	std::vector<helpers::custom_sort_data> data;
-	data.resize(count);
+	std::vector<helpers::custom_sort_data> data(count);
 
 	pfc::string8_fastalloc temp;
 	temp.prealloc(512);
