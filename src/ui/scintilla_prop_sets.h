@@ -51,7 +51,7 @@ public:
 	void reset();
 	void set_data_raw(stream_reader* p_stream, t_size p_sizehint, abort_callback& p_abort) override;
 
-	pfc::list_t<t_sci_prop_set> m_data;
+	std::vector<t_sci_prop_set> m_data;
 
 private:
 	void init_data(const t_prop_set_init_table* p_default);

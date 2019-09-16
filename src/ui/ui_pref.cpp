@@ -39,7 +39,7 @@ t_size CDialogPref::get_state()
 
 t_size CDialogPref::listGetItemCount(ctx_t)
 {
-	return g_sci_prop_sets.m_data.get_count();
+	return g_sci_prop_sets.m_data.size();
 }
 
 pfc::string8 CDialogPref::listGetSubItemText(ctx_t, t_size item, t_size sub_item)

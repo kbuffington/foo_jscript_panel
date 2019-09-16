@@ -20,7 +20,7 @@ namespace helpers
 		int width;
 	};
 
-	using wrapped_item_list = pfc::list_t<wrapped_item>;
+	using wrapped_item_list = std::vector<wrapped_item>;
 
 	COLORREF convert_argb_to_colorref(DWORD argb);
 	DWORD convert_colorref_to_argb(COLORREF color);

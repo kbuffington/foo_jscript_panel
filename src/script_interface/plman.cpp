@@ -580,8 +580,8 @@ STDMETHODIMP Plman::SortPlaylistsByName(int direction)
 	const t_size count = api->get_playlist_count();
 	t_size i;
 
-	pfc::array_t<helpers::custom_sort_data> data;
-	data.set_size(count);
+	std::vector<helpers::custom_sort_data> data;
+	data.resize(count);
 
 	pfc::string8_fastalloc temp;
 	temp.prealloc(512);

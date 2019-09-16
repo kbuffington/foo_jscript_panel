@@ -7,16 +7,18 @@ class my_config_object_notify : public config_object_notify
 public:
 	my_config_object_notify()
 	{
-		m_data.add_item({ &standard_config_objects::bool_playlist_stop_after_current, callback_id::on_playlist_stop_after_current_changed });
-		m_data.add_item({ &standard_config_objects::bool_cursor_follows_playback, callback_id::on_cursor_follow_playback_changed });
-		m_data.add_item({ &standard_config_objects::bool_playback_follows_cursor, callback_id::on_playback_follow_cursor_changed });
-		m_data.add_item({ &standard_config_objects::bool_ui_always_on_top, callback_id::on_always_on_top_changed });
-		m_count = m_data.get_count();
+		m_data = {
+			{ &standard_config_objects::bool_playlist_stop_after_current, callback_id::on_playlist_stop_after_current_changed },
+			{ &standard_config_objects::bool_cursor_follows_playback, callback_id::on_cursor_follow_playback_changed },
+			{ &standard_config_objects::bool_playback_follows_cursor, callback_id::on_playback_follow_cursor_changed },
+			{ &standard_config_objects::bool_ui_always_on_top, callback_id::on_always_on_top_changed }
+		};
+		m_count = m_data.size();
 	}
 
 	GUID get_watched_object(t_size p_index) override
 	{
-		return p_index < m_count ? *m_data[p_index].guid : pfc::guid_null;
+		return p_index < m_count ? *m_data[p_index].first : pfc::guid_null;
 	}
 
 	t_size get_watched_object_count() override
@@ -28,26 +30,20 @@ public:
 	{
 		GUID g = p_object->get_guid();
 
-		m_data.for_each([=](const ids& i) -> void
+		for (const auto& i : m_data)
 		{
-			if (*i.guid == g)
+			if (*i.first == g)
 			{
 				bool b;
 				p_object->get_data_bool(b);
-				panel_manager::instance().post_msg_to_all(i.msg, TO_VARIANT_BOOL(b));
+				panel_manager::instance().post_msg_to_all(i.second, TO_VARIANT_BOOL(b));
 				return;
 			}
-		});
+		}
 	}
 
 private:
-	struct ids
-	{
-		const GUID* guid;
-		t_size msg;
-	};
-	
-	pfc::list_t<ids> m_data;
+	std::vector<std::pair<const GUID*, t_size>> m_data;
 	t_size m_count;
 };
 

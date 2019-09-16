@@ -65,7 +65,7 @@ public:
 	void ContinueCallTip();
 	void FillFunctionDefinition(int pos = -1);
 	void Init();
-	void LoadProperties(const pfc::list_t<t_sci_prop_set>& data);
+	void LoadProperties(const std::vector<t_sci_prop_set>& data);
 	void ReadAPI();
 	void RestoreDefaultStyle();
 	void SetAllStylesFromTable(const t_style_to_key_table table[]);
@@ -75,15 +75,15 @@ public:
 	void TrackWidth();
 
 private:
-	int m_BraceCount;
-	int m_CurrentCallTip;
-	int m_LastPosCallTip;
-	int m_StartCalltipWord;
-	pfc::list_t<pfc::string_simple> m_apis;
-	pfc::string8_fast m_CurrentCallTipWord;
-	pfc::string8_fast m_FunctionDefinition;
 	StyleAndWords m_BlockEnd;
 	StyleAndWords m_BlockStart;
 	StyleAndWords m_StatementEnd;
 	StyleAndWords m_StatementIndent;
+	int m_BraceCount;
+	int m_CurrentCallTip;
+	int m_LastPosCallTip;
+	int m_StartCalltipWord;
+	pfc::string8_fast m_CurrentCallTipWord;
+	pfc::string8_fast m_FunctionDefinition;
+	std::vector<pfc::string_simple> m_apis;
 };

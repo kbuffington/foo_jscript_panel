@@ -54,7 +54,7 @@ private:
 	bool m_engine_inited;
 	bool m_has_error;
 	host_comm* m_host;
-	pfc::map_t<DWORD, pfc::string8_fast> m_context_to_path_map;
-	pfc::map_t<t_size, DISPID> m_callback_map;
+	std::unordered_map<DWORD, pfc::string8_fast> m_context_to_path_map;
+	std::unordered_map<t_size, DISPID> m_callback_map;
 	volatile DWORD m_ref_count;
 };

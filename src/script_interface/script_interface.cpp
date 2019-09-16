@@ -656,8 +656,8 @@ STDMETHODIMP GdiGraphics::DrawPolygon(LONGLONG colour, float line_width, VARIANT
 	const LONG count = helper.get_count();
 	if (count % 2 != 0) return E_INVALIDARG;
 
-	pfc::array_t<Gdiplus::PointF> point_array;
-	point_array.set_size(count / 2);
+	std::vector<Gdiplus::PointF> point_array;
+	point_array.resize(count / 2);
 
 	for (LONG i = 0; i < count / 2; ++i)
 	{
@@ -670,7 +670,7 @@ STDMETHODIMP GdiGraphics::DrawPolygon(LONGLONG colour, float line_width, VARIANT
 	}
 
 	Gdiplus::Pen pen(static_cast<t_size>(colour), line_width);
-	m_ptr->DrawPolygon(&pen, point_array.get_ptr(), point_array.get_count());
+	m_ptr->DrawPolygon(&pen, point_array.data(), point_array.size());
 	return S_OK;
 }
 
@@ -734,7 +734,7 @@ STDMETHODIMP GdiGraphics::EstimateLineWrap(BSTR str, IGdiFont* font, int max_wid
 	SelectFont(dc, oldfont);
 	m_ptr->ReleaseHDC(dc);
 
-	const LONG count = result.get_count();
+	const LONG count = result.size();
 	helpers::com_array helper;
 	if (!helper.create(count * 2)) return E_OUTOFMEMORY;
 	for (LONG i = 0; i < count; ++i)
@@ -781,8 +781,8 @@ STDMETHODIMP GdiGraphics::FillPolygon(LONGLONG colour, int fillmode, VARIANT poi
 	const LONG count = helper.get_count();
 	if (count % 2 != 0) return E_INVALIDARG;
 
-	pfc::array_t<Gdiplus::PointF> point_array;
-	point_array.set_size(count / 2);
+	std::vector<Gdiplus::PointF> point_array;
+	point_array.resize(count / 2);
 
 	for (LONG i = 0; i < count / 2; ++i)
 	{
@@ -795,7 +795,7 @@ STDMETHODIMP GdiGraphics::FillPolygon(LONGLONG colour, int fillmode, VARIANT poi
 	}
 
 	Gdiplus::SolidBrush br(static_cast<t_size>(colour));
-	m_ptr->FillPolygon(&br, point_array.get_ptr(), point_array.get_count(), (Gdiplus::FillMode)fillmode);
+	m_ptr->FillPolygon(&br, point_array.data(), point_array.size(), (Gdiplus::FillMode)fillmode);
 	return S_OK;
 }
 

@@ -12,15 +12,12 @@ panel_manager& panel_manager::instance()
 
 void panel_manager::add_window(HWND p_wnd)
 {
-	if (m_hwnds.find_item(p_wnd) == SIZE_MAX)
-	{
-		m_hwnds.add_item(p_wnd);
-	}
+	m_hwnds.insert(p_wnd);
 }
 
 void panel_manager::notify_others(HWND p_wnd_except, UINT p_msg, pfc::refcounted_object_root* p_param)
 {
-	t_size count = m_hwnds.get_count();
+	t_size count = m_hwnds.size();
 
 	if (count < 2 || !p_param) return;
 
@@ -29,26 +26,26 @@ void panel_manager::notify_others(HWND p_wnd_except, UINT p_msg, pfc::refcounted
 		p_param->refcount_add_ref();
 	}
 
-	m_hwnds.for_each([=](const HWND& hwnd) -> void
+	for (const auto& hwnd : m_hwnds)
 	{
 		if (hwnd != p_wnd_except)
 		{
 			SendMessage(hwnd, p_msg, reinterpret_cast<WPARAM>(p_param), 0);
 		}
-	});
+	}
 }
 
 void panel_manager::post_msg_to_all(UINT p_msg, WPARAM p_wp, LPARAM p_lp)
 {
-	m_hwnds.for_each([=](const HWND& hwnd) -> void
+	for (const auto& hwnd : m_hwnds)
 	{
 		PostMessage(hwnd, p_msg, p_wp, p_lp);
-	});
+	}
 }
 
 void panel_manager::post_msg_to_all_pointer(UINT p_msg, pfc::refcounted_object_root* p_param)
 {
-	t_size count = m_hwnds.get_count();
+	t_size count = m_hwnds.size();
 
 	if (count == 0 || !p_param) return;
 
@@ -57,21 +54,21 @@ void panel_manager::post_msg_to_all_pointer(UINT p_msg, pfc::refcounted_object_r
 		p_param->refcount_add_ref();
 	}
 
-	m_hwnds.for_each([=](const HWND& hwnd) -> void
+	for (const auto& hwnd : m_hwnds)
 	{
 		PostMessage(hwnd, p_msg, reinterpret_cast<WPARAM>(p_param), 0);
-	});
+	}
 }
 
 void panel_manager::remove_window(HWND p_wnd)
 {
-	m_hwnds.remove_item(p_wnd);
+	m_hwnds.erase(p_wnd);
 }
 
 void panel_manager::unload_all()
 {
-	m_hwnds.for_each([](const HWND& hwnd) -> void
+	for (const auto& hwnd : m_hwnds)
 	{
 		SendMessage(hwnd, UWM_UNLOAD, 0, 0);
-	});
+	}
 }

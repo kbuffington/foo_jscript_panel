@@ -31,8 +31,18 @@ struct type_info_cache
 {
 	type_info_cache() : m_type_info(nullptr) {}
 
+	bool query(const ULONG& key, DISPID& value)
+	{
+		if (m_cache.count(key))
+		{
+			value = m_cache.at(key);
+			return true;
+		}
+		return false;
+	}
+
 	ITypeInfoPtr m_type_info;
-	pfc::map_t<ULONG, DISPID> m_cache;
+	std::unordered_map<ULONG, DISPID> m_cache;
 };
 
 template <class T>
@@ -60,7 +70,7 @@ public:
 		for (t_size i = 0; i < cNames; ++i)
 		{
 			ULONG hash = LHashValOfName(LANG_NEUTRAL, names[i]);
-			if (!g_type_info_cache.m_cache.query(hash, dispids[i]))
+			if (!g_type_info_cache.query(hash, dispids[i]))
 			{
 				HRESULT hr = g_type_info_cache.m_type_info->GetIDsOfNames(&names[i], 1, &dispids[i]);
 				if (FAILED(hr)) return hr;

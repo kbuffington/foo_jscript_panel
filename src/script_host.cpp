@@ -101,7 +101,7 @@ script_host::~script_host() {}
 
 DWORD script_host::GenerateSourceContext(const pfc::string8_fast& path)
 {
-	m_context_to_path_map[++m_last_source_context] = path;
+	m_context_to_path_map.emplace(++m_last_source_context, path);
 	return m_last_source_context;
 }
 
@@ -157,7 +157,7 @@ HRESULT script_host::InitCallbackMap()
 		}
 	};
 
-	m_callback_map.remove_all();
+	m_callback_map.clear();
 	if (!m_script_root) return E_POINTER;
 	for (const auto& i : id_names)
 	{
@@ -165,7 +165,7 @@ HRESULT script_host::InitCallbackMap()
 		DISPID dispId;
 		if (SUCCEEDED(m_script_root->GetIDsOfNames(IID_NULL, &name, 1, LOCALE_USER_DEFAULT, &dispId)))
 		{
-			m_callback_map[i.id] = dispId;
+			m_callback_map.emplace(i.id, dispId);
 			check_features(i.id);
 		}
 	}
@@ -205,9 +205,9 @@ HRESULT script_host::InvokeCallback(t_size callbackId, VARIANTARG* argv, t_size 
 {
 	if (!m_script_root) return E_POINTER;
 	if (HasError() || !Ready()) return E_FAIL;
-	if (!m_callback_map.have_item(callbackId)) return DISP_E_MEMBERNOTFOUND;
+	if (m_callback_map.count(callbackId) == 0) return DISP_E_MEMBERNOTFOUND;
 	DISPPARAMS param = { argv, nullptr, argc, 0 };
-	return m_script_root->Invoke(m_callback_map[callbackId], IID_NULL, LOCALE_USER_DEFAULT, DISPATCH_METHOD, &param, ret, nullptr, nullptr);
+	return m_script_root->Invoke(m_callback_map.at(callbackId), IID_NULL, LOCALE_USER_DEFAULT, DISPATCH_METHOD, &param, ret, nullptr, nullptr);
 }
 
 HRESULT script_host::ProcessScripts(IActiveScriptParsePtr& parser)
@@ -370,9 +370,9 @@ STDMETHODIMP script_host::OnScriptError(IActiveScriptError* err)
 
 	if (SUCCEEDED(err->GetSourcePosition(&ctx, &line, &charpos)))
 	{
-		if (m_context_to_path_map.have_item(ctx))
+		if (m_context_to_path_map.count(ctx))
 		{
-			formatter << "File: " << m_context_to_path_map[ctx] << "\n";
+			formatter << "File: " << m_context_to_path_map.at(ctx) << "\n";
 		}
 		formatter << "Line: " << (line + 1) << ", Col: " << (charpos + 1) << "\n";
 	}
@@ -470,8 +470,8 @@ void script_host::Finalise()
 		m_engine_inited = false;
 	}
 
-	m_context_to_path_map.remove_all();
-	m_callback_map.remove_all();
+	m_context_to_path_map.clear();
+	m_callback_map.clear();
 
 	if (m_script_engine)
 	{

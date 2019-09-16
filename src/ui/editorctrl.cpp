@@ -519,7 +519,7 @@ bool CScriptEditorCtrl::GetNearestWords(pfc::string_base& out, const char* wordS
 {
 	out.reset();
 
-	if (m_apis.get_count() == 0)
+	if (m_apis.size() == 0)
 		return false;
 
 	bool status = false;
@@ -529,7 +529,7 @@ bool CScriptEditorCtrl::GetNearestWords(pfc::string_base& out, const char* wordS
 		char otherSeparator = *separators;
 		t_size index;
 
-		if (m_apis.bsearch_t(StringComparePartialNC(searchLen), wordStart, index))
+		if (pfc::bsearch_t(m_apis.size(), m_apis, StringComparePartialNC(searchLen), wordStart, index))
 		{
 			t_size pivot = index;
 			status = true;
@@ -539,7 +539,7 @@ bool CScriptEditorCtrl::GetNearestWords(pfc::string_base& out, const char* wordS
 				--pivot;
 			}
 
-			while (pivot <= m_apis.get_count() - 1)
+			while (pivot <= m_apis.size() - 1)
 			{
 				if (StringComparePartialNC(searchLen)(m_apis[pivot], wordStart) != 0)
 					break;
@@ -593,7 +593,7 @@ bool CScriptEditorCtrl::StartAutoComplete()
 	pfc::string8_fast root;
 	root.set_string(line.c_str() + startword, current - startword);
 
-	if (m_apis.get_count() == 0)
+	if (m_apis.empty())
 		return false;
 
 	pfc::string8_fast words;
@@ -664,12 +664,12 @@ bool CScriptEditorCtrl::StartCallTip()
 
 const char* CScriptEditorCtrl::GetNearestWord(const char* wordStart, int searchLen, std::string wordCharacters, int wordIndex)
 {
-	if (m_apis.get_count() == 0)
+	if (m_apis.empty())
 		return nullptr;
 
 	t_size index;
 
-	if (m_apis.bsearch_t(StringComparePartialNC(searchLen), wordStart, index))
+	if (pfc::bsearch_t(m_apis.size(), m_apis, StringComparePartialNC(searchLen), wordStart, index))
 	{
 		t_size start = index;
 
@@ -680,7 +680,7 @@ const char* CScriptEditorCtrl::GetNearestWord(const char* wordStart, int searchL
 
 		t_size end = index;
 
-		while (end < m_apis.get_count() - 1 && StringComparePartialNC(searchLen)(m_apis[end + 1], wordStart) == 0)
+		while (end < m_apis.size() - 1 && StringComparePartialNC(searchLen)(m_apis[end + 1], wordStart) == 0)
 		{
 			++end;
 		}
@@ -950,7 +950,7 @@ void CScriptEditorCtrl::FillFunctionDefinition(int pos)
 		m_LastPosCallTip = pos;
 	}
 
-	if (m_apis.get_count())
+	if (m_apis.size())
 	{
 		pfc::string8_fast words;
 
@@ -1033,9 +1033,9 @@ void CScriptEditorCtrl::Init()
 	LoadProperties(g_sci_prop_sets.m_data);
 }
 
-void CScriptEditorCtrl::LoadProperties(const pfc::list_t<t_sci_prop_set>& data)
+void CScriptEditorCtrl::LoadProperties(const std::vector<t_sci_prop_set>& data)
 {
-	for (t_size i = 0; i < data.get_count(); ++i)
+	for (t_size i = 0; i < data.size(); ++i)
 	{
 		SetProperty(data[i].key.get_ptr(), data[i].val.get_ptr());
 	}
@@ -1058,7 +1058,7 @@ void CScriptEditorCtrl::ReadAPI()
 		return result;
 	};
 
-	m_apis.remove_all();
+	m_apis.clear();
 	puResource pures = uLoadResource(core_api::get_my_instance(), uMAKEINTRESOURCE(IDR_API), "TEXT");
 	pfc::string8_fast content(static_cast<const char*>(pures->GetPointer()), pures->GetSize());
 	pfc::string_list_impl list;
@@ -1069,10 +1069,10 @@ void CScriptEditorCtrl::ReadAPI()
 		pfc::string8_fast tmp = list[i];
 		if (tmp.get_length())
 		{
-			m_apis.add_item(tmp);
+			m_apis.emplace_back(tmp);
 		}
 	}
-	m_apis.sort_t(sc);
+	pfc::sort_t(m_apis, sc, m_apis.size());
 }
 
 void CScriptEditorCtrl::RestoreDefaultStyle()

@@ -66,7 +66,7 @@ public:
 private:
 	static panel_manager instance_;
 
-	pfc::list_t<HWND> m_hwnds;
+	std::set<HWND> m_hwnds;
 
 	PFC_CLASS_NOT_COPYABLE_EX(panel_manager)
 };
