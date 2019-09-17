@@ -15,21 +15,13 @@
 #include <GdiPlus.h>
 #include <ActivScp.h>
 #include <ComDef.h>
-
-#include <atlstr.h>
-#include <atlwin.h>
-#include <atltypes.h>
-
-#include <atlapp.h>
-#include <atldlgs.h>
-#include <atlctrls.h>
-#include <atlcrack.h>
+#include <ShlObj.h>
 
 #include <Scintilla.h>
 #include <SciLexer.h>
 
 #include <resource.h>
-#include <foobar2000/SDK/foobar2000.h>
+#include <foobar2000/helpers/foobar2000+atl.h>
 #include <foobar2000/helpers/atl-misc.h>
 #include <foobar2000/helpers/filetimetools.h>
 #include <libPPUI/CDialogResizeHelper.h>
