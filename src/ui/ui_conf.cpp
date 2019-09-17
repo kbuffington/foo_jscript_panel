@@ -5,7 +5,22 @@
 #include "ui_goto.h"
 #include "ui_replace.h"
 
-CDialogConf::CDialogConf(panel_window* p_parent) : m_parent(p_parent), m_dlgfind(nullptr), m_dlgreplace(nullptr), m_lastFlags(0)
+static const CDialogResizeHelper::Param resize_data[] = {
+	{ IDC_EDIT, 0, 0, 1, 1 },
+	{ IDC_RESET, 0, 1, 0, 1 },
+	{ IDC_ENGINE_LABEL, 0, 1, 0, 1 },
+	{ IDC_ENGINE_COMBO, 0, 1, 0, 1 },
+	{ IDC_EDGE_LABEL, 0, 1, 0, 1 },
+	{ IDC_EDGE_COMBO, 0, 1, 0, 1 },
+	{ IDC_PSEUDO_TRANSPARENT, 0, 1, 0, 1 },
+	{ IDOK, 1, 1, 1, 1 },
+	{ IDCANCEL, 1, 1, 1, 1 },
+	{ IDC_APPLY, 1, 1, 1, 1 },
+};
+
+static const CRect resize_min_max(620, 381, 0, 0);
+
+CDialogConf::CDialogConf(panel_window* p_parent) : m_parent(p_parent), m_dlgfind(nullptr), m_dlgreplace(nullptr), m_lastFlags(0), m_resizer(resize_data, resize_min_max)
 {
 	m_caption << JSP_NAME " Configuration (id:" << m_parent->m_script_info.id << ")";
 }
@@ -14,11 +29,11 @@ CDialogConf::~CDialogConf() {}
 
 BOOL CDialogConf::OnInitDialog(HWND hwndFocus, LPARAM lParam)
 {
-	m_edge = GetDlgItem(IDC_COMBO_EDGE);
+	m_edge = GetDlgItem(IDC_EDGE_COMBO);
 	m_edit = GetDlgItem(IDC_EDIT);
-	m_engine = GetDlgItem(IDC_COMBO_ENGINE);
+	m_engine = GetDlgItem(IDC_ENGINE_COMBO);
 	m_menu = GetMenu();
-	m_pseudo = GetDlgItem(IDC_CHECK_PSEUDO_TRANSPARENT);
+	m_pseudo = GetDlgItem(IDC_PSEUDO_TRANSPARENT);
 
 	pfc::string8_fast base = helpers::get_fb2k_component_path();
 
@@ -78,9 +93,6 @@ BOOL CDialogConf::OnInitDialog(HWND hwndFocus, LPARAM lParam)
 
 	// Set caption text
 	uSetWindowText(m_hWnd, m_caption);
-
-	// Init resize
-	DlgResize_Init();
 
 	// Apply window placement
 	if (m_parent->m_wndpl.length == 0)

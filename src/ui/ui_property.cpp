@@ -1,7 +1,18 @@
 #include "stdafx.h"
 #include "ui_property.h"
 
-CDialogProperty::CDialogProperty(panel_window* p_parent) : m_parent(p_parent)
+static const CDialogResizeHelper::Param resize_data[] = {
+	{ IDC_LIST_PROPERTIES, 0, 0, 1, 1 },
+	{ IDC_IMPORT, 0, 1, 0, 1 },
+	{ IDC_EXPORT, 0, 1, 0, 1 },
+	{ IDOK, 1, 1, 1, 1 },
+	{ IDCANCEL, 1, 1, 1, 1 },
+	{ IDC_APPLY, 1, 1, 1, 1 },
+};
+
+static const CRect resize_min_max(620, 381, 0, 0);
+
+CDialogProperty::CDialogProperty(panel_window* p_parent) : m_parent(p_parent), m_resizer(resize_data, resize_min_max)
 {
 	m_caption << JSP_NAME " Properties (id:" << m_parent->m_script_info.id << ")";
 }
@@ -12,8 +23,6 @@ BOOL CDialogProperty::OnInitDialog(HWND hwndFocus, LPARAM lParam)
 {
 	// Set caption text
 	uSetWindowText(m_hWnd, m_caption);
-
-	DlgResize_Init();
 
 	m_properties.CreateInDialog(*this, IDC_LIST_PROPERTIES);
 	LoadProperties();

@@ -21,7 +21,6 @@
 #include <atltypes.h>
 
 #include <atlapp.h>
-#include <atlframe.h>
 #include <atldlgs.h>
 #include <atlctrls.h>
 #include <atlcrack.h>
@@ -33,6 +32,7 @@
 #include <foobar2000/SDK/foobar2000.h>
 #include <foobar2000/helpers/atl-misc.h>
 #include <foobar2000/helpers/filetimetools.h>
+#include <libPPUI/CDialogResizeHelper.h>
 #include <libPPUI/CListControlOwnerData.h>
 #include <libPPUI/CListControlComplete.h>
 #include <libPPUI/CListControl-Cells.h>

@@ -5,26 +5,14 @@ class panel_window;
 class CDialogFind;
 class CDialogReplace;
 
-class CDialogConf : public CDialogImpl<CDialogConf>, public CDialogResize<CDialogConf>
+class CDialogConf : public CDialogImpl<CDialogConf>
 {
 public:
 	CDialogConf(panel_window* p_parent);
 	~CDialogConf();
 
-	BEGIN_DLGRESIZE_MAP(CDialogConf)
-		DLGRESIZE_CONTROL(IDC_EDIT, DLSZ_SIZE_X | DLSZ_SIZE_Y)
-		DLGRESIZE_CONTROL(IDC_RESET, DLSZ_MOVE_Y)
-		DLGRESIZE_CONTROL(IDC_STATIC_ENGINE, DLSZ_MOVE_Y)
-		DLGRESIZE_CONTROL(IDC_COMBO_ENGINE, DLSZ_MOVE_Y)
-		DLGRESIZE_CONTROL(IDC_STATIC_EDGE, DLSZ_MOVE_Y)
-		DLGRESIZE_CONTROL(IDC_COMBO_EDGE, DLSZ_MOVE_Y)
-		DLGRESIZE_CONTROL(IDC_CHECK_PSEUDO_TRANSPARENT, DLSZ_MOVE_Y)
-		DLGRESIZE_CONTROL(IDOK, DLSZ_MOVE_X | DLSZ_MOVE_Y)
-		DLGRESIZE_CONTROL(IDC_APPLY, DLSZ_MOVE_X | DLSZ_MOVE_Y)
-		DLGRESIZE_CONTROL(IDCANCEL, DLSZ_MOVE_X | DLSZ_MOVE_Y)
-	END_DLGRESIZE_MAP()
-
 	BEGIN_MSG_MAP(CDialogConf)
+		CHAIN_MSG_MAP_MEMBER(m_resizer)
 		MSG_WM_INITDIALOG(OnInitDialog)
 		MSG_WM_NOTIFY(OnNotify)
 		MESSAGE_HANDLER(UWM_KEYDOWN, OnUwmKeyDown)
@@ -37,8 +25,6 @@ public:
 		COMMAND_RANGE_HANDLER_EX(ID_SAMPLES_BEGIN, ID_SAMPLES_END, OnSamples)
 		COMMAND_RANGE_HANDLER_EX(ID_DOCS_BEGIN, ID_DOCS_END, OnDocs)
 		COMMAND_RANGE_HANDLER_EX(ID_LINKS_BEGIN, ID_LINKS_END, OnLinks)
-		CHAIN_MSG_MAP(CDialogResize<CDialogConf>)
-		REFLECT_NOTIFICATIONS()
 	END_MSG_MAP()
 
 	enum
@@ -70,6 +56,7 @@ private:
 	CDialogReplace* m_dlgreplace;
 	CComboBox m_edge;
 	CComboBox m_engine;
+	CDialogResizeHelper m_resizer;
 	CMenu m_menu;
 	CScriptEditorCtrl m_editorctrl;
 	CWindow m_edit;

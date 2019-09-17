@@ -20,11 +20,11 @@
 #define IDD_DIALOG_CONF                 110
 #define IDC_EDIT                        112
 #define IDC_RESET                       113
-#define IDC_STATIC_ENGINE               114
-#define IDC_COMBO_ENGINE                115
-#define IDC_STATIC_EDGE                 116
-#define IDC_COMBO_EDGE                  117
-#define IDC_CHECK_PSEUDO_TRANSPARENT    118
+#define IDC_ENGINE_LABEL                114
+#define IDC_ENGINE_COMBO                115
+#define IDC_EDGE_LABEL                  116
+#define IDC_EDGE_COMBO                  117
+#define IDC_PSEUDO_TRANSPARENT          118
 
 //ui_find
 #define IDD_DIALOG_FIND                 120
