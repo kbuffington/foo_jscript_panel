@@ -24,6 +24,7 @@ v2.3.0-Beta.3
        IContextMenuManager BuildMenu "max_id"
        IMainMenuManager BuildMenu "count"
        utils.CheckComponent "is_dll"
+       utils.WriteTextFile "write_bom"
        See docs\interfaces.txt for full details.
 - CHG: plman.PlayingPlaylist is now a read-only property.
 - CHG: The IPlaylistRecyclerManager interface has been removed and replaced

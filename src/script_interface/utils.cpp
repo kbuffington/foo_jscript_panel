@@ -416,7 +416,7 @@ STDMETHODIMP Utils::WriteINI(BSTR filename, BSTR section, BSTR key, VARIANT val,
 	return S_OK;
 }
 
-STDMETHODIMP Utils::WriteTextFile(BSTR filename, BSTR content, VARIANT_BOOL write_bom, VARIANT_BOOL* p)
+STDMETHODIMP Utils::WriteTextFile(BSTR filename, BSTR content, VARIANT_BOOL* p)
 {
 	if (!p) return E_POINTER;
 
@@ -426,7 +426,7 @@ STDMETHODIMP Utils::WriteTextFile(BSTR filename, BSTR content, VARIANT_BOOL writ
 	}
 	else
 	{
-		*p = TO_VARIANT_BOOL(helpers::write_file(string_utf8_from_wide(filename).get_ptr(), string_utf8_from_wide(content).get_ptr(), write_bom != VARIANT_FALSE));
+		*p = TO_VARIANT_BOOL(helpers::write_file(string_utf8_from_wide(filename).get_ptr(), string_utf8_from_wide(content).get_ptr()));
 	}
 	return S_OK;
 }

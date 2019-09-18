@@ -1238,15 +1238,11 @@ interface IUtils {
 		utils.WriteINI("e:\\my_file.ini", "Last.fm", "username", "Bob");
 		*/
 
-		utils.WriteTextFile(filename, content[, write_bom]); (boolean)
+		utils.WriteTextFile(filename, content); (boolean)
 		/*
-		write_bom: boolean, default true.
 		The parent folder must already exist.
 
-		Example:
-		utils.WriteTextFile("z:\\1.txt", "test"); // write_bom missing but defaults to true, resulting file is UTF8-BOM
-		utils.WriteTextFile("z:\\2.txt", "test", true); // Resulting file is UTF8-BOM.
-		utils.WriteTextFile("z:\\3.txt", "test", false); // Resulting file is UTF8 without BOM.
+		The previously optional "write_bom" option was removed v2.3.0. Now files are always written as UTF8 without BOM. 
 		*/
 }
 

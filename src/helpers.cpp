@@ -378,9 +378,8 @@ namespace helpers
 		return RegOpenKeyExW(HKEY_CLASSES_ROOT, L"CLSID\\{16d51579-a30b-4c8b-a276-0ff4dc41e755}", 0, KEY_READ, &hKey) == ERROR_SUCCESS;
 	}
 
-	bool write_file(const pfc::string8_fast& path, const pfc::string8_fast& content, bool write_bom)
+	bool write_file(const pfc::string8_fast& path, const pfc::string8_fast& content)
 	{
-		t_size offset = write_bom ? 3 : 0;
 		HANDLE hFile = uCreateFile(path, GENERIC_READ | GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
 
 		if (hFile == INVALID_HANDLE_VALUE)
@@ -388,12 +387,12 @@ namespace helpers
 			return false;
 		}
 
-		HANDLE hFileMapping = uCreateFileMapping(hFile, nullptr, PAGE_READWRITE, 0, content.get_length() + offset, nullptr);
+		HANDLE hFileMapping = uCreateFileMapping(hFile, nullptr, PAGE_READWRITE, 0, content.get_length(), nullptr);
 
 		if (hFileMapping == nullptr)
 		{
 			CloseHandle(hFile);
-			if (content.get_length() + offset == 0 && uFileExists(path)) return true; // suppress errors for empty files w/o BOM
+			if (content.is_empty() && uFileExists(path)) return true; // suppress errors for empty files
 			return false;
 		}
 
@@ -406,12 +405,7 @@ namespace helpers
 			return false;
 		}
 
-		if (write_bom)
-		{
-			const BYTE utf8_bom[] = { 0xef, 0xbb, 0xbf };
-			memcpy(pAddr, utf8_bom, 3);
-		}
-		memcpy(pAddr + offset, content, content.get_length());
+		memcpy(pAddr, content, content.get_length());
 
 		UnmapViewOfFile(pAddr);
 		CloseHandle(hFileMapping);

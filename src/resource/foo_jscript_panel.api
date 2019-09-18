@@ -150,7 +150,7 @@ utils.ReadINI(filename, section, key[, defaultval])
 utils.ReadTextFile(filename[, codepage])
 utils.TimestampToDateString(ts)
 utils.WriteINI(filename, section, key, val)
-utils.WriteTextFile(filename, content[, write_bom])
+utils.WriteTextFile(filename, content)
 
 window.Height
 window.ID
