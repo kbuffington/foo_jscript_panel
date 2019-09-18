@@ -468,7 +468,7 @@ _.mixin({
 		}
 	},
 	save : function (file, value) {
-		if (utils.WriteTextFile(file, value, false)) {
+		if (utils.WriteTextFile(file, value)) {
 			return true;
 		}
 		console.log('Error saving to ' + file);
