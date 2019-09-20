@@ -127,6 +127,7 @@ v2.2.0
        included in a script via the "import" preprocessor directive must be
        UTF8 encoded (with or without BOM). utils.ReadTextFile is unaffected although
        it should have better UTF8 detection than before.
+- CHG: The default "write_bom" argument for utils.WriteTextFile when omitted is now False.
 - CHG: The code that parses the preprocessor section has been rewritten from scratch.
        The only difference is that double quotes in the name/author no longer need to be
        escaped so they will be duplicated if you did this previously.

@@ -378,39 +378,16 @@ namespace helpers
 		return RegOpenKeyExW(HKEY_CLASSES_ROOT, L"CLSID\\{16d51579-a30b-4c8b-a276-0ff4dc41e755}", 0, KEY_READ, &hKey) == ERROR_SUCCESS;
 	}
 
-	bool write_file(const pfc::string8_fast& path, const pfc::string8_fast& content)
+	bool write_file(const char* path, const pfc::string8_fast& content)
 	{
-		HANDLE hFile = uCreateFile(path, GENERIC_READ | GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
-
-		if (hFile == INVALID_HANDLE_VALUE)
+		std::ofstream f(std::filesystem::u8path(path), std::ios::binary);
+		if (f.is_open())
 		{
-			return false;
+			f << content.get_ptr();
+			f.close();
+			return true;
 		}
-
-		HANDLE hFileMapping = uCreateFileMapping(hFile, nullptr, PAGE_READWRITE, 0, content.get_length(), nullptr);
-
-		if (hFileMapping == nullptr)
-		{
-			CloseHandle(hFile);
-			if (content.is_empty() && uFileExists(path)) return true; // suppress errors for empty files
-			return false;
-		}
-
-		PBYTE pAddr = (PBYTE)MapViewOfFile(hFileMapping, FILE_MAP_WRITE, 0, 0, 0);
-
-		if (pAddr == nullptr)
-		{
-			CloseHandle(hFileMapping);
-			CloseHandle(hFile);
-			return false;
-		}
-
-		memcpy(pAddr, content, content.get_length());
-
-		UnmapViewOfFile(pAddr);
-		CloseHandle(hFileMapping);
-		CloseHandle(hFile);
-		return true;
+		return false;
 	}
 
 	const GUID convert_artid_to_guid(t_size art_id)
@@ -506,46 +483,16 @@ namespace helpers
 	pfc::string8_fast read_file(const char* path)
 	{
 		pfc::string8_fast content;
-		HANDLE hFile = uCreateFile(path, GENERIC_READ, FILE_SHARE_READ, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
-
-		if (hFile == INVALID_HANDLE_VALUE)
+		std::ifstream f(std::filesystem::u8path(path));
+		if (f.is_open())
 		{
-			return content;
+			std::string line;
+			while (std::getline(f, line))
+			{
+				content << line.c_str() << "\r\n";
+			}
+			f.close();
 		}
-
-		HANDLE hFileMapping = uCreateFileMapping(hFile, nullptr, PAGE_READONLY, 0, 0, nullptr);
-
-		if (hFileMapping == nullptr)
-		{
-			CloseHandle(hFile);
-			return content;
-		}
-
-		DWORD dwFileSize = GetFileSize(hFile, nullptr);
-		LPCBYTE pAddr = (LPCBYTE)MapViewOfFile(hFileMapping, FILE_MAP_READ, 0, 0, 0);
-
-		if (pAddr == nullptr)
-		{
-			CloseHandle(hFileMapping);
-			CloseHandle(hFile);
-			return content;
-		}
-
-		if (dwFileSize == INVALID_FILE_SIZE)
-		{
-			UnmapViewOfFile(pAddr);
-			CloseHandle(hFileMapping);
-			CloseHandle(hFile);
-			return content;
-		}
-
-		t_size offset = dwFileSize >= 3 && pAddr[0] == 0xEF && pAddr[1] == 0xBB && pAddr[2] == 0xBF ? 3 : 0;
-		const char* pSource = (const char*)(pAddr + offset);
-		content.set_string(pSource);
-
-		UnmapViewOfFile(pAddr);
-		CloseHandle(hFileMapping);
-		CloseHandle(hFile);
 		return content;
 	}
 

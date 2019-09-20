@@ -4,6 +4,8 @@
 #define WINVER _WIN32_WINNT_WINXP
 
 #include <atomic>
+#include <filesystem>
+#include <fstream>
 #include <list>
 #include <map>
 #include <memory>
