@@ -291,7 +291,7 @@ oItem = function (playlist, row_index, type, handle, track_index, group_index, t
 						gr.DrawString("b".repeat(Math.round(this.rating > total_stars_drawable ? total_stars_drawable : this.rating)), g_font_rating, this.rating_color, columns.rating_x - 3, this.y - 1, cw + 1, cTrack.height + cTrack.parity, lc_stringformat);
 						if (total_stars_drawable < 5) {
 							var drawn_star_w = gr.CalcTextWidth("b".repeat(total_stars_drawable), g_font_rating) - 1;
-							gr.gdiDrawText("...", g_font, this.text_colour_default, columns.rating_x - 6 + drawn_star_w, this.y - 1, columns.rating_w + 1, cTrack.height + cTrack.parity, g_LDT);
+							gr.GdiDrawText("...", g_font, this.text_colour_default, columns.rating_x - 6 + drawn_star_w, this.y - 1, columns.rating_w + 1, cTrack.height + cTrack.parity, g_LDT);
 						};
 					} else {
 						gr.SetTextRenderingHint(3);
@@ -300,7 +300,7 @@ oItem = function (playlist, row_index, type, handle, track_index, group_index, t
 						gr.DrawString(String.fromCharCode(234).repeat(Math.round(this.rating > total_stars_drawable ? total_stars_drawable : this.rating)), g_font_rating, this.rating_color, columns.rating_x - 4, this.y + 2, cw + 1, cTrack.height + cTrack.parity, lc_stringformat);
 						if (total_stars_drawable < 5) {
 							var drawn_star_w = gr.CalcTextWidth(String.fromCharCode(234).repeat(total_stars_drawable), g_font_rating);
-							gr.gdiDrawText("...", g_font, this.text_colour_default, columns.rating_x - 6 + drawn_star_w, this.y, cw + 1, cTrack.height + cTrack.parity, g_LDT);
+							gr.GdiDrawText("...", g_font, this.text_colour_default, columns.rating_x - 6 + drawn_star_w, this.y, cw + 1, cTrack.height + cTrack.parity, g_LDT);
 						};
 					};
 					break;
@@ -478,7 +478,7 @@ oItem = function (playlist, row_index, type, handle, track_index, group_index, t
 				// if last empty track of the group, draw group length info
 				/*
 				if (cGroup.extra_rows > 0 && this.track_index_in_group == p.list.groups[this.group_index].count) {
-				gr.gdiDrawText("Total Group Length = " + TimeFromSeconds(Math.round(p.list.groups[this.group_index].total_time_length)), gdi_font("Arial", 10, 0), g_color_normal_txt, this.x, this.y, this.w - 010, this.h, DT_RIGHT | DT_TOP | DT_VCENTER | DT_CALCRECT | DT_NOPREFIX | DT_SINGLELINE | DT_END_ELLIPSIS);
+				gr.GdiDrawText("Total Group Length = " + TimeFromSeconds(Math.round(p.list.groups[this.group_index].total_time_length)), gdi_font("Arial", 10, 0), g_color_normal_txt, this.x, this.y, this.w - 010, this.h, DT_RIGHT | DT_TOP | DT_VCENTER | DT_CALCRECT | DT_NOPREFIX | DT_SINGLELINE | DT_END_ELLIPSIS);
 				};
 				*/
 			};
@@ -661,26 +661,26 @@ oItem = function (playlist, row_index, type, handle, track_index, group_index, t
 			switch (this.heightInRow) {
 			case 1:
 				var lg1_right_field_w = gr.CalcTextWidth(this.r1, g_font_group1) + cList.borderWidth * 2;
-				gr.gdiDrawText(this.l1 + " / " + this.l2, g_font_group1, this.l1_color, this.x + cover.w + text_left_padding, (this.y - groupDelta) - 1, this.w - cover.w - text_left_padding * 4 - lg1_right_field_w - scrollbar_gape, this.h, DT_LEFT | DT_VCENTER | DT_CALCRECT | DT_NOPREFIX | DT_SINGLELINE | DT_END_ELLIPSIS);
-				gr.gdiDrawText(this.r1, g_font_group1, this.l1_color, this.x + cover.w + text_left_padding, (this.y - groupDelta) - 1, this.w - cover.w - text_left_padding * 5 + 2 - scrollbar_gape, this.h, DT_RIGHT | DT_VCENTER | DT_CALCRECT | DT_NOPREFIX | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
+				gr.GdiDrawText(this.l1 + " / " + this.l2, g_font_group1, this.l1_color, this.x + cover.w + text_left_padding, (this.y - groupDelta) - 1, this.w - cover.w - text_left_padding * 4 - lg1_right_field_w - scrollbar_gape, this.h, DT_LEFT | DT_VCENTER | DT_CALCRECT | DT_NOPREFIX | DT_SINGLELINE | DT_END_ELLIPSIS);
+				gr.GdiDrawText(this.r1, g_font_group1, this.l1_color, this.x + cover.w + text_left_padding, (this.y - groupDelta) - 1, this.w - cover.w - text_left_padding * 5 + 2 - scrollbar_gape, this.h, DT_RIGHT | DT_VCENTER | DT_CALCRECT | DT_NOPREFIX | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
 				gr.FillSolidRect(this.x + cover.w + text_left_padding, Math.round(this.y + cTrack.height * 1 - groupDelta - 5), this.w - cover.w - text_left_padding * 5 + 2 - scrollbar_gape, 1.0, line_color);
 				break;
 			case 2:
 				var lg1_right_field_w = gr.CalcTextWidth(this.r1, g_font_group1) + cList.borderWidth * 2;
 				var lg2_right_field_w = gr.CalcTextWidth(this.r2, g_font_group2) + cList.borderWidth * 2;
-				gr.gdiDrawText(this.l1, g_font_group1, this.l1_color, this.x + cover.w + text_left_padding, (this.y - groupDelta) + 3, this.w - cover.w - text_left_padding * 4 - lg1_right_field_w - scrollbar_gape, cTrack.height, DT_LEFT | DT_VCENTER | DT_CALCRECT | DT_NOPREFIX | DT_SINGLELINE | DT_END_ELLIPSIS);
-				gr.gdiDrawText(this.l2, g_font_group2, this.l2_color, this.x + cover.w + text_left_padding, (this.y + cTrack.height - groupDelta) - 6, this.w - cover.w - text_left_padding * 4 - lg2_right_field_w - scrollbar_gape, cTrack.height, DT_LEFT | DT_VCENTER | DT_CALCRECT | DT_NOPREFIX | DT_SINGLELINE | DT_END_ELLIPSIS);
-				gr.gdiDrawText(this.r1, g_font_group1, this.l1_color, this.x + cover.w + text_left_padding, (this.y - groupDelta) + 3, this.w - cover.w - text_left_padding * 5 + 2 - scrollbar_gape, cTrack.height, DT_RIGHT | DT_VCENTER | DT_CALCRECT | DT_NOPREFIX | DT_SINGLELINE | DT_END_ELLIPSIS);
-				gr.gdiDrawText(this.r2, g_font_group2, this.l2_color, this.x + cover.w + text_left_padding, (this.y + cTrack.height - groupDelta) - 6, this.w - cover.w - text_left_padding * 5 + 1 - scrollbar_gape, cTrack.height, DT_RIGHT | DT_VCENTER | DT_CALCRECT | DT_NOPREFIX | DT_SINGLELINE | DT_END_ELLIPSIS);
+				gr.GdiDrawText(this.l1, g_font_group1, this.l1_color, this.x + cover.w + text_left_padding, (this.y - groupDelta) + 3, this.w - cover.w - text_left_padding * 4 - lg1_right_field_w - scrollbar_gape, cTrack.height, DT_LEFT | DT_VCENTER | DT_CALCRECT | DT_NOPREFIX | DT_SINGLELINE | DT_END_ELLIPSIS);
+				gr.GdiDrawText(this.l2, g_font_group2, this.l2_color, this.x + cover.w + text_left_padding, (this.y + cTrack.height - groupDelta) - 6, this.w - cover.w - text_left_padding * 4 - lg2_right_field_w - scrollbar_gape, cTrack.height, DT_LEFT | DT_VCENTER | DT_CALCRECT | DT_NOPREFIX | DT_SINGLELINE | DT_END_ELLIPSIS);
+				gr.GdiDrawText(this.r1, g_font_group1, this.l1_color, this.x + cover.w + text_left_padding, (this.y - groupDelta) + 3, this.w - cover.w - text_left_padding * 5 + 2 - scrollbar_gape, cTrack.height, DT_RIGHT | DT_VCENTER | DT_CALCRECT | DT_NOPREFIX | DT_SINGLELINE | DT_END_ELLIPSIS);
+				gr.GdiDrawText(this.r2, g_font_group2, this.l2_color, this.x + cover.w + text_left_padding, (this.y + cTrack.height - groupDelta) - 6, this.w - cover.w - text_left_padding * 5 + 1 - scrollbar_gape, cTrack.height, DT_RIGHT | DT_VCENTER | DT_CALCRECT | DT_NOPREFIX | DT_SINGLELINE | DT_END_ELLIPSIS);
 				gr.FillSolidRect(this.x + cover.w + text_left_padding, (this.y + cTrack.height * 2 - groupDelta) - 8, this.w - cover.w - text_left_padding * 5 + 2 - scrollbar_gape, 1.0, line_color);
 				break;
 			default:
 				var lg1_right_field_w = gr.CalcTextWidth(this.r1, g_font_group1) + cList.borderWidth * 2;
 				var lg2_right_field_w = gr.CalcTextWidth(this.r2, g_font_group2) + cList.borderWidth * 2;
-				gr.gdiDrawText(this.l1, g_font_group1, this.l1_color, this.x + cover.w + text_left_padding, (this.y - groupDelta) + 3, this.w - cover.w - text_left_padding * 4 - lg1_right_field_w - scrollbar_gape, cTrack.height, DT_LEFT | DT_VCENTER | DT_CALCRECT | DT_NOPREFIX | DT_SINGLELINE | DT_END_ELLIPSIS);
-				gr.gdiDrawText(this.l2, g_font_group2, this.l2_color, this.x + cover.w + text_left_padding, (this.y + cTrack.height - groupDelta) - 4, this.w - cover.w - text_left_padding * 4 - lg2_right_field_w - scrollbar_gape, cTrack.height, DT_LEFT | DT_VCENTER | DT_CALCRECT | DT_NOPREFIX | DT_SINGLELINE | DT_END_ELLIPSIS);
-				gr.gdiDrawText(this.r1, g_font_group1, this.l1_color, this.x + cover.w + text_left_padding, (this.y - groupDelta) + 3, this.w - cover.w - text_left_padding * 5 + 2 - scrollbar_gape, cTrack.height, DT_RIGHT | DT_VCENTER | DT_CALCRECT | DT_NOPREFIX | DT_SINGLELINE | DT_END_ELLIPSIS);
-				gr.gdiDrawText(this.r2, g_font_group2, this.l2_color, this.x + cover.w + text_left_padding, (this.y + cTrack.height - groupDelta) - 4, this.w - cover.w - text_left_padding * 5 + 1 - scrollbar_gape, cTrack.height, DT_RIGHT | DT_VCENTER | DT_CALCRECT | DT_NOPREFIX | DT_SINGLELINE | DT_END_ELLIPSIS);
+				gr.GdiDrawText(this.l1, g_font_group1, this.l1_color, this.x + cover.w + text_left_padding, (this.y - groupDelta) + 3, this.w - cover.w - text_left_padding * 4 - lg1_right_field_w - scrollbar_gape, cTrack.height, DT_LEFT | DT_VCENTER | DT_CALCRECT | DT_NOPREFIX | DT_SINGLELINE | DT_END_ELLIPSIS);
+				gr.GdiDrawText(this.l2, g_font_group2, this.l2_color, this.x + cover.w + text_left_padding, (this.y + cTrack.height - groupDelta) - 4, this.w - cover.w - text_left_padding * 4 - lg2_right_field_w - scrollbar_gape, cTrack.height, DT_LEFT | DT_VCENTER | DT_CALCRECT | DT_NOPREFIX | DT_SINGLELINE | DT_END_ELLIPSIS);
+				gr.GdiDrawText(this.r1, g_font_group1, this.l1_color, this.x + cover.w + text_left_padding, (this.y - groupDelta) + 3, this.w - cover.w - text_left_padding * 5 + 2 - scrollbar_gape, cTrack.height, DT_RIGHT | DT_VCENTER | DT_CALCRECT | DT_NOPREFIX | DT_SINGLELINE | DT_END_ELLIPSIS);
+				gr.GdiDrawText(this.r2, g_font_group2, this.l2_color, this.x + cover.w + text_left_padding, (this.y + cTrack.height - groupDelta) - 4, this.w - cover.w - text_left_padding * 5 + 1 - scrollbar_gape, cTrack.height, DT_RIGHT | DT_VCENTER | DT_CALCRECT | DT_NOPREFIX | DT_SINGLELINE | DT_END_ELLIPSIS);
 				// lg 3 (not customizable)
 				gr.FillSolidRect(this.x + cover.w + text_left_padding, (this.y + cTrack.height * 2 - groupDelta) - 1, this.w - cover.w - text_left_padding * 5 + 2 - scrollbar_gape, 1.0, line_color);
 				if (this.obj) {
@@ -690,8 +690,8 @@ oItem = function (playlist, row_index, type, handle, track_index, group_index, t
 				}
 				var lg3_right_field = (this.group_index + 1) + " / " + p.list.groups.length;
 				var lg3_right_field_w = gr.CalcTextWidth(lg3_right_field, g_font) + cList.borderWidth * 2;
-				gr.gdiDrawText(lg3_left_field, g_font, blendColors(g_color_normal_txt, g_color_normal_bg, 0.35), this.x + cover.w + text_left_padding, (this.y + cTrack.height * 2 - groupDelta) - 2, this.w - cover.w - text_left_padding * 4 - lg3_right_field_w - scrollbar_gape, cTrack.height, DT_LEFT | DT_TOP | DT_VCENTER | DT_CALCRECT | DT_NOPREFIX | DT_SINGLELINE | DT_END_ELLIPSIS);
-				gr.gdiDrawText(lg3_right_field, g_font, blendColors(g_color_normal_txt, g_color_normal_bg, 0.35), this.x + cover.w + text_left_padding, (this.y + cTrack.height * 2 - groupDelta) - 2, this.w - cover.w - text_left_padding * 5 + 01 - scrollbar_gape, cTrack.height, DT_RIGHT | DT_VCENTER | DT_CALCRECT | DT_NOPREFIX | DT_SINGLELINE | DT_END_ELLIPSIS);
+				gr.GdiDrawText(lg3_left_field, g_font, blendColors(g_color_normal_txt, g_color_normal_bg, 0.35), this.x + cover.w + text_left_padding, (this.y + cTrack.height * 2 - groupDelta) - 2, this.w - cover.w - text_left_padding * 4 - lg3_right_field_w - scrollbar_gape, cTrack.height, DT_LEFT | DT_TOP | DT_VCENTER | DT_CALCRECT | DT_NOPREFIX | DT_SINGLELINE | DT_END_ELLIPSIS);
+				gr.GdiDrawText(lg3_right_field, g_font, blendColors(g_color_normal_txt, g_color_normal_bg, 0.35), this.x + cover.w + text_left_padding, (this.y + cTrack.height * 2 - groupDelta) - 2, this.w - cover.w - text_left_padding * 5 + 01 - scrollbar_gape, cTrack.height, DT_RIGHT | DT_VCENTER | DT_CALCRECT | DT_NOPREFIX | DT_SINGLELINE | DT_END_ELLIPSIS);
 			};
 
 			// highlight group that contains a selected track

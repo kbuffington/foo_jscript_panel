@@ -983,7 +983,7 @@ oCheckBox = function (id, x, y, label, linkedVariable, func, parentPageId) {
 			var button_y = this.ly - 1 + Math.ceil((p.settings.txtHeight + 10 - this.button.h) / 2);
 			this.button.draw(gr, this.x, button_y, 255);
 			var label_x = this.x + this.button.w + zoom(5, g_dpi);
-			gr.gdiDrawText(this.label, gdi_font(p.settings.fontname, p.settings.txtHeight, 1), (this.status ? p.settings.color2 : p.settings.color1), label_x, this.ly, p.settings.w, p.settings.txtHeight + 10, g_LDT);
+			gr.GdiDrawText(this.label, gdi_font(p.settings.fontname, p.settings.txtHeight, 1), (this.status ? p.settings.color2 : p.settings.color1), label_x, this.ly, p.settings.w, p.settings.txtHeight + 10, g_LDT);
 		};
 	};
 
@@ -1072,7 +1072,7 @@ oRadioButton = function (id, x, y, label, linkedVariable, func, parentPageId) {
 			var button_y = this.ly - 1 + Math.ceil((p.settings.txtHeight + 10 - this.button.h) / 2);
 			this.button.draw(gr, this.x, button_y, 255);
 			var label_x = this.x + this.button.w + zoom(5, g_dpi);
-			gr.gdiDrawText(this.label, gdi_font(p.settings.fontname, p.settings.txtHeight, 1), (this.status ? p.settings.color2 : p.settings.color1), label_x, this.ly, p.settings.w, p.settings.txtHeight + 10, g_LDT);
+			gr.GdiDrawText(this.label, gdi_font(p.settings.fontname, p.settings.txtHeight, 1), (this.status ? p.settings.color2 : p.settings.color1), label_x, this.ly, p.settings.w, p.settings.txtHeight + 10, g_LDT);
 		};
 	};
 
@@ -1121,7 +1121,7 @@ oTextBox = function (id, x, y, w, h, label, value, func, parentPageId) {
 	this.draw = function (gr) {
 		this.ly = this.y - (p.settings.pages[this.parentPageId].offset * cSettings.rowHeight);
 		if (this.ly + this.h > cSettings.topBarHeight) {
-			gr.gdiDrawText(this.label, gdi_font(p.settings.fontname, p.settings.txtHeight, 5), p.settings.color1, this.x, this.ly, p.list.w - p.settings.pages[this.parentPageId].scrollbarWidth - 10, this.h, g_LDT);
+			gr.GdiDrawText(this.label, gdi_font(p.settings.fontname, p.settings.txtHeight, 5), p.settings.color1, this.x, this.ly, p.list.w - p.settings.pages[this.parentPageId].scrollbarWidth - 10, this.h, g_LDT);
 			this.inputbox.draw(gr, this.x, this.ly + this.h);
 		};
 	};
@@ -1500,7 +1500,7 @@ oWidget = function (id, x, y, w, h, label, color_id, func, parentPageId) {
 
 		// draw widget label
 		var label_y = g_z10;
-		gr.gdiDrawText(this.label, gdi_font(p.settings.fontname, p.settings.txtHeight, 5), p.settings.color1, this.x, this.ly - label_y, p.settings.w, cSettings.rowHeight, g_LDT);
+		gr.GdiDrawText(this.label, gdi_font(p.settings.fontname, p.settings.txtHeight, 5), p.settings.color1, this.x, this.ly - label_y, p.settings.w, cSettings.rowHeight, g_LDT);
 
 		// draw sliders
 		this.slider_y = label_y + zoom(20, g_dpi);
@@ -1514,18 +1514,18 @@ oWidget = function (id, x, y, w, h, label, color_id, func, parentPageId) {
 			switch (i) {
 			case 0:
 				this.sliders[i].draw(gr, this.x + slider_left_padding, Math.floor(this.ly + this.slider_y + sliders_spacing * 0));
-				gr.gdiDrawText("R", gdi_font(g_fname, g_fsize - 2, 0), g_color_normal_txt, this.x + g_z10, this.ly + this.slider_y + sliders_spacing * 0 + zoom(1, g_dpi), mode_w, slider_h, g_LDT);
-				gr.gdiDrawText((this.colorEnabled ? this.sliders[i].value : "0"), gdi_font(g_fname, g_fsize - 2, 0), g_color_normal_txt, this.x + label_y + this.sliders[0].Zw + label_y + zoom(5, g_dpi), this.ly + this.slider_y + sliders_spacing * 0 + zoom(1, g_dpi), cube_left_padding, slider_h, g_LDT);
+				gr.GdiDrawText("R", gdi_font(g_fname, g_fsize - 2, 0), g_color_normal_txt, this.x + g_z10, this.ly + this.slider_y + sliders_spacing * 0 + zoom(1, g_dpi), mode_w, slider_h, g_LDT);
+				gr.GdiDrawText((this.colorEnabled ? this.sliders[i].value : "0"), gdi_font(g_fname, g_fsize - 2, 0), g_color_normal_txt, this.x + label_y + this.sliders[0].Zw + label_y + zoom(5, g_dpi), this.ly + this.slider_y + sliders_spacing * 0 + zoom(1, g_dpi), cube_left_padding, slider_h, g_LDT);
 				break;
 			case 1:
 				this.sliders[i].draw(gr, this.x + slider_left_padding, Math.floor(this.ly + this.slider_y + sliders_spacing * 1));
-				gr.gdiDrawText("G", gdi_font(g_fname, g_fsize - 2, 0), g_color_normal_txt, this.x + g_z10, this.ly + this.slider_y + sliders_spacing * 1 + zoom(1, g_dpi), mode_w, slider_h, g_LDT);
-				gr.gdiDrawText((this.colorEnabled ? this.sliders[i].value : "0"), gdi_font(g_fname, g_fsize - 2, 0), g_color_normal_txt, this.x + label_y + this.sliders[0].Zw + label_y + zoom(5, g_dpi), this.ly + this.slider_y + sliders_spacing * 1 + zoom(1, g_dpi), cube_left_padding, slider_h, g_LDT);
+				gr.GdiDrawText("G", gdi_font(g_fname, g_fsize - 2, 0), g_color_normal_txt, this.x + g_z10, this.ly + this.slider_y + sliders_spacing * 1 + zoom(1, g_dpi), mode_w, slider_h, g_LDT);
+				gr.GdiDrawText((this.colorEnabled ? this.sliders[i].value : "0"), gdi_font(g_fname, g_fsize - 2, 0), g_color_normal_txt, this.x + label_y + this.sliders[0].Zw + label_y + zoom(5, g_dpi), this.ly + this.slider_y + sliders_spacing * 1 + zoom(1, g_dpi), cube_left_padding, slider_h, g_LDT);
 				break;
 			case 2:
 				this.sliders[i].draw(gr, this.x + slider_left_padding, Math.floor(this.ly + this.slider_y + sliders_spacing * 2));
-				gr.gdiDrawText("B", gdi_font(g_fname, g_fsize - 2, 0), g_color_normal_txt, this.x + g_z10, this.ly + this.slider_y + sliders_spacing * 2 + zoom(1, g_dpi), mode_w, slider_h, g_LDT);
-				gr.gdiDrawText((this.colorEnabled ? this.sliders[i].value : "0"), gdi_font(g_fname, g_fsize - 2, 0), g_color_normal_txt, this.x + label_y + this.sliders[0].Zw + label_y + zoom(5, g_dpi), this.ly + this.slider_y + sliders_spacing * 2 + zoom(1, g_dpi), cube_left_padding, slider_h, g_LDT);
+				gr.GdiDrawText("B", gdi_font(g_fname, g_fsize - 2, 0), g_color_normal_txt, this.x + g_z10, this.ly + this.slider_y + sliders_spacing * 2 + zoom(1, g_dpi), mode_w, slider_h, g_LDT);
+				gr.GdiDrawText((this.colorEnabled ? this.sliders[i].value : "0"), gdi_font(g_fname, g_fsize - 2, 0), g_color_normal_txt, this.x + label_y + this.sliders[0].Zw + label_y + zoom(5, g_dpi), this.ly + this.slider_y + sliders_spacing * 2 + zoom(1, g_dpi), cube_left_padding, slider_h, g_LDT);
 				break;
 			};
 		};
@@ -1736,7 +1736,7 @@ oListBox = function (id, object_name, x, y, w, h, row_height, label, arr, select
 
 		// listbox bg
 		if (this.label.length > 0) {
-			gr.gdiDrawText(this.label, gdi_font(p.settings.fontname, p.settings.txtHeight, 5), p.settings.color1, this.x, this.ly - this.rowHeight - g_z2, this.w, this.rowHeight, g_LDT);
+			gr.GdiDrawText(this.label, gdi_font(p.settings.fontname, p.settings.txtHeight, 5), p.settings.color1, this.x, this.ly - this.rowHeight - g_z2, this.w, this.rowHeight, g_LDT);
 		};
 		gr.FillSolidRect(this.x, this.ly, this.w, this.h + 1, RGB(240, 240, 240));
 		gr.DrawRect(this.x - 1, this.ly - 1, this.w + 1, this.h + 2, 1.0, RGB(180, 180, 180));
@@ -1760,7 +1760,7 @@ oListBox = function (id, object_name, x, y, w, h, row_height, label, arr, select
 			};
 			if (i == this.selectedId)
 				gr.FillSolidRect(this.x + 1, this.ly + row * this.rowHeight + 1, this.w - this.scrollbarWidth - 2, this.rowHeight - 1, RGBA(150, 150, 150, 200));
-			gr.gdiDrawText((isCustom ? "[" : "") + this.arr[i] + (isCustom ? "]" : ""), gdi_font(p.settings.fontname, p.settings.txtHeight, (i == this.selectedId ? 1 : 0)), (i == this.selectedId ? RGB(0, 0, 0) : RGB(0, 0, 0)), this.x + text_padding, this.ly + row * this.rowHeight, this.w - this.scrollbarWidth - text_padding * 2, this.rowHeight, g_LDT);
+			gr.GdiDrawText((isCustom ? "[" : "") + this.arr[i] + (isCustom ? "]" : ""), gdi_font(p.settings.fontname, p.settings.txtHeight, (i == this.selectedId ? 1 : 0)), (i == this.selectedId ? RGB(0, 0, 0) : RGB(0, 0, 0)), this.x + text_padding, this.ly + row * this.rowHeight, this.w - this.scrollbarWidth - text_padding * 2, this.rowHeight, g_LDT);
 			row++;
 		};
 	};
@@ -2196,16 +2196,16 @@ oPage = function (id, objectName, label, nbrows) {
 
 		switch (this.id) {
 		case 0:
-			gr.gdiDrawText("Layout", gdi_font(p.settings.fontname, p.settings.txtHeight, 5), p.settings.color1, txtbox_x, cSettings.topBarHeight + rh * 1.5 - (this.offset * cSettings.rowHeight), p.settings.w - 10, p.settings.txtHeight + 10, g_LDT);
-			gr.gdiDrawText("Playlist Manager", gdi_font(p.settings.fontname, p.settings.txtHeight, 5), p.settings.color1, txtbox_x, cSettings.topBarHeight + rh * 6.5 - (this.offset * cSettings.rowHeight), p.settings.w - 10, p.settings.txtHeight + 10, g_LDT);
-			gr.gdiDrawText("Tagging", gdi_font(p.settings.fontname, p.settings.txtHeight, 5), p.settings.color1, txtbox_x, cSettings.topBarHeight + rh * 9.5 - (this.offset * cSettings.rowHeight), p.settings.w - 10, p.settings.txtHeight + 10, g_LDT);
-			gr.gdiDrawText("Behaviour", gdi_font(p.settings.fontname, p.settings.txtHeight, 5), p.settings.color1, txtbox_x, cSettings.topBarHeight + rh * 11.5 - (this.offset * cSettings.rowHeight), p.settings.w - 10, p.settings.txtHeight + 10, g_LDT);
-			gr.gdiDrawText("Default Playlist Action", gdi_font(p.settings.fontname, p.settings.txtHeight, 5), p.settings.color1, txtbox_x, cSettings.topBarHeight + rh * 14.5 - (this.offset * cSettings.rowHeight), p.settings.w - 10, p.settings.txtHeight + 10, g_LDT);
+			gr.GdiDrawText("Layout", gdi_font(p.settings.fontname, p.settings.txtHeight, 5), p.settings.color1, txtbox_x, cSettings.topBarHeight + rh * 1.5 - (this.offset * cSettings.rowHeight), p.settings.w - 10, p.settings.txtHeight + 10, g_LDT);
+			gr.GdiDrawText("Playlist Manager", gdi_font(p.settings.fontname, p.settings.txtHeight, 5), p.settings.color1, txtbox_x, cSettings.topBarHeight + rh * 6.5 - (this.offset * cSettings.rowHeight), p.settings.w - 10, p.settings.txtHeight + 10, g_LDT);
+			gr.GdiDrawText("Tagging", gdi_font(p.settings.fontname, p.settings.txtHeight, 5), p.settings.color1, txtbox_x, cSettings.topBarHeight + rh * 9.5 - (this.offset * cSettings.rowHeight), p.settings.w - 10, p.settings.txtHeight + 10, g_LDT);
+			gr.GdiDrawText("Behaviour", gdi_font(p.settings.fontname, p.settings.txtHeight, 5), p.settings.color1, txtbox_x, cSettings.topBarHeight + rh * 11.5 - (this.offset * cSettings.rowHeight), p.settings.w - 10, p.settings.txtHeight + 10, g_LDT);
+			gr.GdiDrawText("Default Playlist Action", gdi_font(p.settings.fontname, p.settings.txtHeight, 5), p.settings.color1, txtbox_x, cSettings.topBarHeight + rh * 14.5 - (this.offset * cSettings.rowHeight), p.settings.w - 10, p.settings.txtHeight + 10, g_LDT);
 			break;
 		case 1:
 			var listBoxWidth = zoom(100, g_dpi);
-			gr.gdiDrawText("Status", gdi_font(p.settings.fontname, p.settings.txtHeight, 5), p.settings.color1, txtbox_x, cSettings.topBarHeight + rh * 4.5 - (this.offset * cSettings.rowHeight), p.settings.w - 10, p.settings.txtHeight + 10, g_LDT);
-			gr.gdiDrawText("Text Alignment", gdi_font(p.settings.fontname, p.settings.txtHeight, 5), p.settings.color1, txtbox_x, cSettings.topBarHeight + rh * 14.5 - (this.offset * cSettings.rowHeight), p.settings.w - 10, p.settings.txtHeight + 10, g_LDT);
+			gr.GdiDrawText("Status", gdi_font(p.settings.fontname, p.settings.txtHeight, 5), p.settings.color1, txtbox_x, cSettings.topBarHeight + rh * 4.5 - (this.offset * cSettings.rowHeight), p.settings.w - 10, p.settings.txtHeight + 10, g_LDT);
+			gr.GdiDrawText("Text Alignment", gdi_font(p.settings.fontname, p.settings.txtHeight, 5), p.settings.color1, txtbox_x, cSettings.topBarHeight + rh * 14.5 - (this.offset * cSettings.rowHeight), p.settings.w - 10, p.settings.txtHeight + 10, g_LDT);
 
 			// new column button
 			var nx = 20 + listBoxWidth + zoom(30, g_dpi);
@@ -2251,22 +2251,22 @@ oPage = function (id, objectName, label, nbrows) {
 
 			gr.FillSolidRect(txtbox_x, cSettings.topBarHeight + rh * 10.75 - (this.offset * cSettings.rowHeight), p.settings.w - 20 * 2 - cScrollBar.width, cHeaderBar.borderWidth, p.settings.color1);
 
-			gr.gdiDrawText("Collapsed Row Height", gdi_font(p.settings.fontname, p.settings.txtHeight, 5), p.settings.color1, txtbox_x, cSettings.topBarHeight + rh * 15.25 - (this.offset * cSettings.rowHeight), p.settings.w - 10, p.settings.txtHeight + 10, g_LDT);
-			gr.gdiDrawText("Expanded Row Height", gdi_font(p.settings.fontname, p.settings.txtHeight, 5), p.settings.color1, txtbox_x, cSettings.topBarHeight + rh * 16.75 - (this.offset * cSettings.rowHeight), p.settings.w - 10, p.settings.txtHeight + 10, g_LDT);
-			gr.gdiDrawText("Cover Art Status", gdi_font(p.settings.fontname, p.settings.txtHeight, 5), p.settings.color1, txtbox_x, cSettings.topBarHeight + rh * 18.75 - (this.offset * cSettings.rowHeight), p.settings.w - 10, p.settings.txtHeight + 10, g_LDT);
-			gr.gdiDrawText("Auto-Collapse Status", gdi_font(p.settings.fontname, p.settings.txtHeight, 5), p.settings.color1, txtbox_x, cSettings.topBarHeight + rh * 20.5 - (this.offset * cSettings.rowHeight), p.settings.w - 10, p.settings.txtHeight + 10, g_LDT);
-			gr.gdiDrawText("Default Group Status", gdi_font(p.settings.fontname, p.settings.txtHeight, 5), p.settings.color1, txtbox_x, cSettings.topBarHeight + rh * 22.25 - (this.offset * cSettings.rowHeight), p.settings.w - 10, p.settings.txtHeight + 10, g_LDT);
+			gr.GdiDrawText("Collapsed Row Height", gdi_font(p.settings.fontname, p.settings.txtHeight, 5), p.settings.color1, txtbox_x, cSettings.topBarHeight + rh * 15.25 - (this.offset * cSettings.rowHeight), p.settings.w - 10, p.settings.txtHeight + 10, g_LDT);
+			gr.GdiDrawText("Expanded Row Height", gdi_font(p.settings.fontname, p.settings.txtHeight, 5), p.settings.color1, txtbox_x, cSettings.topBarHeight + rh * 16.75 - (this.offset * cSettings.rowHeight), p.settings.w - 10, p.settings.txtHeight + 10, g_LDT);
+			gr.GdiDrawText("Cover Art Status", gdi_font(p.settings.fontname, p.settings.txtHeight, 5), p.settings.color1, txtbox_x, cSettings.topBarHeight + rh * 18.75 - (this.offset * cSettings.rowHeight), p.settings.w - 10, p.settings.txtHeight + 10, g_LDT);
+			gr.GdiDrawText("Auto-Collapse Status", gdi_font(p.settings.fontname, p.settings.txtHeight, 5), p.settings.color1, txtbox_x, cSettings.topBarHeight + rh * 20.5 - (this.offset * cSettings.rowHeight), p.settings.w - 10, p.settings.txtHeight + 10, g_LDT);
+			gr.GdiDrawText("Default Group Status", gdi_font(p.settings.fontname, p.settings.txtHeight, 5), p.settings.color1, txtbox_x, cSettings.topBarHeight + rh * 22.25 - (this.offset * cSettings.rowHeight), p.settings.w - 10, p.settings.txtHeight + 10, g_LDT);
 
 			var GHF_delta = 13.0;
-			gr.gdiDrawText("Group Header Fields", gdi_font(p.settings.fontname, p.settings.txtHeight * 1.5, 5), p.settings.color2, txtbox_x, cSettings.topBarHeight + rh * (11.0 + GHF_delta) - (this.offset * cSettings.rowHeight), p.settings.w - 10, p.settings.txtHeight + 10, g_LDT);
+			gr.GdiDrawText("Group Header Fields", gdi_font(p.settings.fontname, p.settings.txtHeight * 1.5, 5), p.settings.color2, txtbox_x, cSettings.topBarHeight + rh * (11.0 + GHF_delta) - (this.offset * cSettings.rowHeight), p.settings.w - 10, p.settings.txtHeight + 10, g_LDT);
 
 			break;
 		case 3:
-			gr.gdiDrawText("Wallpaper Status", gdi_font(p.settings.fontname, p.settings.txtHeight, 5), p.settings.color1, txtbox_x, cSettings.topBarHeight + rh * 1.5 - (this.offset * cSettings.rowHeight), p.settings.w - 10, p.settings.txtHeight + 10, g_LDT);
-			gr.gdiDrawText("Wallpaper Image", gdi_font(p.settings.fontname, p.settings.txtHeight, 5), p.settings.color1, txtbox_x, cSettings.topBarHeight + rh * 3.25 - (this.offset * cSettings.rowHeight), p.settings.w - 10, p.settings.txtHeight + 10, g_LDT);
-			gr.gdiDrawText("Wallpaper Effects", gdi_font(p.settings.fontname, p.settings.txtHeight, 5), p.settings.color1, txtbox_x, cSettings.topBarHeight + rh * 5.0 - (this.offset * cSettings.rowHeight), p.settings.w - 10, p.settings.txtHeight + 10, g_LDT);
-			gr.gdiDrawText("Wallpaper Alpha Shading", gdi_font(p.settings.fontname, p.settings.txtHeight, 5), p.settings.color1, txtbox_x, cSettings.topBarHeight + rh * 6.75 - (this.offset * cSettings.rowHeight), p.settings.w - 10, p.settings.txtHeight + 10, g_LDT);
-			gr.gdiDrawText("Customize Panel Colors", gdi_font(p.settings.fontname, p.settings.txtHeight, 5), p.settings.color1, txtbox_x, cSettings.topBarHeight + rh * 10.25 - (this.offset * cSettings.rowHeight), p.settings.w - 10, p.settings.txtHeight + 10, g_LDT);
+			gr.GdiDrawText("Wallpaper Status", gdi_font(p.settings.fontname, p.settings.txtHeight, 5), p.settings.color1, txtbox_x, cSettings.topBarHeight + rh * 1.5 - (this.offset * cSettings.rowHeight), p.settings.w - 10, p.settings.txtHeight + 10, g_LDT);
+			gr.GdiDrawText("Wallpaper Image", gdi_font(p.settings.fontname, p.settings.txtHeight, 5), p.settings.color1, txtbox_x, cSettings.topBarHeight + rh * 3.25 - (this.offset * cSettings.rowHeight), p.settings.w - 10, p.settings.txtHeight + 10, g_LDT);
+			gr.GdiDrawText("Wallpaper Effects", gdi_font(p.settings.fontname, p.settings.txtHeight, 5), p.settings.color1, txtbox_x, cSettings.topBarHeight + rh * 5.0 - (this.offset * cSettings.rowHeight), p.settings.w - 10, p.settings.txtHeight + 10, g_LDT);
+			gr.GdiDrawText("Wallpaper Alpha Shading", gdi_font(p.settings.fontname, p.settings.txtHeight, 5), p.settings.color1, txtbox_x, cSettings.topBarHeight + rh * 6.75 - (this.offset * cSettings.rowHeight), p.settings.w - 10, p.settings.txtHeight + 10, g_LDT);
+			gr.GdiDrawText("Customize Panel Colors", gdi_font(p.settings.fontname, p.settings.txtHeight, 5), p.settings.color1, txtbox_x, cSettings.topBarHeight + rh * 10.25 - (this.offset * cSettings.rowHeight), p.settings.w - 10, p.settings.txtHeight + 10, g_LDT);
 			break;
 		};
 

@@ -88,10 +88,10 @@ var wsh_time_elaps;
 var wsh_delay_stats;
 var wsh_limit_stats;
 var tf_length_seconds = fb.TitleFormat("%length_seconds_fp%");
-var first_played = fb.Titleformat("%first_played%");
-var last_played = fb.Titleformat("%last_played%");
-var play_counter = fb.Titleformat("%play_counter%");
-var play_count = fb.Titleformat("%play_count%");
+var first_played = fb.TitleFormat("%first_played%");
+var last_played = fb.TitleFormat("%last_played%");
+var play_counter = fb.TitleFormat("%play_counter%");
+var play_count = fb.TitleFormat("%play_count%");
 cStats = {
 	handle: null,
 	waiting_for_writing: false
@@ -1004,7 +1004,7 @@ function on_paint(gr) {
 
 	if (properties.showDPI) {
 		gr.FillSolidRect(ww - 33, 5, 30, 15, g_color_normal_bg);
-		gr.gdiDrawText(g_dpi, gdi_font("segoe ui", 15, 1), RGB(75, 255, 75), 0, 2, ww - 5, wh - 5, DT_RIGHT | DT_TOP);
+		gr.GdiDrawText(g_dpi, gdi_font("segoe ui", 15, 1), RGB(75, 255, 75), 0, 2, ww - 5, wh - 5, DT_RIGHT | DT_TOP);
 	};
 
 	// tweaks to fix bug in timer/memory/repaint handle in WSH Panel Mod v1.5.6
