@@ -392,19 +392,15 @@ namespace helpers
 
 	const GUID convert_artid_to_guid(t_size art_id)
 	{
-		const GUID* guids[] = {
+		static const std::array<const GUID*, 5> guids =
+		{
 			&album_art_ids::cover_front,
 			&album_art_ids::cover_back,
 			&album_art_ids::disc,
 			&album_art_ids::icon,
 			&album_art_ids::artist,
 		};
-
-		if (art_id < _countof(guids))
-		{
-			return *guids[art_id];
-		}
-		return *guids[0];
+		return art_id < guids.size() ? *guids[art_id] : *guids[0];
 	}
 
 	int get_encoder_clsid(const wchar_t* format, CLSID* pClsid)

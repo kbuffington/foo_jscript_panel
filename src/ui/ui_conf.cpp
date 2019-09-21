@@ -5,7 +5,8 @@
 #include "ui_goto.h"
 #include "ui_replace.h"
 
-static const CDialogResizeHelper::Param resize_data[] = {
+static const CDialogResizeHelper::Param resize_data[] =
+{
 	{ IDC_EDIT, 0, 0, 1, 1 },
 	{ IDC_RESET, 0, 1, 0, 1 },
 	{ IDC_ENGINE_LABEL, 0, 1, 0, 1 },
@@ -343,12 +344,12 @@ void CDialogConf::OnFileExport(UINT uNotifyCode, int nID, HWND wndCtl)
 
 void CDialogConf::OnLinks(UINT uNotifyCode, int nID, HWND wndCtl)
 {
-	const wchar_t* links[] = {
+	static const std::array<const wchar_t*, 3> links =
+	{
 		L"https://github.com/marc2k3/foo_jscript_panel/wiki",
 		L"https://github.com/marc2k3/foo_jscript_panel/releases",
 		L"https://github.com/marc2k3/foo_jscript_panel/issues"
 	};
-
 	ShellExecute(nullptr, L"open", links[nID - ID_LINKS_BEGIN], nullptr, nullptr, SW_SHOW);
 }
 

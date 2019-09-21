@@ -286,7 +286,8 @@ STDMETHODIMP Fb::GetSelectionType(UINT* p)
 {
 	if (!p) return E_POINTER;
 
-	const GUID* guids[] = {
+	static const std::array<const GUID*, 7> guids =
+	{
 		&contextmenu_item::caller_undefined,
 		&contextmenu_item::caller_active_playlist_selection,
 		&contextmenu_item::caller_active_playlist,
@@ -295,18 +296,9 @@ STDMETHODIMP Fb::GetSelectionType(UINT* p)
 		&contextmenu_item::caller_keyboard_shortcut_list,
 		&contextmenu_item::caller_media_library_viewer,
 	};
-
-	*p = 0;
-	GUID type = ui_selection_manager_v2::get()->get_selection_type(0);
-
-	for (t_size i = 0; i < _countof(guids); ++i)
-	{
-		if (*guids[i] == type)
-		{
-			*p = i;
-			break;
-		}
-	}
+	const GUID type = ui_selection_manager_v2::get()->get_selection_type(0);
+	const auto it = std::find_if(guids.begin(), guids.end(), [type](const auto& guid) { return *guid == type; } );
+	*p = it != guids.end() ? std::distance(guids.begin(), it) : 0;
 	return S_OK;
 }
 

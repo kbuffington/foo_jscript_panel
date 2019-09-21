@@ -22,11 +22,7 @@ struct StyleAndWords
 
 struct t_sci_prop_set;
 
-struct t_style_to_key_table
-{
-	int style_num;
-	const char* key;
-};
+using t_style_to_key_table = std::pair<int, const char*>;
 
 class CScriptEditorCtrl : public CScintillaCtrl
 {
@@ -68,7 +64,7 @@ public:
 	void LoadProperties(const std::vector<t_sci_prop_set>& data);
 	void ReadAPI();
 	void RestoreDefaultStyle();
-	void SetAllStylesFromTable(const t_style_to_key_table table[]);
+	void SetAllStylesFromTable(const std::vector<t_style_to_key_table>& table);
 	void SetContent(const char* text, bool clear_undo_buffer = false);
 	void SetJScript();
 	void SetIndentation(int line, int indent);

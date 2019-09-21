@@ -1064,28 +1064,24 @@ STDMETHODIMP MainMenuManager::ExecuteByID(UINT id, VARIANT_BOOL* p)
 
 STDMETHODIMP MainMenuManager::Init(BSTR root_name)
 {
-	struct t_valid_root_name
-	{
-		const wchar_t* name;
-		const GUID* guid;
-	};
+	using t_valid_root_name = std::pair<const wchar_t*, const GUID*>;
 
-	const t_valid_root_name valid_root_names[] =
+	static const std::vector<t_valid_root_name> valid_root_names =
 	{
-		{L"file", &mainmenu_groups::file},
-		{L"view", &mainmenu_groups::view},
-		{L"edit", &mainmenu_groups::edit},
-		{L"playback", &mainmenu_groups::playback},
-		{L"library", &mainmenu_groups::library},
-		{L"help", &mainmenu_groups::help},
+		{ L"file", &mainmenu_groups::file },
+		{ L"edit", &mainmenu_groups::edit },
+		{ L"view", &mainmenu_groups::view },
+		{ L"playback", &mainmenu_groups::playback },
+		{ L"library", &mainmenu_groups::library },
+		{ L"help", &mainmenu_groups::help }
 	};
 
 	for (const auto& i : valid_root_names)
 	{
-		if (_wcsicmp(root_name, i.name) == 0)
+		if (_wcsicmp(root_name, i.first) == 0)
 		{
 			m_mm = standard_api_create_t<mainmenu_manager>();
-			m_mm->instantiate(*i.guid);
+			m_mm->instantiate(*i.second);
 			return S_OK;
 		}
 	}

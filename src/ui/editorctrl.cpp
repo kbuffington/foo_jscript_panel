@@ -26,7 +26,7 @@ const char js_keywords[] = "abstract boolean break byte case catch char class co
 	" try typeof var void while with enum byvalue cast future generic inner"
 	" operator outer rest Array Math RegExp window fb gdi utils plman console";
 
-const t_style_to_key_table js_style_table[] =
+static const std::vector<t_style_to_key_table> js_style_table =
 {
 	{ STYLE_DEFAULT, "style.default" },
 	{ STYLE_LINENUMBER, "style.linenumber" },
@@ -274,7 +274,7 @@ BOOL CScriptEditorCtrl::SubclassWindow(HWND hWnd)
 
 DWORD CScriptEditorCtrl::GetPropertyColor(const char* key, bool* key_exist)
 {
-	pfc::array_t<char> buff;
+	std::vector<char> buff;
 	int len = GetPropertyExpanded(key, 0);
 
 	if (key_exist)
@@ -283,10 +283,10 @@ DWORD CScriptEditorCtrl::GetPropertyColor(const char* key, bool* key_exist)
 	if (len == 0)
 		return 0;
 
-	buff.set_size(len + 1);
+	buff.resize(len + 1);
 	buff[len] = 0;
-	GetPropertyExpanded(key, buff.get_ptr());
-	return ParseHex(buff.get_ptr());
+	GetPropertyExpanded(key, buff.data());
+	return ParseHex(buff.data());
 }
 
 IndentationStatus CScriptEditorCtrl::GetIndentState(int line)
@@ -519,10 +519,9 @@ bool CScriptEditorCtrl::GetNearestWords(pfc::string_base& out, const char* wordS
 {
 	out.reset();
 
-	if (m_apis.size() == 0)
-		return false;
-
 	bool status = false;
+	if (m_apis.empty())
+		return status;
 
 	while (!status && *separators)
 	{
@@ -831,15 +830,15 @@ void CScriptEditorCtrl::AutomaticIndentation(int ch)
 
 	if (curLine > 0)
 	{
-		pfc::array_t<char> linebuf;
+		std::vector<char> linebuf;
 		bool foundBrace = false;
 		int prevLineLength = LineLength(curLine - 1);
 		int slen = 0;
 
-		linebuf.set_size(prevLineLength + 2);
-		GetLine(curLine - 1, linebuf.get_ptr());
+		linebuf.resize(prevLineLength + 2);
+		GetLine(curLine - 1, linebuf.data());
 		linebuf[prevLineLength] = 0;
-		slen = strlen(linebuf.get_ptr());
+		slen = strlen(linebuf.data());
 
 		for (int pos = slen - 1; pos >= 0 && linebuf[pos]; --pos)
 		{
@@ -1130,59 +1129,42 @@ void CScriptEditorCtrl::RestoreDefaultStyle()
 	SetCaretLineBackAlpha(GetPropertyInt("style.caret.line.back.alpha", SC_ALPHA_NOALPHA));
 }
 
-void CScriptEditorCtrl::SetAllStylesFromTable(const t_style_to_key_table table[])
+void CScriptEditorCtrl::SetAllStylesFromTable(const std::vector<t_style_to_key_table>& table)
 {
 	const char* key = nullptr;
 
-	for (int i = 0; table[i].style_num != -1; ++i)
+	for (const auto& item : table)
 	{
-		if ((key = table[i].key) != nullptr)
+		key = item.second;
+		if (key != nullptr)
 		{
 			int style_num;
-			pfc::array_t<char> definition;
+			std::vector<char> definition;
 			t_sci_editor_style style;
 			int len;
 
-			style_num = table[i].style_num;
+			style_num = item.first;
 
 			len = GetPropertyExpanded(key, 0);
 
 			if (len != 0)
 			{
-				definition.set_size(len + 1);
+				definition.resize(len + 1);
 				definition[len] = 0;
-				GetPropertyExpanded(key, definition.get_ptr());
+				GetPropertyExpanded(key, definition.data());
 
-				if (!ParseStyle(definition.get_ptr(), style))
-					continue;
-
-				if (style.flags & ESF_FONT)
-					StyleSetFont(style_num, style.font.get_ptr());
-
-				if (style.flags & ESF_SIZE)
-					StyleSetSize(style_num, style.size);
-
-				if (style.flags & ESF_FORE)
-					StyleSetFore(style_num, style.fore);
-
-				if (style.flags & ESF_BACK)
-					StyleSetBack(style_num, style.back);
-
-				if (style.flags & ESF_ITALICS)
-					StyleSetItalic(style_num, style.italics);
-
-				if (style.flags & ESF_BOLD)
-					StyleSetBold(style_num, style.bold);
-
-				if (style.flags & ESF_UNDERLINED)
-					StyleSetUnderline(style_num, style.underlined);
-
-				if (style.flags & ESF_CASEFORCE)
-					StyleSetCase(style_num, style.case_force);
+				if (!ParseStyle(definition.data(), style)) continue;
+				if (style.flags & ESF_FONT) StyleSetFont(style_num, style.font.get_ptr());
+				if (style.flags & ESF_SIZE) StyleSetSize(style_num, style.size);
+				if (style.flags & ESF_FORE) StyleSetFore(style_num, style.fore);
+				if (style.flags & ESF_BACK) StyleSetBack(style_num, style.back);
+				if (style.flags & ESF_ITALICS) StyleSetItalic(style_num, style.italics);
+				if (style.flags & ESF_BOLD) StyleSetBold(style_num, style.bold);
+				if (style.flags & ESF_UNDERLINED) StyleSetUnderline(style_num, style.underlined);
+				if (style.flags & ESF_CASEFORCE) StyleSetCase(style_num, style.case_force);
 			}
 
-			if (style_num == STYLE_DEFAULT)
-				StyleClearAll();
+			if (style_num == STYLE_DEFAULT) StyleClearAll();
 		}
 	}
 }

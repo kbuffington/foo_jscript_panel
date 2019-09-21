@@ -7,11 +7,8 @@ struct t_script_info
 {
 	t_script_info() : id(0) {}
 
-	struct
+	std::vector<std::pair<std::string, std::string>> expand_table =
 	{
-		std::string which;
-		std::string path;
-	} expand_table[3] = {
 		{ "%fb2k_profile_path%", helpers::get_profile_path().get_ptr() },
 		{ "%fb2k_component_path%", helpers::get_fb2k_component_path().get_ptr() },
 		{ "%fb2k_path%", helpers::get_fb2k_path().get_ptr() },
@@ -46,9 +43,9 @@ struct t_script_info
 		std::string tmp = imports[idx];
 		for (const auto& i : expand_table)
 		{
-			if (tmp.find(i.which) == 0)
+			if (tmp.find(i.first) == 0)
 			{
-				tmp = i.path + tmp.substr(i.which.length());
+				tmp = i.second + tmp.substr(i.first.length());
 				break;
 			}
 		}

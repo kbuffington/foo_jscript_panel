@@ -43,14 +43,14 @@ public:
 
 	DWORD get_colour_ui(t_size type) override
 	{
-		const GUID* guids[] = {
+		static const std::array<const GUID*, 4> guids =
+		{
 			&ui_color_text,
 			&ui_color_background,
 			&ui_color_highlight,
 			&ui_color_selection,
 		};
-
-		return type < _countof(guids) ? helpers::convert_colorref_to_argb(m_callback->query_std_color(*guids[type])) : 0;
+		return type < guids.size() ? helpers::convert_colorref_to_argb(m_callback->query_std_color(*guids[type])) : 0;
 	}
 
 	GUID get_guid() override
@@ -65,7 +65,8 @@ public:
 
 	HFONT get_font_ui(t_size type) override
 	{
-		const GUID* guids[] = {
+		static const std::array<const GUID*, 6> guids =
+		{
 			&ui_font_default,
 			&ui_font_tabs,
 			&ui_font_lists,
@@ -73,8 +74,7 @@ public:
 			&ui_font_statusbar,
 			&ui_font_console,
 		};
-
-		return type < _countof(guids) ? m_callback->query_font_ex(*guids[type]) : nullptr;
+		return type < guids.size() ? m_callback->query_font_ex(*guids[type]) : nullptr;
 	}
 
 	HWND get_wnd() override

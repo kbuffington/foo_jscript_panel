@@ -7,7 +7,8 @@ class my_config_object_notify : public config_object_notify
 public:
 	my_config_object_notify()
 	{
-		m_data = {
+		m_data =
+		{
 			{ &standard_config_objects::bool_playlist_stop_after_current, callback_id::on_playlist_stop_after_current_changed },
 			{ &standard_config_objects::bool_cursor_follows_playback, callback_id::on_cursor_follow_playback_changed },
 			{ &standard_config_objects::bool_playback_follows_cursor, callback_id::on_playback_follow_cursor_changed },

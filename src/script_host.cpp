@@ -11,13 +11,9 @@
 
 #define DEFINE_ID_NAME_ENTRY(x) { callback_id::##x, PFC_WIDESTRING(#x) }
 
-struct id_name_entry
-{
-	t_size id;
-	const wchar_t* name;
-};
+using id_name_entry = std::pair<t_size, const wchar_t*>;
 
-static const id_name_entry id_names[] =
+std::vector<id_name_entry> id_names =
 {
 	DEFINE_ID_NAME_ENTRY(on_always_on_top_changed),
 	DEFINE_ID_NAME_ENTRY(on_char),
@@ -101,7 +97,7 @@ script_host::~script_host() {}
 
 DWORD script_host::GenerateSourceContext(const pfc::string8_fast& path)
 {
-	m_context_to_path_map.emplace(++m_last_source_context, path);
+	m_context_to_path_map[++m_last_source_context] = path;
 	return m_last_source_context;
 }
 
@@ -161,12 +157,12 @@ HRESULT script_host::InitCallbackMap()
 	if (!m_script_root) return E_POINTER;
 	for (const auto& i : id_names)
 	{
-		LPOLESTR name = const_cast<LPOLESTR>(i.name);
+		LPOLESTR name = const_cast<LPOLESTR>(i.second);
 		DISPID dispId;
 		if (SUCCEEDED(m_script_root->GetIDsOfNames(IID_NULL, &name, 1, LOCALE_USER_DEFAULT, &dispId)))
 		{
-			m_callback_map.emplace(i.id, dispId);
-			check_features(i.id);
+			m_callback_map[i.first] = dispId;
+			check_features(i.first);
 		}
 	}
 	return S_OK;

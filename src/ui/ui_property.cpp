@@ -1,7 +1,8 @@
 #include "stdafx.h"
 #include "ui_property.h"
 
-static const CDialogResizeHelper::Param resize_data[] = {
+static const CDialogResizeHelper::Param resize_data[] =
+{
 	{ IDC_LIST_PROPERTIES, 0, 0, 1, 1 },
 	{ IDC_IMPORT, 0, 1, 0, 1 },
 	{ IDC_EXPORT, 0, 1, 0, 1 },
