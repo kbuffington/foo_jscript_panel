@@ -1076,14 +1076,12 @@ STDMETHODIMP MainMenuManager::Init(BSTR root_name)
 		{ L"help", &mainmenu_groups::help }
 	};
 
-	for (const auto& [name, guid] : valid_root_names)
+	const auto it = std::find_if(valid_root_names.begin(), valid_root_names.end(), [&](const t_valid_root_name& item) { return _wcsicmp(root_name, item.first) == 0; });
+	if (it != valid_root_names.end())
 	{
-		if (_wcsicmp(root_name, name) == 0)
-		{
-			m_mm = standard_api_create_t<mainmenu_manager>();
-			m_mm->instantiate(*guid);
-			return S_OK;
-		}
+		m_mm = standard_api_create_t<mainmenu_manager>();
+		m_mm->instantiate(*it->second);
+		return S_OK;
 	}
 	return E_INVALIDARG;
 }
