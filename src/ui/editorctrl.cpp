@@ -3,19 +3,43 @@
 #include "helpers.h"
 #include "scintilla_prop_sets.h"
 
+enum
+{
+	ESF_NONE = 0,
+	ESF_FONT = 1 << 0,
+	ESF_SIZE = 1 << 1,
+	ESF_FORE = 1 << 2,
+	ESF_BACK = 1 << 3,
+	ESF_BOLD = 1 << 4,
+	ESF_ITALICS = 1 << 5,
+	ESF_UNDERLINED = 1 << 6,
+	ESF_CASEFORCE = 1 << 7,
+};
+
+struct t_sci_editor_style
+{
+	t_sci_editor_style() : back(0), fore(0), case_force(0), flags(0), size(0) {}
+
+	DWORD back, fore;
+	bool bold, italics, underlined;
+	int case_force;
+	pfc::string8_fast font;
+	t_size flags, size;
+};
+
 struct StringComparePartialNC
 {
-	StringComparePartialNC(t_size len_) : len(len_) {}
+	StringComparePartialNC(t_size p_len) : m_len(p_len) {}
 
 	int operator()(const char* s1, const char* s2) const
 	{
-		t_size len1 = pfc::strlen_max_t(s1, len);
-		t_size len2 = pfc::strlen_max_t(s2, len);
+		t_size len1 = pfc::strlen_max_t(s1, m_len);
+		t_size len2 = pfc::strlen_max_t(s2, m_len);
 
 		return pfc::stricmp_ascii_ex(s1, len1, s2, len2);
 	}
 
-	t_size len;
+	t_size m_len;
 };
 
 const char js_keywords[] = "abstract boolean break byte case catch char class const continue"
@@ -26,7 +50,7 @@ const char js_keywords[] = "abstract boolean break byte case catch char class co
 	" try typeof var void while with enum byvalue cast future generic inner"
 	" operator outer rest Array Math RegExp window fb gdi utils plman console";
 
-static const std::vector<t_style_to_key_table> js_style_table =
+static const std::vector<std::pair<int, const char*>> js_style_table =
 {
 	{ STYLE_DEFAULT, "style.default" },
 	{ STYLE_LINENUMBER, "style.linenumber" },
@@ -43,8 +67,7 @@ static const std::vector<t_style_to_key_table> js_style_table =
 	{ SCE_C_NUMBER, "style.number" },
 	{ SCE_C_STRING, "style.string" },
 	{ SCE_C_CHARACTER, "style.string" },
-	{ SCE_C_OPERATOR, "style.operator" },
-	{ -1, nullptr },
+	{ SCE_C_OPERATOR, "style.operator" }
 };
 
 static DWORD ParseHex(const char* hex)
@@ -132,101 +155,85 @@ static bool IsSymIncludes(const StyleAndWords& symbols, const std::string& value
 	return false;
 }
 
-static bool ParseStyle(const char* p_definition, t_sci_editor_style& p_style)
+static bool ParseStyle(const pfc::string8_fast& definition, t_sci_editor_style& style)
 {
-	if (p_definition == 0 || !*p_definition)
-		return false;
+	if (definition.is_empty()) return false;
 
-	char* val = _strdup(p_definition);
-	char* opt = val;
+	pfc::string_list_impl values;
+	pfc::splitStringByChar(values, definition, ',');
 
-	while (opt)
+	for (t_size i = 0; i < values.get_count(); ++i)
 	{
-		char* cpComma = strchr(opt, ',');
+		pfc::string_list_impl tmp;
+		pfc::splitStringByChar(tmp, values[i], ':');
+		auto opt = tmp[0];
 
-		if (cpComma)
-		{
-			*cpComma = 0;
-		}
+		const char* secondary = tmp.get_count() == 2 ? tmp[1] : nullptr;
 
-		char* colon = strchr(opt, ':');
+		if (strcmp(opt, "italics") == 0)
+		{
+			style.flags |= ESF_ITALICS;
+			style.italics = true;
+		}
+		else if (strcmp(opt, "notitalics") == 0)
+		{
+			style.flags |= ESF_ITALICS;
+			style.italics = false;
+		}
+		else if (strcmp(opt, "bold") == 0)
+		{
+			style.flags |= ESF_BOLD;
+			style.bold = true;
+		}
+		else if (strcmp(opt, "notbold") == 0)
+		{
+			style.flags |= ESF_BOLD;
+			style.bold = false;
+		}
+		else if (strcmp(opt, "font") == 0 && secondary)
+		{
+			style.flags |= ESF_FONT;
+			style.font = secondary;
+		}
+		else if (strcmp(opt, "fore") == 0 && secondary)
+		{
+			style.flags |= ESF_FORE;
+			style.fore = ParseHex(secondary);
+		}
+		else if (strcmp(opt, "back") == 0 && secondary)
+		{
+			style.flags |= ESF_BACK;
+			style.back = ParseHex(secondary);
+		}
+		else if (strcmp(opt, "size") == 0 && secondary)
+		{
+			style.flags |= ESF_SIZE;
+			style.size = atoi(secondary);
+		}
+		else if (strcmp(opt, "underlined") == 0)
+		{
+			style.flags |= ESF_UNDERLINED;
+			style.underlined = true;
+		}
+		else if (strcmp(opt, "notunderlined") == 0)
+		{
+			style.flags |= ESF_UNDERLINED;
+			style.underlined = false;
+		}
+		else if (strcmp(opt, "case") == 0)
+		{
+			style.flags |= ESF_CASEFORCE;
+			style.case_force = SC_CASE_MIXED;
 
-		if (colon)
-		{
-			*colon++ = '\0';
-		}
-
-		if (0 == strcmp(opt, "italics"))
-		{
-			p_style.flags |= ESF_ITALICS;
-			p_style.italics = true;
-		}
-		else if (0 == strcmp(opt, "notitalics"))
-		{
-			p_style.flags |= ESF_ITALICS;
-			p_style.italics = false;
-		}
-		else if (0 == strcmp(opt, "bold"))
-		{
-			p_style.flags |= ESF_BOLD;
-			p_style.bold = true;
-		}
-		else if (0 == strcmp(opt, "notbold"))
-		{
-			p_style.flags |= ESF_BOLD;
-			p_style.bold = false;
-		}
-		else if (0 == strcmp(opt, "font"))
-		{
-			p_style.flags |= ESF_FONT;
-			p_style.font = colon;
-		}
-		else if (0 == strcmp(opt, "fore"))
-		{
-			p_style.flags |= ESF_FORE;
-			p_style.fore = ParseHex(colon);
-		}
-		else if (0 == strcmp(opt, "back"))
-		{
-			p_style.flags |= ESF_BACK;
-			p_style.back = ParseHex(colon);
-		}
-		else if (0 == strcmp(opt, "size"))
-		{
-			p_style.flags |= ESF_SIZE;
-			p_style.size = atoi(colon);
-		}
-		else if (0 == strcmp(opt, "underlined"))
-		{
-			p_style.flags |= ESF_UNDERLINED;
-			p_style.underlined = true;
-		}
-		else if (0 == strcmp(opt, "notunderlined"))
-		{
-			p_style.flags |= ESF_UNDERLINED;
-			p_style.underlined = false;
-		}
-		else if (0 == strcmp(opt, "case"))
-		{
-			p_style.flags |= ESF_CASEFORCE;
-			p_style.case_force = SC_CASE_MIXED;
-
-			if (colon)
+			if (secondary)
 			{
-				if (*colon == 'u')
-					p_style.case_force = SC_CASE_UPPER;
-				else if (*colon == 'l')
-					p_style.case_force = SC_CASE_LOWER;
+				if (*secondary == 'u')
+					style.case_force = SC_CASE_UPPER;
+				else if (*secondary == 'l')
+					style.case_force = SC_CASE_LOWER;
 			}
 		}
-
-		if (cpComma)
-			opt = cpComma + 1;
-		else
-			opt = 0;
 	}
-
-	free(val);
 	return true;
 }
 
@@ -260,7 +267,12 @@ static t_size LengthWord(const char* word, char otherSeparator)
 	return endWord - word;
 }
 
-CScriptEditorCtrl::CScriptEditorCtrl() : m_BraceCount(0), m_CurrentCallTip(0), m_StartCalltipWord(0), m_LastPosCallTip(0) {}
+CScriptEditorCtrl::CScriptEditorCtrl()
+	: m_BraceCount(0)
+	, m_CurrentCallTip(0)
+	, m_StartCalltipWord(0)
+	, m_LastPosCallTip(0)
+	, m_apis(panel_manager::instance().get_apis()) {}
 
 BOOL CScriptEditorCtrl::SubclassWindow(HWND hWnd)
 {
@@ -274,7 +286,6 @@ BOOL CScriptEditorCtrl::SubclassWindow(HWND hWnd)
 
 DWORD CScriptEditorCtrl::GetPropertyColor(const char* key, bool* key_exist)
 {
-	std::vector<char> buff;
 	int len = GetPropertyExpanded(key, 0);
 
 	if (key_exist)
@@ -283,7 +294,7 @@ DWORD CScriptEditorCtrl::GetPropertyColor(const char* key, bool* key_exist)
 	if (len == 0)
 		return 0;
 
-	buff.resize(len + 1);
+	std::vector<char> buff(len + 1);
 	buff[len] = 0;
 	GetPropertyExpanded(key, buff.data());
 	return ParseHex(buff.data());
@@ -520,8 +531,6 @@ bool CScriptEditorCtrl::GetNearestWords(pfc::string_base& out, const char* wordS
 	out.reset();
 
 	bool status = false;
-	if (m_apis.empty())
-		return status;
 
 	while (!status && *separators)
 	{
@@ -592,11 +601,7 @@ bool CScriptEditorCtrl::StartAutoComplete()
 	pfc::string8_fast root;
 	root.set_string(line.c_str() + startword, current - startword);
 
-	if (m_apis.empty())
-		return false;
-
 	pfc::string8_fast words;
-
 	if (!GetNearestWords(words, root.get_ptr(), root.length(), "("))
 		return false;
 
@@ -663,9 +668,6 @@ bool CScriptEditorCtrl::StartCallTip()
 
 const char* CScriptEditorCtrl::GetNearestWord(const char* wordStart, int searchLen, std::string wordCharacters, int wordIndex)
 {
-	if (m_apis.empty())
-		return nullptr;
-
 	t_size index;
 
 	if (pfc::bsearch_t(m_apis.size(), m_apis, StringComparePartialNC(searchLen), wordStart, index))
@@ -830,12 +832,11 @@ void CScriptEditorCtrl::AutomaticIndentation(int ch)
 
 	if (curLine > 0)
 	{
-		std::vector<char> linebuf;
 		bool foundBrace = false;
 		int prevLineLength = LineLength(curLine - 1);
 		int slen = 0;
 
-		linebuf.resize(prevLineLength + 2);
+		std::vector<char> linebuf(prevLineLength + 2);
 		GetLine(curLine - 1, linebuf.data());
 		linebuf[prevLineLength] = 0;
 		slen = strlen(linebuf.data());
@@ -949,34 +950,31 @@ void CScriptEditorCtrl::FillFunctionDefinition(int pos)
 		m_LastPosCallTip = pos;
 	}
 
-	if (m_apis.size())
+	pfc::string8_fast words;
+
+	if (!GetNearestWords(words, m_CurrentCallTipWord.get_ptr(), m_CurrentCallTipWord.get_length(), "("))
 	{
-		pfc::string8_fast words;
+		t_size calltip_pos = m_CurrentCallTipWord.find_first(".");
+
+		if (calltip_pos == SIZE_MAX)
+			return;
+
+		m_CurrentCallTipWord.remove_chars(0, calltip_pos + 1);
 
 		if (!GetNearestWords(words, m_CurrentCallTipWord.get_ptr(), m_CurrentCallTipWord.get_length(), "("))
 		{
-			t_size calltip_pos = m_CurrentCallTipWord.find_first(".");
-
-			if (calltip_pos == SIZE_MAX)
-				return;
-
-			m_CurrentCallTipWord.remove_chars(0, calltip_pos + 1);
-
-			if (!GetNearestWords(words, m_CurrentCallTipWord.get_ptr(), m_CurrentCallTipWord.get_length(), "("))
-			{
-				return;
-			}
+			return;
 		}
+	}
 
-		const char* word = GetNearestWord(m_CurrentCallTipWord.get_ptr(), m_CurrentCallTipWord.get_length(), "_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", m_CurrentCallTip);
+	const char* word = GetNearestWord(m_CurrentCallTipWord.get_ptr(), m_CurrentCallTipWord.get_length(), "_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", m_CurrentCallTip);
 
-		if (word)
-		{
-			m_FunctionDefinition = word;
+	if (word)
+	{
+		m_FunctionDefinition = word;
 
-			CallTipShow(m_LastPosCallTip - m_CurrentCallTipWord.get_length(), m_FunctionDefinition.get_ptr());
-			ContinueCallTip();
-		}
+		CallTipShow(m_LastPosCallTip - m_CurrentCallTipWord.get_length(), m_FunctionDefinition.get_ptr());
+		ContinueCallTip();
 	}
 }
 
@@ -1029,49 +1027,10 @@ void CScriptEditorCtrl::Init()
 	AutoCSetIgnoreCase(true);
 
 	// Load properties
-	LoadProperties(g_sci_prop_sets.m_data);
-}
-
-void CScriptEditorCtrl::LoadProperties(const std::vector<t_sci_prop_set>& data)
-{
-	for (t_size i = 0; i < data.size(); ++i)
+	for (const auto& [key, val] : g_sci_prop_sets.m_data)
 	{
-		SetProperty(data[i].key.get_ptr(), data[i].val.get_ptr());
+		SetProperty(key, val);
 	}
-}
-
-void CScriptEditorCtrl::ReadAPI()
-{
-	auto sc = [](const char* s1, const char* s2)
-	{
-		int result = _stricmp(s1, s2);
-
-		if (result == 0)
-		{
-			if (isalpha(*s1) && (*s1 != *s2))
-			{
-				return islower(*s1) ? -1 : 1;
-			}
-		}
-
-		return result;
-	};
-
-	m_apis.clear();
-	puResource pures = uLoadResource(core_api::get_my_instance(), uMAKEINTRESOURCE(IDR_API), "TEXT");
-	pfc::string8_fast content(static_cast<const char*>(pures->GetPointer()), pures->GetSize());
-	pfc::string_list_impl list;
-	pfc::splitStringByLines(list, content);
-
-	for (t_size i = 0; i < list.get_count(); ++i)
-	{
-		pfc::string8_fast tmp = list[i];
-		if (tmp.get_length())
-		{
-			m_apis.emplace_back(tmp);
-		}
-	}
-	pfc::sort_t(m_apis, sc, m_apis.size());
 }
 
 void CScriptEditorCtrl::RestoreDefaultStyle()
@@ -1129,43 +1088,30 @@ void CScriptEditorCtrl::RestoreDefaultStyle()
 	SetCaretLineBackAlpha(GetPropertyInt("style.caret.line.back.alpha", SC_ALPHA_NOALPHA));
 }
 
-void CScriptEditorCtrl::SetAllStylesFromTable(const std::vector<t_style_to_key_table>& table)
+void CScriptEditorCtrl::SetAllStylesFromTable()
 {
-	const char* key = nullptr;
-
-	for (const auto& item : table)
+	for (const auto& [style_num, key] : js_style_table)
 	{
-		key = item.second;
-		if (key != nullptr)
+		int len = GetPropertyExpanded(key, 0);
+		if (len != 0)
 		{
-			int style_num;
-			std::vector<char> definition;
+			std::vector<char> definition(len + 1);
+			definition[len] = 0;
+			GetPropertyExpanded(key, definition.data());
+
 			t_sci_editor_style style;
-			int len;
+			if (!ParseStyle(definition.data(), style)) continue;
 
-			style_num = item.first;
-
-			len = GetPropertyExpanded(key, 0);
-
-			if (len != 0)
-			{
-				definition.resize(len + 1);
-				definition[len] = 0;
-				GetPropertyExpanded(key, definition.data());
-
-				if (!ParseStyle(definition.data(), style)) continue;
-				if (style.flags & ESF_FONT) StyleSetFont(style_num, style.font.get_ptr());
-				if (style.flags & ESF_SIZE) StyleSetSize(style_num, style.size);
-				if (style.flags & ESF_FORE) StyleSetFore(style_num, style.fore);
-				if (style.flags & ESF_BACK) StyleSetBack(style_num, style.back);
-				if (style.flags & ESF_ITALICS) StyleSetItalic(style_num, style.italics);
-				if (style.flags & ESF_BOLD) StyleSetBold(style_num, style.bold);
-				if (style.flags & ESF_UNDERLINED) StyleSetUnderline(style_num, style.underlined);
-				if (style.flags & ESF_CASEFORCE) StyleSetCase(style_num, style.case_force);
-			}
-
-			if (style_num == STYLE_DEFAULT) StyleClearAll();
+			if (style.flags & ESF_FONT) StyleSetFont(style_num, style.font.get_ptr());
+			if (style.flags & ESF_SIZE) StyleSetSize(style_num, style.size);
+			if (style.flags & ESF_FORE) StyleSetFore(style_num, style.fore);
+			if (style.flags & ESF_BACK) StyleSetBack(style_num, style.back);
+			if (style.flags & ESF_ITALICS) StyleSetItalic(style_num, style.italics);
+			if (style.flags & ESF_BOLD) StyleSetBold(style_num, style.bold);
+			if (style.flags & ESF_UNDERLINED) StyleSetUnderline(style_num, style.underlined);
+			if (style.flags & ESF_CASEFORCE) StyleSetCase(style_num, style.case_force);
 		}
+		if (style_num == STYLE_DEFAULT) StyleClearAll();
 	}
 }
 
@@ -1186,7 +1132,7 @@ void CScriptEditorCtrl::SetJScript()
 	RestoreDefaultStyle();
 	SetLexer(SCLEX_CPP);
 	SetKeyWords(0, js_keywords);
-	SetAllStylesFromTable(js_style_table);
+	SetAllStylesFromTable();
 }
 
 void CScriptEditorCtrl::SetIndentation(int line, int indent)

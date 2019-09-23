@@ -128,7 +128,7 @@ void CDialogProperty::LoadProperties(bool reload)
 	m_properties.ReloadData();
 }
 
-void CDialogProperty::OnCloseCmd(UINT uNotifyCode, int nID, HWND wndCtl)
+void CDialogProperty::OnCloseCmd(UINT, int nID, HWND)
 {
 	switch (nID)
 	{
@@ -143,16 +143,15 @@ void CDialogProperty::OnCloseCmd(UINT uNotifyCode, int nID, HWND wndCtl)
 	EndDialog(nID);
 }
 
-void CDialogProperty::OnExportBnClicked(UINT uNotifyCode, int nID, HWND wndCtl)
+void CDialogProperty::OnExportBnClicked(UINT, int, HWND)
 {
 	pfc::string8_fast path;
 
 	if (uGetOpenFileName(m_hWnd, "Property files|*.wsp", 0, "wsp", "Save as", nullptr, path, TRUE))
 	{
-		file_ptr io;
-
 		try
 		{
+			file_ptr io;
 			filesystem::g_open_write_new(io, path, fb2k::noAbort);
 			properties::g_save(m_dup_prop_map, io.get_ptr(), fb2k::noAbort);
 		}
@@ -160,16 +159,15 @@ void CDialogProperty::OnExportBnClicked(UINT uNotifyCode, int nID, HWND wndCtl)
 	}
 }
 
-void CDialogProperty::OnImportBnClicked(UINT uNotifyCode, int nID, HWND wndCtl)
+void CDialogProperty::OnImportBnClicked(UINT, int, HWND)
 {
 	pfc::string8_fast path;
 
 	if (uGetOpenFileName(m_hWnd, "Property files|*.wsp|All files|*.*", 0, "wsp", "Import from", nullptr, path, FALSE))
 	{
-		file_ptr io;
-
 		try
 		{
+			file_ptr io;
 			filesystem::g_open_read(io, path, fb2k::noAbort);
 			properties::g_load(m_dup_prop_map, io.get_ptr(), fb2k::noAbort);
 			LoadProperties(false);

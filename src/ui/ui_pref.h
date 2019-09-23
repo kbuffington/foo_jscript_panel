@@ -21,18 +21,17 @@ public:
 	HWND get_wnd() override;
 	t_size get_state() override;
 	void LoadProps(bool reset = false);
-	void OnExportBnClicked(UINT uNotifyCode, int nID, HWND wndCtl);
-	void OnImportBnClicked(UINT uNotifyCode, int nID, HWND wndCtl);
-	void OnPresetsBnClicked(UINT uNotifyCode, int nID, HWND wndCtl);
+	void OnExportBnClicked(UINT, int, HWND);
+	void OnImportBnClicked(UINT, int, HWND);
+	void OnPresetsBnClicked(UINT, int, HWND);
 	void apply() override;
 	void reset() override;
 
 private:
-	// IListControlOwnerDataSource methods
 	bool listCanSelectItem(ctx_t, t_size) override;
 	bool listIsColumnEditable(ctx_t, t_size sub_item) override;
-	t_size listGetItemCount(ctx_t) override;
 	pfc::string8 listGetSubItemText(ctx_t, t_size item, t_size sub_item) override;
+	t_size listGetItemCount(ctx_t) override;
 	void listSetEditField(ctx_t, t_size item, t_size sub_item, const char* value) override;
 	void listSubItemClicked(ctx_t, t_size item, t_size sub_item) override;
 

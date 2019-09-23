@@ -155,14 +155,14 @@ HRESULT script_host::InitCallbackMap()
 
 	m_callback_map.clear();
 	if (!m_script_root) return E_POINTER;
-	for (const auto& i : id_names)
+	for (const auto& [id, callback_name] : id_names)
 	{
-		LPOLESTR name = const_cast<LPOLESTR>(i.second);
+		LPOLESTR name = const_cast<LPOLESTR>(callback_name);
 		DISPID dispId;
 		if (SUCCEEDED(m_script_root->GetIDsOfNames(IID_NULL, &name, 1, LOCALE_USER_DEFAULT, &dispId)))
 		{
-			m_callback_map[i.first] = dispId;
-			check_features(i.first);
+			m_callback_map[id] = dispId;
+			check_features(id);
 		}
 	}
 	return S_OK;

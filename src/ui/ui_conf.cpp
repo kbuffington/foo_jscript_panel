@@ -109,7 +109,6 @@ BOOL CDialogConf::OnInitDialog(HWND hwndFocus, LPARAM lParam)
 	// Edit Control
 	m_editorctrl.SubclassWindow(m_edit);
 	m_editorctrl.SetJScript();
-	m_editorctrl.ReadAPI();
 	m_editorctrl.SetContent(m_parent->m_script_code, true);
 	m_editorctrl.SetSavePoint();
 

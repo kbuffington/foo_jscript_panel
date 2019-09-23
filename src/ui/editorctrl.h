@@ -2,6 +2,8 @@
 // Copyright 1998-2005 by Neil Hodgson <neilh@scintilla.org>
 // The License.txt file describes the conditions under which this software may be distributed.
 #pragma once
+#include "panel_manager.h"
+
 #include <wtlscintilla.h>
 
 enum IndentationStatus
@@ -19,10 +21,6 @@ struct StyleAndWords
 	bool IsEmpty() const { return words.length() == 0; }
 	bool IsSingleChar() const { return words.length() == 1; }
 };
-
-struct t_sci_prop_set;
-
-using t_style_to_key_table = std::pair<int, const char*>;
 
 class CScriptEditorCtrl : public CScintillaCtrl
 {
@@ -61,10 +59,8 @@ public:
 	void ContinueCallTip();
 	void FillFunctionDefinition(int pos = -1);
 	void Init();
-	void LoadProperties(const std::vector<t_sci_prop_set>& data);
-	void ReadAPI();
 	void RestoreDefaultStyle();
-	void SetAllStylesFromTable(const std::vector<t_style_to_key_table>& table);
+	void SetAllStylesFromTable();
 	void SetContent(const char* text, bool clear_undo_buffer = false);
 	void SetJScript();
 	void SetIndentation(int line, int indent);
@@ -79,7 +75,7 @@ private:
 	int m_CurrentCallTip;
 	int m_LastPosCallTip;
 	int m_StartCalltipWord;
+	panel_manager::api_list m_apis;
 	pfc::string8_fast m_CurrentCallTipWord;
 	pfc::string8_fast m_FunctionDefinition;
-	std::vector<pfc::string_simple> m_apis;
 };

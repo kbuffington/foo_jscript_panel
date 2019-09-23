@@ -26,9 +26,9 @@ public:
 	BOOL OnInitDialog(HWND hwndFocus, LPARAM lParam);
 	void Apply();
 	void LoadProperties(bool reload = true);
-	void OnCloseCmd(UINT uNotifyCode, int nID, HWND wndCtl);
-	void OnExportBnClicked(UINT uNotifyCode, int nID, HWND wndCtl);
-	void OnImportBnClicked(UINT uNotifyCode, int nID, HWND wndCtl);
+	void OnCloseCmd(UINT, int nID, HWND);
+	void OnExportBnClicked(UINT, int, HWND);
+	void OnImportBnClicked(UINT, int, HWND);
 
 private:
 	CDialogResizeHelper m_resizer;

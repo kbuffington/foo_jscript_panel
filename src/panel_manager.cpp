@@ -10,6 +10,32 @@ panel_manager& panel_manager::instance()
 	return instance_;
 }
 
+panel_manager::api_list panel_manager::get_apis()
+{
+	if (m_apis.empty())
+	{
+		puResource pures = uLoadResource(core_api::get_my_instance(), uMAKEINTRESOURCE(IDR_API), "TEXT");
+		pfc::string8_fast content(static_cast<const char*>(pures->GetPointer()), pures->GetSize());
+		pfc::string_list_impl list;
+		pfc::splitStringByLines(list, content);
+
+		for (t_size i = 0; i < list.get_count(); ++i)
+		{
+			pfc::string8_fast tmp = list[i];
+			if (tmp.get_length())
+			{
+				m_apis.emplace_back(tmp);
+			}
+		}
+
+		std::sort(m_apis.begin(), m_apis.end(), [](const pfc::string_simple& one, const pfc::string_simple& two) -> bool
+		{
+			return _stricmp(one, two) < 0;
+		});
+	}
+	return m_apis;
+}
+
 void panel_manager::add_window(HWND p_wnd)
 {
 	m_hwnds.insert(p_wnd);

@@ -31,13 +31,13 @@ public:
 	{
 		GUID g = p_object->get_guid();
 
-		for (const auto& i : m_data)
+		for (const auto& [guid, id] : m_data)
 		{
-			if (*i.first == g)
+			if (*guid == g)
 			{
 				bool b;
 				p_object->get_data_bool(b);
-				panel_manager::instance().post_msg_to_all(i.second, TO_VARIANT_BOOL(b));
+				panel_manager::instance().post_msg_to_all(id, TO_VARIANT_BOOL(b));
 				return;
 			}
 		}

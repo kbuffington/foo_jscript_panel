@@ -41,11 +41,11 @@ struct t_script_info
 	pfc::string8_fast expand_import(t_size idx)
 	{
 		std::string tmp = imports[idx];
-		for (const auto& i : expand_table)
+		for (const auto& [key, value] : expand_table)
 		{
-			if (tmp.find(i.first) == 0)
+			if (tmp.find(key) == 0)
 			{
-				tmp = i.second + tmp.substr(i.first.length());
+				tmp = value + tmp.substr(key.length());
 				break;
 			}
 		}

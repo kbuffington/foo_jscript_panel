@@ -54,8 +54,11 @@ class panel_manager
 public:
 	panel_manager();
 
+	using api_list = std::vector<pfc::string_simple>;
+
 	static panel_manager& instance();
 
+	api_list get_apis();
 	void add_window(HWND p_wnd);
 	void notify_others(HWND p_wnd_except, UINT p_msg, pfc::refcounted_object_root* p_param);
 	void post_msg_to_all(UINT p_msg, WPARAM p_wp = 0, LPARAM p_lp = 0);
@@ -66,6 +69,7 @@ public:
 private:
 	static panel_manager instance_;
 
+	api_list m_apis;
 	std::set<HWND> m_hwnds;
 
 	PFC_CLASS_NOT_COPYABLE_EX(panel_manager)
