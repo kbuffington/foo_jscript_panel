@@ -29,17 +29,17 @@ struct t_sci_editor_style
 
 struct StringComparePartialNC
 {
-	StringComparePartialNC(t_size p_len) : m_len(p_len) {}
+	StringComparePartialNC(t_size p_len) : len(p_len) {}
 
 	int operator()(const char* s1, const char* s2) const
 	{
-		t_size len1 = pfc::strlen_max_t(s1, m_len);
-		t_size len2 = pfc::strlen_max_t(s2, m_len);
+		t_size len1 = pfc::strlen_max_t(s1, len);
+		t_size len2 = pfc::strlen_max_t(s2, len);
 
 		return pfc::stricmp_ascii_ex(s1, len1, s2, len2);
 	}
 
-	t_size m_len;
+	t_size len;
 };
 
 const char js_keywords[] = "abstract boolean break byte case catch char class const continue"
@@ -108,12 +108,7 @@ static DWORD ParseHex(const char* hex)
 	return RGB(r, g, b);
 }
 
-static bool IsIdentifierChar(int ch)
-{
-	return __iswcsym((wint_t)ch);
-}
-
-static bool IsSymIncludes(const StyleAndWords& symbols, const std::string& value)
+static bool includes(const StyleAndWords& symbols, const std::string& value)
 {
 	if (symbols.IsEmpty())
 	{
@@ -151,7 +146,6 @@ static bool IsSymIncludes(const StyleAndWords& symbols, const std::string& value
 		char ch = symbols.words[0];
 		return strchr(value.c_str(), ch) != 0;
 	}
-
 	return false;
 }
 
@@ -244,17 +238,10 @@ static t_size LengthWord(const char* word, char otherSeparator)
 		return ch == ' ' || (ch >= 0x09 && ch <= 0x0d);
 	};
 
-	const char* endWord = 0;
-
-	if (otherSeparator)
-		endWord = strchr(word, otherSeparator);
-
-	if (!endWord)
-		endWord = strchr(word, '(');
-
-	if (!endWord)
-		endWord = word + strlen(word);
-
+	const char* endWord = nullptr;
+	if (otherSeparator) endWord = strchr(word, otherSeparator);
+	if (!endWord) endWord = strchr(word, '(');
+	if (!endWord) endWord = word + strlen(word);
 	if (endWord > word)
 	{
 		endWord--;
@@ -263,16 +250,15 @@ static t_size LengthWord(const char* word, char otherSeparator)
 			endWord--;
 		}
 	}
-
-	return endWord - word;
+	return endWord - word + 1;
 }
 
 CScriptEditorCtrl::CScriptEditorCtrl()
-	: m_BraceCount(0)
-	, m_CurrentCallTip(0)
-	, m_StartCalltipWord(0)
-	, m_LastPosCallTip(0)
-	, m_apis(panel_manager::instance().get_apis()) {}
+	: BraceCount(0)
+	, CurrentCallTip(0)
+	, StartCalltipWord(0)
+	, LastPosCallTip(0)
+	, apis(panel_manager::instance().get_apis()) {}
 
 BOOL CScriptEditorCtrl::SubclassWindow(HWND hWnd)
 {
@@ -284,54 +270,26 @@ BOOL CScriptEditorCtrl::SubclassWindow(HWND hWnd)
 	return bRet;
 }
 
-DWORD CScriptEditorCtrl::GetPropertyColor(const char* key, bool* key_exist)
-{
-	int len = GetPropertyExpanded(key, 0);
-
-	if (key_exist)
-		*key_exist = (len != 0);
-
-	if (len == 0)
-		return 0;
-
-	std::vector<char> buff(len + 1);
-	buff[len] = 0;
-	GetPropertyExpanded(key, buff.data());
-	return ParseHex(buff.data());
-}
-
 IndentationStatus CScriptEditorCtrl::GetIndentState(int line)
 {
 	IndentationStatus indentState = isNone;
-	std::string controlWords[20];
-	t_size i, parts = GetLinePartsInStyle(line, m_StatementIndent.styleNumber, controlWords, _countof(controlWords));
-
-	for (i = 0; i < parts; ++i)
+	for (const std::string& sIndent : GetLinePartsInStyle(line, StatementIndent))
 	{
-		if (IsSymIncludes(m_StatementIndent, controlWords[i]))
+		if (includes(StatementIndent, sIndent))
 			indentState = isKeyWordStart;
 	}
-
-	parts = GetLinePartsInStyle(line, m_StatementEnd.styleNumber, controlWords, _countof(controlWords));
-
-	for (i = 0; i < parts; ++i)
+	for (const std::string& sEnd : GetLinePartsInStyle(line, StatementEnd))
 	{
-		if (IsSymIncludes(m_StatementEnd, controlWords[i]))
+		if (includes(StatementEnd, sEnd))
 			indentState = isNone;
 	}
-	std::string controlStrings[20];
-
-	parts = GetLinePartsInStyle(line, m_BlockEnd.styleNumber, controlStrings, _countof(controlStrings));
-
-	for (i = 0; i < parts; ++i)
+	for (const std::string& sBlock : GetLinePartsInStyle(line, BlockEnd))
 	{
-		if (IsSymIncludes(m_BlockEnd, controlStrings[i]))
+		if (includes(BlockEnd, sBlock))
 			indentState = isBlockEnd;
-
-		if (IsSymIncludes(m_BlockStart, controlStrings[i]))
+		if (includes(BlockStart, sBlock))
 			indentState = isBlockStart;
 	}
-
 	return indentState;
 }
 
@@ -349,22 +307,22 @@ LRESULT CScriptEditorCtrl::OnCharAdded(LPNMHDR pnmh)
 	int selStart = crange.cpMin;
 	int selEnd = crange.cpMax;
 
-	if ((selEnd == selStart) && (selStart > 0))
+	if (selEnd == selStart && selStart > 0)
 	{
 		if (CallTipActive())
 		{
 			switch (ch)
 			{
 			case ')':
-				m_BraceCount--;
-				if (m_BraceCount < 1)
+				BraceCount--;
+				if (BraceCount < 1)
 					CallTipCancel();
 				else
 					StartCallTip();
 				break;
 
 			case '(':
-				m_BraceCount++;
+				BraceCount++;
 				StartCallTip();
 				break;
 
@@ -377,14 +335,14 @@ LRESULT CScriptEditorCtrl::OnCharAdded(LPNMHDR pnmh)
 		{
 			if (ch == '(')
 			{
-				m_BraceCount++;
+				BraceCount++;
 				StartCallTip();
 			}
 			else if (ch == ')')
 			{
-				m_BraceCount--;
+				BraceCount--;
 			}
-			else if (!IsIdentifierChar(ch))
+			else if (!__iswcsym(ch))
 			{
 				AutoCCancel();
 
@@ -396,14 +354,14 @@ LRESULT CScriptEditorCtrl::OnCharAdded(LPNMHDR pnmh)
 		{
 			if (ch == '(')
 			{
-				m_BraceCount = 1;
+				BraceCount = 1;
 				StartCallTip();
 			}
 			else
 			{
 				AutomaticIndentation(ch);
 
-				if (IsIdentifierChar(ch) || ch == '.')
+				if (__iswcsym(ch) || ch == '.')
 					StartAutoComplete();
 			}
 		}
@@ -526,46 +484,17 @@ bool CScriptEditorCtrl::FindBraceMatchPos(int& braceAtCaret, int& braceOpposite)
 	return isInside;
 }
 
-bool CScriptEditorCtrl::GetNearestWords(pfc::string_base& out, const char* wordStart, int searchLen, const char* separators)
+bool CScriptEditorCtrl::GetPropertyEx(const char* key, pfc::string_base& out)
 {
 	out.reset();
+	int len = GetPropertyExpanded(key, 0);
+	if (len == 0) return false;
 
-	bool status = false;
-
-	while (!status && *separators)
-	{
-		char otherSeparator = *separators;
-		t_size index;
-
-		if (pfc::bsearch_t(m_apis.size(), m_apis, StringComparePartialNC(searchLen), wordStart, index))
-		{
-			t_size pivot = index;
-			status = true;
-
-			while ((pivot > 0) && (StringComparePartialNC(searchLen)(m_apis[pivot - 1], wordStart) == 0))
-			{
-				--pivot;
-			}
-
-			while (pivot <= m_apis.size() - 1)
-			{
-				if (StringComparePartialNC(searchLen)(m_apis[pivot], wordStart) != 0)
-					break;
-
-				t_size wordlen = LengthWord(m_apis[pivot], otherSeparator) + 1;
-
-				out.add_string(m_apis[pivot], wordlen);
-				out.add_char(' ');
-
-				++pivot;
-			}
-
-		}
-
-		separators++;
-	}
-
-	return status;
+	std::vector<char> buff(len + 1);
+	buff[len] = 0;
+	GetPropertyExpanded(key, buff.data());
+	out = buff.data();
+	return true;
 }
 
 bool CScriptEditorCtrl::RangeIsAllWhitespace(int start, int end)
@@ -593,27 +522,27 @@ bool CScriptEditorCtrl::StartAutoComplete()
 
 	int startword = current;
 
-	while ((startword > 0) && (IsIdentifierChar(line[startword - 1]) || line[startword - 1] == '.'))
+	while ((startword > 0) && (__iswcsym(line[startword - 1]) || line[startword - 1] == '.'))
 	{
 		startword--;
 	}
 
-	pfc::string8_fast root;
-	root.set_string(line.c_str() + startword, current - startword);
+	std::string root = line.substr(startword, current - startword);
 
-	pfc::string8_fast words;
-	if (!GetNearestWords(words, root.get_ptr(), root.length(), "("))
+	std::string words = GetNearestWords(root.c_str(), root.length(), '(');
+	if (words.empty())
+	{
 		return false;
+	}
 
-	AutoCShow(root.length(), words);
-
+	AutoCShow(root.length(), words.c_str());
 	return true;
 }
 
 bool CScriptEditorCtrl::StartCallTip()
 {
-	m_CurrentCallTip = 0;
-	m_CurrentCallTipWord = "";
+	CurrentCallTip = 0;
+	CurrentCallTipWord = "";
 	std::string line = GetCurrentLine();
 	int current = GetCaretInLine();
 	int pos = GetCurrentPos();
@@ -647,61 +576,23 @@ bool CScriptEditorCtrl::StartCallTip()
 			current--;
 			pos--;
 		}
-	} while (current > 0 && !IsIdentifierChar(line[current - 1]));
+	} while (current > 0 && !__iswcsym(line[current - 1]));
 
 	if (current <= 0)
 		return true;
 
-	m_StartCalltipWord = current - 1;
+	StartCalltipWord = current - 1;
 
-	while (m_StartCalltipWord > 0 && (IsIdentifierChar(line[m_StartCalltipWord - 1]) || (line[m_StartCalltipWord - 1] == '.')))
+	while (StartCalltipWord > 0 && (__iswcsym(line[StartCalltipWord - 1]) || (line[StartCalltipWord - 1] == '.')))
 	{
-		--m_StartCalltipWord;
+		--StartCalltipWord;
 	}
 
 	line.at(current) = '\0';
-	m_CurrentCallTipWord = line.c_str() + m_StartCalltipWord;
-	m_FunctionDefinition = "";
+	CurrentCallTipWord = line.c_str() + StartCalltipWord;
+	FunctionDefinition = "";
 	FillFunctionDefinition(pos);
 	return true;
-}
-
-const char* CScriptEditorCtrl::GetNearestWord(const char* wordStart, int searchLen, std::string wordCharacters, int wordIndex)
-{
-	t_size index;
-
-	if (pfc::bsearch_t(m_apis.size(), m_apis, StringComparePartialNC(searchLen), wordStart, index))
-	{
-		t_size start = index;
-
-		while (start > 0 && StringComparePartialNC(searchLen)(m_apis[start - 1], wordStart) == 0)
-		{
-			--start;
-		}
-
-		t_size end = index;
-
-		while (end < m_apis.size() - 1 && StringComparePartialNC(searchLen)(m_apis[end + 1], wordStart) == 0)
-		{
-			++end;
-		}
-
-		for (t_size i = start; i <= end; ++i)
-		{
-			const char* word = m_apis[i];
-
-			if (wordCharacters.find(word[searchLen]) == std::string::npos)
-			{
-				if (wordIndex <= 0)
-					return word;
-
-				--wordIndex;
-			}
-		}
-
-		return nullptr;
-	}
-	return nullptr;
 }
 
 int CScriptEditorCtrl::GetCaretInLine()
@@ -763,41 +654,88 @@ std::string CScriptEditorCtrl::GetCurrentLine()
 	return text.substr(0, text.length() - 1);
 }
 
-t_size CScriptEditorCtrl::GetLinePartsInStyle(int line, int style, std::string sv[], int len)
+std::string CScriptEditorCtrl::GetNearestWord(const char* wordStart, int searchLen, int wordIndex)
 {
-	for (int i = 0; i < len; ++i)
-		sv[i] = "";
+	auto it = std::find_if(apis.begin(), apis.end(), [=](const auto& item)
+	{
+		return StringComparePartialNC(searchLen)(wordStart, item) == 0;
+	});
 
+	std::string wordCharacters = "_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+	for (; it < apis.end(); ++it)
+	{
+		const char* word = *it;
+		if (!word[searchLen] || wordCharacters.find(word[searchLen]) == std::string::npos)
+		{
+			if (wordIndex <= 0)
+			{
+				return std::string(word);
+			}
+			wordIndex--;
+		}
+	}
+	return std::string();
+}
+
+std::string CScriptEditorCtrl::GetNearestWords(const char* wordStart, int searchLen, char separator)
+{
+	std::string words;
+	const t_size wordStartLength = LengthWord(wordStart, separator);
+	auto it = std::find_if(apis.begin(), apis.end(), [=](const auto& item)
+	{
+		return StringComparePartialNC(searchLen)(wordStart, item) == 0;
+	});
+
+	for (; it < apis.end(); ++it)
+	{
+		if (StringComparePartialNC(searchLen)(wordStart, *it) != 0)
+		{
+			break;
+		}
+
+		const t_size len = LengthWord(*it, separator);
+		if (words.length() > 0) words.append(" ", 1);
+		words.append(*it, len);
+	}
+	return words;
+}
+
+std::vector<std::string> CScriptEditorCtrl::GetLinePartsInStyle(int line, const StyleAndWords& saw)
+{
+	const bool separateCharacters = saw.IsSingleChar();
+	const int thisLineStart = PositionFromLine(line);
+	const int nextLineStart = PositionFromLine(line + 1);
 	std::string s;
-	int part = 0;
-	int thisLineStart = PositionFromLine(line);
-	int nextLineStart = PositionFromLine(line + 1);
+	std::vector<std::string> sv;
 
 	for (int pos = thisLineStart; pos < nextLineStart; ++pos)
 	{
-		if (GetStyleAt(pos) == style || GetStyleAt(pos) == -1)
+		if (GetStyleAt(pos) == saw.styleNumber)
 		{
-			char c[2];
-			c[0] = GetCharAt(pos);
-			c[1] = '\0';
-			s += c;
+			if (separateCharacters)
+			{
+				if (s.length() > 0)
+				{
+					sv.push_back(s);
+				}
+				s = "";
+			}
+			s += GetCharAt(pos);
 		}
 		else if (s.length() > 0)
 		{
-			if (part < len)
-			{
-				sv[part++] = s;
-			}
+			sv.push_back(s);
 			s = "";
 		}
 	}
 
-	if ((s.length() > 0) && (part < len))
+	if (s.length() > 0)
 	{
-		sv[part++] = s;
+		sv.push_back(s);
 	}
 
-	return part;
+	return sv;
 }
 
 void CScriptEditorCtrl::AutoMarginWidth()
@@ -880,17 +818,12 @@ void CScriptEditorCtrl::AutomaticIndentation(int ch)
 	}
 	else if ((ch == '\r' || ch == '\n') && (selStart == thisLineStart))
 	{
-		std::string controlWords[1];
-
-		if (GetLinePartsInStyle(curLine - 1, m_BlockEnd.styleNumber, controlWords, _countof(controlWords)))
+		const std::vector<std::string> controlWords = GetLinePartsInStyle(curLine - 1, BlockEnd);
+		if (!controlWords.empty() && includes(BlockEnd, controlWords[0]))
 		{
-			if (IsSymIncludes(m_BlockEnd, controlWords[0]))
-			{
-				SetIndentation(curLine - 1, IndentOfBlock(curLine - 2) - indentSize);
-				indentBlock = IndentOfBlock(curLine - 1);
-			}
+			SetIndentation(curLine - 1, IndentOfBlock(curLine - 2) - indentSize);
+			indentBlock = IndentOfBlock(curLine - 1);
 		}
-
 		SetIndentation(curLine, indentBlock);
 	}
 }
@@ -902,7 +835,7 @@ void CScriptEditorCtrl::ContinueCallTip()
 	int braces = 0;
 	int commas = 0;
 
-	for (int i = m_StartCalltipWord; i < current; ++i)
+	for (int i = StartCalltipWord; i < current; ++i)
 	{
 		if (line[i] == '(')
 			braces++;
@@ -914,28 +847,28 @@ void CScriptEditorCtrl::ContinueCallTip()
 
 	int startHighlight = 0;
 
-	while (m_FunctionDefinition[startHighlight] && m_FunctionDefinition[startHighlight] != '(')
+	while (FunctionDefinition[startHighlight] && FunctionDefinition[startHighlight] != '(')
 		startHighlight++;
 
-	if (m_FunctionDefinition[startHighlight] == '(')
+	if (FunctionDefinition[startHighlight] == '(')
 		startHighlight++;
 
-	while (m_FunctionDefinition[startHighlight] && commas > 0)
+	while (FunctionDefinition[startHighlight] && commas > 0)
 	{
-		if (m_FunctionDefinition[startHighlight] == ',')
+		if (FunctionDefinition[startHighlight] == ',')
 			commas--;
-		if (m_FunctionDefinition[startHighlight] == ')')
+		if (FunctionDefinition[startHighlight] == ')')
 			commas = 0;
 		else
 			startHighlight++;
 	}
 
-	if (m_FunctionDefinition[startHighlight] == ',')
+	if (FunctionDefinition[startHighlight] == ',')
 		startHighlight++;
 
 	int endHighlight = startHighlight;
 
-	while (m_FunctionDefinition[endHighlight] && m_FunctionDefinition[endHighlight] != ',' && m_FunctionDefinition[endHighlight] != ')')
+	while (FunctionDefinition[endHighlight] && FunctionDefinition[endHighlight] != ',' && FunctionDefinition[endHighlight] != ')')
 	{
 		endHighlight++;
 	}
@@ -947,34 +880,21 @@ void CScriptEditorCtrl::FillFunctionDefinition(int pos)
 {
 	if (pos > 0)
 	{
-		m_LastPosCallTip = pos;
+		LastPosCallTip = pos;
 	}
 
-	pfc::string8_fast words;
-
-	if (!GetNearestWords(words, m_CurrentCallTipWord.get_ptr(), m_CurrentCallTipWord.get_length(), "("))
+	std::string words = GetNearestWords(CurrentCallTipWord.c_str(), CurrentCallTipWord.length(), '(');
+	if (words.length())
 	{
-		t_size calltip_pos = m_CurrentCallTipWord.find_first(".");
+		std::string word = GetNearestWord(CurrentCallTipWord.c_str(), CurrentCallTipWord.length(), CurrentCallTip);
 
-		if (calltip_pos == SIZE_MAX)
-			return;
-
-		m_CurrentCallTipWord.remove_chars(0, calltip_pos + 1);
-
-		if (!GetNearestWords(words, m_CurrentCallTipWord.get_ptr(), m_CurrentCallTipWord.get_length(), "("))
+		if (word.length())
 		{
-			return;
+			FunctionDefinition = word;
+
+			CallTipShow(LastPosCallTip - CurrentCallTipWord.length(), FunctionDefinition.c_str());
+			ContinueCallTip();
 		}
-	}
-
-	const char* word = GetNearestWord(m_CurrentCallTipWord.get_ptr(), m_CurrentCallTipWord.get_length(), "_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", m_CurrentCallTip);
-
-	if (word)
-	{
-		m_FunctionDefinition = word;
-
-		CallTipShow(m_LastPosCallTip - m_CurrentCallTipWord.get_length(), m_FunctionDefinition.get_ptr());
-		ContinueCallTip();
 	}
 }
 
@@ -1046,61 +966,46 @@ void CScriptEditorCtrl::RestoreDefaultStyle()
 	SetMarginWidthN(4, 0);
 	SetMarginTypeN(0, SC_MARGIN_NUMBER);
 
-	// Additional styles
-	bool sel_fore, sel_back, line_back;
-	DWORD color;
-
-	color = GetPropertyColor("style.selection.fore", &sel_fore);
-
-	if (sel_fore)
-		SetSelFore(true, color);
-	else
-		SetSelFore(false, 0);
-
-	color = GetPropertyColor("style.selection.back", &sel_back);
-
-	if (sel_back)
-	{
-		SetSelBack(true, color);
-	}
-	else
-	{
-		if (sel_fore)
-			SetSelBack(true, RGB(0xc0, 0xc0, 0xc0));
-	}
-
-	SetSelAlpha(GetPropertyInt("style.selection.alpha", SC_ALPHA_NOALPHA));
-	SetCaretFore(GetPropertyColor("style.caret.fore"));
+	SetCaretLineBackAlpha(GetPropertyInt("style.caret.line.back.alpha", SC_ALPHA_NOALPHA));
+	SetCaretLineVisible(false);
 	SetCaretWidth(GetPropertyInt("style.caret.width", 1));
+	SetSelAlpha(GetPropertyInt("style.selection.alpha", SC_ALPHA_NOALPHA));
+	SetSelFore(false, 0);
 
-	color = GetPropertyColor("style.caret.line.back", &line_back);
+	pfc::string8_fast colour;
 
-	if (line_back)
+	if (GetPropertyEx("style.selection.fore", colour))
+	{
+		SetSelFore(true, ParseHex(colour));
+		SetSelBack(true, RGB(0xc0, 0xc0, 0xc0));
+	}
+		
+	if (GetPropertyEx("style.selection.back", colour))
+	{
+		SetSelBack(true, ParseHex(colour));
+	}
+
+	if (GetPropertyEx("style.caret.fore", colour))
+	{
+		SetCaretFore(ParseHex(colour));
+	}
+	
+	if (GetPropertyEx("style.caret.line.back", colour))
 	{
 		SetCaretLineVisible(true);
-		SetCaretLineBack(color);
+		SetCaretLineBack(ParseHex(colour));
 	}
-	else
-	{
-		SetCaretLineVisible(false);
-	}
-
-	SetCaretLineBackAlpha(GetPropertyInt("style.caret.line.back.alpha", SC_ALPHA_NOALPHA));
 }
 
 void CScriptEditorCtrl::SetAllStylesFromTable()
 {
 	for (const auto& [style_num, key] : js_style_table)
 	{
-		int len = GetPropertyExpanded(key, 0);
-		if (len != 0)
+		pfc::string8_fast tmp;
+		if (GetPropertyEx(key, tmp))
 		{
-			std::vector<char> definition(len + 1);
-			definition[len] = 0;
-			GetPropertyExpanded(key, definition.data());
-
 			t_sci_editor_style style;
-			if (!ParseStyle(definition.data(), style)) continue;
+			if (!ParseStyle(tmp, style)) continue;
 
 			if (style.flags & ESF_FONT) StyleSetFont(style_num, style.font.get_ptr());
 			if (style.flags & ESF_SIZE) StyleSetSize(style_num, style.size);
@@ -1115,14 +1020,10 @@ void CScriptEditorCtrl::SetAllStylesFromTable()
 	}
 }
 
-void CScriptEditorCtrl::SetContent(const char* text, bool clear_undo_buffer)
+void CScriptEditorCtrl::SetContent(const char* text)
 {
 	SetText(text);
 	ConvertEOLs(SC_EOL_CRLF);
-
-	if (clear_undo_buffer)
-		EmptyUndoBuffer();
-
 	GrabFocus();
 	TrackWidth();
 }

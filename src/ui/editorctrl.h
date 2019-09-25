@@ -36,7 +36,6 @@ public:
 	END_MSG_MAP()
 
 	BOOL SubclassWindow(HWND hWnd);
-	DWORD GetPropertyColor(const char* key, bool* key_exist = nullptr);
 	IndentationStatus GetIndentState(int line);
 	LRESULT OnChange(UINT uNotifyCode, int nID, HWND wndCtl);
 	LRESULT OnCharAdded(LPNMHDR pnmh);
@@ -45,15 +44,16 @@ public:
 	LRESULT OnZoom(LPNMHDR pnmn);
 	Sci_CharacterRange GetSelection();
 	bool FindBraceMatchPos(int& braceAtCaret, int& braceOpposite);
-	bool GetNearestWords(pfc::string_base& out, const char* wordStart, int searchLen, const char* separators);
+	bool GetPropertyEx(const char* key, pfc::string_base& out);
 	bool RangeIsAllWhitespace(int start, int end);
 	bool StartAutoComplete();
 	bool StartCallTip();
-	const char* GetNearestWord(const char* wordStart, int searchLen, std::string wordCharacters = nullptr, int wordIndex = -1);
 	int GetCaretInLine();
 	int IndentOfBlock(int line);
 	std::string GetCurrentLine();
-	t_size GetLinePartsInStyle(int line, int style, std::string sv[], int len);
+	std::string GetNearestWord(const char* wordStart, int searchLen, int wordIndex);
+	std::string GetNearestWords(const char* wordStart, int searchLen, char separator);
+	std::vector<std::string> GetLinePartsInStyle(int line, const StyleAndWords& saw);
 	void AutoMarginWidth();
 	void AutomaticIndentation(int ch);
 	void ContinueCallTip();
@@ -61,21 +61,21 @@ public:
 	void Init();
 	void RestoreDefaultStyle();
 	void SetAllStylesFromTable();
-	void SetContent(const char* text, bool clear_undo_buffer = false);
+	void SetContent(const char* text);
 	void SetJScript();
 	void SetIndentation(int line, int indent);
 	void TrackWidth();
 
 private:
-	StyleAndWords m_BlockEnd;
-	StyleAndWords m_BlockStart;
-	StyleAndWords m_StatementEnd;
-	StyleAndWords m_StatementIndent;
-	int m_BraceCount;
-	int m_CurrentCallTip;
-	int m_LastPosCallTip;
-	int m_StartCalltipWord;
-	panel_manager::api_list m_apis;
-	pfc::string8_fast m_CurrentCallTipWord;
-	pfc::string8_fast m_FunctionDefinition;
+	StyleAndWords BlockEnd;
+	StyleAndWords BlockStart;
+	StyleAndWords StatementEnd;
+	StyleAndWords StatementIndent;
+	int BraceCount;
+	int CurrentCallTip;
+	int LastPosCallTip;
+	int StartCalltipWord;
+	panel_manager::api_list apis;
+	std::string CurrentCallTipWord;
+	std::string FunctionDefinition;
 };

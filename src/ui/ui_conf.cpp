@@ -106,12 +106,6 @@ BOOL CDialogConf::OnInitDialog(HWND hwndFocus, LPARAM lParam)
 		SetWindowPlacement(&m_parent->m_wndpl);
 	}
 
-	// Edit Control
-	m_editorctrl.SubclassWindow(m_edit);
-	m_editorctrl.SetJScript();
-	m_editorctrl.SetContent(m_parent->m_script_code, true);
-	m_editorctrl.SetSavePoint();
-
 	// Script Engine
 	m_engine.AddString(L"Chakra");
 	m_engine.AddString(L"JScript");
@@ -146,6 +140,13 @@ BOOL CDialogConf::OnInitDialog(HWND hwndFocus, LPARAM lParam)
 
 		m_pseudo.SetCheck(m_parent->m_pseudo_transparent);
 	}
+
+	// Edit Control
+	m_editorctrl.SubclassWindow(m_edit);
+	m_editorctrl.SetJScript();
+	m_editorctrl.SetContent(m_parent->m_script_code);
+	m_editorctrl.EmptyUndoBuffer();
+	m_editorctrl.SetSavePoint();
 
 	return FALSE;
 }
