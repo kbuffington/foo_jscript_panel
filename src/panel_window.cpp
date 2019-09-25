@@ -21,14 +21,12 @@ LRESULT panel_window::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 	switch (msg)
 	{
 	case WM_CREATE:
-		{
-			m_hwnd = hwnd;
-			m_hdc = GetDC(m_hwnd);
-			create_context();
-			m_gr_wrap.Attach(new com_object_impl_t<GdiGraphics>(), false);
-			panel_manager::instance().add_window(m_hwnd);
-			load_script();
-		}
+		m_hwnd = hwnd;
+		m_hdc = GetDC(m_hwnd);
+		create_context();
+		m_gr_wrap.Attach(new com_object_impl_t<GdiGraphics>(), false);
+		panel_manager::instance().add_window(m_hwnd);
+		load_script();
 		return 0;
 	case WM_DESTROY:
 		unload_script();

@@ -78,4 +78,5 @@ private:
 	panel_manager::api_list apis;
 	std::string CurrentCallTipWord;
 	std::string FunctionDefinition;
+	std::string WordCharacters;
 };

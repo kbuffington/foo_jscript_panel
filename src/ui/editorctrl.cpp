@@ -108,6 +108,11 @@ static DWORD ParseHex(const char* hex)
 	return RGB(r, g, b);
 }
 
+static bool contains(const std::string& str, char ch)
+{
+	return str.find(ch) != std::string::npos;
+}
+
 static bool includes(const StyleAndWords& symbols, const std::string& value)
 {
 	if (symbols.IsEmpty())
@@ -233,11 +238,6 @@ static bool ParseStyle(const pfc::string8_fast& definition, t_sci_editor_style& 
 
 static t_size LengthWord(const char* word, char otherSeparator)
 {
-	auto IsASpace = [](t_size ch)
-	{
-		return ch == ' ' || (ch >= 0x09 && ch <= 0x0d);
-	};
-
 	const char* endWord = nullptr;
 	if (otherSeparator) endWord = strchr(word, otherSeparator);
 	if (!endWord) endWord = strchr(word, '(');
@@ -245,7 +245,7 @@ static t_size LengthWord(const char* word, char otherSeparator)
 	if (endWord > word)
 	{
 		endWord--;
-		while (endWord > word && IsASpace(*endWord))
+		while (endWord > word && isspace(*endWord))
 		{
 			endWord--;
 		}
@@ -258,6 +258,7 @@ CScriptEditorCtrl::CScriptEditorCtrl()
 	, CurrentCallTip(0)
 	, StartCalltipWord(0)
 	, LastPosCallTip(0)
+	, WordCharacters("_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
 	, apis(panel_manager::instance().get_apis()) {}
 
 BOOL CScriptEditorCtrl::SubclassWindow(HWND hWnd)
@@ -342,7 +343,7 @@ LRESULT CScriptEditorCtrl::OnCharAdded(LPNMHDR pnmh)
 			{
 				BraceCount--;
 			}
-			else if (!__iswcsym(ch))
+			else if (!contains(WordCharacters, ch))
 			{
 				AutoCCancel();
 
@@ -361,7 +362,7 @@ LRESULT CScriptEditorCtrl::OnCharAdded(LPNMHDR pnmh)
 			{
 				AutomaticIndentation(ch);
 
-				if (__iswcsym(ch) || ch == '.')
+				if (contains(WordCharacters, ch) || ch == '.')
 					StartAutoComplete();
 			}
 		}
@@ -522,7 +523,7 @@ bool CScriptEditorCtrl::StartAutoComplete()
 
 	int startword = current;
 
-	while ((startword > 0) && (__iswcsym(line[startword - 1]) || line[startword - 1] == '.'))
+	while (startword > 0 && (contains(WordCharacters, line[startword - 1]) || line[startword - 1] == '.'))
 	{
 		startword--;
 	}
@@ -576,14 +577,14 @@ bool CScriptEditorCtrl::StartCallTip()
 			current--;
 			pos--;
 		}
-	} while (current > 0 && !__iswcsym(line[current - 1]));
+	} while (current > 0 && !contains(WordCharacters, line[current - 1]));
 
 	if (current <= 0)
 		return true;
 
 	StartCalltipWord = current - 1;
 
-	while (StartCalltipWord > 0 && (__iswcsym(line[StartCalltipWord - 1]) || (line[StartCalltipWord - 1] == '.')))
+	while (StartCalltipWord > 0 && (contains(WordCharacters, line[StartCalltipWord - 1]) || line[StartCalltipWord - 1] == '.'))
 	{
 		--StartCalltipWord;
 	}
@@ -661,12 +662,10 @@ std::string CScriptEditorCtrl::GetNearestWord(const char* wordStart, int searchL
 		return StringComparePartialNC(searchLen)(wordStart, item) == 0;
 	});
 
-	std::string wordCharacters = "_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-
 	for (; it < apis.end(); ++it)
 	{
 		const char* word = *it;
-		if (!word[searchLen] || wordCharacters.find(word[searchLen]) == std::string::npos)
+		if (!word[searchLen] || !contains(WordCharacters, word[searchLen]))
 		{
 			if (wordIndex <= 0)
 			{

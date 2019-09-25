@@ -30,16 +30,15 @@ public:
 	void on_watched_object_changed(const config_object::ptr& p_object) override
 	{
 		GUID g = p_object->get_guid();
-
-		for (const auto& [guid, id] : m_data)
+		const auto it = std::find_if(m_data.begin(), m_data.end(), [=](const auto& item)
 		{
-			if (*guid == g)
-			{
-				bool b;
-				p_object->get_data_bool(b);
-				panel_manager::instance().post_msg_to_all(id, TO_VARIANT_BOOL(b));
-				return;
-			}
+			return g == *item.first;
+		});
+		if (it != m_data.end())
+		{
+			bool b;
+			p_object->get_data_bool(b);
+			panel_manager::instance().post_msg_to_all(it->second, TO_VARIANT_BOOL(b));
 		}
 	}
 
