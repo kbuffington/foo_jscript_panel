@@ -3,6 +3,7 @@
 #define _WIN32_WINNT _WIN32_WINNT_WINXP
 #define WINVER _WIN32_WINNT_WINXP
 
+#include <algorithm>
 #include <atomic>
 #include <filesystem>
 #include <fstream>
@@ -11,6 +12,13 @@
 #include <memory>
 #include <mutex>
 #include <vector>
+
+#define NOMINMAX
+namespace Gdiplus
+{
+	using std::min;
+	using std::max;
+};
 
 #include <WinSock2.h>
 #include <Windows.h>

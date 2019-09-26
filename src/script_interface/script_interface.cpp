@@ -312,7 +312,8 @@ STDMETHODIMP GdiBitmap::GetColourSchemeJSON(UINT count, BSTR* p)
 	if (!m_ptr || !p) return E_POINTER;
 
 	Gdiplus::BitmapData bmpdata;
-	int w = min(m_ptr->GetWidth(), 220), h = min(m_ptr->GetHeight(), 220);
+	int w = std::min((int)m_ptr->GetWidth(), 220);
+	int h = std::min((int)m_ptr->GetHeight(), 220);
 	Gdiplus::Bitmap* bitmap = new Gdiplus::Bitmap(w, h, PixelFormat32bppPARGB);
 	Gdiplus::Graphics gb(bitmap);
 	Gdiplus::Rect rect(0, 0, w, h);
@@ -368,7 +369,7 @@ STDMETHODIMP GdiBitmap::GetColourSchemeJSON(UINT count, BSTR* p)
 		});
 
 	json j = json::array();
-	t_size outCount = min(count, colour_counters.size());
+	t_size outCount = std::min(count, colour_counters.size());
 	for (t_size i = 0; i < outCount; ++i)
 	{
 		int colour = 0xff000000 | (int)clusters[i].getCentralValue(0) << 16 | (int)clusters[i].getCentralValue(1) << 8 | (int)clusters[i].getCentralValue(2);

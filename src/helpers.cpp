@@ -582,7 +582,7 @@ namespace helpers
 
 			if (get_text_width(hdc, text, textLength) < max_width)
 			{
-				while (get_text_width(hdc, text, min(len, textLength + 1)) <= max_width)
+				while (get_text_width(hdc, text, std::min(len, textLength + 1)) <= max_width)
 				{
 					++textLength;
 				}
@@ -596,7 +596,7 @@ namespace helpers
 			}
 
 			{
-				int fallbackTextLength = max(textLength, 1);
+				int fallbackTextLength = std::max(textLength, 1);
 
 				while (textLength > 0 && !is_wrap_char(text[textLength - 1], text[textLength]))
 				{

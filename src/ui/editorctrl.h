@@ -50,7 +50,6 @@ public:
 	static bool Contains(const std::string& str, char ch);
 	static bool Includes(const StyleAndWords& symbols, const std::string& value);
 	static bool ParseStyle(const std::string& definition, EditorStyle& style);
-	static t_size LengthWord(const char* word);
 
 	BOOL SubclassWindow(HWND hWnd);
 	IndentationStatus GetIndentState(int line);

@@ -239,7 +239,7 @@ LRESULT CScriptEditorCtrl::OnUpdateUI(LPNMHDR pnmn)
 		int columnAtCaret = GetColumn(braceAtCaret);
 		int columnOpposite = GetColumn(braceOpposite);
 
-		SetHighlightGuide(min(columnAtCaret, columnOpposite));
+		SetHighlightGuide(std::min(columnAtCaret, columnOpposite));
 	}
 
 	return 0;
@@ -472,7 +472,7 @@ bool CScriptEditorCtrl::RangeIsAllWhitespace(int start, int end)
 	if (start < 0)
 		start = 0;
 
-	end = min(end, GetLength());
+	end = std::min(end, GetLength());
 
 	for (int i = start; i < end; ++i)
 	{
@@ -658,7 +658,8 @@ std::string CScriptEditorCtrl::GetNearestWords(const char* wordStart, int search
 			break;
 		}
 
-		const t_size len = LengthWord(*it);
+		std::string word(*it);
+		const t_size len = std::min({ word.find('('), word.find(' '), word.length() });
 		if (words.length() > 0) words.append(" ", 1);
 		words.append(*it, len);
 	}
@@ -700,22 +701,6 @@ std::vector<std::string> CScriptEditorCtrl::GetLinePartsInStyle(int line, const 
 	}
 
 	return sv;
-}
-
-t_size CScriptEditorCtrl::LengthWord(const char* word)
-{
-	const char* endWord = nullptr;
-	if (!endWord) endWord = strchr(word, '(');
-	if (!endWord) endWord = word + strlen(word);
-	if (endWord > word)
-	{
-		endWord--;
-		while (endWord > word && isspace(*endWord))
-		{
-			endWord--;
-		}
-	}
-	return endWord - word + 1;
 }
 
 void CScriptEditorCtrl::AutoMarginWidth()
