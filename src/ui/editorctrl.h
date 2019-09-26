@@ -68,8 +68,8 @@ public:
 	int IndentOfBlock(int line);
 	slist GetLinePartsInStyle(int line, const StyleAndWords& saw);
 	std::string GetCurrentLine();
-	std::string GetNearestWord(const char* wordStart, int searchLen, int wordIndex);
-	std::string GetNearestWords(const char* wordStart, int searchLen);
+	std::string GetNearestWord(const char* wordStart, t_size searchLen, int wordIndex);
+	std::string GetNearestWords(const char* wordStart, t_size searchLen);
 	void AutoMarginWidth();
 	void AutomaticIndentation(int ch);
 	void ContinueCallTip();
@@ -91,8 +91,8 @@ private:
 	int CurrentCallTip;
 	int LastPosCallTip;
 	int StartCalltipWord;
-	slist apis;
 	std::string CurrentCallTipWord;
 	std::string FunctionDefinition;
 	std::string WordCharacters;
+	std::vector<panel_manager::api_item> apis;
 };

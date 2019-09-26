@@ -394,70 +394,69 @@ bool CScriptEditorCtrl::ParseStyle(const std::string& definition, EditorStyle& s
 	for (const auto& value : values)
 	{
 		slist tmp = helpers::split_string(value, ":");
-		auto opt = tmp[0].c_str();
+		auto opt = tmp[0];
+		auto secondary = tmp.size() == 2 ? tmp[1] : "";
 
-		const char* secondary = tmp.size() == 2 ? tmp[1].c_str() : nullptr;
-
-		if (strcmp(opt, "italics") == 0)
+		if (opt.compare("italics") == 0)
 		{
 			style.flags |= ESF_ITALICS;
 			style.italics = true;
 		}
-		else if (strcmp(opt, "notitalics") == 0)
+		else if (opt.compare("notitalics") == 0)
 		{
 			style.flags |= ESF_ITALICS;
 			style.italics = false;
 		}
-		else if (strcmp(opt, "bold") == 0)
+		else if (opt.compare("bold") == 0)
 		{
 			style.flags |= ESF_BOLD;
 			style.bold = true;
 		}
-		else if (strcmp(opt, "notbold") == 0)
+		else if (opt.compare("notbold") == 0)
 		{
 			style.flags |= ESF_BOLD;
 			style.bold = false;
 		}
-		else if (strcmp(opt, "font") == 0 && secondary)
+		else if (opt.compare("font") == 0)
 		{
 			style.flags |= ESF_FONT;
 			style.font = secondary;
 		}
-		else if (strcmp(opt, "fore") == 0 && secondary)
+		else if (opt.compare("fore") == 0)
 		{
 			style.flags |= ESF_FORE;
 			style.fore = ParseHex(secondary);
 		}
-		else if (strcmp(opt, "back") == 0 && secondary)
+		else if (opt.compare("back") == 0)
 		{
 			style.flags |= ESF_BACK;
 			style.back = ParseHex(secondary);
 		}
-		else if (strcmp(opt, "size") == 0 && secondary)
+		else if (opt.compare("size") == 0 && secondary.length())
 		{
 			style.flags |= ESF_SIZE;
-			style.size = atoi(secondary);
+			style.size = atoi(secondary.c_str());
 		}
-		else if (strcmp(opt, "underlined") == 0)
+		else if (opt.compare("underlined") == 0)
 		{
 			style.flags |= ESF_UNDERLINED;
 			style.underlined = true;
 		}
-		else if (strcmp(opt, "notunderlined") == 0)
+		else if (opt.compare("notunderlined") == 0)
 		{
 			style.flags |= ESF_UNDERLINED;
 			style.underlined = false;
 		}
-		else if (strcmp(opt, "case") == 0)
+		else if (opt.compare("case") == 0)
 		{
 			style.flags |= ESF_CASEFORCE;
 			style.case_force = SC_CASE_MIXED;
 
-			if (secondary)
+			if (secondary.length())
 			{
-				if (*secondary == 'u')
+				if (secondary.at(0) == 'u')
 					style.case_force = SC_CASE_UPPER;
-				else if (*secondary == 'l')
+				else if (secondary.at(0) == 'l')
 					style.case_force = SC_CASE_LOWER;
 			}
 		}
@@ -656,21 +655,20 @@ std::string CScriptEditorCtrl::GetCurrentLine()
 	return text.substr(0, text.length() - 1);
 }
 
-std::string CScriptEditorCtrl::GetNearestWord(const char* wordStart, int searchLen, int wordIndex)
+std::string CScriptEditorCtrl::GetNearestWord(const char* wordStart, t_size searchLen, int wordIndex)
 {
-	auto it = std::find_if(apis.begin(), apis.end(), [=](const std::string& item)
+	auto it = std::find_if(apis.begin(), apis.end(), [=](const panel_manager::api_item& item)
 	{
-		return StringComparePartialNC(searchLen)(wordStart, item) == 0;
+		return StringComparePartialNC(searchLen)(wordStart, item.first) == 0;
 	});
 
 	for (; it < apis.end(); ++it)
 	{
-		const char* word = it->c_str();
-		if (!word[searchLen] || !Contains(WordCharacters, word[searchLen]))
+		if (searchLen > it->first.length() || !Contains(WordCharacters, it->first.at(searchLen)))
 		{
 			if (wordIndex <= 0)
 			{
-				return *it;
+				return it->first;
 			}
 			wordIndex--;
 		}
@@ -678,24 +676,23 @@ std::string CScriptEditorCtrl::GetNearestWord(const char* wordStart, int searchL
 	return std::string();
 }
 
-std::string CScriptEditorCtrl::GetNearestWords(const char* wordStart, int searchLen)
+std::string CScriptEditorCtrl::GetNearestWords(const char* wordStart, t_size searchLen)
 {
 	std::string words;
-	auto it = std::find_if(apis.begin(), apis.end(), [=](const std::string& item)
+	auto it = std::find_if(apis.begin(), apis.end(), [=](const panel_manager::api_item& item)
 	{
-		return StringComparePartialNC(searchLen)(wordStart, item) == 0;
+		return StringComparePartialNC(searchLen)(wordStart, item.first) == 0;
 	});
 
 	for (; it < apis.end(); ++it)
 	{
-		if (StringComparePartialNC(searchLen)(wordStart, *it) != 0)
+		if (StringComparePartialNC(searchLen)(wordStart, it->first) != 0)
 		{
 			break;
 		}
 
-		const t_size len = std::min({ it->find('('), it->find(' '), it->length() });
 		if (words.length()) words.append(" ");
-		words.append(*it, 0, len);
+		words.append(it->first, 0, it->second);
 	}
 	return words;
 }

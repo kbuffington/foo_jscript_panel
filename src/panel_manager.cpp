@@ -11,19 +11,24 @@ panel_manager& panel_manager::instance()
 	return instance_;
 }
 
-slist panel_manager::get_apis()
+std::vector<panel_manager::api_item> panel_manager::get_apis()
 {
 	if (m_apis.empty())
 	{
 		puResource pures = uLoadResource(core_api::get_my_instance(), uMAKEINTRESOURCE(IDR_API), "TEXT");
 		std::string content(static_cast<const char*>(pures->GetPointer()), pures->GetSize());
 
-		slist tmp = helpers::split_string(content, "\r\n");
-		std::copy_if(tmp.begin(), tmp.end(), std::back_inserter(m_apis), [](const std::string& item) { return !item.empty();  });
-
-		std::sort(m_apis.begin(), m_apis.end(), [](const std::string& one, const std::string& two) -> bool
+		slist lines = helpers::split_string(content, "\r\n");
+		for (const auto& line : lines)
 		{
-			return _stricmp(one.c_str(), two.c_str()) < 0;
+			if (line.empty()) continue;
+			api_item item = {line, std::min({line.find('('), line.find(' '), line.length()})};
+			m_apis.emplace_back(item);
+		}
+
+		std::sort(m_apis.begin(), m_apis.end(), [](const auto& one, const auto& two) -> bool
+		{
+			return _stricmp(one.first.c_str(), two.first.c_str()) < 0;
 		});
 	}
 	return m_apis;

@@ -48,7 +48,6 @@ void cfg_sci_prop_sets::import(const char* content)
 {
 	slist lines = helpers::split_string(content, "\r\n");
 	t_str_map data_map;
-
 	for (const auto& line : lines)
 	{
 		if (line.empty() || line.at(0) == '#' || line.length() <= 3) continue;
