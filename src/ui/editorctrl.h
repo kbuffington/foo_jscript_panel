@@ -66,10 +66,10 @@ public:
 	bool StartCallTip();
 	int GetCaretInLine();
 	int IndentOfBlock(int line);
+	slist GetLinePartsInStyle(int line, const StyleAndWords& saw);
 	std::string GetCurrentLine();
 	std::string GetNearestWord(const char* wordStart, int searchLen, int wordIndex);
 	std::string GetNearestWords(const char* wordStart, int searchLen);
-	std::vector<std::string> GetLinePartsInStyle(int line, const StyleAndWords& saw);
 	void AutoMarginWidth();
 	void AutomaticIndentation(int ch);
 	void ContinueCallTip();
@@ -91,7 +91,7 @@ private:
 	int CurrentCallTip;
 	int LastPosCallTip;
 	int StartCalltipWord;
-	panel_manager::api_list apis;
+	slist apis;
 	std::string CurrentCallTipWord;
 	std::string FunctionDefinition;
 	std::string WordCharacters;

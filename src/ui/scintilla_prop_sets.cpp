@@ -46,38 +46,18 @@ void cfg_sci_prop_sets::get_data_raw(stream_writer* p_stream, abort_callback& p_
 
 void cfg_sci_prop_sets::import(const char* content)
 {
-	using t_string_chain_list = pfc::chain_list_v2_t<pfc::string8_fast>;
-	t_string_chain_list lines;
-	pfc::splitStringByLines(lines, content);
-
-	pfc::string8_fast key;
+	slist lines = helpers::split_string(content, "\r\n");
 	t_str_map data_map;
 
-	for (t_string_chain_list::iterator iter = lines.first(); iter != lines.last(); ++iter)
+	for (const auto& line : lines)
 	{
-		const int len = iter->get_length();
-		if (len > 0)
-		{
-			const char* ptr = iter->get_ptr();
-
-			if (*ptr == '#' || len <= 3)
-			{
-				continue;
-			}
-
-			const char* delim = strchr(ptr, '=');
-
-			if ((!delim) || (delim - ptr + 1 > len))
-			{
-				continue;
-			}
-
-			if (delim > ptr)
-			{
-				key.set_string(ptr, delim - ptr);
-				data_map[key].set_string(delim + 1);
-			}
-		}
+		if (line.empty() || line.at(0) == '#' || line.length() <= 3) continue;
+		t_size pos = line.find('=');
+		if (pos == std::string::npos) continue;
+		std::string key = line.substr(0, pos);
+		std::string value = line.substr(pos + 1);
+		if (key.empty() || value.empty()) continue;
+		data_map[key.c_str()].set_string(value.c_str());
 	}
 	merge_data(data_map);
 }

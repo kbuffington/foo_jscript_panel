@@ -496,13 +496,10 @@ void script_host::ProcessScriptInfo(t_script_info& info)
 	}
 
 	std::string pre = source.substr(start + 21, end - start - 21);
+	slist lines = helpers::split_string(pre, "\r\n");
 
-	pfc::string_list_impl lines;
-	pfc::splitStringByLines(lines, pre.c_str());
-
-	for (t_size i = 0; i < lines.get_count(); ++i)
+	for (const std::string& line : lines)
 	{
-		std::string line = lines[i];
 		if (line.find("@name") < argh)
 		{
 			info.name = ExtractValue(line);

@@ -47,3 +47,4 @@ namespace Gdiplus
 #include <component_defines.h>
 
 using namespace pfc::stringcvt;
+using slist = std::vector<std::string>;

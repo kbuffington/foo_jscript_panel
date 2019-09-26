@@ -492,6 +492,22 @@ namespace helpers
 		return content;
 	}
 
+	slist split_string(const std::string& str, const std::string& delims)
+	{
+		slist output;
+		t_size first = 0;
+		while (first < str.size())
+		{
+			const auto second = str.find_first_of(delims, first);
+			if (first != second)
+				output.emplace_back(str.substr(first, second - first));
+			if (second == std::string::npos)
+				break;
+			first = second + 1;
+		}
+		return output;
+	}
+
 	t_size detect_charset(const char* fileName)
 	{
 		pfc::string8_fast text;

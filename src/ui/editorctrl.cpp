@@ -20,12 +20,12 @@ struct StringComparePartialNC
 {
 	StringComparePartialNC(t_size p_len) : len(p_len) {}
 
-	int operator()(const char* s1, const char* s2) const
+	int operator()(const std::string& s1, const std::string& s2) const
 	{
-		t_size len1 = pfc::strlen_max_t(s1, len);
-		t_size len2 = pfc::strlen_max_t(s2, len);
+		t_size len1 = pfc::strlen_max_t(s1.c_str(), len);
+		t_size len2 = pfc::strlen_max_t(s2.c_str(), len);
 
-		return pfc::stricmp_ascii_ex(s1, len1, s2, len2);
+		return pfc::stricmp_ascii_ex(s1.c_str(), len1, s2.c_str(), len2);
 	}
 
 	t_size len;
@@ -389,16 +389,14 @@ bool CScriptEditorCtrl::ParseStyle(const std::string& definition, EditorStyle& s
 {
 	if (definition.empty()) return false;
 
-	pfc::string_list_impl values;
-	pfc::splitStringByChar(values, definition.c_str(), ',');
+	slist values = helpers::split_string(definition, ",");
 
-	for (t_size i = 0; i < values.get_count(); ++i)
+	for (const auto& value : values)
 	{
-		pfc::string_list_impl tmp;
-		pfc::splitStringByChar(tmp, values[i], ':');
-		auto opt = tmp[0];
+		slist tmp = helpers::split_string(value, ":");
+		auto opt = tmp[0].c_str();
 
-		const char* secondary = tmp.get_count() == 2 ? tmp[1] : nullptr;
+		const char* secondary = tmp.size() == 2 ? tmp[1].c_str() : nullptr;
 
 		if (strcmp(opt, "italics") == 0)
 		{
@@ -613,66 +611,13 @@ int CScriptEditorCtrl::IndentOfBlock(int line)
 	return indentBlock;
 }
 
-std::string CScriptEditorCtrl::GetCurrentLine()
-{
-	const int len = GetCurLine(0, 0);
-	std::string text(len, '\0');
-	GetCurLine(&text[0], len);
-	return text.substr(0, text.length() - 1);
-}
-
-std::string CScriptEditorCtrl::GetNearestWord(const char* wordStart, int searchLen, int wordIndex)
-{
-	auto it = std::find_if(apis.begin(), apis.end(), [=](const auto& item)
-	{
-		return StringComparePartialNC(searchLen)(wordStart, item) == 0;
-	});
-
-	for (; it < apis.end(); ++it)
-	{
-		const char* word = *it;
-		if (!word[searchLen] || !Contains(WordCharacters, word[searchLen]))
-		{
-			if (wordIndex <= 0)
-			{
-				return std::string(word);
-			}
-			wordIndex--;
-		}
-	}
-	return std::string();
-}
-
-std::string CScriptEditorCtrl::GetNearestWords(const char* wordStart, int searchLen)
-{
-	std::string words;
-	auto it = std::find_if(apis.begin(), apis.end(), [=](const auto& item)
-	{
-		return StringComparePartialNC(searchLen)(wordStart, item) == 0;
-	});
-
-	for (; it < apis.end(); ++it)
-	{
-		if (StringComparePartialNC(searchLen)(wordStart, *it) != 0)
-		{
-			break;
-		}
-
-		std::string word(*it);
-		const t_size len = std::min({ word.find('('), word.find(' '), word.length() });
-		if (words.length() > 0) words.append(" ", 1);
-		words.append(*it, len);
-	}
-	return words;
-}
-
-std::vector<std::string> CScriptEditorCtrl::GetLinePartsInStyle(int line, const StyleAndWords& saw)
+slist CScriptEditorCtrl::GetLinePartsInStyle(int line, const StyleAndWords& saw)
 {
 	const bool separateCharacters = saw.IsSingleChar();
 	const int thisLineStart = PositionFromLine(line);
 	const int nextLineStart = PositionFromLine(line + 1);
+	slist sv;
 	std::string s;
-	std::vector<std::string> sv;
 
 	for (int pos = thisLineStart; pos < nextLineStart; ++pos)
 	{
@@ -701,6 +646,58 @@ std::vector<std::string> CScriptEditorCtrl::GetLinePartsInStyle(int line, const 
 	}
 
 	return sv;
+}
+
+std::string CScriptEditorCtrl::GetCurrentLine()
+{
+	const int len = GetCurLine(0, 0);
+	std::string text(len, '\0');
+	GetCurLine(&text[0], len);
+	return text.substr(0, text.length() - 1);
+}
+
+std::string CScriptEditorCtrl::GetNearestWord(const char* wordStart, int searchLen, int wordIndex)
+{
+	auto it = std::find_if(apis.begin(), apis.end(), [=](const std::string& item)
+	{
+		return StringComparePartialNC(searchLen)(wordStart, item) == 0;
+	});
+
+	for (; it < apis.end(); ++it)
+	{
+		const char* word = it->c_str();
+		if (!word[searchLen] || !Contains(WordCharacters, word[searchLen]))
+		{
+			if (wordIndex <= 0)
+			{
+				return *it;
+			}
+			wordIndex--;
+		}
+	}
+	return std::string();
+}
+
+std::string CScriptEditorCtrl::GetNearestWords(const char* wordStart, int searchLen)
+{
+	std::string words;
+	auto it = std::find_if(apis.begin(), apis.end(), [=](const std::string& item)
+	{
+		return StringComparePartialNC(searchLen)(wordStart, item) == 0;
+	});
+
+	for (; it < apis.end(); ++it)
+	{
+		if (StringComparePartialNC(searchLen)(wordStart, *it) != 0)
+		{
+			break;
+		}
+
+		const t_size len = std::min({ it->find('('), it->find(' '), it->length() });
+		if (words.length()) words.append(" ");
+		words.append(*it, 0, len);
+	}
+	return words;
 }
 
 void CScriptEditorCtrl::AutoMarginWidth()
@@ -783,7 +780,7 @@ void CScriptEditorCtrl::AutomaticIndentation(int ch)
 	}
 	else if ((ch == '\r' || ch == '\n') && (selStart == thisLineStart))
 	{
-		const std::vector<std::string> controlWords = GetLinePartsInStyle(curLine - 1, BlockEnd);
+		const slist controlWords = GetLinePartsInStyle(curLine - 1, BlockEnd);
 		if (controlWords.size() && Includes(BlockEnd, controlWords[0]))
 		{
 			SetIndentation(curLine - 1, IndentOfBlock(curLine - 2) - indentSize);
@@ -944,7 +941,7 @@ void CScriptEditorCtrl::RestoreDefaultStyle()
 		SetSelFore(true, ParseHex(colour));
 		SetSelBack(true, RGB(0xc0, 0xc0, 0xc0));
 	}
-		
+
 	if (GetPropertyEx("style.selection.back", colour))
 	{
 		SetSelBack(true, ParseHex(colour));
@@ -954,7 +951,7 @@ void CScriptEditorCtrl::RestoreDefaultStyle()
 	{
 		SetCaretFore(ParseHex(colour));
 	}
-	
+
 	if (GetPropertyEx("style.caret.line.back", colour))
 	{
 		SetCaretLineVisible(true);

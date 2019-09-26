@@ -63,9 +63,8 @@ BOOL CDialogConf::OnInitDialog(HWND hwndFocus, LPARAM lParam)
 			uAppendMenu(sub, MF_STRING, ID_SAMPLES_BEGIN + m_samples.get_count() - 1, display);
 		}
 
-		pfc::string_list_impl path_split;
-		pfc::splitStringSimple_toList(path_split, "\\", folder);
-		uAppendMenu(samples, MF_STRING | MF_POPUP, (UINT_PTR)sub, path_split[path_split.get_count() - 1]);
+		slist path_split = helpers::split_string(folder.get_ptr(), "\\");
+		uAppendMenu(samples, MF_STRING | MF_POPUP, (UINT_PTR)sub, path_split[path_split.size() - 1].c_str());
 	}
 
 	uAppendMenu(m_menu, MF_STRING | MF_POPUP, (UINT_PTR)samples, "Samples");
