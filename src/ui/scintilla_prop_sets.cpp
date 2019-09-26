@@ -56,7 +56,7 @@ void cfg_sci_prop_sets::import(const char* content)
 		if (pos == std::string::npos) continue;
 		std::string key = line.substr(0, pos);
 		std::string value = line.substr(pos + 1);
-		if (key.empty() || value.empty()) continue;
+		if (key.empty()) continue;
 		data_map[key.c_str()].set_string(value.c_str());
 	}
 	merge_data(data_map);
