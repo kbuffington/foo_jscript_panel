@@ -6,22 +6,6 @@
 
 #include <wtlscintilla.h>
 
-enum IndentationStatus
-{
-	isNone,
-	isBlockStart,
-	isBlockEnd,
-	isKeyWordStart
-};
-
-struct StyleAndWords
-{
-	int styleNumber;
-	std::string words;
-	bool IsEmpty() const { return words.length() == 0; }
-	bool IsSingleChar() const { return words.length() == 1; }
-};
-
 class CScriptEditorCtrl : public CScintillaCtrl
 {
 public:
@@ -35,6 +19,39 @@ public:
 		REFLECTED_COMMAND_CODE_HANDLER_EX(SCEN_CHANGE, OnChange)
 	END_MSG_MAP()
 
+	enum IndentationStatus
+	{
+		isNone,
+		isBlockStart,
+		isBlockEnd,
+		isKeyWordStart
+	};
+
+	struct EditorStyle
+	{
+		EditorStyle() : back(0), fore(0), case_force(0), flags(0), size(0), bold(false), italics(false), underlined(false) {}
+
+		DWORD back, fore;
+		bool bold, italics, underlined;
+		int case_force;
+		std::string font;
+		t_size flags, size;
+	};
+
+	struct StyleAndWords
+	{
+		int styleNumber;
+		std::string words;
+		bool IsEmpty() const { return words.length() == 0; }
+		bool IsSingleChar() const { return words.length() == 1; }
+	};
+
+	static DWORD ParseHex(const std::string& hex);
+	static bool Contains(const std::string& str, char ch);
+	static bool Includes(const StyleAndWords& symbols, const std::string& value);
+	static bool ParseStyle(const std::string& definition, EditorStyle& style);
+	static t_size LengthWord(const char* word);
+
 	BOOL SubclassWindow(HWND hWnd);
 	IndentationStatus GetIndentState(int line);
 	LRESULT OnChange(UINT uNotifyCode, int nID, HWND wndCtl);
@@ -44,7 +61,7 @@ public:
 	LRESULT OnZoom(LPNMHDR pnmn);
 	Sci_CharacterRange GetSelection();
 	bool FindBraceMatchPos(int& braceAtCaret, int& braceOpposite);
-	bool GetPropertyEx(const char* key, pfc::string_base& out);
+	bool GetPropertyEx(const std::string& key, std::string& out);
 	bool RangeIsAllWhitespace(int start, int end);
 	bool StartAutoComplete();
 	bool StartCallTip();
@@ -52,7 +69,7 @@ public:
 	int IndentOfBlock(int line);
 	std::string GetCurrentLine();
 	std::string GetNearestWord(const char* wordStart, int searchLen, int wordIndex);
-	std::string GetNearestWords(const char* wordStart, int searchLen, char separator);
+	std::string GetNearestWords(const char* wordStart, int searchLen);
 	std::vector<std::string> GetLinePartsInStyle(int line, const StyleAndWords& saw);
 	void AutoMarginWidth();
 	void AutomaticIndentation(int ch);
