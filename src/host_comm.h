@@ -18,27 +18,27 @@ struct t_script_info
 	{
 		pfc::string8_fast ret;
 		ret << JSP_NAME_VERSION " (";
-		if (name.get_length())
+		if (name.length())
 		{
-			ret << name;
+			ret << name.c_str();
 		}
 		else
 		{
 			ret << "id:" << id;
 		}
-		if (version.get_length())
+		if (version.length())
 		{
-			ret << " v" << version;
+			ret << " v" << version.c_str();
 		}
-		if (author.get_length())
+		if (author.length())
 		{
-			ret << " by " << author;
+			ret << " by " << author.c_str();
 		}
 		ret << ")";
 		return ret;
 	}
 
-	pfc::string8_fast expand_import(t_size idx)
+	std::string expand_import(t_size idx)
 	{
 		std::string tmp = imports[idx];
 		for (const auto& [key, value] : expand_table)
@@ -49,22 +49,22 @@ struct t_script_info
 				break;
 			}
 		}
-		return tmp.c_str();
+		return tmp;
 	}
 
 	void clear()
 	{
-		imports.remove_all();
+		imports.clear();
 		name = "";
 		version = "";
 		author = "";
 		id = 0;
 	}
 
-	pfc::string_list_impl imports;
-	pfc::string8_fast name;
-	pfc::string8_fast version;
-	pfc::string8_fast author;
+	slist imports;
+	std::string name;
+	std::string version;
+	std::string author;
 	t_size id;
 };
 

@@ -305,7 +305,7 @@ STDMETHODIMP Window::get_Name(BSTR* p)
 {
 	if (!p) return E_POINTER;
 
-	pfc::string8_fast name = m_host->m_script_info.name;
+	pfc::string8_fast name = m_host->m_script_info.name.c_str();
 	if (name.is_empty())
 	{
 		name << "id:" << m_host->m_script_info.id;

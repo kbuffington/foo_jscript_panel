@@ -211,13 +211,13 @@ HRESULT script_host::ProcessScripts(IActiveScriptParsePtr& parser)
 	HRESULT hr = S_OK;
 	bool import_error = false;
 	pfc::string8_fast path, code;
-	const t_size count = m_host->m_script_info.imports.get_count();
+	const t_size count = m_host->m_script_info.imports.size();
 
 	for (t_size i = 0; i <= count; ++i)
 	{
 		if (i < count) // import
 		{
-			path = m_host->m_script_info.expand_import(i);
+			path = m_host->m_script_info.expand_import(i).c_str();
 			code = helpers::read_file(path);
 			if (code.is_empty())
 			{
@@ -435,14 +435,14 @@ bool script_host::Ready()
 	return m_engine_inited && m_script_engine;
 }
 
-pfc::string8_fast script_host::ExtractValue(const std::string& source)
+std::string script_host::ExtractValue(const std::string& source)
 {
 	char q = '"';
 	t_size first = source.find_first_of(q);
 	t_size last = source.find_last_of(q);
 	if (first < last && last < source.length())
 	{
-		return source.substr(first + 1, last - first - 1).c_str();
+		return source.substr(first + 1, last - first - 1);
 	}
 	return "";
 }
@@ -514,7 +514,7 @@ void script_host::ProcessScriptInfo(t_script_info& info)
 		}
 		else if (line.find("@import") < argh)
 		{
-			info.imports.add_item(ExtractValue(line));
+			info.imports.emplace_back(ExtractValue(line));
 		}
 	}
 }

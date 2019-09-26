@@ -37,7 +37,7 @@ public:
 	ULONG STDMETHODCALLTYPE Release() override;
 	bool HasError();
 	bool Ready();
-	pfc::string8_fast ExtractValue(const std::string& source);
+	std::string ExtractValue(const std::string& source);
 	void Finalise();
 	void ProcessScriptInfo(t_script_info& info);
 
