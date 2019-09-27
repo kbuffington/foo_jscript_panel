@@ -89,33 +89,166 @@ LRESULT panel_window::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 	case WM_LBUTTONDOWN:
 	case WM_MBUTTONDOWN:
 	case WM_RBUTTONDOWN:
-		on_mouse_button_down(msg, wp, lp);
+		{
+			if (m_grabfocus)
+			{
+				SetFocus(m_hwnd);
+			}
+
+			SetCapture(m_hwnd);
+
+			VARIANTARG args[3];
+			args[0].vt = VT_I4;
+			args[0].lVal = wp;
+			args[1].vt = VT_I4;
+			args[1].lVal = GET_Y_LPARAM(lp);
+			args[2].vt = VT_I4;
+			args[2].lVal = GET_X_LPARAM(lp);
+
+			switch (msg)
+			{
+			case WM_LBUTTONDOWN:
+				script_invoke(callback_id::on_mouse_lbtn_down, args, _countof(args));
+				break;
+
+			case WM_MBUTTONDOWN:
+				script_invoke(callback_id::on_mouse_mbtn_down, args, _countof(args));
+				break;
+
+			case WM_RBUTTONDOWN:
+				script_invoke(callback_id::on_mouse_rbtn_down, args, _countof(args));
+				break;
+			}
+		}
 		break;
 	case WM_LBUTTONUP:
 	case WM_MBUTTONUP:
 	case WM_RBUTTONUP:
-		if (on_mouse_button_up(msg, wp, lp))
-			return 0;
+		{
+			bool ret = false;
+
+			VARIANTARG args[3];
+			args[0].vt = VT_I4;
+			args[0].lVal = wp;
+			args[1].vt = VT_I4;
+			args[1].lVal = GET_Y_LPARAM(lp);
+			args[2].vt = VT_I4;
+			args[2].lVal = GET_X_LPARAM(lp);
+
+			switch (msg)
+			{
+			case WM_LBUTTONUP:
+				script_invoke(callback_id::on_mouse_lbtn_up, args, _countof(args));
+				break;
+
+			case WM_MBUTTONUP:
+				script_invoke(callback_id::on_mouse_mbtn_up, args, _countof(args));
+				break;
+
+			case WM_RBUTTONUP:
+			{
+				// Bypass the user code?
+				if (IsKeyPressed(VK_LSHIFT) && IsKeyPressed(VK_LWIN))
+				{
+					break;
+				}
+
+				_variant_t result;
+				if (SUCCEEDED(script_invoke(callback_id::on_mouse_rbtn_up, args, _countof(args), &result)))
+				{
+					if (SUCCEEDED(VariantChangeType(&result, &result, 0, VT_BOOL)))
+					{
+						ret = !!result.boolVal;
+					}
+				}
+			}
+			break;
+			}
+
+			ReleaseCapture();
+			if (ret)
+				return 0;
+		}
 		break;
 	case WM_LBUTTONDBLCLK:
 	case WM_MBUTTONDBLCLK:
 	case WM_RBUTTONDBLCLK:
-		on_mouse_button_dblclk(msg, wp, lp);
+		{
+			VARIANTARG args[3];
+			args[0].vt = VT_I4;
+			args[0].lVal = wp;
+			args[1].vt = VT_I4;
+			args[1].lVal = GET_Y_LPARAM(lp);
+			args[2].vt = VT_I4;
+			args[2].lVal = GET_X_LPARAM(lp);
+
+			switch (msg)
+			{
+			case WM_LBUTTONDBLCLK:
+				script_invoke(callback_id::on_mouse_lbtn_dblclk, args, _countof(args));
+				break;
+
+			case WM_MBUTTONDBLCLK:
+				script_invoke(callback_id::on_mouse_mbtn_dblclk, args, _countof(args));
+				break;
+
+			case WM_RBUTTONDBLCLK:
+				script_invoke(callback_id::on_mouse_rbtn_dblclk, args, _countof(args));
+				break;
+			}
+		}
 		break;
 	case WM_CONTEXTMENU:
-		on_context_menu(GET_X_LPARAM(lp), GET_Y_LPARAM(lp));
+		{
+			int x = GET_X_LPARAM(lp);
+			int y = GET_Y_LPARAM(lp);
+
+			HMENU menu = CreatePopupMenu();
+			const int base_id = 0;
+			build_context_menu(menu, x, y, base_id);
+			const int idx = TrackPopupMenu(menu, TPM_RIGHTBUTTON | TPM_NONOTIFY | TPM_RETURNCMD, x, y, 0, m_hwnd, 0);
+			execute_context_menu_command(idx, base_id);
+			DestroyMenu(menu);
+		}
 		return 1;
 	case WM_MOUSEMOVE:
-		on_mouse_move(wp, lp);
+		{
+			if (!m_is_mouse_tracked)
+			{
+				TRACKMOUSEEVENT tme;
+
+				tme.cbSize = sizeof(tme);
+				tme.hwndTrack = m_hwnd;
+				tme.dwFlags = TME_LEAVE;
+				TrackMouseEvent(&tme);
+				m_is_mouse_tracked = true;
+				SetCursor(LoadCursor(nullptr, IDC_ARROW));
+			}
+
+			VARIANTARG args[3];
+			args[0].vt = VT_I4;
+			args[0].lVal = wp;
+			args[1].vt = VT_I4;
+			args[1].lVal = GET_Y_LPARAM(lp);
+			args[2].vt = VT_I4;
+			args[2].lVal = GET_X_LPARAM(lp);
+			script_invoke(callback_id::on_mouse_move, args, _countof(args));
+		}
 		break;
 	case WM_MOUSELEAVE:
-		on_mouse_leave();
+		m_is_mouse_tracked = false;
+
+		script_invoke(callback_id::on_mouse_leave);
+		SetCursor(LoadCursor(nullptr, IDC_ARROW));
 		break;
 	case WM_MOUSEWHEEL:
-		on_mouse_wheel(wp);
-		break;
 	case WM_MOUSEHWHEEL:
-		on_mouse_wheel_h(wp);
+		{
+			VARIANTARG args[1];
+			args[0].vt = VT_I4;
+			args[0].lVal = GET_WHEEL_DELTA_WPARAM(wp) > 0 ? 1 : -1;
+			script_invoke(msg == WM_MOUSEWHEEL ? callback_id::on_mouse_wheel : callback_id::on_mouse_wheel_h, args, _countof(args));
+		}
 		break;
 	case WM_SETCURSOR:
 		return 1;
@@ -164,122 +297,173 @@ LRESULT panel_window::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 			script_invoke(callback_id::on_focus, args, _countof(args));
 		}
 		break;
-	case callback_id::on_always_on_top_changed:
-		on_always_on_top_changed(wp);
-		return 0;
 	case callback_id::on_colours_changed:
-		on_colours_changed();
-		return 0;
-	case callback_id::on_cursor_follow_playback_changed:
-		on_cursor_follow_playback_changed(wp);
-		return 0;
 	case callback_id::on_dsp_preset_changed:
-		on_dsp_preset_changed();
-		return 0;
 	case callback_id::on_font_changed:
-		on_font_changed();
+	case callback_id::on_output_device_changed:
+	case callback_id::on_playback_dynamic_info:
+	case callback_id::on_playback_dynamic_info_track:
+	case callback_id::on_playlist_items_selection_change:
+	case callback_id::on_playlist_switch:
+	case callback_id::on_playlists_changed:
+	case callback_id::on_selection_changed:
+		script_invoke(msg);
 		return 0;
-	case callback_id::on_get_album_art_done:
-		on_get_album_art_done(wp);
-		return 0;
-	case callback_id::on_item_focus_change:
-		on_item_focus_change(wp);
+	case callback_id::on_always_on_top_changed:
+	case callback_id::on_cursor_follow_playback_changed:
+	case callback_id::on_playback_follow_cursor_changed:
+	case callback_id::on_playback_pause:
+	case callback_id::on_playlist_stop_after_current_changed:
+		{
+			VARIANTARG args[1];
+			args[0].vt = VT_BOOL;
+			args[0].boolVal = TO_VARIANT_BOOL(wp);
+			script_invoke(msg, args, _countof(args));
+		}
 		return 0;
 	case callback_id::on_item_played:
-		on_item_played(wp);
+	case callback_id::on_playback_edited:
+	case callback_id::on_playback_new_track:
+		{
+			callback_data_scope_releaser<callback_data<metadb_handle_ptr>> data(wp);
+			auto handle = new com_object_impl_t<MetadbHandle>(data->m_item1);
+
+			VARIANTARG args[1];
+			args[0].vt = VT_DISPATCH;
+			args[0].pdispVal = handle;
+			script_invoke(msg, args, _countof(args));
+
+			if (handle)
+				handle->Release();
+		}
 		return 0;
 	case callback_id::on_library_items_added:
-		on_library_items_added(wp);
-		return 0;
 	case callback_id::on_library_items_changed:
-		on_library_items_changed(wp);
-		return 0;
 	case callback_id::on_library_items_removed:
-		on_library_items_removed(wp);
-		return 0;
-	case callback_id::on_load_image_done:
-		on_load_image_done(wp);
+	case callback_id::on_metadb_changed:
+		{
+			callback_data_scope_releaser<metadb_callback_data> data(wp);
+			auto handles = new com_object_impl_t<MetadbHandleList>(data->m_items);
+
+			VARIANTARG args[1];
+			args[0].vt = VT_DISPATCH;
+			args[0].pdispVal = handles;
+			script_invoke(msg, args, _countof(args));
+
+			if (handles)
+				handles->Release();
+		}
 		return 0;
 	case callback_id::on_main_menu:
-		on_main_menu(wp);
-		return 0;
-	case callback_id::on_metadb_changed:
-		on_metadb_changed(wp);
-		return 0;
-	case callback_id::on_notify_data:
-		on_notify_data(wp);
-		return 0;
-	case callback_id::on_output_device_changed:
-		on_output_device_changed();
-		return 0;
-	case callback_id::on_playback_dynamic_info:
-		on_playback_dynamic_info();
-		return 0;
-	case callback_id::on_playback_dynamic_info_track:
-		on_playback_dynamic_info_track();
-		return 0;
-	case callback_id::on_playback_edited:
-		on_playback_edited(wp);
-		return 0;
-	case callback_id::on_playback_follow_cursor_changed:
-		on_playback_follow_cursor_changed(wp);
-		return 0;
-	case callback_id::on_playback_new_track:
-		on_playback_new_track(wp);
-		return 0;
 	case callback_id::on_playback_order_changed:
-		on_playback_order_changed(wp);
-		return 0;
-	case callback_id::on_playback_pause:
-		on_playback_pause(wp);
-		return 0;
 	case callback_id::on_playback_queue_changed:
-		on_playback_queue_changed(wp);
-		return 0;
-	case callback_id::on_playback_seek:
-		on_playback_seek(wp);
-		return 0;
-	case callback_id::on_playback_starting:
-		on_playback_starting(wp, lp);
-		return 0;
 	case callback_id::on_playback_stop:
-		on_playback_stop(wp);
-		return 0;
-	case callback_id::on_playback_time:
-		on_playback_time(wp);
-		return 0;
-	case callback_id::on_playlist_item_ensure_visible:
-		on_playlist_item_ensure_visible(wp, lp);
-		return 0;
 	case callback_id::on_playlist_items_added:
-		on_playlist_items_added(wp);
-		return 0;
-	case callback_id::on_playlist_items_removed:
-		on_playlist_items_removed(wp, lp);
-		return 0;
 	case callback_id::on_playlist_items_reordered:
-		on_playlist_items_reordered(wp);
-		return 0;
-	case callback_id::on_playlist_items_selection_change:
-		on_playlist_items_selection_change();
-		return 0;
-	case callback_id::on_playlist_stop_after_current_changed:
-		on_playlist_stop_after_current_changed(wp);
-		return 0;
-	case callback_id::on_playlist_switch:
-		on_playlist_switch();
-		return 0;
-	case callback_id::on_playlists_changed:
-		on_playlists_changed();
-		return 0;
 	case callback_id::on_replaygain_mode_changed:
-		on_replaygain_mode_changed(wp);
-		return 0;
-	case callback_id::on_selection_changed:
-		on_selection_changed();
+		{
+			VARIANTARG args[1];
+			args[0].vt = VT_UI4;
+			args[0].ulVal = wp;
+			script_invoke(msg, args, _countof(args));
+		}
 		return 0;
 	case callback_id::on_volume_change:
-		on_volume_change(wp);
+		{
+			callback_data_scope_releaser<callback_data<float>> data(wp);
+
+			VARIANTARG args[1];
+			args[0].vt = VT_R4;
+			args[0].fltVal = data->m_item1;
+			script_invoke(msg, args, _countof(args));
+		}
+		return 0;
+	case callback_id::on_playback_seek:
+	case callback_id::on_playback_time:
+		{
+			callback_data_scope_releaser<callback_data<double>> data(wp);
+
+			VARIANTARG args[1];
+			args[0].vt = VT_R8;
+			args[0].dblVal = data->m_item1;
+			script_invoke(msg, args, _countof(args));
+		}
+		return 0;
+	case callback_id::on_get_album_art_done:
+		{
+			auto param = reinterpret_cast<helpers::album_art_async::t_param*>(wp);
+
+			VARIANTARG args[4];
+			args[0].vt = VT_BSTR;
+			args[0].bstrVal = param->path;
+			args[1].vt = VT_DISPATCH;
+			args[1].pdispVal = param->bitmap;
+			args[2].vt = VT_UI4;
+			args[2].ulVal = param->art_id;
+			args[3].vt = VT_DISPATCH;
+			args[3].pdispVal = param->handle;
+			script_invoke(msg, args, _countof(args));
+		}
+		return 0;
+	case callback_id::on_item_focus_change:
+		{
+			callback_data_scope_releaser<callback_data<t_size, t_size, t_size>> data(wp);
+
+			VARIANTARG args[3];
+			args[0].vt = VT_UI4;
+			args[0].ulVal = data->m_item3;
+			args[1].vt = VT_UI4;
+			args[1].ulVal = data->m_item2;
+			args[2].vt = VT_UI4;
+			args[2].ulVal = data->m_item1;
+			script_invoke(msg, args, _countof(args));
+		}
+		return 0;
+	case callback_id::on_load_image_done:
+		{
+			auto param = reinterpret_cast<helpers::load_image_async::t_param*>(wp);
+
+			VARIANTARG args[3];
+			args[0].vt = VT_BSTR;
+			args[0].bstrVal = param->path;
+			args[1].vt = VT_DISPATCH;
+			args[1].pdispVal = param->bitmap;
+			args[2].vt = VT_UI4;
+			args[2].ulVal = param->cookie;
+			script_invoke(msg, args, _countof(args));
+		}
+		return 0;
+	case callback_id::on_notify_data:
+		{
+			callback_data_scope_releaser<callback_data<_bstr_t, _variant_t>> data(wp);
+
+			VARIANTARG args[2];
+			args[0] = data->m_item2;
+			args[1].vt = VT_BSTR;
+			args[1].bstrVal = data->m_item1;
+			script_invoke(msg, args, _countof(args));
+		}
+		return 0;
+	case callback_id::on_playback_starting:
+		{
+			VARIANTARG args[2];
+			args[0].vt = VT_BOOL;
+			args[0].boolVal = TO_VARIANT_BOOL(lp);
+			args[1].vt = VT_UI4;
+			args[1].ulVal = wp;
+			script_invoke(msg, args, _countof(args));
+		}
+		return 0;
+	case callback_id::on_playlist_item_ensure_visible:
+	case callback_id::on_playlist_items_removed:
+		{
+			VARIANTARG args[2];
+			args[0].vt = VT_UI4;
+			args[0].ulVal = lp;
+			args[1].vt = VT_UI4;
+			args[1].ulVal = wp;
+			script_invoke(msg, args, _countof(args));
+		}
 		return 0;
 	case UWM_TIMER:
 		host_timer_dispatcher::instance().invoke_message(wp);
@@ -289,52 +473,6 @@ LRESULT panel_window::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 		return 0;
 	}
 	return uDefWindowProc(hwnd, msg, wp, lp);
-}
-
-bool panel_window::on_mouse_button_up(UINT msg, WPARAM wp, LPARAM lp)
-{
-	bool ret = false;
-
-	VARIANTARG args[3];
-	args[0].vt = VT_I4;
-	args[0].lVal = wp;
-	args[1].vt = VT_I4;
-	args[1].lVal = GET_Y_LPARAM(lp);
-	args[2].vt = VT_I4;
-	args[2].lVal = GET_X_LPARAM(lp);
-
-	switch (msg)
-	{
-	case WM_LBUTTONUP:
-		script_invoke(callback_id::on_mouse_lbtn_up, args, _countof(args));
-		break;
-
-	case WM_MBUTTONUP:
-		script_invoke(callback_id::on_mouse_mbtn_up, args, _countof(args));
-		break;
-
-	case WM_RBUTTONUP:
-		{
-			// Bypass the user code?
-			if (IsKeyPressed(VK_LSHIFT) && IsKeyPressed(VK_LWIN))
-			{
-				break;
-			}
-
-			_variant_t result;
-			if (SUCCEEDED(script_invoke(callback_id::on_mouse_rbtn_up, args, _countof(args), &result)))
-			{
-				if (SUCCEEDED(VariantChangeType(&result, &result, 0, VT_BOOL)))
-				{
-					ret = !!result.boolVal;
-				}
-			}
-		}
-		break;
-	}
-
-	ReleaseCapture();
-	return ret;
 }
 
 bool panel_window::show_configure_popup(HWND parent)
@@ -419,292 +557,6 @@ void panel_window::load_script()
 	}
 
 	FB2K_console_formatter() << m_script_info.build_info_string() << ": initialised in " << (int)(timer.query() * 1000) << " ms";
-}
-
-void panel_window::on_always_on_top_changed(WPARAM wp)
-{
-	VARIANTARG args[1];
-	args[0].vt = VT_BOOL;
-	args[0].boolVal = TO_VARIANT_BOOL(wp);
-	script_invoke(callback_id::on_always_on_top_changed, args, _countof(args));
-}
-
-void panel_window::on_colours_changed()
-{
-	script_invoke(callback_id::on_colours_changed);
-}
-
-void panel_window::on_context_menu(int x, int y)
-{
-	HMENU menu = CreatePopupMenu();
-	const int base_id = 0;
-	build_context_menu(menu, x, y, base_id);
-	const int idx = TrackPopupMenu(menu, TPM_RIGHTBUTTON | TPM_NONOTIFY | TPM_RETURNCMD, x, y, 0, m_hwnd, 0);
-	execute_context_menu_command(idx, base_id);
-	DestroyMenu(menu);
-}
-
-void panel_window::on_cursor_follow_playback_changed(WPARAM wp)
-{
-	VARIANTARG args[1];
-	args[0].vt = VT_BOOL;
-	args[0].boolVal = TO_VARIANT_BOOL(wp);
-	script_invoke(callback_id::on_cursor_follow_playback_changed, args, _countof(args));
-}
-
-void panel_window::on_dsp_preset_changed()
-{
-	script_invoke(callback_id::on_dsp_preset_changed);
-}
-
-void panel_window::on_font_changed()
-{
-	script_invoke(callback_id::on_font_changed);
-}
-
-void panel_window::on_get_album_art_done(WPARAM wp)
-{
-	auto param = reinterpret_cast<helpers::album_art_async::t_param*>(wp);
-
-	VARIANTARG args[4];
-	args[0].vt = VT_BSTR;
-	args[0].bstrVal = param->path;
-	args[1].vt = VT_DISPATCH;
-	args[1].pdispVal = param->bitmap;
-	args[2].vt = VT_UI4;
-	args[2].ulVal = param->art_id;
-	args[3].vt = VT_DISPATCH;
-	args[3].pdispVal = param->handle;
-	script_invoke(callback_id::on_get_album_art_done, args, _countof(args));
-}
-
-void panel_window::on_item_focus_change(WPARAM wp)
-{
-	callback_data_scope_releaser<callback_data<t_size, t_size, t_size>> data(wp);
-
-	VARIANTARG args[3];
-	args[0].vt = VT_UI4;
-	args[0].ulVal = data->m_item3;
-	args[1].vt = VT_UI4;
-	args[1].ulVal = data->m_item2;
-	args[2].vt = VT_UI4;
-	args[2].ulVal = data->m_item1;
-	script_invoke(callback_id::on_item_focus_change, args, _countof(args));
-}
-
-void panel_window::on_item_played(WPARAM wp)
-{
-	callback_data_scope_releaser<callback_data<metadb_handle_ptr>> data(wp);
-	auto handle = new com_object_impl_t<MetadbHandle>(data->m_item1);
-
-	VARIANTARG args[1];
-	args[0].vt = VT_DISPATCH;
-	args[0].pdispVal = handle;
-	script_invoke(callback_id::on_item_played, args, _countof(args));
-
-	if (handle)
-		handle->Release();
-}
-
-void panel_window::on_load_image_done(WPARAM wp)
-{
-	auto param = reinterpret_cast<helpers::load_image_async::t_param*>(wp);
-
-	VARIANTARG args[3];
-	args[0].vt = VT_BSTR;
-	args[0].bstrVal = param->path;
-	args[1].vt = VT_DISPATCH;
-	args[1].pdispVal = param->bitmap;
-	args[2].vt = VT_UI4;
-	args[2].ulVal = param->cookie;
-	script_invoke(callback_id::on_load_image_done, args, _countof(args));
-}
-
-void panel_window::on_library_items_added(WPARAM wp)
-{
-	callback_data_scope_releaser<metadb_callback_data> data(wp);
-	auto handles = new com_object_impl_t<MetadbHandleList>(data->m_items);
-
-	VARIANTARG args[1];
-	args[0].vt = VT_DISPATCH;
-	args[0].pdispVal = handles;
-	script_invoke(callback_id::on_library_items_added, args, _countof(args));
-
-	if (handles)
-		handles->Release();
-}
-
-void panel_window::on_library_items_changed(WPARAM wp)
-{
-	callback_data_scope_releaser<metadb_callback_data> data(wp);
-	auto handles = new com_object_impl_t<MetadbHandleList>(data->m_items);
-
-	VARIANTARG args[1];
-	args[0].vt = VT_DISPATCH;
-	args[0].pdispVal = handles;
-	script_invoke(callback_id::on_library_items_changed, args, _countof(args));
-
-	if (handles)
-		handles->Release();
-}
-
-void panel_window::on_library_items_removed(WPARAM wp)
-{
-	callback_data_scope_releaser<metadb_callback_data> data(wp);
-	auto handles = new com_object_impl_t<MetadbHandleList>(data->m_items);
-
-	VARIANTARG args[1];
-	args[0].vt = VT_DISPATCH;
-	args[0].pdispVal = handles;
-	script_invoke(callback_id::on_library_items_removed, args, _countof(args));
-
-	if (handles)
-		handles->Release();
-}
-
-void panel_window::on_main_menu(WPARAM wp)
-{
-	VARIANTARG args[1];
-	args[0].vt = VT_UI4;
-	args[0].ulVal = wp;
-	script_invoke(callback_id::on_main_menu, args, _countof(args));
-}
-
-void panel_window::on_metadb_changed(WPARAM wp)
-{
-	callback_data_scope_releaser<metadb_callback_data> data(wp);
-	auto handles = new com_object_impl_t<MetadbHandleList>(data->m_items);
-
-	VARIANTARG args[1];
-	args[0].vt = VT_DISPATCH;
-	args[0].pdispVal = handles;
-	script_invoke(callback_id::on_metadb_changed, args, _countof(args));
-
-	if (handles)
-		handles->Release();
-}
-
-void panel_window::on_mouse_button_dblclk(UINT msg, WPARAM wp, LPARAM lp)
-{
-	VARIANTARG args[3];
-	args[0].vt = VT_I4;
-	args[0].lVal = wp;
-	args[1].vt = VT_I4;
-	args[1].lVal = GET_Y_LPARAM(lp);
-	args[2].vt = VT_I4;
-	args[2].lVal = GET_X_LPARAM(lp);
-
-	switch (msg)
-	{
-	case WM_LBUTTONDBLCLK:
-		script_invoke(callback_id::on_mouse_lbtn_dblclk, args, _countof(args));
-		break;
-
-	case WM_MBUTTONDBLCLK:
-		script_invoke(callback_id::on_mouse_mbtn_dblclk, args, _countof(args));
-		break;
-
-	case WM_RBUTTONDBLCLK:
-		script_invoke(callback_id::on_mouse_rbtn_dblclk, args, _countof(args));
-		break;
-	}
-}
-
-void panel_window::on_mouse_button_down(UINT msg, WPARAM wp, LPARAM lp)
-{
-	if (m_grabfocus)
-	{
-		SetFocus(m_hwnd);
-	}
-
-	SetCapture(m_hwnd);
-
-	VARIANTARG args[3];
-	args[0].vt = VT_I4;
-	args[0].lVal = wp;
-	args[1].vt = VT_I4;
-	args[1].lVal = GET_Y_LPARAM(lp);
-	args[2].vt = VT_I4;
-	args[2].lVal = GET_X_LPARAM(lp);
-
-	switch (msg)
-	{
-	case WM_LBUTTONDOWN:
-		script_invoke(callback_id::on_mouse_lbtn_down, args, _countof(args));
-		break;
-
-	case WM_MBUTTONDOWN:
-		script_invoke(callback_id::on_mouse_mbtn_down, args, _countof(args));
-		break;
-
-	case WM_RBUTTONDOWN:
-		script_invoke(callback_id::on_mouse_rbtn_down, args, _countof(args));
-		break;
-	}
-}
-
-void panel_window::on_mouse_leave()
-{
-	m_is_mouse_tracked = false;
-
-	script_invoke(callback_id::on_mouse_leave);
-	SetCursor(LoadCursor(nullptr, IDC_ARROW));
-}
-
-void panel_window::on_mouse_move(WPARAM wp, LPARAM lp)
-{
-	if (!m_is_mouse_tracked)
-	{
-		TRACKMOUSEEVENT tme;
-
-		tme.cbSize = sizeof(tme);
-		tme.hwndTrack = m_hwnd;
-		tme.dwFlags = TME_LEAVE;
-		TrackMouseEvent(&tme);
-		m_is_mouse_tracked = true;
-		SetCursor(LoadCursor(nullptr, IDC_ARROW));
-	}
-
-	VARIANTARG args[3];
-	args[0].vt = VT_I4;
-	args[0].lVal = wp;
-	args[1].vt = VT_I4;
-	args[1].lVal = GET_Y_LPARAM(lp);
-	args[2].vt = VT_I4;
-	args[2].lVal = GET_X_LPARAM(lp);
-	script_invoke(callback_id::on_mouse_move, args, _countof(args));
-}
-
-void panel_window::on_mouse_wheel(WPARAM wp)
-{
-	VARIANTARG args[1];
-	args[0].vt = VT_I4;
-	args[0].lVal = GET_WHEEL_DELTA_WPARAM(wp) > 0 ? 1 : -1;
-	script_invoke(callback_id::on_mouse_wheel, args, _countof(args));
-}
-
-void panel_window::on_mouse_wheel_h(WPARAM wp)
-{
-	VARIANTARG args[1];
-	args[0].vt = VT_I4;
-	args[0].lVal = GET_WHEEL_DELTA_WPARAM(wp) > 0 ? 1 : -1;
-	script_invoke(callback_id::on_mouse_wheel_h, args, _countof(args));
-}
-
-void panel_window::on_notify_data(WPARAM wp)
-{
-	callback_data_scope_releaser<callback_data<_bstr_t, _variant_t>> data(wp);
-
-	VARIANTARG args[2];
-	args[0] = data->m_item2;
-	args[1].vt = VT_BSTR;
-	args[1].bstrVal = data->m_item1;
-	script_invoke(callback_id::on_notify_data, args, _countof(args));
-}
-
-void panel_window::on_output_device_changed()
-{
-	script_invoke(callback_id::on_output_device_changed);
 }
 
 void panel_window::on_paint(HDC dc, LPRECT lpUpdateRect)
@@ -814,186 +666,6 @@ void panel_window::on_paint_user(HDC memdc, LPRECT lpUpdateRect)
 	}
 }
 
-void panel_window::on_playback_dynamic_info()
-{
-	script_invoke(callback_id::on_playback_dynamic_info);
-}
-
-void panel_window::on_playback_dynamic_info_track()
-{
-	script_invoke(callback_id::on_playback_dynamic_info_track);
-}
-
-void panel_window::on_playback_edited(WPARAM wp)
-{
-	callback_data_scope_releaser<callback_data<metadb_handle_ptr>> data(wp);
-	auto handle = new com_object_impl_t<MetadbHandle>(data->m_item1);
-
-	VARIANTARG args[1];
-	args[0].vt = VT_DISPATCH;
-	args[0].pdispVal = handle;
-	script_invoke(callback_id::on_playback_edited, args, _countof(args));
-
-	if (handle)
-		handle->Release();
-}
-
-void panel_window::on_playback_follow_cursor_changed(WPARAM wp)
-{
-	VARIANTARG args[1];
-	args[0].vt = VT_BOOL;
-	args[0].boolVal = TO_VARIANT_BOOL(wp);
-	script_invoke(callback_id::on_playback_follow_cursor_changed, args, _countof(args));
-}
-
-void panel_window::on_playback_new_track(WPARAM wp)
-{
-	callback_data_scope_releaser<callback_data<metadb_handle_ptr>> data(wp);
-	auto handle = new com_object_impl_t<MetadbHandle>(data->m_item1);
-
-	VARIANTARG args[1];
-	args[0].vt = VT_DISPATCH;
-	args[0].pdispVal = handle;
-	script_invoke(callback_id::on_playback_new_track, args, _countof(args));
-
-	if (handle)
-		handle->Release();
-}
-
-void panel_window::on_playback_order_changed(WPARAM wp)
-{
-	VARIANTARG args[1];
-	args[0].vt = VT_UI4;
-	args[0].ulVal = wp;
-	script_invoke(callback_id::on_playback_order_changed, args, _countof(args));
-}
-
-void panel_window::on_playback_pause(WPARAM wp)
-{
-	VARIANTARG args[1];
-	args[0].vt = VT_BOOL;
-	args[0].boolVal = TO_VARIANT_BOOL(wp);
-	script_invoke(callback_id::on_playback_pause, args, _countof(args));
-}
-
-void panel_window::on_playback_queue_changed(WPARAM wp)
-{
-	VARIANTARG args[1];
-	args[0].vt = VT_UI4;
-	args[0].ulVal = wp;
-	script_invoke(callback_id::on_playback_queue_changed, args, _countof(args));
-}
-
-void panel_window::on_playback_seek(WPARAM wp)
-{
-	callback_data_scope_releaser<callback_data<double>> data(wp);
-
-	VARIANTARG args[1];
-	args[0].vt = VT_R8;
-	args[0].dblVal = data->m_item1;
-	script_invoke(callback_id::on_playback_seek, args, _countof(args));
-}
-
-void panel_window::on_playback_starting(WPARAM wp, LPARAM lp)
-{
-	VARIANTARG args[2];
-	args[0].vt = VT_BOOL;
-	args[0].boolVal = TO_VARIANT_BOOL(lp);
-	args[1].vt = VT_UI4;
-	args[1].ulVal = wp;
-	script_invoke(callback_id::on_playback_starting, args, _countof(args));
-}
-
-void panel_window::on_playback_stop(WPARAM wp)
-{
-	VARIANTARG args[1];
-	args[0].vt = VT_UI4;
-	args[0].ulVal = wp;
-	script_invoke(callback_id::on_playback_stop, args, _countof(args));
-}
-
-void panel_window::on_playback_time(WPARAM wp)
-{
-	callback_data_scope_releaser<callback_data<double>> data(wp);
-
-	VARIANTARG args[1];
-	args[0].vt = VT_R8;
-	args[0].dblVal = data->m_item1;
-	script_invoke(callback_id::on_playback_time, args, _countof(args));
-}
-
-void panel_window::on_playlist_item_ensure_visible(WPARAM wp, LPARAM lp)
-{
-	VARIANTARG args[2];
-	args[0].vt = VT_UI4;
-	args[0].ulVal = lp;
-	args[1].vt = VT_UI4;
-	args[1].ulVal = wp;
-	script_invoke(callback_id::on_playlist_item_ensure_visible, args, _countof(args));
-}
-
-void panel_window::on_playlist_items_added(WPARAM wp)
-{
-	VARIANTARG args[1];
-	args[0].vt = VT_UI4;
-	args[0].ulVal = wp;
-	script_invoke(callback_id::on_playlist_items_added, args, _countof(args));
-}
-
-void panel_window::on_playlist_items_removed(WPARAM wp, LPARAM lp)
-{
-	VARIANTARG args[2];
-	args[0].vt = VT_UI4;
-	args[0].ulVal = lp;
-	args[1].vt = VT_UI4;
-	args[1].ulVal = wp;
-	script_invoke(callback_id::on_playlist_items_removed, args, _countof(args));
-}
-
-void panel_window::on_playlist_items_reordered(WPARAM wp)
-{
-	VARIANTARG args[1];
-	args[0].vt = VT_UI4;
-	args[0].ulVal = wp;
-	script_invoke(callback_id::on_playlist_items_reordered, args, _countof(args));
-}
-
-void panel_window::on_playlist_items_selection_change()
-{
-	script_invoke(callback_id::on_playlist_items_selection_change);
-}
-
-void panel_window::on_playlist_stop_after_current_changed(WPARAM wp)
-{
-	VARIANTARG args[1];
-	args[0].vt = VT_BOOL;
-	args[0].boolVal = TO_VARIANT_BOOL(wp);
-	script_invoke(callback_id::on_playlist_stop_after_current_changed, args, _countof(args));
-}
-
-void panel_window::on_playlist_switch()
-{
-	script_invoke(callback_id::on_playlist_switch);
-}
-
-void panel_window::on_playlists_changed()
-{
-	script_invoke(callback_id::on_playlists_changed);
-}
-
-void panel_window::on_replaygain_mode_changed(WPARAM wp)
-{
-	VARIANTARG args[1];
-	args[0].vt = VT_UI4;
-	args[0].ulVal = wp;
-	script_invoke(callback_id::on_replaygain_mode_changed, args, _countof(args));
-}
-
-void panel_window::on_selection_changed()
-{
-	script_invoke(callback_id::on_selection_changed);
-}
-
 void panel_window::on_size(int w, int h)
 {
 	m_width = w;
@@ -1003,16 +675,6 @@ void panel_window::on_size(int w, int h)
 	create_context();
 
 	script_invoke(callback_id::on_size);
-}
-
-void panel_window::on_volume_change(WPARAM wp)
-{
-	callback_data_scope_releaser<callback_data<float>> data(wp);
-
-	VARIANTARG args[1];
-	args[0].vt = VT_R4;
-	args[0].fltVal = data->m_item1;
-	script_invoke(callback_id::on_volume_change, args, _countof(args));
 }
 
 void panel_window::show_property_popup(HWND parent)

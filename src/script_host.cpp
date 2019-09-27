@@ -9,7 +9,7 @@
 #include "utils.h"
 #include "window.h"
 
-#define DEFINE_ID_NAME_ENTRY(x) { callback_id::##x, PFC_WIDESTRING(#x) }
+#define DEFINE_ID_NAME_ENTRY(x) { callback_id::x, PFC_WIDESTRING(#x) }
 
 using id_name_entry = std::pair<t_size, const wchar_t*>;
 
