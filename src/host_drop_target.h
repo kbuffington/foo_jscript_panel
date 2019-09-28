@@ -59,10 +59,10 @@ public:
 	HRESULT OnDragLeave() override;
 	HRESULT OnDragOver(DWORD grfKeyState, POINTL pt, DWORD* pdwEffect) override;
 	HRESULT OnDrop(IDataObject* pDataObj, DWORD grfKeyState, POINTL pt, DWORD* pdwEffect) override;
-	void on_drag_enter(DWORD keyState, POINTL& pt, IDropSourceAction* action);
+	void on_drag_enter(DWORD keyState, const POINTL& pt, IDropSourceAction* action);
 	void on_drag_leave();
-	void on_drag_over(DWORD keyState, POINTL& pt, IDropSourceAction* action);
-	void on_drag_drop(DWORD keyState, POINTL& pt, IDropSourceAction* action);
+	void on_drag_over(DWORD keyState, const POINTL& pt, IDropSourceAction* action);
+	void on_drag_drop(DWORD keyState, const POINTL& pt, IDropSourceAction* action);
 
 private:
 	DropSourceAction* m_action;

@@ -78,7 +78,7 @@ protected:
 	void delete_context();
 	void load_config(stream_reader* reader, t_size size, abort_callback& abort);
 	void redraw();
-	void refresh_background(LPRECT lprcUpdate = nullptr);
+	void refresh_background(const LPRECT& lprcUpdate);
 	void reset_config();
 	void save_config(stream_writer* writer, abort_callback& abort) const;
 

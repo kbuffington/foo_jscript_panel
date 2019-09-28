@@ -34,7 +34,7 @@ ULONG STDMETHODCALLTYPE IDropSourceImpl::AddRef()
 
 ULONG STDMETHODCALLTYPE IDropSourceImpl::Release()
 {
-	LONG rv = InterlockedDecrement(&m_ref_count);
+	const LONG rv = InterlockedDecrement(&m_ref_count);
 	if (!rv)
 	{
 		delete this;
@@ -257,7 +257,7 @@ HRESULT host_drop_target::OnDrop(IDataObject* pDataObj, DWORD grfKeyState, POINT
 	return S_OK;
 }
 
-void host_drop_target::on_drag_enter(DWORD keyState, POINTL& pt, IDropSourceAction* action)
+void host_drop_target::on_drag_enter(DWORD keyState, const POINTL& pt, IDropSourceAction* action)
 {
 	VARIANTARG args[4];
 	args[0].vt = VT_I4;
@@ -276,7 +276,7 @@ void host_drop_target::on_drag_leave()
 	m_host->script_invoke(callback_id::on_drag_leave);
 }
 
-void host_drop_target::on_drag_over(DWORD keyState, POINTL& pt, IDropSourceAction* action)
+void host_drop_target::on_drag_over(DWORD keyState, const POINTL& pt, IDropSourceAction* action)
 {
 	VARIANTARG args[4];
 	args[0].vt = VT_I4;
@@ -290,7 +290,7 @@ void host_drop_target::on_drag_over(DWORD keyState, POINTL& pt, IDropSourceActio
 	m_host->script_invoke(callback_id::on_drag_over, args, _countof(args));
 }
 
-void host_drop_target::on_drag_drop(DWORD keyState, POINTL& pt, IDropSourceAction* action)
+void host_drop_target::on_drag_drop(DWORD keyState, const POINTL& pt, IDropSourceAction* action)
 {
 	VARIANTARG args[4];
 	args[0].vt = VT_I4;

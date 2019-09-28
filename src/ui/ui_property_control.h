@@ -36,7 +36,7 @@ public:
 		menu.AppendMenu(MF_SEPARATOR);
 		uAppendMenu(menu, MF_STRING, ID_REMOVE, "Remove\tDel");
 
-		int idx = menu.TrackPopupMenu(TPM_RIGHTBUTTON | TPM_NONOTIFY | TPM_RETURNCMD, point.x, point.y, m_hWnd, 0);
+		const int idx = menu.TrackPopupMenu(TPM_RIGHTBUTTON | TPM_NONOTIFY | TPM_RETURNCMD, point.x, point.y, m_hWnd, 0);
 		switch (idx)
 		{
 		case ID_SELECTALL:
@@ -131,7 +131,7 @@ public:
 
 	void RemoveMask(const pfc::bit_array& mask)
 	{
-		auto old_count = GetItemCount();
+		const auto old_count = GetItemCount();
 		pfc::remove_mask_t(m_data, mask);
 		this->OnItemsRemoved(mask, old_count);
 	}

@@ -51,7 +51,7 @@ void cfg_sci_prop_sets::import(const char* content)
 	for (const auto& line : lines)
 	{
 		if (line.empty() || line.at(0) == '#' || line.length() <= 3) continue;
-		t_size pos = line.find('=');
+		const t_size pos = line.find('=');
 		if (pos == std::string::npos) continue;
 		std::string key = line.substr(0, pos);
 		std::string value = line.substr(pos + 1);

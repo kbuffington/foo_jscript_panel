@@ -374,7 +374,7 @@ STDMETHODIMP Plman::MovePlaylist(UINT from, UINT to, VARIANT_BOOL* p)
 	if (from < count && to < count)
 	{
 		order_helper order(count);
-		int inc = (from < to) ? 1 : -1;
+		const int inc = (from < to) ? 1 : -1;
 
 		for (t_size i = from; i != to; i += inc)
 		{

@@ -129,7 +129,7 @@ class GdiGraphics : public GdiObj<IGdiGraphics, Gdiplus::Graphics>
 protected:
 	GdiGraphics();
 
-	static void GetRoundRectPath(Gdiplus::GraphicsPath& gp, Gdiplus::RectF& rect, float arc_width, float arc_height);
+	static void GetRoundRectPath(Gdiplus::GraphicsPath& gp, const Gdiplus::RectF& rect, float arc_width, float arc_height);
 
 public:
 	STDMETHODIMP Dispose() override

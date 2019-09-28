@@ -96,14 +96,14 @@ void CDialogReplace::OnReplaceAll(UINT uNotifyCode, int nID, HWND wndCtl)
 
 	while (true)
 	{
-		int start_pos = SendMessage(m_hedit, SCI_GETTARGETEND, 0, 0);
-		int end_pos = SendMessage(m_hedit, SCI_GETLENGTH, 0, 0);
+		const int start_pos = SendMessage(m_hedit, SCI_GETTARGETEND, 0, 0);
+		const int end_pos = SendMessage(m_hedit, SCI_GETLENGTH, 0, 0);
 
 		SendMessage(m_hedit, SCI_SETTARGETSTART, start_pos, 0);
 		SendMessage(m_hedit, SCI_SETTARGETEND, end_pos, 0);
 		SendMessage(m_hedit, SCI_SETSEARCHFLAGS, m_flags, 0);
 
-		int occurance = SendMessage(m_hedit, SCI_SEARCHINTARGET, m_text.get_length(), (LPARAM)m_text.get_ptr());
+		const int occurance = SendMessage(m_hedit, SCI_SEARCHINTARGET, m_text.get_length(), (LPARAM)m_text.get_ptr());
 
 		if (occurance == -1)
 		{

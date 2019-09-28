@@ -39,9 +39,9 @@ void panel_manager::add_window(HWND p_wnd)
 	m_hwnds.insert(p_wnd);
 }
 
-void panel_manager::notify_others(HWND p_wnd_except, UINT p_msg, pfc::refcounted_object_root* p_param)
+void panel_manager::notify_others(const HWND& p_wnd_except, UINT p_msg, pfc::refcounted_object_root* p_param)
 {
-	t_size count = m_hwnds.size();
+	const t_size count = m_hwnds.size();
 
 	if (count < 2 || !p_param) return;
 
@@ -69,7 +69,7 @@ void panel_manager::post_msg_to_all(UINT p_msg, WPARAM p_wp, LPARAM p_lp)
 
 void panel_manager::post_msg_to_all_pointer(UINT p_msg, pfc::refcounted_object_root* p_param)
 {
-	t_size count = m_hwnds.size();
+	const t_size count = m_hwnds.size();
 
 	if (count == 0 || !p_param) return;
 

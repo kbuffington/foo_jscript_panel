@@ -54,7 +54,7 @@ public:
 	BOOL SubclassWindow(HWND hWnd);
 	IndentationStatus GetIndentState(int line);
 	LRESULT OnChange(UINT uNotifyCode, int nID, HWND wndCtl);
-	LRESULT OnCharAdded(LPNMHDR pnmh);
+	LRESULT OnCharAdded(const LPNMHDR& pnmh);
 	LRESULT OnKeyDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 	LRESULT OnUpdateUI(LPNMHDR pnmn);
 	LRESULT OnZoom(LPNMHDR pnmn);

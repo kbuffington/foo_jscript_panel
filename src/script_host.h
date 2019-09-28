@@ -22,7 +22,7 @@ public:
 	HRESULT InitCallbackMap();
 	HRESULT InitScriptEngine();
 	HRESULT InvokeCallback(t_size callbackId, VARIANTARG* argv = nullptr, t_size argc = 0, VARIANT* ret = nullptr);
-	HRESULT ProcessScripts(IActiveScriptParsePtr& parser);
+	HRESULT ProcessScripts(const IActiveScriptParsePtr& parser);
 	STDMETHODIMP EnableModeless(BOOL fEnable) override;
 	STDMETHODIMP GetDocVersionString(BSTR* pstr) override;
 	STDMETHODIMP GetItemInfo(LPCOLESTR name, DWORD mask, IUnknown** ppunk, ITypeInfo** ppti) override;

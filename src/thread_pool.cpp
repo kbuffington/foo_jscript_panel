@@ -68,7 +68,7 @@ bool simple_thread_pool::enqueue(simple_thread_task* task)
 		return false;
 
 	insync(cs_);
-	int max_count = pfc::getOptimalWorkerThreadCount();
+	const int max_count = pfc::getOptimalWorkerThreadCount();
 	track(task);
 
 	if (num_workers_ < max_count)
@@ -155,7 +155,7 @@ void simple_thread_pool::remove_worker_(simple_thread_worker* worker)
 void simple_thread_pool::track(simple_thread_task* task)
 {
 	insync(cs_);
-	bool empty = is_queue_empty();
+	const bool empty = is_queue_empty();
 	task_list_.add_item(task);
 
 	if (empty)

@@ -148,7 +148,7 @@ void host_comm::redraw()
 	RedrawWindow(m_hwnd, nullptr, nullptr, RDW_INVALIDATE | RDW_UPDATENOW);
 }
 
-void host_comm::refresh_background(LPRECT lprcUpdate)
+void host_comm::refresh_background(const LPRECT& lprcUpdate)
 {
 	HWND wnd_parent = GetAncestor(m_hwnd, GA_PARENT);
 
@@ -257,7 +257,7 @@ void host_comm::reset_config()
 
 void host_comm::save_config(stream_writer* writer, abort_callback& abort) const
 {
-	const t_size ver = 123;
+	constexpr t_size ver = 123;
 
 	try
 	{

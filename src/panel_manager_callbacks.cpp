@@ -29,7 +29,7 @@ public:
 
 	void on_watched_object_changed(const config_object::ptr& p_object) override
 	{
-		GUID g = p_object->get_guid();
+		const GUID g = p_object->get_guid();
 		const auto it = std::find_if(m_data.begin(), m_data.end(), [=](const auto& item)
 		{
 			return g == *item.first;

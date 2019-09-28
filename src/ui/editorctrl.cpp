@@ -22,8 +22,8 @@ struct StringComparePartialNC
 
 	int operator()(const std::string& s1, const std::string& s2) const
 	{
-		t_size len1 = pfc::strlen_max_t(s1.c_str(), len);
-		t_size len2 = pfc::strlen_max_t(s2.c_str(), len);
+		const t_size len1 = pfc::strlen_max_t(s1.c_str(), len);
+		const t_size len2 = pfc::strlen_max_t(s2.c_str(), len);
 
 		return pfc::stricmp_ascii_ex(s1.c_str(), len1, s2.c_str(), len2);
 	}
@@ -69,7 +69,7 @@ CScriptEditorCtrl::CScriptEditorCtrl()
 
 BOOL CScriptEditorCtrl::SubclassWindow(HWND hWnd)
 {
-	BOOL bRet = CScintillaCtrl::SubclassWindow(hWnd);
+	const BOOL bRet = CScintillaCtrl::SubclassWindow(hWnd);
 
 	if (bRet)
 		Init();
@@ -79,7 +79,7 @@ BOOL CScriptEditorCtrl::SubclassWindow(HWND hWnd)
 
 DWORD CScriptEditorCtrl::ParseHex(const std::string& hex)
 {
-	auto int_from_hex_digit = [](int ch)
+	const auto int_from_hex_digit = [](int ch)
 	{
 		if ((ch >= '0') && (ch <= '9'))
 		{
@@ -99,16 +99,16 @@ DWORD CScriptEditorCtrl::ParseHex(const std::string& hex)
 		}
 	};
 
-	auto int_from_hex_byte = [int_from_hex_digit](const char* hex_byte)
+	const auto int_from_hex_byte = [int_from_hex_digit](const char* hex_byte)
 	{
 		return (int_from_hex_digit(hex_byte[0]) << 4) | (int_from_hex_digit(hex_byte[1]));
 	};
 
 	if (hex.length() > 7) return 0;
 
-	int r = int_from_hex_byte(hex.c_str() + 1);
-	int g = int_from_hex_byte(hex.c_str() + 3);
-	int b = int_from_hex_byte(hex.c_str() + 5);
+	const int r = int_from_hex_byte(hex.c_str() + 1);
+	const int g = int_from_hex_byte(hex.c_str() + 3);
+	const int b = int_from_hex_byte(hex.c_str() + 5);
 
 	return RGB(r, g, b);
 }
@@ -142,13 +142,13 @@ LRESULT CScriptEditorCtrl::OnChange(UINT uNotifyCode, int nID, HWND wndCtl)
 	return 0;
 }
 
-LRESULT CScriptEditorCtrl::OnCharAdded(LPNMHDR pnmh)
+LRESULT CScriptEditorCtrl::OnCharAdded(const LPNMHDR& pnmh)
 {
-	SCNotification* notification = (SCNotification*)pnmh;
-	int ch = notification->ch;
-	Sci_CharacterRange crange = GetSelection();
-	int selStart = crange.cpMin;
-	int selEnd = crange.cpMax;
+	const SCNotification* notification = (SCNotification*)pnmh;
+	const int ch = notification->ch;
+	const Sci_CharacterRange crange = GetSelection();
+	const int selStart = crange.cpMin;
+	const int selEnd = crange.cpMax;
 
 	if (selEnd == selStart && selStart > 0)
 	{
@@ -236,8 +236,8 @@ LRESULT CScriptEditorCtrl::OnUpdateUI(LPNMHDR pnmn)
 	{
 		BraceHighlight(braceAtCaret, braceOpposite);
 
-		int columnAtCaret = GetColumn(braceAtCaret);
-		int columnOpposite = GetColumn(braceOpposite);
+		const int columnAtCaret = GetColumn(braceAtCaret);
+		const int columnOpposite = GetColumn(braceOpposite);
 
 		SetHighlightGuide(std::min(columnAtCaret, columnOpposite));
 	}
@@ -266,7 +266,7 @@ bool CScriptEditorCtrl::Contains(const std::string& str, char ch)
 
 bool CScriptEditorCtrl::FindBraceMatchPos(int& braceAtCaret, int& braceOpposite)
 {
-	auto IsBraceChar = [](int ch)
+	const auto IsBraceChar = [](int ch)
 	{
 		return ch == '[' || ch == ']' || ch == '(' || ch == ')' || ch == '{' || ch == '}';
 	};
@@ -278,11 +278,11 @@ bool CScriptEditorCtrl::FindBraceMatchPos(int& braceAtCaret, int& braceOpposite)
 	braceOpposite = -1;
 
 	char charBefore = 0;
-	int lengthDoc = GetLength();
+	const int lengthDoc = GetLength();
 
 	if (lengthDoc > 0 && caretPos > 0)
 	{
-		int posBefore = PositionBefore(caretPos);
+		const int posBefore = PositionBefore(caretPos);
 
 		if (posBefore == caretPos - 1)
 		{
@@ -295,12 +295,11 @@ bool CScriptEditorCtrl::FindBraceMatchPos(int& braceAtCaret, int& braceOpposite)
 		braceAtCaret = caretPos - 1;
 	}
 
-	bool colonMode = false;
 	bool isAfter = true;
 
 	if (lengthDoc > 0 && braceAtCaret < 0 && caretPos < lengthDoc)
 	{
-		char charAfter = GetCharAt(caretPos);
+		const char charAfter = GetCharAt(caretPos);
 
 		if (charAfter && IsBraceChar(charAfter))
 		{
@@ -311,17 +310,7 @@ bool CScriptEditorCtrl::FindBraceMatchPos(int& braceAtCaret, int& braceOpposite)
 
 	if (braceAtCaret >= 0)
 	{
-		if (colonMode)
-		{
-			int lineStart = LineFromPosition(braceAtCaret);
-			int lineMaxSubord = GetLastChild(lineStart, -1);
-
-			braceOpposite = GetLineEndPosition(lineMaxSubord);
-		}
-		else
-		{
-			braceOpposite = BraceMatch(braceAtCaret);
-		}
+		braceOpposite = BraceMatch(braceAtCaret);
 
 		if (braceOpposite > braceAtCaret)
 			isInside = isAfter;
@@ -335,7 +324,7 @@ bool CScriptEditorCtrl::FindBraceMatchPos(int& braceAtCaret, int& braceOpposite)
 bool CScriptEditorCtrl::GetPropertyEx(const std::string& key, std::string& out)
 {
 	out.clear();
-	int len = GetPropertyExpanded(key.c_str(), 0);
+	const int len = GetPropertyExpanded(key.c_str(), 0);
 	if (len == 0) return false;
 
 	std::vector<char> buff(len + 1);
@@ -353,7 +342,7 @@ bool CScriptEditorCtrl::Includes(const StyleAndWords& symbols, const std::string
 	}
 	else if (isalpha(symbols.words[0]))
 	{
-		t_size lenVal = value.length();
+		const t_size lenVal = value.length();
 		const char* symbol = symbols.words.c_str();
 
 		while (symbol)
@@ -473,7 +462,7 @@ bool CScriptEditorCtrl::RangeIsAllWhitespace(int start, int end)
 
 	for (int i = start; i < end; ++i)
 	{
-		char c = GetCharAt(i);
+		const char c = GetCharAt(i);
 
 		if ((c != ' ') && (c != '\t'))
 			return false;
@@ -485,7 +474,7 @@ bool CScriptEditorCtrl::RangeIsAllWhitespace(int start, int end)
 bool CScriptEditorCtrl::StartAutoComplete()
 {
 	std::string line = GetCurrentLine();
-	int current = GetCaretInLine();
+	const int current = GetCaretInLine();
 
 	int startword = current;
 
@@ -561,9 +550,9 @@ bool CScriptEditorCtrl::StartCallTip()
 
 int CScriptEditorCtrl::GetCaretInLine()
 {
-	int caret = GetCurrentPos();
-	int line = LineFromPosition(caret);
-	int lineStart = PositionFromLine(line);
+	const int caret = GetCurrentPos();
+	const int line = LineFromPosition(caret);
+	const int lineStart = PositionFromLine(line);
 	return caret - lineStart;
 }
 
@@ -572,7 +561,7 @@ int CScriptEditorCtrl::IndentOfBlock(int line)
 	if (line < 0)
 		return 0;
 
-	int indentSize = GetIndent();
+	const int indentSize = GetIndent();
 	int indentBlock = GetLineIndentation(line);
 	int backLine = line;
 	IndentationStatus indentState = isNone;
@@ -720,17 +709,17 @@ void CScriptEditorCtrl::AutoMarginWidth()
 
 void CScriptEditorCtrl::AutomaticIndentation(int ch)
 {
-	Sci_CharacterRange crange = GetSelection();
-	int selStart = crange.cpMin;
-	int curLine = LineFromPosition(GetCurrentPos());
-	int thisLineStart = PositionFromLine(curLine);
-	int indentSize = GetIndent();
+	const Sci_CharacterRange crange = GetSelection();
+	const int selStart = crange.cpMin;
+	const int curLine = LineFromPosition(GetCurrentPos());
+	const int thisLineStart = PositionFromLine(curLine);
+	const int indentSize = GetIndent();
 	int indentBlock = IndentOfBlock(curLine - 1);
 
 	if (curLine > 0)
 	{
 		bool foundBrace = false;
-		int prevLineLength = LineLength(curLine - 1);
+		const int prevLineLength = LineLength(curLine - 1);
 		int slen = 0;
 
 		std::vector<char> linebuf(prevLineLength + 2);
@@ -740,7 +729,7 @@ void CScriptEditorCtrl::AutomaticIndentation(int ch)
 
 		for (int pos = slen - 1; pos >= 0 && linebuf[pos]; --pos)
 		{
-			char c = linebuf[pos];
+			const char c = linebuf[pos];
 
 			if (c == '\t' || c == ' ' || c == '\r' || c == '\n')
 			{
@@ -790,7 +779,7 @@ void CScriptEditorCtrl::AutomaticIndentation(int ch)
 void CScriptEditorCtrl::ContinueCallTip()
 {
 	std::string line = GetCurrentLine();
-	int current = GetCaretInLine();
+	const int current = GetCaretInLine();
 	int braces = 0;
 	int commas = 0;
 
@@ -1001,10 +990,10 @@ void CScriptEditorCtrl::SetIndentation(int line, int indent)
 		return;
 
 	Sci_CharacterRange crange = GetSelection();
-	int posBefore = GetLineIndentPosition(line);
+	const int posBefore = GetLineIndentPosition(line);
 	SetLineIndentation(line, indent);
-	int posAfter = GetLineIndentPosition(line);
-	int posDifference = posAfter - posBefore;
+	const int posAfter = GetLineIndentPosition(line);
+	const int posDifference = posAfter - posBefore;
 	if (posAfter > posBefore)
 	{
 		if (crange.cpMin >= posBefore)
@@ -1045,8 +1034,8 @@ void CScriptEditorCtrl::TrackWidth()
 
 	for (int i = 0; i < GetLineCount(); ++i)
 	{
-		int pos = GetLineEndPosition(i);
-		int width = PointXFromPosition(pos);
+		const int pos = GetLineEndPosition(i);
+		const int width = PointXFromPosition(pos);
 
 		if (width > max_width)
 			max_width = width;

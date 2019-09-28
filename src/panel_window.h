@@ -27,7 +27,7 @@ private:
 	void load_script();
 	void on_paint(HDC dc, LPRECT lpUpdateRect);
 	void on_paint_error(HDC memdc);
-	void on_paint_user(HDC memdc, LPRECT lpUpdateRect);
+	void on_paint_user(HDC memdc, const LPRECT& lpUpdateRect);
 	void on_size(int w, int h);
 
 	CComPtr<IDropTargetImpl> m_drop_target;

@@ -198,7 +198,7 @@ STDMETHODIMP Utils::Glob(BSTR pattern, UINT exc_mask, UINT inc_mask, VARIANT* p)
 	{
 		do
 		{
-			DWORD attr = ff->GetAttributes();
+			const DWORD attr = ff->GetAttributes();
 
 			if ((attr& inc_mask) && !(attr& exc_mask))
 			{
@@ -244,7 +244,7 @@ STDMETHODIMP Utils::InputBox(UINT window_id, BSTR prompt, BSTR caption, BSTR def
 		auto udef = string_utf8_from_wide(def);
 
 		CInputBox dlg(uprompt, ucaption, udef);
-		int status = dlg.DoModal(HWND(window_id));
+		const int status = dlg.DoModal(HWND(window_id));
 		if (status == IDOK)
 		{
 			pfc::string8_fast str;

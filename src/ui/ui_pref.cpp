@@ -9,7 +9,7 @@ BOOL CDialogPref::OnInitDialog(HWND hwndFocus, LPARAM lParam)
 {
 	m_props.CreateInDialog(*this, IDC_LIST_PREFERENCES);
 
-	auto DPI = m_props.GetDPI();
+	const auto DPI = m_props.GetDPI();
 
 	m_props.AddColumn("Name", MulDiv(150, DPI.cx, 96));
 	m_props.AddColumn("Value", MulDiv(310, DPI.cx, 96));
@@ -98,7 +98,7 @@ void CDialogPref::OnPresetsBnClicked(UINT, int, HWND)
 
 	RECT rc;
 	::GetWindowRect(::GetDlgItem(m_hWnd, IDC_PRESETS), &rc);
-	int idx = TrackPopupMenu(menu, TPM_RIGHTBUTTON | TPM_NONOTIFY | TPM_RETURNCMD, rc.left, rc.bottom, 0, m_hWnd, 0);
+	const int idx = TrackPopupMenu(menu, TPM_RIGHTBUTTON | TPM_NONOTIFY | TPM_RETURNCMD, rc.left, rc.bottom, 0, m_hWnd, 0);
 	if (idx > 0)
 	{
 		g_sci_prop_sets.load_preset(idx);

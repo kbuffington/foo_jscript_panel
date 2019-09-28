@@ -121,7 +121,7 @@ STDMETHODIMP Fb::DoDragDrop(IMetadbHandleList* handles, UINT okEffects, UINT* p)
 	pfc::com_ptr_t<IDropSourceImpl> pIDropSource = new IDropSourceImpl();
 
 	DWORD returnEffect;
-	HRESULT hr = SHDoDragDrop(nullptr, pDO.get_ptr(), pIDropSource.get_ptr(), okEffects, &returnEffect);
+	const HRESULT hr = SHDoDragDrop(nullptr, pDO.get_ptr(), pIDropSource.get_ptr(), okEffects, &returnEffect);
 
 	*p = hr == DRAGDROP_S_CANCEL ? DROPEFFECT_NONE : returnEffect;
 	return S_OK;

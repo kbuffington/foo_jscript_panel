@@ -77,7 +77,7 @@ namespace helpers
 		return ret;
 	}
 
-	IGdiBitmap* load_image(BSTR path)
+	IGdiBitmap* load_image(const BSTR& path)
 	{
 		IGdiBitmap* ret = nullptr;
 		CComPtr<IStream> stream;
@@ -130,7 +130,7 @@ namespace helpers
 		contextmenu_manager::ptr cm;
 		contextmenu_manager::g_create(cm);
 		pfc::string8_fast path;
-		t_size flags = contextmenu_manager::flag_view_full;
+		constexpr t_size flags = contextmenu_manager::flag_view_full;
 
 		if (p_handles.get_count())
 		{
@@ -147,7 +147,7 @@ namespace helpers
 		return execute_context_command_recur(p_command, path, cm->get_root());
 	}
 
-	bool execute_context_command_recur(const char* p_command, pfc::string_base& p_path, contextmenu_node* p_parent)
+	bool execute_context_command_recur(const char* p_command, const pfc::string_base& p_path, contextmenu_node* p_parent)
 	{
 		for (t_size i = 0; i < p_parent->get_num_children(); ++i)
 		{
@@ -283,7 +283,7 @@ namespace helpers
 		if (iswspace(current))
 			return true;
 
-		int currentAlphaNum = iswalnum(current);
+		const int currentAlphaNum = iswalnum(current);
 
 		if (currentAlphaNum)
 		{
@@ -311,7 +311,7 @@ namespace helpers
 			return false;
 		}
 
-		DWORD dwFileSize = GetFileSize(hFile, nullptr);
+		const DWORD dwFileSize = GetFileSize(hFile, nullptr);
 		LPCBYTE pAddr = (LPCBYTE)MapViewOfFile(hFileMapping, FILE_MAP_READ, 0, 0, 0);
 
 		if (pAddr == nullptr)
@@ -332,7 +332,7 @@ namespace helpers
 		if (dwFileSize >=2 && pAddr[0] == 0xFF && pAddr[1] == 0xFE) // UTF16 LE?
 		{
 			const wchar_t* pSource = (const wchar_t*)(pAddr + 2);
-			t_size len = (dwFileSize - 2) >> 1;
+			const t_size len = (dwFileSize - 2) >> 1;
 
 			content.set_size(len + 1);
 			pfc::__unsafe__memcpy_t(content.get_ptr(), pSource, len);
@@ -341,7 +341,7 @@ namespace helpers
 		else if (dwFileSize >= 3 && pAddr[0] == 0xEF && pAddr[1] == 0xBB && pAddr[2] == 0xBF) // UTF8-BOM?
 		{
 			const char* pSource = (const char*)(pAddr + 3);
-			t_size pSourceSize = dwFileSize - 3;
+			const t_size pSourceSize = dwFileSize - 3;
 
 			const t_size size = estimate_utf8_to_wide_quick(pSource, pSourceSize);
 			content.set_size(size);
@@ -350,19 +350,18 @@ namespace helpers
 		else
 		{
 			const char* pSource = (const char*)(pAddr);
-			t_size pSourceSize = dwFileSize;
 
 			if (pfc::is_valid_utf8(pSource))
 			{
-				const t_size size = estimate_utf8_to_wide_quick(pSource, pSourceSize);
+				const t_size size = estimate_utf8_to_wide_quick(pSource, dwFileSize);
 				content.set_size(size);
-				convert_utf8_to_wide(content.get_ptr(), size, pSource, pSourceSize);
+				convert_utf8_to_wide(content.get_ptr(), size, pSource, dwFileSize);
 			}
 			else
 			{
-				const t_size size = estimate_codepage_to_wide(codepage, pSource, pSourceSize);
+				const t_size size = estimate_codepage_to_wide(codepage, pSource, dwFileSize);
 				content.set_size(size);
-				convert_codepage_to_wide(codepage, content.get_ptr(), size, pSource, pSourceSize);
+				convert_codepage_to_wide(codepage, content.get_ptr(), size, pSource, dwFileSize);
 			}
 		}
 
@@ -526,7 +525,7 @@ namespace helpers
 			return 0;
 		}
 
-		const int maxEncodings = 2;
+		constexpr int maxEncodings = 2;
 		int encodingCount = maxEncodings;
 		DetectEncodingInfo encodings[maxEncodings];
 
@@ -585,7 +584,7 @@ namespace helpers
 	void estimate_line_wrap_recur(HDC hdc, const wchar_t* text, int len, int max_width, wrapped_item_list& out)
 	{
 		int textLength = len;
-		int textWidth = get_text_width(hdc, text, len);
+		const int textWidth = get_text_width(hdc, text, len);
 
 		if (textWidth <= max_width || len <= 1)
 		{
@@ -612,7 +611,7 @@ namespace helpers
 			}
 
 			{
-				int fallbackTextLength = std::max(textLength, 1);
+				const int fallbackTextLength = std::max(textLength, 1);
 
 				while (textLength > 0 && !is_wrap_char(text[textLength - 1], text[textLength]))
 				{

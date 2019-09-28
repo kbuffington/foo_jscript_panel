@@ -212,13 +212,13 @@ STDMETHODIMP GdiBitmap::ApplyAlpha(BYTE alpha, IGdiBitmap** pp)
 {
 	if (!m_ptr || !pp) return E_POINTER;
 
-	t_size width = m_ptr->GetWidth();
-	t_size height = m_ptr->GetHeight();
+	const t_size width = m_ptr->GetWidth();
+	const t_size height = m_ptr->GetHeight();
 	Gdiplus::Bitmap* out = new Gdiplus::Bitmap(width, height, PixelFormat32bppPARGB);
 	Gdiplus::Graphics g(out);
 	Gdiplus::ImageAttributes ia;
 	Gdiplus::ColorMatrix cm = { 0.0 };
-	Gdiplus::Rect rect(0, 0, width, height);
+	const Gdiplus::Rect rect(0, 0, width, height);
 
 	cm.m[0][0] = cm.m[1][1] = cm.m[2][2] = cm.m[4][4] = 1.0;
 	cm.m[3][3] = static_cast<float>(alpha) / 255;
@@ -243,7 +243,7 @@ STDMETHODIMP GdiBitmap::ApplyMask(IGdiBitmap* mask, VARIANT_BOOL* p)
 		return E_INVALIDARG;
 	}
 
-	Gdiplus::Rect rect(0, 0, m_ptr->GetWidth(), m_ptr->GetHeight());
+	const Gdiplus::Rect rect(0, 0, m_ptr->GetWidth(), m_ptr->GetHeight());
 	Gdiplus::BitmapData bmpdata_mask = { 0 }, bmpdata_dst = { 0 };
 
 	if (bitmap_mask->LockBits(&rect, Gdiplus::ImageLockModeRead, PixelFormat32bppARGB, &bmpdata_mask) != Gdiplus::Ok)
@@ -312,11 +312,11 @@ STDMETHODIMP GdiBitmap::GetColourSchemeJSON(UINT count, BSTR* p)
 	if (!m_ptr || !p) return E_POINTER;
 
 	Gdiplus::BitmapData bmpdata;
-	int w = std::min((int)m_ptr->GetWidth(), 220);
-	int h = std::min((int)m_ptr->GetHeight(), 220);
+	const int w = std::min((int)m_ptr->GetWidth(), 220);
+	const int h = std::min((int)m_ptr->GetHeight(), 220);
 	Gdiplus::Bitmap* bitmap = new Gdiplus::Bitmap(w, h, PixelFormat32bppPARGB);
 	Gdiplus::Graphics gb(bitmap);
-	Gdiplus::Rect rect(0, 0, w, h);
+	const Gdiplus::Rect rect(0, 0, w, h);
 	gb.SetInterpolationMode((Gdiplus::InterpolationMode)6);
 	gb.DrawImage(m_ptr, 0, 0, w, h);
 
@@ -349,9 +349,9 @@ STDMETHODIMP GdiBitmap::GetColourSchemeJSON(UINT count, BSTR* p)
 
 	for (it = colour_counters.begin(); it != colour_counters.end(); it++, idx++)
 	{
-		BYTE r = (it->first >> 16) & 0xff;
-		BYTE g = (it->first >> 8) & 0xff;
-		BYTE b = (it->first & 0xff);
+		const BYTE r = (it->first >> 16) & 0xff;
+		const BYTE g = (it->first >> 8) & 0xff;
+		const BYTE b = (it->first & 0xff);
 
 		std::vector<t_size> values = { r, g, b };
 		Point pt(idx, values, it->second);
@@ -369,7 +369,7 @@ STDMETHODIMP GdiBitmap::GetColourSchemeJSON(UINT count, BSTR* p)
 		});
 
 	json j = json::array();
-	t_size outCount = std::min(count, colour_counters.size());
+	const t_size outCount = std::min(count, colour_counters.size());
 	for (t_size i = 0; i < outCount; ++i)
 	{
 		int colour = 0xff000000 | (int)clusters[i].getCentralValue(0) << 16 | (int)clusters[i].getCentralValue(1) << 8 | (int)clusters[i].getCentralValue(2);
@@ -530,10 +530,10 @@ STDMETHODIMP GdiFont::get_Style(int* p)
 
 GdiGraphics::GdiGraphics() : GdiObj<IGdiGraphics, Gdiplus::Graphics>(nullptr) {}
 
-void GdiGraphics::GetRoundRectPath(Gdiplus::GraphicsPath& gp, Gdiplus::RectF& rect, float arc_width, float arc_height)
+void GdiGraphics::GetRoundRectPath(Gdiplus::GraphicsPath& gp, const Gdiplus::RectF& rect, float arc_width, float arc_height)
 {
-	float arc_dia_w = arc_width * 2;
-	float arc_dia_h = arc_height * 2;
+	const float arc_dia_w = arc_width * 2;
+	const float arc_dia_h = arc_height * 2;
 	Gdiplus::RectF corner(rect.X, rect.Y, arc_dia_w, arc_dia_h);
 
 	gp.Reset();
@@ -607,7 +607,7 @@ STDMETHODIMP GdiGraphics::DrawImage(IGdiBitmap* image, float dstX, float dstY, f
 
 	if (angle != 0.0)
 	{
-		Gdiplus::PointF pt(dstX + dstW / 2, dstY + dstH / 2);
+		const Gdiplus::PointF pt(dstX + dstW / 2, dstY + dstH / 2);
 		Gdiplus::Matrix m;
 		m.RotateAt(angle, pt);
 		m_ptr->GetTransform(&old_m);
@@ -691,7 +691,7 @@ STDMETHODIMP GdiGraphics::DrawRoundRect(float x, float y, float w, float h, floa
 
 	Gdiplus::Pen pen(static_cast<t_size>(colour), line_width);
 	Gdiplus::GraphicsPath gp;
-	Gdiplus::RectF rect(x, y, w, h);
+	const Gdiplus::RectF rect(x, y, w, h);
 	GetRoundRectPath(gp, rect, arc_width, arc_height);
 	pen.SetStartCap(Gdiplus::LineCapRound);
 	pen.SetEndCap(Gdiplus::LineCapRound);
@@ -765,7 +765,7 @@ STDMETHODIMP GdiGraphics::FillGradRect(float x, float y, float w, float h, float
 {
 	if (!m_ptr) return E_POINTER;
 
-	Gdiplus::RectF rect(x, y, w, h);
+	const Gdiplus::RectF rect(x, y, w, h);
 	Gdiplus::LinearGradientBrush brush(rect, static_cast<t_size>(colour1), static_cast<t_size>(colour2), angle, TRUE);
 	brush.SetBlendTriangularShape(focus);
 	m_ptr->FillRectangle(&brush, rect);
@@ -806,7 +806,7 @@ STDMETHODIMP GdiGraphics::FillRoundRect(float x, float y, float w, float h, floa
 
 	Gdiplus::SolidBrush br(static_cast<t_size>(colour));
 	Gdiplus::GraphicsPath gp;
-	Gdiplus::RectF rect(x, y, w, h);
+	const Gdiplus::RectF rect(x, y, w, h);
 	GetRoundRectPath(gp, rect, arc_width, arc_height);
 	m_ptr->FillPath(&br, &gp);
 	return S_OK;
@@ -968,7 +968,7 @@ GdiRawBitmap::~GdiRawBitmap() {}
 
 HBITMAP GdiRawBitmap::CreateHBITMAP(Gdiplus::Bitmap* bitmap_ptr)
 {
-	Gdiplus::Rect rect(0, 0, bitmap_ptr->GetWidth(), bitmap_ptr->GetHeight());
+	const Gdiplus::Rect rect(0, 0, bitmap_ptr->GetWidth(), bitmap_ptr->GetHeight());
 	Gdiplus::BitmapData bmpdata;
 
 	if (bitmap_ptr->LockBits(&rect, Gdiplus::ImageLockModeRead, PixelFormat32bppPARGB, &bmpdata) != Gdiplus::Ok)
@@ -1626,12 +1626,12 @@ STDMETHODIMP MetadbHandleList::MakeIntersection(IMetadbHandleList* handles)
 	metadb_handle_list* handles_ptr = nullptr;
 	handles->get__ptr((void**)&handles_ptr);
 
-	metadb_handle_list_ref handles_ref = *handles_ptr;
+	const metadb_handle_list_ref handles_ref = *handles_ptr;
 	metadb_handle_list result;
 	t_size walk1 = 0;
 	t_size walk2 = 0;
-	t_size last1 = m_handles.get_count();
-	t_size last2 = handles_ptr->get_count();
+	const t_size last1 = m_handles.get_count();
+	const t_size last2 = handles_ptr->get_count();
 
 	while (walk1 != last1 && walk2 != last2)
 	{
@@ -2039,7 +2039,7 @@ STDMETHODIMP ThemeManager::DrawThemeBackground(IGdiGraphics* gr, int x, int y, i
 		rc_pclip = nullptr;
 	}
 
-	HRESULT hr = ::DrawThemeBackground(m_theme, dc, m_partid, m_stateid, &rc, rc_pclip);
+	const HRESULT hr = ::DrawThemeBackground(m_theme, dc, m_partid, m_stateid, &rc, rc_pclip);
 
 	graphics->ReleaseHDC(dc);
 	return hr;
@@ -2156,7 +2156,7 @@ Tooltip::Tooltip(HWND p_wndparent, const panel_tooltip_param_ptr& p_param_ptr) :
 	m_ti.uId = (UINT_PTR)p_wndparent;
 	m_ti.lpszText = m_tip_buffer;
 
-	HFONT font = CreateFont(
+	const HFONT font = CreateFont(
 		-(int)m_panel_tooltip_param_ptr->font_size,
 		0,
 		0,

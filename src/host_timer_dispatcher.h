@@ -50,7 +50,7 @@ public:
 	t_size set_timeout(HWND hwnd, t_size delay, IDispatch* pDisp);
 	void invoke_message(t_size timerId);
 	void kill_timer(t_size timerId);
-	void kill_timers(HWND hwnd);
+	void kill_timers(const HWND& hwnd);
 	void on_task_complete(t_size timerId);
 	void on_timer_expire(t_size timerId);
 	void on_timer_stop_request(HWND hwnd, HANDLE hTimer, t_size timerId);

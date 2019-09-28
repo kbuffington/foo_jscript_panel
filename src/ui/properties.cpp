@@ -67,7 +67,7 @@ void properties::g_load(t_map& data, stream_reader* reader, abort_callback& abor
 			reader->read_string(key, abort);
 			reader->read_lendian_t(vt, abort);
 
-			int cbRead = g_get_sizeof(vt);
+			const int cbRead = g_get_sizeof(vt);
 
 			_variant_t val;
 			val.vt = vt;
@@ -99,7 +99,7 @@ void properties::g_save(const t_map& data, stream_writer* writer, abort_callback
 		{
 			writer->write_string(iter->m_key, abort);
 			writer->write_lendian_t(iter->m_value.vt, abort);
-			int cbWrite = g_get_sizeof(iter->m_value.vt);
+			const int cbWrite = g_get_sizeof(iter->m_value.vt);
 
 			if (cbWrite > 0)
 			{

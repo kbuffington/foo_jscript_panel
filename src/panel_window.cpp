@@ -200,11 +200,11 @@ LRESULT panel_window::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 		break;
 	case WM_CONTEXTMENU:
 		{
-			int x = GET_X_LPARAM(lp);
-			int y = GET_Y_LPARAM(lp);
+			const int x = GET_X_LPARAM(lp);
+			const int y = GET_Y_LPARAM(lp);
 
 			HMENU menu = CreatePopupMenu();
-			const int base_id = 0;
+			constexpr int base_id = 0;
 			build_context_menu(menu, x, y, base_id);
 			const int idx = TrackPopupMenu(menu, TPM_RIGHTBUTTON | TPM_NONOTIFY | TPM_RETURNCMD, x, y, 0, m_hwnd, 0);
 			execute_context_menu_command(idx, base_id);
@@ -646,12 +646,12 @@ void panel_window::on_paint_error(HDC memdc)
 	SelectObject(memdc, oldfont);
 }
 
-void panel_window::on_paint_user(HDC memdc, LPRECT lpUpdateRect)
+void panel_window::on_paint_user(HDC memdc, const LPRECT& lpUpdateRect)
 {
 	if (m_script_host->Ready())
 	{
 		Gdiplus::Graphics gr(memdc);
-		Gdiplus::Rect rect(lpUpdateRect->left, lpUpdateRect->top, lpUpdateRect->right - lpUpdateRect->left, lpUpdateRect->bottom - lpUpdateRect->top);
+		const Gdiplus::Rect rect(lpUpdateRect->left, lpUpdateRect->top, lpUpdateRect->right - lpUpdateRect->left, lpUpdateRect->bottom - lpUpdateRect->top);
 		gr.SetClip(rect);
 		m_gr_wrap->put__ptr(&gr);
 

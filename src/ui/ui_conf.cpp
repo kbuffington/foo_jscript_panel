@@ -150,7 +150,7 @@ BOOL CDialogConf::OnInitDialog(HWND hwndFocus, LPARAM lParam)
 	return FALSE;
 }
 
-LRESULT CDialogConf::OnNotify(int idCtrl, LPNMHDR pnmh)
+LRESULT CDialogConf::OnNotify(int idCtrl, const LPNMHDR& pnmh)
 {
 	pfc::string8_fast caption = m_caption;
 
@@ -178,7 +178,7 @@ LRESULT CDialogConf::OnUwmFindTextChanged(UINT uMsg, WPARAM wParam, LPARAM lPara
 
 LRESULT CDialogConf::OnUwmKeyDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
-	int modifiers = (IsKeyPressed(VK_SHIFT) ? SCMOD_SHIFT : 0) | (IsKeyPressed(VK_CONTROL) ? SCMOD_CTRL : 0) | (IsKeyPressed(VK_MENU) ? SCMOD_ALT : 0);
+	const int modifiers = (IsKeyPressed(VK_SHIFT) ? SCMOD_SHIFT : 0) | (IsKeyPressed(VK_CONTROL) ? SCMOD_CTRL : 0) | (IsKeyPressed(VK_MENU) ? SCMOD_ALT : 0);
 
 	if (modifiers == SCMOD_CTRL)
 	{
@@ -242,7 +242,7 @@ bool CDialogConf::FindNext(HWND hWnd, HWND hWndEdit, t_size flags, const char* w
 	SendMessage(::GetAncestor(hWndEdit, GA_PARENT), UWM_FIND_TEXT_CHANGED, flags, reinterpret_cast<LPARAM>(which));
 	SendMessage(hWndEdit, SCI_CHARRIGHT, 0, 0);
 	SendMessage(hWndEdit, SCI_SEARCHANCHOR, 0, 0);
-	int pos = SendMessage(hWndEdit, SCI_SEARCHNEXT, flags, reinterpret_cast<LPARAM>(which));
+	const int pos = SendMessage(hWndEdit, SCI_SEARCHNEXT, flags, reinterpret_cast<LPARAM>(which));
 	return FindResult(hWnd, hWndEdit, pos, which);
 }
 
@@ -250,7 +250,7 @@ bool CDialogConf::FindPrevious(HWND hWnd, HWND hWndEdit, t_size flags, const cha
 {
 	SendMessage(::GetAncestor(hWndEdit, GA_PARENT), UWM_FIND_TEXT_CHANGED, flags, reinterpret_cast<LPARAM>(which));
 	SendMessage(hWndEdit, SCI_SEARCHANCHOR, 0, 0);
-	int pos = SendMessage(hWndEdit, SCI_SEARCHPREV, flags, reinterpret_cast<LPARAM>(which));
+	const int pos = SendMessage(hWndEdit, SCI_SEARCHPREV, flags, reinterpret_cast<LPARAM>(which));
 	return FindResult(hWnd, hWndEdit, pos, which);
 }
 
@@ -278,7 +278,7 @@ void CDialogConf::Apply()
 
 	// Get script text
 	pfc::array_t<char> code;
-	int len = m_editorctrl.GetTextLength() + 1;
+	const int len = m_editorctrl.GetTextLength() + 1;
 	code.set_size(len);
 	m_editorctrl.GetText(code.get_ptr(), len);
 	m_parent->m_script_code = code.get_ptr();
@@ -331,7 +331,7 @@ void CDialogConf::OnFileExport(UINT uNotifyCode, int nID, HWND wndCtl)
 	pfc::string8_fast filename;
 	if (uGetOpenFileName(m_hWnd, "Text files|*.txt|All files|*.*", 0, "txt", "Save as", nullptr, filename, TRUE))
 	{
-		int len = m_editorctrl.GetTextLength();
+		const int len = m_editorctrl.GetTextLength();
 		pfc::string8_fast text;
 
 		m_editorctrl.GetText(text.lock_buffer(len), len + 1);

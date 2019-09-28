@@ -149,7 +149,7 @@ t_size host_timer_dispatcher::create_timer(HWND hwnd, t_size delay, bool isRepea
 
 	m_timer_map.emplace(id, new host_timer(hwnd, id, delay, isRepeated));
 
-	auto curTask = m_task_map.emplace(id, new host_timer_task(pDisp, id));
+	const auto curTask = m_task_map.emplace(id, new host_timer_task(pDisp, id));
 	curTask.first->second->acquire();
 
 	if (!m_timer_map[id]->start(m_timer_queue))
@@ -190,21 +190,21 @@ void host_timer_dispatcher::kill_timer(t_size timerId)
 	{
 		std::lock_guard<std::mutex> lock(m_timer_mutex);
 
-		auto timerIter = m_timer_map.find(timerId);
+		const auto timerIter = m_timer_map.find(timerId);
 		if (m_timer_map.end() != timerIter)
 		{
 			timerIter->second->stop();
 		}
 	}
 
-	auto taskIter = m_task_map.find(timerId);
+	const auto taskIter = m_task_map.find(timerId);
 	if (m_task_map.end() != taskIter)
 	{
 		taskIter->second->release();
 	}
 }
 
-void host_timer_dispatcher::kill_timers(HWND hwnd)
+void host_timer_dispatcher::kill_timers(const HWND& hwnd)
 {
 	std::list<t_size> timersToDelete;
 

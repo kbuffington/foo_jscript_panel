@@ -69,10 +69,10 @@ public:
 		if (!dispids) return E_POINTER;
 		for (t_size i = 0; i < cNames; ++i)
 		{
-			ULONG hash = LHashValOfName(LANG_NEUTRAL, names[i]);
+			const ULONG hash = LHashValOfName(LANG_NEUTRAL, names[i]);
 			if (!g_type_info_cache.query(hash, dispids[i]))
 			{
-				HRESULT hr = g_type_info_cache.m_type_info->GetIDsOfNames(&names[i], 1, &dispids[i]);
+				const HRESULT hr = g_type_info_cache.m_type_info->GetIDsOfNames(&names[i], 1, &dispids[i]);
 				if (FAILED(hr)) return hr;
 				g_type_info_cache.m_cache[hash] = dispids[i];
 			}
@@ -98,7 +98,7 @@ public:
 
 	STDMETHODIMP Invoke(DISPID dispid, REFIID riid, LCID lcid, WORD flags, DISPPARAMS* params, VARIANT* result, EXCEPINFO* excep, UINT* err) override
 	{
-		HRESULT hr = g_type_info_cache.m_type_info->Invoke(this, dispid, flags, params, result, excep, err);
+		const HRESULT hr = g_type_info_cache.m_type_info->Invoke(this, dispid, flags, params, result, excep, err);
 		PFC_ASSERT(hr != RPC_E_WRONG_THREAD);
 		return hr;
 	}
@@ -180,7 +180,7 @@ public:
 
 	ULONG STDMETHODCALLTYPE Release() override
 	{
-		ULONG n = Release_();
+		const ULONG n = Release_();
 		if (n == 0)
 		{
 			this->FinalRelease();

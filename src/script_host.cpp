@@ -135,7 +135,7 @@ HRESULT script_host::Initialise()
 
 HRESULT script_host::InitCallbackMap()
 {
-	auto check_features = [&](t_size id)
+	const auto check_features = [&](t_size id)
 	{
 		switch (id)
 		{
@@ -171,7 +171,7 @@ HRESULT script_host::InitCallbackMap()
 HRESULT script_host::InitScriptEngine()
 {
 	HRESULT hr = E_FAIL;
-	const DWORD classContext = CLSCTX_INPROC_SERVER | CLSCTX_INPROC_HANDLER;
+	constexpr DWORD classContext = CLSCTX_INPROC_SERVER | CLSCTX_INPROC_HANDLER;
 
 	if (helpers::supports_chakra() && _stricmp(m_host->m_script_engine_str, "Chakra") == 0)
 	{
@@ -206,7 +206,7 @@ HRESULT script_host::InvokeCallback(t_size callbackId, VARIANTARG* argv, t_size 
 	return m_script_root->Invoke(m_callback_map.at(callbackId), IID_NULL, LOCALE_USER_DEFAULT, DISPATCH_METHOD, &param, ret, nullptr, nullptr);
 }
 
-HRESULT script_host::ProcessScripts(IActiveScriptParsePtr& parser)
+HRESULT script_host::ProcessScripts(const IActiveScriptParsePtr& parser)
 {
 	HRESULT hr = S_OK;
 	bool import_error = false;
@@ -235,7 +235,7 @@ HRESULT script_host::ProcessScripts(IActiveScriptParsePtr& parser)
 			code = m_host->m_script_code;
 		}
 
-		DWORD source_context = GenerateSourceContext(path);
+		const DWORD source_context = GenerateSourceContext(path);
 		hr = parser->ParseScriptText(string_wide_from_utf8_fast(code), nullptr, nullptr, nullptr, source_context, 0, SCRIPTTEXT_HOSTMANAGESSOURCE | SCRIPTTEXT_ISVISIBLE, nullptr, nullptr);
 		if (FAILED(hr)) break;
 	}
@@ -417,7 +417,7 @@ ULONG STDMETHODCALLTYPE script_host::AddRef()
 
 ULONG STDMETHODCALLTYPE script_host::Release()
 {
-	ULONG n = InterlockedDecrement(&m_ref_count);
+	const ULONG n = InterlockedDecrement(&m_ref_count);
 	if (n == 0)
 	{
 		delete this;
@@ -437,9 +437,9 @@ bool script_host::Ready()
 
 std::string script_host::ExtractValue(const std::string& source)
 {
-	char q = '"';
-	t_size first = source.find_first_of(q);
-	t_size last = source.find_last_of(q);
+	constexpr char q = '"';
+	const t_size first = source.find_first_of(q);
+	const t_size last = source.find_last_of(q);
 	if (first < last && last < source.length())
 	{
 		return source.substr(first + 1, last - first - 1);
@@ -486,9 +486,9 @@ void script_host::ProcessScriptInfo(t_script_info& info)
 	info.id = (t_size)m_host->get_hwnd();
 
 	std::string source(m_host->m_script_code);
-	t_size start = source.find("// ==PREPROCESSOR==");
-	t_size end = source.find("// ==/PREPROCESSOR==");
-	t_size argh = std::string::npos;
+	const t_size start = source.find("// ==PREPROCESSOR==");
+	const t_size end = source.find("// ==/PREPROCESSOR==");
+	constexpr t_size argh = std::string::npos;
 
 	if (start == argh || end == argh || start > end)
 	{
