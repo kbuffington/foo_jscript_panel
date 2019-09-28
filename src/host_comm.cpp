@@ -214,36 +214,21 @@ void host_comm::refresh_background(const LPRECT& lprcUpdate)
 	SetWindowRgn(m_hwnd, nullptr, FALSE);
 	m_suppress_drawing = false;
 	if (m_edge_style) SendMessage(m_hwnd, WM_NCPAINT, 1, 0);
-	repaint(true);
+	m_paint_pending = true;
+	RedrawWindow(m_hwnd, nullptr, nullptr, RDW_INVALIDATE | RDW_UPDATENOW);
 }
 
-void host_comm::repaint(bool force)
+void host_comm::repaint()
 {
 	m_paint_pending = true;
-
-	if (force)
-	{
-		RedrawWindow(m_hwnd, nullptr, nullptr, RDW_INVALIDATE | RDW_UPDATENOW);
-	}
-	else
-	{
-		InvalidateRect(m_hwnd, nullptr, FALSE);
-	}
+	InvalidateRect(m_hwnd, nullptr, FALSE);
 }
 
-void host_comm::repaint_rect(int x, int y, int w, int h, bool force)
+void host_comm::repaint_rect(int x, int y, int w, int h)
 {
+	m_paint_pending = true;
 	RECT rc = { x, y, x + w, y + h };
-	m_paint_pending = true;
-
-	if (force)
-	{
-		RedrawWindow(m_hwnd, &rc, nullptr, RDW_INVALIDATE | RDW_UPDATENOW);
-	}
-	else
-	{
-		InvalidateRect(m_hwnd, &rc, FALSE);
-	}
+	InvalidateRect(m_hwnd, &rc, FALSE);
 }
 
 void host_comm::reset_config()

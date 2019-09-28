@@ -125,8 +125,8 @@ public:
 	virtual void show_property_popup(HWND parent) = 0;
 	virtual void unload_script() = 0;
 	virtual void update_script() = 0;
-	void repaint(bool force = false);
-	void repaint_rect(int x, int y, int w, int h, bool force = false);
+	void repaint();
+	void repaint_rect(int x, int y, int w, int h);
 
 	POINT m_max_size;
 	POINT m_min_size;
