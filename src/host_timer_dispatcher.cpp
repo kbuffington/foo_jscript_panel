@@ -204,7 +204,7 @@ void host_timer_dispatcher::kill_timer(t_size timerId)
 	}
 }
 
-void host_timer_dispatcher::kill_timers(const HWND& hwnd)
+void host_timer_dispatcher::kill_timers(HWND hwnd)
 {
 	std::list<t_size> timersToDelete;
 

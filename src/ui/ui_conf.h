@@ -38,7 +38,7 @@ public:
 	static bool FindResult(HWND hWnd, HWND hWndEdit, int pos, const char* which);
 
 	BOOL OnInitDialog(HWND hwndFocus, LPARAM lParam);
-	LRESULT OnNotify(int idCtrl, const LPNMHDR& pnmh);
+	LRESULT OnNotify(int idCtrl, LPNMHDR pnmh);
 	LRESULT OnUwmFindTextChanged(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 	LRESULT OnUwmKeyDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 	void Apply();

@@ -150,7 +150,7 @@ BOOL CDialogConf::OnInitDialog(HWND hwndFocus, LPARAM lParam)
 	return FALSE;
 }
 
-LRESULT CDialogConf::OnNotify(int idCtrl, const LPNMHDR& pnmh)
+LRESULT CDialogConf::OnNotify(int idCtrl, LPNMHDR pnmh)
 {
 	pfc::string8_fast caption = m_caption;
 

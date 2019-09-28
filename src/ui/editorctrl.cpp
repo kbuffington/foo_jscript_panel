@@ -142,7 +142,7 @@ LRESULT CScriptEditorCtrl::OnChange(UINT uNotifyCode, int nID, HWND wndCtl)
 	return 0;
 }
 
-LRESULT CScriptEditorCtrl::OnCharAdded(const LPNMHDR& pnmh)
+LRESULT CScriptEditorCtrl::OnCharAdded(LPNMHDR pnmh)
 {
 	const SCNotification* notification = (SCNotification*)pnmh;
 	const int ch = notification->ch;

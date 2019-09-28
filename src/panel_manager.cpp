@@ -39,7 +39,7 @@ void panel_manager::add_window(HWND p_wnd)
 	m_hwnds.insert(p_wnd);
 }
 
-void panel_manager::notify_others(const HWND& p_wnd_except, UINT p_msg, pfc::refcounted_object_root* p_param)
+void panel_manager::notify_others(HWND p_wnd_except, UINT p_msg, pfc::refcounted_object_root* p_param)
 {
 	const t_size count = m_hwnds.size();
 

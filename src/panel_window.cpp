@@ -646,7 +646,7 @@ void panel_window::on_paint_error(HDC memdc)
 	SelectObject(memdc, oldfont);
 }
 
-void panel_window::on_paint_user(HDC memdc, const LPRECT& lpUpdateRect)
+void panel_window::on_paint_user(HDC memdc, LPRECT lpUpdateRect)
 {
 	if (m_script_host->Ready())
 	{
