@@ -36,4 +36,7 @@ public:
 	STDMETHODIMP WriteINI(BSTR filename, BSTR section, BSTR key, VARIANT val, VARIANT_BOOL* p) override;
 	STDMETHODIMP WriteTextFile(BSTR filename, BSTR content, VARIANT_BOOL* p) override;
 	STDMETHODIMP get_Version(UINT* p) override;
+
+private:
+	std::vector<COLORREF> m_colours;
 };

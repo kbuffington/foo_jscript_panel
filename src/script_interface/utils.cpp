@@ -3,7 +3,15 @@
 #include "ui_input_box.h"
 #include "utils.h"
 
-Utils::Utils() {}
+Utils::Utils()
+{
+	m_colours.resize(16);
+	for (auto& colour : m_colours)
+	{
+		colour = 0;
+	}
+}
+
 Utils::~Utils() {}
 
 STDMETHODIMP Utils::Chardet(BSTR filename, UINT* p)
@@ -70,8 +78,7 @@ STDMETHODIMP Utils::ColourPicker(UINT window_id, int default_colour, int* p)
 	if (!p) return E_POINTER;
 
 	COLORREF COLOR = helpers::convert_argb_to_colorref(default_colour);
-	COLORREF COLORS[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-	uChooseColor(&COLOR, (HWND)window_id, &COLORS[0]);
+	uChooseColor(&COLOR, (HWND)window_id, &m_colours[0]);
 	*p = helpers::convert_colorref_to_argb(COLOR);
 	return S_OK;
 }
