@@ -3,15 +3,7 @@
 #include "ui_input_box.h"
 #include "utils.h"
 
-Utils::Utils()
-{
-	m_colours.resize(16);
-	for (auto& colour : m_colours)
-	{
-		colour = 0;
-	}
-}
-
+Utils::Utils() : m_colours(16, 0) {}
 Utils::~Utils() {}
 
 STDMETHODIMP Utils::Chardet(BSTR filename, UINT* p)
