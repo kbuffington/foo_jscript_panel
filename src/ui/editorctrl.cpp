@@ -220,7 +220,7 @@ LRESULT CScriptEditorCtrl::OnKeyDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BO
 	return TRUE;
 }
 
-LRESULT CScriptEditorCtrl::OnUpdateUI(LPNMHDR pnmn)
+LRESULT CScriptEditorCtrl::OnUpdateUI(LPNMHDR pnmh)
 {
 	int braceAtCaret = -1;
 	int braceOpposite = -1;
@@ -245,7 +245,7 @@ LRESULT CScriptEditorCtrl::OnUpdateUI(LPNMHDR pnmn)
 	return 0;
 }
 
-LRESULT CScriptEditorCtrl::OnZoom(LPNMHDR pnmn)
+LRESULT CScriptEditorCtrl::OnZoom(LPNMHDR pnmh)
 {
 	AutoMarginWidth();
 	return 0;

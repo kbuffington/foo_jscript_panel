@@ -94,10 +94,10 @@ LRESULT CDialogFind::CEditWithReturn::OnKeyDown(UINT uMsg, WPARAM wParam, LPARAM
 	switch (wParam)
 	{
 	case VK_RETURN:
-		::PostMessage(m_parent, WM_COMMAND, MAKEWPARAM(IDC_FIND_NEXT, BN_CLICKED), (LPARAM)m_hWnd);
+		::PostMessage(m_parent, WM_COMMAND, MAKEWPARAM(IDC_FIND_NEXT, BN_CLICKED), reinterpret_cast<LPARAM>(m_hWnd));
 		return 0;
 	case VK_ESCAPE:
-		::PostMessage(m_parent, WM_COMMAND, MAKEWPARAM(IDCANCEL, BN_CLICKED), (LPARAM)m_hWnd);
+		::PostMessage(m_parent, WM_COMMAND, MAKEWPARAM(IDCANCEL, BN_CLICKED), reinterpret_cast<LPARAM>(m_hWnd));
 		return 0;
 	case VK_TAB:
 		::PostMessage(m_parent, WM_NEXTDLGCTL, 0, 0);

@@ -150,7 +150,7 @@ STDMETHODIMP Fb::GetClipboardContents(UINT window_id, IMetadbHandleList** pp)
 			dropped_files_data_impl data;
 			if (SUCCEEDED(api->parse_dataobject(pDO, data)))
 			{
-				data.to_handles(items, native, (HWND)window_id);
+				data.to_handles(items, native, reinterpret_cast<HWND>(window_id));
 			}
 		}
 	}

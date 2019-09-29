@@ -359,7 +359,7 @@ STDMETHODIMP script_host::OnScriptError(IActiveScriptError* err)
 			}
 			else
 			{
-				formatter << "Unknown error code: 0x" << pfc::format_hex_lowercase((t_size)excep.scode);
+				formatter << "Unknown error code: 0x" << pfc::format_hex_lowercase(static_cast<t_size>(excep.scode));
 			}
 		}
 	}
@@ -483,7 +483,7 @@ void script_host::Finalise()
 void script_host::ProcessScriptInfo(t_script_info& info)
 {
 	info.clear();
-	info.id = (t_size)m_host->get_hwnd();
+	info.id = reinterpret_cast<t_size>(m_host->get_hwnd());
 
 	std::string source(m_host->m_script_code);
 	const t_size start = source.find("// ==PREPROCESSOR==");

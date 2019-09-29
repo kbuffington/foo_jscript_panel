@@ -312,8 +312,8 @@ STDMETHODIMP GdiBitmap::GetColourSchemeJSON(UINT count, BSTR* p)
 	if (!m_ptr || !p) return E_POINTER;
 
 	Gdiplus::BitmapData bmpdata;
-	const int w = std::min((int)m_ptr->GetWidth(), 220);
-	const int h = std::min((int)m_ptr->GetHeight(), 220);
+	const int w = std::min(static_cast<int>(m_ptr->GetWidth()), 220);
+	const int h = std::min(static_cast<int>(m_ptr->GetHeight()), 220);
 	Gdiplus::Bitmap* bitmap = new Gdiplus::Bitmap(w, h, PixelFormat32bppPARGB);
 	Gdiplus::Graphics gb(bitmap);
 	const Gdiplus::Rect rect(0, 0, w, h);
@@ -372,7 +372,7 @@ STDMETHODIMP GdiBitmap::GetColourSchemeJSON(UINT count, BSTR* p)
 	const t_size outCount = std::min(count, colour_counters.size());
 	for (t_size i = 0; i < outCount; ++i)
 	{
-		int colour = 0xff000000 | (int)clusters[i].getCentralValue(0) << 16 | (int)clusters[i].getCentralValue(1) << 8 | (int)clusters[i].getCentralValue(2);
+		int colour = 0xff000000 | static_cast<int>(clusters[i].getCentralValue(0)) << 16 | static_cast<int>(clusters[i].getCentralValue(1)) << 8 | static_cast<int>(clusters[i].getCentralValue(2));
 		double frequency = clusters[i].getTotalPoints() / (double)colours_length;
 
 		j.push_back({
@@ -486,7 +486,7 @@ STDMETHODIMP GdiFont::get__HFont(UINT* p)
 {
 	if (!m_ptr || !p) return E_POINTER;
 
-	*p = (UINT)m_hFont;
+	*p = reinterpret_cast<UINT>(m_hFont);
 	return S_OK;
 }
 
@@ -496,7 +496,7 @@ STDMETHODIMP GdiFont::get_Height(UINT* p)
 
 	Gdiplus::Bitmap img(1, 1, PixelFormat32bppPARGB);
 	Gdiplus::Graphics g(&img);
-	*p = (UINT)m_ptr->GetHeight(&g);
+	*p = static_cast<UINT>(m_ptr->GetHeight(&g));
 	return S_OK;
 }
 
@@ -1986,7 +1986,7 @@ Profiler::~Profiler() {}
 
 STDMETHODIMP Profiler::Print()
 {
-	FB2K_console_formatter() << "FbProfiler (" << m_name << "): " << (int)(m_timer.query() * 1000) << " ms";
+	FB2K_console_formatter() << "FbProfiler (" << m_name << "): " << static_cast<int>(m_timer.query() * 1000) << " ms";
 	return S_OK;
 }
 
@@ -2000,7 +2000,7 @@ STDMETHODIMP Profiler::get_Time(int* p)
 {
 	if (!p) return E_POINTER;
 
-	*p = (int)(m_timer.query() * 1000);
+	*p = static_cast<int>(m_timer.query() * 1000);
 	return S_OK;
 }
 
@@ -2157,7 +2157,7 @@ Tooltip::Tooltip(HWND p_wndparent, const panel_tooltip_param_ptr& p_param_ptr) :
 	m_ti.lpszText = m_tip_buffer;
 
 	const HFONT font = CreateFont(
-		-(int)m_panel_tooltip_param_ptr->font_size,
+		-static_cast<int>(m_panel_tooltip_param_ptr->font_size),
 		0,
 		0,
 		0,
@@ -2172,9 +2172,9 @@ Tooltip::Tooltip(HWND p_wndparent, const panel_tooltip_param_ptr& p_param_ptr) :
 		DEFAULT_PITCH | FF_DONTCARE,
 		m_panel_tooltip_param_ptr->font_name);
 
-	SendMessage(m_wndtooltip, TTM_ADDTOOL, 0, (LPARAM)&m_ti);
+	SendMessage(m_wndtooltip, TTM_ADDTOOL, 0, reinterpret_cast<LPARAM>(&m_ti));
 	SendMessage(m_wndtooltip, TTM_ACTIVATE, FALSE, 0);
-	SendMessage(m_wndtooltip, WM_SETFONT, (WPARAM)font, MAKELPARAM(FALSE, 0));
+	SendMessage(m_wndtooltip, WM_SETFONT, reinterpret_cast<WPARAM>(font), MAKELPARAM(FALSE, 0));
 
 	m_panel_tooltip_param_ptr->tooltip_hwnd = m_wndtooltip;
 }
@@ -2235,7 +2235,7 @@ STDMETHODIMP Tooltip::TrackPosition(int x, int y)
 {
 	POINT pt = { x, y };
 	ClientToScreen(m_wndparent, &pt);
-	SendMessage(m_wndtooltip, TTM_TRACKPOSITION, 0, (LPARAM)MAKELONG(pt.x, pt.y));
+	SendMessage(m_wndtooltip, TTM_TRACKPOSITION, 0, MAKELONG(pt.x, pt.y));
 	return S_OK;
 }
 
@@ -2251,7 +2251,7 @@ STDMETHODIMP Tooltip::put_Text(BSTR text)
 {
 	SysReAllocString(&m_tip_buffer, text);
 	m_ti.lpszText = m_tip_buffer;
-	SendMessage(m_wndtooltip, TTM_SETTOOLINFO, 0, (LPARAM)&m_ti);
+	SendMessage(m_wndtooltip, TTM_SETTOOLINFO, 0, reinterpret_cast<LPARAM>(&m_ti));
 	return S_OK;
 }
 
@@ -2266,7 +2266,7 @@ STDMETHODIMP Tooltip::put_TrackActivate(VARIANT_BOOL activate)
 		m_ti.uFlags &= ~(TTF_TRACK | TTF_ABSOLUTE);
 	}
 
-	SendMessage(m_wndtooltip, TTM_TRACKACTIVATE, activate != VARIANT_FALSE ? TRUE : FALSE, (LPARAM)&m_ti);
+	SendMessage(m_wndtooltip, TTM_TRACKACTIVATE, activate != VARIANT_FALSE ? TRUE : FALSE, reinterpret_cast<LPARAM>(&m_ti));
 	return S_OK;
 }
 

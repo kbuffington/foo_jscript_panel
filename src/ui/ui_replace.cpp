@@ -80,7 +80,7 @@ void CDialogReplace::OnReplace(UINT uNotifyCode, int nID, HWND wndCtl)
 
 		SendMessage(m_hedit, SCI_SETTARGETSTART, cr.cpMin, 0);
 		SendMessage(m_hedit, SCI_SETTARGETEND, cr.cpMax, 0);
-		SendMessage(m_hedit, SCI_REPLACETARGET, m_reptext.get_length(), (LPARAM)m_reptext.get_ptr());
+		SendMessage(m_hedit, SCI_REPLACETARGET, m_reptext.get_length(), reinterpret_cast<LPARAM>(m_reptext.get_ptr()));
 		SendMessage(m_hedit, SCI_SETSEL, cr.cpMin + m_reptext.get_length(), cr.cpMin);
 		m_havefound = false;
 	}
@@ -103,7 +103,7 @@ void CDialogReplace::OnReplaceAll(UINT uNotifyCode, int nID, HWND wndCtl)
 		SendMessage(m_hedit, SCI_SETTARGETEND, end_pos, 0);
 		SendMessage(m_hedit, SCI_SETSEARCHFLAGS, m_flags, 0);
 
-		const int occurance = SendMessage(m_hedit, SCI_SEARCHINTARGET, m_text.get_length(), (LPARAM)m_text.get_ptr());
+		const int occurance = SendMessage(m_hedit, SCI_SEARCHINTARGET, m_text.get_length(), reinterpret_cast<LPARAM>(m_text.get_ptr()));
 
 		if (occurance == -1)
 		{
@@ -111,7 +111,7 @@ void CDialogReplace::OnReplaceAll(UINT uNotifyCode, int nID, HWND wndCtl)
 			break;
 		}
 
-		SendMessage(m_hedit, SCI_REPLACETARGET, m_reptext.get_length(), (LPARAM)m_reptext.get_ptr());
+		SendMessage(m_hedit, SCI_REPLACETARGET, m_reptext.get_length(), reinterpret_cast<LPARAM>(m_reptext.get_ptr()));
 		SendMessage(m_hedit, SCI_SETSEL, occurance + m_reptext.get_length(), occurance);
 	}
 
@@ -148,10 +148,10 @@ LRESULT CDialogReplace::CEditWithReturn::OnKeyDown(UINT uMsg, WPARAM wParam, LPA
 	switch (wParam)
 	{
 	case VK_RETURN:
-		::PostMessage(m_parent, WM_COMMAND, MAKEWPARAM(IDC_REPLACE, BN_CLICKED), (LPARAM)m_hWnd);
+		::PostMessage(m_parent, WM_COMMAND, MAKEWPARAM(IDC_REPLACE, BN_CLICKED), reinterpret_cast<LPARAM>(m_hWnd));
 		return 0;
 	case VK_ESCAPE:
-		::PostMessage(m_parent, WM_COMMAND, MAKEWPARAM(IDCANCEL, BN_CLICKED), (LPARAM)m_hWnd);
+		::PostMessage(m_parent, WM_COMMAND, MAKEWPARAM(IDCANCEL, BN_CLICKED), reinterpret_cast<LPARAM>(m_hWnd));
 		return 0;
 	case VK_TAB:
 		::PostMessage(m_parent, WM_NEXTDLGCTL, 0, 0);

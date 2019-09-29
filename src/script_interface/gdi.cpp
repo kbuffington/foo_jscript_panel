@@ -33,7 +33,7 @@ STDMETHODIMP Gdi::Font(BSTR name, float pxSize, int style, IGdiFont** pp)
 	if (helpers::ensure_gdiplus_object(font))
 	{
 		HFONT hFont = CreateFont(
-			-(int)pxSize,
+			-static_cast<int>(pxSize),
 			0,
 			0,
 			0,
@@ -74,7 +74,7 @@ STDMETHODIMP Gdi::LoadImageAsync(UINT window_id, BSTR path, UINT* p)
 
 	try
 	{
-		helpers::load_image_async* task = new helpers::load_image_async((HWND)window_id, path);
+		helpers::load_image_async* task = new helpers::load_image_async(reinterpret_cast<HWND>(window_id), path);
 
 		if (simple_thread_pool::instance().enqueue(task))
 			cookie = reinterpret_cast<t_size>(task);

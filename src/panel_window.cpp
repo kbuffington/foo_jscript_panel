@@ -556,7 +556,7 @@ void panel_window::load_script()
 		repaint();
 	}
 
-	FB2K_console_formatter() << m_script_info.build_info_string() << ": initialised in " << (int)(timer.query() * 1000) << " ms";
+	FB2K_console_formatter() << m_script_info.build_info_string() << ": initialised in " << static_cast<int>(timer.query() * 1000) << " ms";
 }
 
 void panel_window::on_paint(HDC dc, LPRECT lpUpdateRect)

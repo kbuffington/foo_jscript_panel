@@ -70,7 +70,7 @@ STDMETHODIMP Utils::ColourPicker(UINT window_id, int default_colour, int* p)
 	if (!p) return E_POINTER;
 
 	COLORREF COLOR = helpers::convert_argb_to_colorref(default_colour);
-	uChooseColor(&COLOR, (HWND)window_id, &m_colours[0]);
+	uChooseColor(&COLOR, reinterpret_cast<HWND>(window_id), &m_colours[0]);
 	*p = helpers::convert_colorref_to_argb(COLOR);
 	return S_OK;
 }
@@ -79,7 +79,7 @@ STDMETHODIMP Utils::DateStringToTimestamp(BSTR str, UINT* p)
 {
 	if (!p) return E_POINTER;
 
-	*p = (UINT)pfc::fileTimeWtoU(filetimestamp_from_string(string_utf8_from_wide(str).get_ptr()));
+	*p = static_cast<UINT>(pfc::fileTimeWtoU(filetimestamp_from_string(string_utf8_from_wide(str).get_ptr())));
 	return S_OK;
 }
 
@@ -112,7 +112,7 @@ STDMETHODIMP Utils::GetAlbumArtAsync(UINT window_id, IMetadbHandle* handle, UINT
 
 	try
 	{
-		helpers::album_art_async* task = new helpers::album_art_async((HWND)window_id, ptr, art_id, need_stub != VARIANT_FALSE, only_embed != VARIANT_FALSE, no_load != VARIANT_FALSE);
+		helpers::album_art_async* task = new helpers::album_art_async(reinterpret_cast<HWND>(window_id), ptr, art_id, need_stub != VARIANT_FALSE, only_embed != VARIANT_FALSE, no_load != VARIANT_FALSE);
 
 		if (simple_thread_pool::instance().enqueue(task))
 			cookie = reinterpret_cast<t_size>(task);

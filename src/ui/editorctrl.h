@@ -56,8 +56,8 @@ public:
 	LRESULT OnChange(UINT uNotifyCode, int nID, HWND wndCtl);
 	LRESULT OnCharAdded(LPNMHDR pnmh);
 	LRESULT OnKeyDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-	LRESULT OnUpdateUI(LPNMHDR pnmn);
-	LRESULT OnZoom(LPNMHDR pnmn);
+	LRESULT OnUpdateUI(LPNMHDR pnmh);
+	LRESULT OnZoom(LPNMHDR pnmh);
 	Sci_CharacterRange GetSelection();
 	bool FindBraceMatchPos(int& braceAtCaret, int& braceOpposite);
 	bool GetPropertyEx(const std::string& key, std::string& out);
