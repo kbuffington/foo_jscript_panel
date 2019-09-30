@@ -48,13 +48,13 @@ public:
 	int GetText(LPSTR szText, int nLength) const
 	{
 		ATLASSERT(::IsWindow(this->m_hWnd));
-		return ::SendMessage(this->m_hWnd, SCI_GETTEXT, nLength, (LPARAM)szText);
+		return ::SendMessage(this->m_hWnd, SCI_GETTEXT, nLength, reinterpret_cast<LPARAM>(szText));
 	}
 
 	void SetText(LPCSTR szText)
 	{
 		ATLASSERT(::IsWindow(this->m_hWnd));
-		::SendMessage(this->m_hWnd, SCI_SETTEXT, 0, (LPARAM)szText);
+		::SendMessage(this->m_hWnd, SCI_SETTEXT, 0, reinterpret_cast<LPARAM>(szText));
 	}
 
 	void SetSavePoint()
@@ -66,7 +66,7 @@ public:
 	int GetLine(int nLine, LPSTR szText) const
 	{
 		ATLASSERT(::IsWindow(this->m_hWnd));
-		return ::SendMessage(this->m_hWnd, SCI_GETLINE, nLine, (LPARAM)szText);
+		return ::SendMessage(this->m_hWnd, SCI_GETLINE, nLine, reinterpret_cast<LPARAM>(szText));
 	}
 
 	int GetLineLength(int nLine) const
@@ -77,7 +77,7 @@ public:
 	void ReplaceSel(LPCSTR szText)
 	{
 		ATLASSERT(::IsWindow(this->m_hWnd));
-		::SendMessage(this->m_hWnd, SCI_REPLACESEL, 0, (LPARAM)szText);
+		::SendMessage(this->m_hWnd, SCI_REPLACESEL, 0, reinterpret_cast<LPARAM>(szText));
 	}
 
 	bool GetReadOnly() const
@@ -107,25 +107,25 @@ public:
 	void AddText(LPCSTR szText, int nLength)
 	{
 		ATLASSERT(::IsWindow(this->m_hWnd));
-		::SendMessage(this->m_hWnd, SCI_ADDTEXT, nLength, (LPARAM)szText);
+		::SendMessage(this->m_hWnd, SCI_ADDTEXT, nLength, reinterpret_cast<LPARAM>(szText));
 	}
 
 	void AddStyledText(LPCSTR szText, int nLength)
 	{
 		ATLASSERT(::IsWindow(this->m_hWnd));
-		::SendMessage(this->m_hWnd, SCI_ADDSTYLEDTEXT, nLength, (LPARAM)szText);
+		::SendMessage(this->m_hWnd, SCI_ADDSTYLEDTEXT, nLength, reinterpret_cast<LPARAM>(szText));
 	}
 
 	void AppendText(LPCSTR szText, int nLength)
 	{
 		ATLASSERT(::IsWindow(this->m_hWnd));
-		::SendMessage(this->m_hWnd, SCI_APPENDTEXT, nLength, (LPARAM)szText);
+		::SendMessage(this->m_hWnd, SCI_APPENDTEXT, nLength, reinterpret_cast<LPARAM>(szText));
 	}
 
 	void InsertText(unsigned int nPosition, LPCSTR szText)
 	{
 		ATLASSERT(::IsWindow(this->m_hWnd));
-		::SendMessage(this->m_hWnd, SCI_INSERTTEXT, nPosition, (LPARAM)szText);
+		::SendMessage(this->m_hWnd, SCI_INSERTTEXT, nPosition, reinterpret_cast<LPARAM>(szText));
 	}
 
 	void ClearAll()
@@ -183,13 +183,13 @@ public:
 	int SearchNext(int nFlags, LPCSTR szText) const
 	{
 		ATLASSERT(::IsWindow(this->m_hWnd));
-		return ::SendMessage(this->m_hWnd, SCI_SEARCHNEXT, nFlags, (LPARAM)szText);
+		return ::SendMessage(this->m_hWnd, SCI_SEARCHNEXT, nFlags, reinterpret_cast<LPARAM>(szText));
 	}
 
 	int SearchPrev(int nFlags, LPCSTR szText) const
 	{
 		ATLASSERT(::IsWindow(this->m_hWnd));
-		return ::SendMessage(this->m_hWnd, SCI_SEARCHPREV, nFlags, (LPARAM)szText);
+		return ::SendMessage(this->m_hWnd, SCI_SEARCHPREV, nFlags, reinterpret_cast<LPARAM>(szText));
 	}
 
 	//@}
@@ -241,19 +241,19 @@ public:
 	int SearchInTarget(LPCSTR szText, int nLength)
 	{
 		ATLASSERT(::IsWindow(this->m_hWnd));
-		return ::SendMessage(this->m_hWnd, SCI_SEARCHINTARGET, nLength, (LPARAM)szText);
+		return ::SendMessage(this->m_hWnd, SCI_SEARCHINTARGET, nLength, reinterpret_cast<LPARAM>(szText));
 	}
 
 	int ReplaceTarget(LPCSTR szText, int nLength)
 	{
 		ATLASSERT(::IsWindow(this->m_hWnd));
-		return ::SendMessage(this->m_hWnd, SCI_REPLACETARGET, nLength, (LPARAM)szText);
+		return ::SendMessage(this->m_hWnd, SCI_REPLACETARGET, nLength, reinterpret_cast<LPARAM>(szText));
 	}
 
 	int ReplaceTargetRE(LPCSTR szText, int nLength)
 	{
 		ATLASSERT(::IsWindow(this->m_hWnd));
-		return ::SendMessage(this->m_hWnd, SCI_REPLACETARGETRE, nLength, (LPARAM)szText);
+		return ::SendMessage(this->m_hWnd, SCI_REPLACETARGETRE, nLength, reinterpret_cast<LPARAM>(szText));
 	}
 
 	//@}
@@ -315,7 +315,7 @@ public:
 	void CopyText(LPCSTR szText, int nLength)
 	{
 		ATLASSERT(::IsWindow(this->m_hWnd));
-		::SendMessage(this->m_hWnd, SCI_COPYTEXT, nLength, (LPARAM)szText);
+		::SendMessage(this->m_hWnd, SCI_COPYTEXT, nLength, reinterpret_cast<LPARAM>(szText));
 	}
 
 	void SetPasteConvertEndings(bool bConvert)
@@ -585,13 +585,13 @@ public:
 	int GetSelText(LPSTR szText) const
 	{
 		ATLASSERT(::IsWindow(this->m_hWnd));
-		return ::SendMessage(this->m_hWnd, SCI_GETSELTEXT, 0, (LPARAM)szText);
+		return ::SendMessage(this->m_hWnd, SCI_GETSELTEXT, 0, reinterpret_cast<LPARAM>(szText));
 	}
 
 	int GetCurLine(LPSTR szText, int nLength) const
 	{
 		ATLASSERT(::IsWindow(this->m_hWnd));
-		return ::SendMessage(this->m_hWnd, SCI_GETCURLINE, nLength, (LPARAM)szText);
+		return ::SendMessage(this->m_hWnd, SCI_GETCURLINE, nLength, reinterpret_cast<LPARAM>(szText));
 	}
 
 	bool SelectionIsRectangle() const
@@ -657,7 +657,7 @@ public:
 	int TextWidth(int nStyle, LPCSTR szText)
 	{
 		ATLASSERT(::IsWindow(this->m_hWnd));
-		return ::SendMessage(this->m_hWnd, SCI_TEXTWIDTH, nStyle, (LPARAM)szText);
+		return ::SendMessage(this->m_hWnd, SCI_TEXTWIDTH, nStyle, reinterpret_cast<LPARAM>(szText));
 	}
 
 	int TextHeight(int nLine) const
@@ -1524,7 +1524,7 @@ public:
 	void AutoCSelect(LPCSTR szText)
 	{
 		ATLASSERT(::IsWindow(this->m_hWnd));
-		::SendMessage(this->m_hWnd, SCI_AUTOCSELECT, 0, (LPARAM)szText);
+		::SendMessage(this->m_hWnd, SCI_AUTOCSELECT, 0, reinterpret_cast<LPARAM>(szText));
 	}
 
 	int AutoCGetCurrent() const

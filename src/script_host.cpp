@@ -187,7 +187,7 @@ HRESULT script_host::InitScriptEngine()
 	if (SUCCEEDED(hr))
 	{
 		IActiveScriptProperty* pActScriProp = nullptr;
-		m_script_engine->QueryInterface(IID_IActiveScriptProperty, (void**)&pActScriProp);
+		m_script_engine->QueryInterface(IID_IActiveScriptProperty, reinterpret_cast<void**>(&pActScriProp));
 		VARIANT scriptLangVersion;
 		scriptLangVersion.vt = VT_I4;
 		scriptLangVersion.lVal = SCRIPTLANGUAGEVERSION_5_8 + 1;
@@ -454,7 +454,7 @@ void script_host::Finalise()
 	if (Ready())
 	{
 		IActiveScriptGarbageCollector* gc = nullptr;
-		if (SUCCEEDED(m_script_engine->QueryInterface(IID_IActiveScriptGarbageCollector, (void**)&gc)))
+		if (SUCCEEDED(m_script_engine->QueryInterface(IID_IActiveScriptGarbageCollector, reinterpret_cast<void**>(&gc))))
 		{
 			gc->CollectGarbage(SCRIPTGCTYPE_EXHAUSTIVE);
 			gc->Release();

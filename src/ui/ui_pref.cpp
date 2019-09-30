@@ -98,7 +98,7 @@ void CDialogPref::OnPresetsBnClicked(UINT, int, HWND)
 
 	RECT rc;
 	::GetWindowRect(::GetDlgItem(m_hWnd, IDC_PRESETS), &rc);
-	const int idx = TrackPopupMenu(menu, TPM_RIGHTBUTTON | TPM_NONOTIFY | TPM_RETURNCMD, rc.left, rc.bottom, 0, m_hWnd, 0);
+	const int idx = TrackPopupMenu(menu, TPM_RIGHTBUTTON | TPM_NONOTIFY | TPM_RETURNCMD, rc.left, rc.bottom, 0, m_hWnd, nullptr);
 	if (idx > 0)
 	{
 		g_sci_prop_sets.load_preset(idx);

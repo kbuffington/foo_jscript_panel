@@ -36,7 +36,7 @@ STDMETHODIMP ContextMenuManager::ExecuteByID(UINT id, VARIANT_BOOL* p)
 STDMETHODIMP ContextMenuManager::InitContext(IMetadbHandleList* handles)
 {
 	metadb_handle_list* handles_ptr = nullptr;
-	handles->get__ptr((void**)&handles_ptr);
+	handles->get__ptr(reinterpret_cast<void**>(&handles_ptr));
 	contextmenu_manager::g_create(m_cm);
 	m_cm->init_context(*handles_ptr, contextmenu_manager::flag_show_shortcuts);
 	return S_OK;
@@ -236,7 +236,7 @@ STDMETHODIMP GdiBitmap::ApplyMask(IGdiBitmap* mask, VARIANT_BOOL* p)
 
 	*p = VARIANT_FALSE;
 	Gdiplus::Bitmap* bitmap_mask = nullptr;
-	mask->get__ptr((void**)&bitmap_mask);
+	mask->get__ptr(reinterpret_cast<void**>(&bitmap_mask));
 
 	if (!bitmap_mask || bitmap_mask->GetHeight() != m_ptr->GetHeight() || bitmap_mask->GetWidth() != m_ptr->GetWidth())
 	{
@@ -399,7 +399,7 @@ STDMETHODIMP GdiBitmap::ReleaseGraphics(IGdiGraphics* p)
 	if (p)
 	{
 		Gdiplus::Graphics* g = nullptr;
-		p->get__ptr((void**)&g);
+		p->get__ptr(reinterpret_cast<void**>(&g));
 		p->put__ptr(nullptr);
 		if (g) delete g;
 	}
@@ -563,7 +563,7 @@ STDMETHODIMP GdiGraphics::CalcTextHeight(BSTR str, IGdiFont* font, UINT* p)
 	if (!m_ptr || !p) return E_POINTER;
 
 	HFONT hFont = nullptr;
-	font->get__HFont((UINT*)&hFont);
+	font->get__HFont(reinterpret_cast<UINT*>(&hFont));
 	HDC dc = m_ptr->GetHDC();
 	HFONT oldfont = SelectFont(dc, hFont);
 
@@ -578,7 +578,7 @@ STDMETHODIMP GdiGraphics::CalcTextWidth(BSTR str, IGdiFont* font, UINT* p)
 	if (!m_ptr || !p) return E_POINTER;
 
 	HFONT hFont = nullptr;
-	font->get__HFont((UINT*)&hFont);
+	font->get__HFont(reinterpret_cast<UINT*>(&hFont));
 	HDC dc = m_ptr->GetHDC();
 	HFONT oldfont = SelectFont(dc, hFont);
 
@@ -602,7 +602,7 @@ STDMETHODIMP GdiGraphics::DrawImage(IGdiBitmap* image, float dstX, float dstY, f
 	if (!m_ptr) return E_POINTER;
 
 	Gdiplus::Bitmap* img = nullptr;
-	image->get__ptr((void**)&img);
+	image->get__ptr(reinterpret_cast<void**>(&img));
 	Gdiplus::Matrix old_m;
 
 	if (angle != 0.0)
@@ -704,7 +704,7 @@ STDMETHODIMP GdiGraphics::DrawString(BSTR str, IGdiFont* font, LONGLONG colour, 
 	if (!m_ptr) return E_POINTER;
 
 	Gdiplus::Font* fn = nullptr;
-	font->get__ptr((void**)&fn);
+	font->get__ptr(reinterpret_cast<void**>(&fn));
 	Gdiplus::SolidBrush br(static_cast<t_size>(colour));
 	Gdiplus::StringFormat fmt(Gdiplus::StringFormat::GenericTypographic());
 
@@ -725,7 +725,7 @@ STDMETHODIMP GdiGraphics::EstimateLineWrap(BSTR str, IGdiFont* font, int max_wid
 	if (!m_ptr || !p) return E_POINTER;
 
 	HFONT hFont = nullptr;
-	font->get__HFont((UINT*)&hFont);
+	font->get__HFont(reinterpret_cast<UINT*>(&hFont));
 	HDC dc = m_ptr->GetHDC();
 	HFONT oldfont = SelectFont(dc, hFont);
 
@@ -864,7 +864,7 @@ STDMETHODIMP GdiGraphics::GdiDrawText(BSTR str, IGdiFont* font, LONGLONG colour,
 	if (format & DT_MODIFYSTRING) return E_INVALIDARG;
 
 	HFONT hFont = nullptr;
-	font->get__HFont((UINT*)&hFont);
+	font->get__HFont(reinterpret_cast<UINT*>(&hFont));
 	HDC dc = m_ptr->GetHDC();
 	HFONT oldfont = SelectFont(dc, hFont);
 
@@ -908,7 +908,7 @@ STDMETHODIMP GdiGraphics::MeasureString(BSTR str, IGdiFont* font, float x, float
 	if (!m_ptr || !pp) return E_POINTER;
 
 	Gdiplus::Font* fn = nullptr;
-	font->get__ptr((void**)&fn);
+	font->get__ptr(reinterpret_cast<void**>(&fn));
 
 	Gdiplus::StringFormat fmt = Gdiplus::StringFormat::GenericTypographic();
 
@@ -1253,7 +1253,7 @@ STDMETHODIMP MetadbHandle::Compare(IMetadbHandle* handle, VARIANT_BOOL* p)
 	if (m_handle.is_empty() || !p) return E_POINTER;
 
 	metadb_handle* ptr = nullptr;
-	handle->get__ptr((void**)&ptr);
+	handle->get__ptr(reinterpret_cast<void**>(&ptr));
 	if (!ptr) return E_INVALIDARG;
 
 	*p = TO_VARIANT_BOOL(ptr == m_handle.get_ptr());
@@ -1451,7 +1451,7 @@ STDMETHODIMP MetadbHandleList::get__ptr(void** pp)
 STDMETHODIMP MetadbHandleList::Add(IMetadbHandle* handle)
 {
 	metadb_handle* ptr = nullptr;
-	handle->get__ptr((void**)&ptr);
+	handle->get__ptr(reinterpret_cast<void**>(&ptr));
 	if (!ptr) return E_INVALIDARG;
 
 	m_handles.add_item(ptr);
@@ -1461,7 +1461,7 @@ STDMETHODIMP MetadbHandleList::Add(IMetadbHandle* handle)
 STDMETHODIMP MetadbHandleList::AddRange(IMetadbHandleList* handles)
 {
 	metadb_handle_list* handles_ptr = nullptr;
-	handles->get__ptr((void**)&handles_ptr);
+	handles->get__ptr(reinterpret_cast<void**>(&handles_ptr));
 	m_handles.add_items(*handles_ptr);
 	return S_OK;
 }
@@ -1502,7 +1502,7 @@ STDMETHODIMP MetadbHandleList::BSearch(IMetadbHandle* handle, int* p)
 	if (!p) return E_POINTER;
 
 	metadb_handle* ptr = nullptr;
-	handle->get__ptr((void**)&ptr);
+	handle->get__ptr(reinterpret_cast<void**>(&ptr));
 	if (!ptr) return E_INVALIDARG;
 
 	*p = m_handles.bsearch_by_pointer(ptr);
@@ -1558,7 +1558,7 @@ STDMETHODIMP MetadbHandleList::Find(IMetadbHandle* handle, int* p)
 	if (!p) return E_POINTER;
 
 	metadb_handle* ptr = nullptr;
-	handle->get__ptr((void**)&ptr);
+	handle->get__ptr(reinterpret_cast<void**>(&ptr));
 	if (!ptr) return E_INVALIDARG;
 
 	*p = m_handles.find_item(ptr);
@@ -1595,7 +1595,7 @@ STDMETHODIMP MetadbHandleList::GetLibraryRelativePaths(VARIANT* p)
 STDMETHODIMP MetadbHandleList::Insert(UINT index, IMetadbHandle* handle)
 {
 	metadb_handle* ptr = nullptr;
-	handle->get__ptr((void**)&ptr);
+	handle->get__ptr(reinterpret_cast<void**>(&ptr));
 	if (!ptr) return E_INVALIDARG;
 
 	m_handles.insert_item(ptr, index);
@@ -1605,7 +1605,7 @@ STDMETHODIMP MetadbHandleList::Insert(UINT index, IMetadbHandle* handle)
 STDMETHODIMP MetadbHandleList::InsertRange(UINT index, IMetadbHandleList* handles)
 {
 	metadb_handle_list* handles_ptr = nullptr;
-	handles->get__ptr((void**)&handles_ptr);
+	handles->get__ptr(reinterpret_cast<void**>(&handles_ptr));
 	m_handles.insert_items(*handles_ptr, index);
 	return S_OK;
 }
@@ -1613,7 +1613,7 @@ STDMETHODIMP MetadbHandleList::InsertRange(UINT index, IMetadbHandleList* handle
 STDMETHODIMP MetadbHandleList::MakeDifference(IMetadbHandleList* handles)
 {
 	metadb_handle_list* handles_ptr = nullptr;
-	handles->get__ptr((void**)&handles_ptr);
+	handles->get__ptr(reinterpret_cast<void**>(&handles_ptr));
 
 	metadb_handle_list r1, r2;
 	metadb_handle_list_helper::sorted_by_pointer_extract_difference(m_handles, *handles_ptr, r1, r2);
@@ -1624,7 +1624,7 @@ STDMETHODIMP MetadbHandleList::MakeDifference(IMetadbHandleList* handles)
 STDMETHODIMP MetadbHandleList::MakeIntersection(IMetadbHandleList* handles)
 {
 	metadb_handle_list* handles_ptr = nullptr;
-	handles->get__ptr((void**)&handles_ptr);
+	handles->get__ptr(reinterpret_cast<void**>(&handles_ptr));
 
 	const metadb_handle_list_ref handles_ref = *handles_ptr;
 	metadb_handle_list result;
@@ -1654,7 +1654,7 @@ STDMETHODIMP MetadbHandleList::MakeIntersection(IMetadbHandleList* handles)
 STDMETHODIMP MetadbHandleList::MakeUnion(IMetadbHandleList* handles)
 {
 	metadb_handle_list* handles_ptr = nullptr;
-	handles->get__ptr((void**)&handles_ptr);
+	handles->get__ptr(reinterpret_cast<void**>(&handles_ptr));
 
 	m_handles.add_items(*handles_ptr);
 	m_handles.sort_by_pointer_remove_duplicates();
@@ -1664,7 +1664,7 @@ STDMETHODIMP MetadbHandleList::MakeUnion(IMetadbHandleList* handles)
 STDMETHODIMP MetadbHandleList::OrderByFormat(__interface ITitleFormat* script, int direction)
 {
 	titleformat_object* obj = nullptr;
-	script->get__ptr((void**)&obj);
+	script->get__ptr(reinterpret_cast<void**>(&obj));
 	m_handles.sort_by_format(obj, nullptr, direction);
 	return S_OK;
 }
@@ -1734,7 +1734,7 @@ STDMETHODIMP MetadbHandleList::RefreshStats()
 STDMETHODIMP MetadbHandleList::Remove(IMetadbHandle* handle)
 {
 	metadb_handle* ptr = nullptr;
-	handle->get__ptr((void**)&ptr);
+	handle->get__ptr(reinterpret_cast<void**>(&ptr));
 	if (!ptr) return E_INVALIDARG;
 
 	m_handles.remove_item(ptr);
@@ -1892,7 +1892,7 @@ STDMETHODIMP MetadbHandleList::put_Item(UINT index, IMetadbHandle* handle)
 	if (index < m_handles.get_count())
 	{
 		metadb_handle* ptr = nullptr;
-		handle->get__ptr((void**)&ptr);
+		handle->get__ptr(reinterpret_cast<void**>(&ptr));
 		if (!ptr) return E_INVALIDARG;
 
 		m_handles.replace_item(index, ptr);
@@ -2027,7 +2027,7 @@ STDMETHODIMP ThemeManager::DrawThemeBackground(IGdiGraphics* gr, int x, int y, i
 	if (!m_theme) return E_POINTER;
 
 	Gdiplus::Graphics* graphics = nullptr;
-	gr->get__ptr((void**)&graphics);
+	gr->get__ptr(reinterpret_cast<void**>(&graphics));
 
 	RECT rc = { x, y, x + w, y + h };
 	RECT rc_clip = { clip_x, clip_y, clip_x + clip_w, clip_y + clip_h };
@@ -2097,7 +2097,7 @@ STDMETHODIMP TitleFormat::EvalWithMetadb(IMetadbHandle* handle, BSTR* p)
 	if (m_obj.is_empty() || !p) return E_POINTER;
 
 	metadb_handle* ptr = nullptr;
-	handle->get__ptr((void**)&ptr);
+	handle->get__ptr(reinterpret_cast<void**>(&ptr));
 	if (!ptr) return E_INVALIDARG;
 
 	pfc::string8_fast str;
@@ -2111,7 +2111,7 @@ STDMETHODIMP TitleFormat::EvalWithMetadbs(IMetadbHandleList* handles, VARIANT* p
 	if (m_obj.is_empty() || !p) return E_POINTER;
 
 	metadb_handle_list* handles_ptr = nullptr;
-	handles->get__ptr((void**)&handles_ptr);
+	handles->get__ptr(reinterpret_cast<void**>(&handles_ptr));
 
 	const LONG count = handles_ptr->get_count();
 	helpers::com_array helper;
@@ -2153,7 +2153,7 @@ Tooltip::Tooltip(HWND p_wndparent, const panel_tooltip_param_ptr& p_param_ptr) :
 	m_ti.uFlags = TTF_IDISHWND | TTF_SUBCLASS | TTF_TRANSPARENT;
 	m_ti.hinst = core_api::get_my_instance();
 	m_ti.hwnd = p_wndparent;
-	m_ti.uId = (UINT_PTR)p_wndparent;
+	m_ti.uId = reinterpret_cast<UINT_PTR>(p_wndparent);
 	m_ti.lpszText = m_tip_buffer;
 
 	const HFONT font = CreateFont(
@@ -2293,7 +2293,7 @@ STDMETHODIMP UiSelectionHolder::SetPlaylistTracking()
 STDMETHODIMP UiSelectionHolder::SetSelection(IMetadbHandleList* handles)
 {
 	metadb_handle_list* handles_ptr = nullptr;
-	handles->get__ptr((void**)&handles_ptr);
+	handles->get__ptr(reinterpret_cast<void**>(&handles_ptr));
 	m_holder->set_selection(*handles_ptr);
 	return S_OK;
 }

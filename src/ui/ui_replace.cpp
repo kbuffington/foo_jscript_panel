@@ -85,7 +85,7 @@ void CDialogReplace::OnReplace(UINT uNotifyCode, int nID, HWND wndCtl)
 		m_havefound = false;
 	}
 
-	OnFindNext(0, 0, 0);
+	OnFindNext(0, 0, nullptr);
 }
 
 void CDialogReplace::OnReplaceAll(UINT uNotifyCode, int nID, HWND wndCtl)

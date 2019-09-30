@@ -324,7 +324,7 @@ bool CScriptEditorCtrl::FindBraceMatchPos(int& braceAtCaret, int& braceOpposite)
 bool CScriptEditorCtrl::GetPropertyEx(const std::string& key, std::string& out)
 {
 	out.clear();
-	const int len = GetPropertyExpanded(key.c_str(), 0);
+	const int len = GetPropertyExpanded(key.c_str(), nullptr);
 	if (len == 0) return false;
 
 	std::vector<char> buff(len + 1);
@@ -638,7 +638,7 @@ slist CScriptEditorCtrl::GetLinePartsInStyle(int line, const StyleAndWords& saw)
 
 std::string CScriptEditorCtrl::GetCurrentLine()
 {
-	const int len = GetCurLine(0, 0);
+	const int len = GetCurLine(nullptr, 0);
 	std::string text(len, '\0');
 	GetCurLine(&text[0], len);
 	return text.substr(0, text.length() - 1);
@@ -689,10 +689,9 @@ std::string CScriptEditorCtrl::GetNearestWords(const char* wordStart, t_size sea
 void CScriptEditorCtrl::AutoMarginWidth()
 {
 	int linenumwidth = 1;
-	int marginwidth, oldmarginwidth;
-	int linecount;
-
-	linecount = GetLineCount();
+	int marginwidth = 0;
+	int oldmarginwidth = 0;
+	int linecount = GetLineCount();
 
 	while (linecount >= 10)
 	{

@@ -36,7 +36,7 @@ public:
 		menu.AppendMenu(MF_SEPARATOR);
 		uAppendMenu(menu, MF_STRING, ID_REMOVE, "Remove\tDel");
 
-		const int idx = menu.TrackPopupMenu(TPM_RIGHTBUTTON | TPM_NONOTIFY | TPM_RETURNCMD, point.x, point.y, m_hWnd, 0);
+		const int idx = menu.TrackPopupMenu(TPM_RIGHTBUTTON | TPM_NONOTIFY | TPM_RETURNCMD, point.x, point.y, m_hWnd, nullptr);
 		switch (idx)
 		{
 		case ID_SELECTALL:

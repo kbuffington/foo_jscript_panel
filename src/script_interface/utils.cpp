@@ -107,7 +107,7 @@ STDMETHODIMP Utils::GetAlbumArtAsync(UINT window_id, IMetadbHandle* handle, UINT
 
 	t_size cookie = 0;
 	metadb_handle* ptr = nullptr;
-	handle->get__ptr((void**)&ptr);
+	handle->get__ptr(reinterpret_cast<void**>(&ptr));
 	if (!ptr) return E_INVALIDARG;
 
 	try
@@ -141,7 +141,7 @@ STDMETHODIMP Utils::GetAlbumArtV2(IMetadbHandle* handle, UINT art_id, VARIANT_BO
 	if (!pp) return E_POINTER;
 
 	metadb_handle* ptr = nullptr;
-	handle->get__ptr((void**)&ptr);
+	handle->get__ptr(reinterpret_cast<void**>(&ptr));
 	if (!ptr) return E_INVALIDARG;
 
 	pfc::string8_fast dummy;

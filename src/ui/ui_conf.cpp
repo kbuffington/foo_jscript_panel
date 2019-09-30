@@ -64,10 +64,10 @@ BOOL CDialogConf::OnInitDialog(HWND hwndFocus, LPARAM lParam)
 		}
 
 		slist path_split = helpers::split_string(folder.get_ptr(), "\\");
-		uAppendMenu(samples, MF_STRING | MF_POPUP, (UINT_PTR)sub, path_split[path_split.size() - 1].c_str());
+		uAppendMenu(samples, MF_STRING | MF_POPUP, reinterpret_cast<UINT_PTR>(sub), path_split[path_split.size() - 1].c_str());
 	}
 
-	uAppendMenu(m_menu, MF_STRING | MF_POPUP, (UINT_PTR)samples, "Samples");
+	uAppendMenu(m_menu, MF_STRING | MF_POPUP, reinterpret_cast<UINT_PTR>(samples), "Samples");
 
 	// Generate docs menu
 	HMENU docs = CreateMenu();
@@ -82,14 +82,14 @@ BOOL CDialogConf::OnInitDialog(HWND hwndFocus, LPARAM lParam)
 		uAppendMenu(docs, MF_STRING, ID_DOCS_BEGIN + i, display);
 	}
 
-	uAppendMenu(m_menu, MF_STRING | MF_POPUP, (UINT_PTR)docs, "Docs");
+	uAppendMenu(m_menu, MF_STRING | MF_POPUP, reinterpret_cast<UINT_PTR>(docs), "Docs");
 
 	// Generate links menu
 	HMENU links = CreateMenu();
 	uAppendMenu(links, MF_STRING, ID_LINKS_BEGIN, "Wiki");
 	uAppendMenu(links, MF_STRING, ID_LINKS_BEGIN + 1, "Releases");
 	uAppendMenu(links, MF_STRING, ID_LINKS_BEGIN + 2, "Report an issue");
-	uAppendMenu(m_menu, MF_STRING | MF_POPUP, (UINT_PTR)links , "Links");
+	uAppendMenu(m_menu, MF_STRING | MF_POPUP, reinterpret_cast<UINT_PTR>(links), "Links");
 
 	// Set caption text
 	uSetWindowText(m_hWnd, m_caption);
