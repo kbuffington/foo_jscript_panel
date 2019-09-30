@@ -409,7 +409,7 @@ library foo_jscript_panel
 		HRESULT DateStringToTimestamp(BSTR str, [out, retval] UINT* p);
 		HRESULT FormatDuration(double seconds, [out, retval] BSTR* p);
 		HRESULT FormatFileSize(LONGLONG bytes, [out, retval] BSTR* p);
-		HRESULT GetAlbumArtAsync(UINT window_id, IMetadbHandle* handle, [defaultvalue(0)] UINT art_id, [defaultvalue(-1)] VARIANT_BOOL need_stub, [defaultvalue(0)] VARIANT_BOOL only_embed, [defaultvalue(0)] VARIANT_BOOL no_load, [out, retval] UINT* p);
+		HRESULT GetAlbumArtAsync(UINT window_id, IMetadbHandle* handle, [defaultvalue(0)] UINT art_id, [defaultvalue(-1)] VARIANT_BOOL need_stub, [defaultvalue(0)] VARIANT_BOOL only_embed, [defaultvalue(0)] VARIANT_BOOL no_load);
 		HRESULT GetAlbumArtEmbedded(BSTR rawpath, [defaultvalue(0)] UINT art_id, [out, retval] IGdiBitmap** pp);
 		HRESULT GetAlbumArtV2(IMetadbHandle* handle, [defaultvalue(0)] UINT art_id, [defaultvalue(-1)] VARIANT_BOOL need_stub, [out, retval] IGdiBitmap** pp);
 		HRESULT GetFileSize(BSTR filename, [out, retval] LONGLONG* p);

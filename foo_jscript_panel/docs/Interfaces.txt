@@ -561,7 +561,7 @@ interface IGdi {
 		gdi.LoadImageAsync(window_id, path); (uint)
 		/*
 		window_id: window.ID
-		Returns a unique id.
+		Returns a unique id which is the first argument on the on_load_image_done callback. See callbacks.txt.
 		*/
 }
 
@@ -1063,7 +1063,7 @@ interface IUtils {
 		>> 7.9 GB
 		*/
 
-		utils.GetAlbumArtAsync(window_id, handle[, art_id, need_stub, only_embed, no_load]); (uint)
+		utils.GetAlbumArtAsync(window_id, handle[, art_id, need_stub, only_embed, no_load]);
 		/*
 		window_id: window.ID
 		art_id: default 0.

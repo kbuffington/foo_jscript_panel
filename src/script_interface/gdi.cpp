@@ -70,21 +70,9 @@ STDMETHODIMP Gdi::LoadImageAsync(UINT window_id, BSTR path, UINT* p)
 {
 	if (!p) return E_POINTER;
 
-	t_size cookie = 0;
+	auto task = new helpers::load_image_async(reinterpret_cast<HWND>(window_id), path);
+	simple_thread_pool::instance().enqueue(task);
 
-	try
-	{
-		helpers::load_image_async* task = new helpers::load_image_async(reinterpret_cast<HWND>(window_id), path);
-
-		if (simple_thread_pool::instance().enqueue(task))
-			cookie = reinterpret_cast<t_size>(task);
-		else
-			delete task;
-	}
-	catch (...)
-	{
-	}
-
-	*p = cookie;
+	*p = reinterpret_cast<t_size>(task);
 	return S_OK;
 }

@@ -15,7 +15,7 @@ public:
 	STDMETHODIMP DateStringToTimestamp(BSTR str, UINT* p) override;
 	STDMETHODIMP FormatDuration(double seconds, BSTR* p) override;
 	STDMETHODIMP FormatFileSize(LONGLONG bytes, BSTR* p) override;
-	STDMETHODIMP GetAlbumArtAsync(UINT window_id, IMetadbHandle* handle, UINT art_id, VARIANT_BOOL need_stub, VARIANT_BOOL only_embed, VARIANT_BOOL no_load, UINT* p) override;
+	STDMETHODIMP GetAlbumArtAsync(UINT window_id, IMetadbHandle* handle, UINT art_id, VARIANT_BOOL need_stub, VARIANT_BOOL only_embed, VARIANT_BOOL no_load) override;
 	STDMETHODIMP GetAlbumArtEmbedded(BSTR rawpath, UINT art_id, IGdiBitmap** pp) override;
 	STDMETHODIMP GetAlbumArtV2(IMetadbHandle* handle, UINT art_id, VARIANT_BOOL need_stub, IGdiBitmap** pp) override;
 	STDMETHODIMP GetFileSize(BSTR filename, LONGLONG* p) override;

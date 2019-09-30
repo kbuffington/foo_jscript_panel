@@ -101,30 +101,14 @@ STDMETHODIMP Utils::FormatFileSize(LONGLONG bytes, BSTR* p)
 	return S_OK;
 }
 
-STDMETHODIMP Utils::GetAlbumArtAsync(UINT window_id, IMetadbHandle* handle, UINT art_id, VARIANT_BOOL need_stub, VARIANT_BOOL only_embed, VARIANT_BOOL no_load, UINT* p)
+STDMETHODIMP Utils::GetAlbumArtAsync(UINT window_id, IMetadbHandle* handle, UINT art_id, VARIANT_BOOL need_stub, VARIANT_BOOL only_embed, VARIANT_BOOL no_load)
 {
-	if (!p) return E_POINTER;
-
-	t_size cookie = 0;
 	metadb_handle* ptr = nullptr;
 	handle->get__ptr(reinterpret_cast<void**>(&ptr));
 	if (!ptr) return E_INVALIDARG;
 
-	try
-	{
-		helpers::album_art_async* task = new helpers::album_art_async(reinterpret_cast<HWND>(window_id), ptr, art_id, need_stub != VARIANT_FALSE, only_embed != VARIANT_FALSE, no_load != VARIANT_FALSE);
-
-		if (simple_thread_pool::instance().enqueue(task))
-			cookie = reinterpret_cast<t_size>(task);
-		else
-			delete task;
-	}
-	catch (...)
-	{
-		cookie = 0;
-	}
-
-	*p = cookie;
+	auto task = new helpers::album_art_async(reinterpret_cast<HWND>(window_id), ptr, art_id, need_stub != VARIANT_FALSE, only_embed != VARIANT_FALSE, no_load != VARIANT_FALSE);
+	simple_thread_pool::instance().enqueue(task);
 	return S_OK;
 }
 
