@@ -20,7 +20,7 @@ public:
 	void update_script() override;
 
 protected:
-	void build_context_menu(HMENU menu, int x, int y, int id_base);
+	void build_context_menu(HMENU menu, int id_base);
 	void execute_context_menu_command(int id, int id_base);
 
 private:

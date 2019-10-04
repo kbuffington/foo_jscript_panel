@@ -113,7 +113,7 @@ public:
 
 	void edit_mode_context_menu_build(const POINT& p_point, bool p_fromkeyboard, HMENU p_menu, t_size p_id_base) override
 	{
-		build_context_menu(p_menu, p_point.x, p_point.y, p_id_base);
+		build_context_menu(p_menu, p_id_base);
 	}
 
 	void edit_mode_context_menu_command(const POINT& p_point, bool p_fromkeyboard, t_size p_id, t_size p_id_base) override

@@ -200,13 +200,16 @@ LRESULT panel_window::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 		break;
 	case WM_CONTEXTMENU:
 		{
-			const int x = GET_X_LPARAM(lp);
-			const int y = GET_Y_LPARAM(lp);
+			POINT pt = { GET_X_LPARAM(lp), GET_Y_LPARAM(lp) };
+			if (pt.x == -1 && pt.y == -1)
+			{
+				GetMessagePos(&pt);
+			}
 
 			HMENU menu = CreatePopupMenu();
 			constexpr int base_id = 0;
-			build_context_menu(menu, x, y, base_id);
-			const int idx = TrackPopupMenu(menu, TPM_RIGHTBUTTON | TPM_NONOTIFY | TPM_RETURNCMD, x, y, 0, m_hwnd, 0);
+			build_context_menu(menu, base_id);
+			const int idx = TrackPopupMenu(menu, TPM_RIGHTBUTTON | TPM_NONOTIFY | TPM_RETURNCMD, pt.x, pt.y, 0, m_hwnd, nullptr);
 			execute_context_menu_command(idx, base_id);
 			DestroyMenu(menu);
 		}
@@ -492,7 +495,7 @@ ui_helpers::container_window::class_data& panel_window::get_class_data() const
 	__implement_get_class_data_ex(JSP_NAME L" Class", L"", false, 0, WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN, get_edge_style(), CS_DBLCLKS);
 }
 
-void panel_window::build_context_menu(HMENU menu, int x, int y, int id_base)
+void panel_window::build_context_menu(HMENU menu, int id_base)
 {
 	uAppendMenu(menu, MF_STRING, id_base + 1, "&Reload");
 	uAppendMenu(menu, MF_SEPARATOR, 0, 0);
