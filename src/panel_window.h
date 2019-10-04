@@ -11,10 +11,10 @@ public:
 	panel_window();
 	~panel_window();
 
-	HRESULT script_invoke(t_size callbackId, VARIANTARG* argv = nullptr, t_size argc = 0, VARIANT* ret = nullptr);
 	LRESULT on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp) override;
 	class_data& get_class_data() const override;
 	bool show_configure_popup(HWND parent) override;
+	void script_invoke(t_size callbackId, VARIANTARG* argv = nullptr, t_size argc = 0, VARIANT* ret = nullptr);
 	void show_property_popup(HWND parent) override;
 	void unload_script() override;
 	void update_script() override;

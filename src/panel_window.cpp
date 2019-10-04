@@ -11,11 +11,6 @@ panel_window::~panel_window()
 	m_script_host->Release();
 }
 
-HRESULT panel_window::script_invoke(t_size callbackId, VARIANTARG* argv, t_size argc, VARIANT* ret)
-{
-	return m_script_host->InvokeCallback(callbackId, argv, argc, ret);
-}
-
 LRESULT panel_window::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 {
 	switch (msg)
@@ -154,12 +149,10 @@ LRESULT panel_window::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 				}
 
 				_variant_t result;
-				if (SUCCEEDED(script_invoke(callback_id::on_mouse_rbtn_up, args, _countof(args), &result)))
+				script_invoke(callback_id::on_mouse_rbtn_up, args, _countof(args), &result);
+				if (SUCCEEDED(VariantChangeType(&result, &result, 0, VT_BOOL)))
 				{
-					if (SUCCEEDED(VariantChangeType(&result, &result, 0, VT_BOOL)))
-					{
-						ret = !!result.boolVal;
-					}
+					ret = !!result.boolVal;
 				}
 			}
 			break;
@@ -678,6 +671,11 @@ void panel_window::on_size(int w, int h)
 	create_context();
 
 	script_invoke(callback_id::on_size);
+}
+
+void panel_window::script_invoke(t_size callbackId, VARIANTARG* argv, t_size argc, VARIANT* ret)
+{
+	m_script_host->InvokeCallback(callbackId, argv, argc, ret);
 }
 
 void panel_window::show_property_popup(HWND parent)

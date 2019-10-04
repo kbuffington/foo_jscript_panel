@@ -197,16 +197,7 @@ HRESULT script_host::InitScriptEngine()
 	return hr;
 }
 
-HRESULT script_host::InvokeCallback(t_size callbackId, VARIANTARG* argv, t_size argc, VARIANT* ret)
-{
-	if (!m_script_root) return E_POINTER;
-	if (HasError() || !Ready()) return E_FAIL;
-	if (m_callback_map.count(callbackId) == 0) return DISP_E_MEMBERNOTFOUND;
-	DISPPARAMS param = { argv, nullptr, argc, 0 };
-	return m_script_root->Invoke(m_callback_map.at(callbackId), IID_NULL, LOCALE_USER_DEFAULT, DISPATCH_METHOD, &param, ret, nullptr, nullptr);
-}
-
-HRESULT script_host::ProcessScripts(const IActiveScriptParsePtr& parser)
+HRESULT script_host::ProcessScripts(IActiveScriptParsePtr& parser)
 {
 	HRESULT hr = S_OK;
 	bool import_error = false;
@@ -478,6 +469,14 @@ void script_host::Finalise()
 	{
 		m_script_root.Release();
 	}
+}
+
+void script_host::InvokeCallback(t_size callbackId, VARIANTARG* argv, t_size argc, VARIANT* ret)
+{
+	if (!m_script_root || HasError() || !Ready() || m_callback_map.count(callbackId) == 0) return;
+
+	DISPPARAMS param = { argv, nullptr, argc, 0 };
+	m_script_root->Invoke(m_callback_map.at(callbackId), IID_NULL, LOCALE_USER_DEFAULT, DISPATCH_METHOD, &param, ret, nullptr, nullptr);
 }
 
 void script_host::ProcessScriptInfo(t_script_info& info)
