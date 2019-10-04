@@ -1,3 +1,7 @@
+v2.3.0.1
+- FIX: Make utils.ColourPicker remember Custom colours for the lifetime
+       of foobar2000 being open.
+
 v2.3.0
 - CHG: Drop support for foobar2000 v1.3.x. Now requires v1.4 or later.
 - NEW: Add utils.DateStringFromTimestamp and utils.TimestampFromDateString
