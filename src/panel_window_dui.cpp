@@ -63,8 +63,15 @@ public:
 		return g_get_subclass();
 	}
 
-	HFONT get_font_ui(t_size type) override
+	HWND get_wnd() override
 	{
+		return m_hwnd;
+	}	
+	
+	IGdiFont* get_font_ui(t_size type) override
+	{
+		IGdiFont* ret = nullptr;
+
 		static const std::array<const GUID*, 6> guids =
 		{
 			&ui_font_default,
@@ -74,12 +81,25 @@ public:
 			&ui_font_statusbar,
 			&ui_font_console,
 		};
-		return type < guids.size() ? m_callback->query_font_ex(*guids[type]) : nullptr;
-	}
 
-	HWND get_wnd() override
-	{
-		return m_hwnd;
+		if (type < guids.size())
+		{
+			HFONT hFont = m_callback->query_font_ex(*guids[type]);
+			if (hFont)
+			{
+				Gdiplus::Font* font = new Gdiplus::Font(m_hdc, hFont);
+				if (helpers::ensure_gdiplus_object(font))
+				{
+					ret = new com_object_impl_t<GdiFont>(font, hFont, false);
+				}
+				else
+				{
+					if (font) delete font;
+					font = nullptr;
+				}
+			}
+		}
+		return ret;
 	}
 
 	LRESULT on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp) override

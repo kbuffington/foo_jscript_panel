@@ -6,13 +6,7 @@ class panel_window_cui : public panel_window, public uie::window, public cui::fo
 protected:
 	DWORD get_colour_ui(t_size type) override
 	{
-		cui::colours::helper helper(pfc::guid_null);
-		return type <= cui::colours::colour_active_item_frame ? helpers::convert_colorref_to_argb(helper.get_colour((cui::colours::colour_identifier_t)type)) : 0;
-	}
-
-	HFONT get_font_ui(t_size type) override
-	{
-		return type <= cui::fonts::font_type_labels ? static_api_ptr_t<cui::fonts::manager>()->get_font((cui::fonts::font_type_t)type) : nullptr;
+		return type <= cui::colours::colour_active_item_frame ? helpers::convert_colorref_to_argb(cui::colours::helper(pfc::guid_null).get_colour((cui::colours::colour_identifier_t)type)) : 0;
 	}
 
 	HWND create_or_transfer_window(HWND parent, const uie::window_host_ptr& host, const ui_helpers::window_position_t& p_position) override
@@ -37,6 +31,30 @@ protected:
 	HWND get_wnd() const override
 	{
 		return m_hwnd;
+	}
+
+	IGdiFont* get_font_ui(t_size type) override
+	{
+		IGdiFont* ret = nullptr;
+
+		if (type <= cui::fonts::font_type_labels)
+		{
+			HFONT hFont = static_api_ptr_t<cui::fonts::manager>()->get_font((cui::fonts::font_type_t)type);
+			if (hFont)
+			{
+				Gdiplus::Font* font = new Gdiplus::Font(m_hdc, hFont);
+				if (helpers::ensure_gdiplus_object(font))
+				{
+					ret = new com_object_impl_t<GdiFont>(font, hFont);
+				}
+				else
+				{
+					if (font) delete font;
+					font = nullptr;
+				}
+			}
+		}
+		return ret;
 	}
 
 	LRESULT on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp) override

@@ -277,11 +277,9 @@ void CDialogConf::Apply()
 	m_parent->m_pseudo_transparent = m_pseudo.IsChecked();
 
 	// Get script text
-	pfc::array_t<char> code;
-	const int len = m_editorctrl.GetTextLength() + 1;
-	code.set_size(len);
-	m_editorctrl.GetText(code.get_ptr(), len);
-	m_parent->m_script_code = code.get_ptr();
+	std::vector<char> code(m_editorctrl.GetTextLength() + 1);
+	m_editorctrl.GetText(code.data(), code.size());
+	m_parent->m_script_code = code.data();
 	m_parent->update_script();
 
 	// Window position

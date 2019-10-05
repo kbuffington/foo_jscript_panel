@@ -86,21 +86,7 @@ STDMETHODIMP Window::GetFontCUI(UINT type, IGdiFont** pp)
 	if (!pp) return E_POINTER;
 	if (m_host->get_instance_type() != host_comm::KInstanceTypeCUI) return E_NOTIMPL;
 
-	*pp = nullptr;
-	HFONT hFont = m_host->get_font_ui(type);
-	if (hFont)
-	{
-		Gdiplus::Font* font = new Gdiplus::Font(m_host->get_hdc(), hFont);
-		if (helpers::ensure_gdiplus_object(font))
-		{
-			*pp = new com_object_impl_t<GdiFont>(font, hFont);
-		}
-		else
-		{
-			if (font) delete font;
-			font = nullptr;
-		}
-	}
+	*pp = m_host->get_font_ui(type);
 	return S_OK;
 }
 
@@ -109,21 +95,7 @@ STDMETHODIMP Window::GetFontDUI(UINT type, IGdiFont** pp)
 	if (!pp) return E_POINTER;
 	if (m_host->get_instance_type() != host_comm::KInstanceTypeDUI) return E_NOTIMPL;
 
-	*pp = nullptr;
-	HFONT hFont = m_host->get_font_ui(type);
-	if (hFont)
-	{
-		Gdiplus::Font* font = new Gdiplus::Font(m_host->get_hdc(), hFont);
-		if (helpers::ensure_gdiplus_object(font))
-		{
-			*pp = new com_object_impl_t<GdiFont>(font, hFont, false);
-		}
-		else
-		{
-			if (font) delete font;
-			font = nullptr;
-		}
-	}
+	*pp = m_host->get_font_ui(type);
 	return S_OK;
 }
 
