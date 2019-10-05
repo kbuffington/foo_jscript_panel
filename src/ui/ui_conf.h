@@ -52,7 +52,7 @@ public:
 	void OpenFindDialog();
 
 private:
-	CButton m_pseudo;
+	CCheckBox m_pseudo;
 	CDialogFind* m_dlgfind;
 	CDialogReplace* m_dlgreplace;
 	CComboBox m_edge;
