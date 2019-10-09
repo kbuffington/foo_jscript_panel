@@ -19,6 +19,8 @@ public:
 
 	void OnContextMenu(CWindow wnd, CPoint point)
 	{
+		if (m_data.empty()) return;
+
 		enum
 		{ 
 			ID_SELECTALL = 1,
@@ -34,7 +36,7 @@ public:
 		uAppendMenu(menu, MF_STRING, ID_SELECTNONE, "Select none");
 		uAppendMenu(menu, MF_STRING, ID_INVERTSEL, "Invert selection");
 		menu.AppendMenu(MF_SEPARATOR);
-		uAppendMenu(menu, MF_STRING, ID_REMOVE, "Remove\tDel");
+		uAppendMenu(menu, GetSelectedCount() ? MF_STRING : MF_GRAYED, ID_REMOVE, "Remove\tDel");
 
 		const int idx = menu.TrackPopupMenu(TPM_RIGHTBUTTON | TPM_NONOTIFY | TPM_RETURNCMD, point.x, point.y, m_hWnd, nullptr);
 		switch (idx)
