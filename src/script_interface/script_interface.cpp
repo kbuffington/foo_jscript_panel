@@ -1796,16 +1796,7 @@ STDMETHODIMP MetadbHandleList::UpdateFileInfoFromJSON(BSTR str)
 	info.set_size(count);
 
 	bool is_array;
-	json j;
-
-	try
-	{
-		j = json::parse(string_utf8_from_wide(str).get_ptr());
-	}
-	catch (...)
-	{
-		return E_INVALIDARG;
-	}
+	json j = json::parse(string_utf8_from_wide(str).get_ptr(), nullptr, false);
 
 	if (j.is_array() && j.size() == count)
 	{
