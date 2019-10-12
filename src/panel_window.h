@@ -28,7 +28,7 @@ private:
 	void on_paint();
 	void on_paint_error(HDC memdc);
 	void on_paint_user(HDC memdc, LPRECT lpUpdateRect);
-	void on_size(int w, int h);
+	void on_size();
 
 	CComPtr<IDropTargetImpl> m_drop_target;
 	IGdiGraphicsPtr m_gr_wrap;

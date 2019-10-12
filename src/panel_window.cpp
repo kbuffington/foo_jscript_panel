@@ -64,7 +64,9 @@ LRESULT panel_window::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 		{
 			RECT rc;
 			GetClientRect(m_hwnd, &rc);
-			on_size(RECT_CX(rc), RECT_CY(rc));
+			m_width = RECT_CX(rc);
+			m_height = RECT_CY(rc);
+			on_size();
 			if (m_pseudo_transparent)
 				redraw();
 			else
@@ -539,7 +541,7 @@ void panel_window::load_script()
 	}
 
 	// HACK: Script update will not call on_size, so invoke it explicitly
-	on_size(m_width, m_height);
+	on_size();
 	if (m_pseudo_transparent)
 	{
 		redraw();
@@ -648,14 +650,10 @@ void panel_window::on_paint_user(HDC memdc, LPRECT lpUpdateRect)
 	m_gr_wrap->put__ptr(nullptr);
 }
 
-void panel_window::on_size(int w, int h)
+void panel_window::on_size()
 {
-	m_width = w;
-	m_height = h;
-
 	delete_context();
 	create_context();
-
 	script_invoke(callback_id::on_size);
 }
 
