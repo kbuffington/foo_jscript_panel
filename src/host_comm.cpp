@@ -205,7 +205,7 @@ void host_comm::refresh_background(LPRECT lprcUpdate)
 	// Background bitmap
 	HBITMAP old_bmp = SelectBitmap(hdc_bk, m_gr_bmp_bk);
 
-	BitBlt(hdc_bk, rect_child.left, rect_child.top, rect_child.right - rect_child.left, rect_child.bottom - rect_child.top, dc_parent, pt.x, pt.y, SRCCOPY);
+	BitBlt(hdc_bk, rect_child.left, rect_child.top, RECT_CX(rect_child), RECT_CY(rect_child), dc_parent, pt.x, pt.y, SRCCOPY);
 
 	SelectBitmap(hdc_bk, old_bmp);
 	DeleteDC(hdc_bk);

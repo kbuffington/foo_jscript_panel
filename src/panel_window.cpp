@@ -56,10 +56,7 @@ LRESULT panel_window::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 				return 0;
 			}
 
-			PAINTSTRUCT ps;
-			HDC dc = BeginPaint(m_hwnd, &ps);
-			on_paint(dc, &ps.rcPaint);
-			EndPaint(m_hwnd, &ps);
+			on_paint();
 			m_paint_pending = false;
 		}
 		return 0;
@@ -67,7 +64,7 @@ LRESULT panel_window::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 		{
 			RECT rc;
 			GetClientRect(m_hwnd, &rc);
-			on_size(rc.right - rc.left, rc.bottom - rc.top);
+			on_size(RECT_CX(rc), RECT_CY(rc));
 			if (m_pseudo_transparent)
 				redraw();
 			else
@@ -555,10 +552,12 @@ void panel_window::load_script()
 	FB2K_console_formatter() << m_script_info.build_info_string() << ": initialised in " << static_cast<int>(timer.query() * 1000) << " ms";
 }
 
-void panel_window::on_paint(HDC dc, LPRECT lpUpdateRect)
+void panel_window::on_paint()
 {
-	if (!dc || !lpUpdateRect || !m_gr_bmp || !m_gr_wrap) return;
+	if (!m_gr_bmp || !m_gr_wrap) return;
 
+	PAINTSTRUCT ps;
+	HDC dc = BeginPaint(m_hwnd, &ps);
 	HDC memdc = CreateCompatibleDC(dc);
 	HBITMAP oldbmp = SelectBitmap(memdc, m_gr_bmp);
 
@@ -568,29 +567,17 @@ void panel_window::on_paint(HDC dc, LPRECT lpUpdateRect)
 		{
 			HDC bkdc = CreateCompatibleDC(dc);
 			HBITMAP bkoldbmp = SelectBitmap(bkdc, m_gr_bmp_bk);
-
-			BitBlt(
-				memdc,
-				lpUpdateRect->left,
-				lpUpdateRect->top,
-				lpUpdateRect->right - lpUpdateRect->left,
-				lpUpdateRect->bottom - lpUpdateRect->top,
-				bkdc,
-				lpUpdateRect->left,
-				lpUpdateRect->top,
-				SRCCOPY);
-
+			BitBlt(memdc, ps.rcPaint.left, ps.rcPaint.top, RECT_CX(ps.rcPaint), RECT_CY(ps.rcPaint), bkdc, ps.rcPaint.left, ps.rcPaint.top, SRCCOPY);
 			SelectBitmap(bkdc, bkoldbmp);
 			DeleteDC(bkdc);
 		}
 		else
 		{
 			RECT rc = { 0, 0, m_width, m_height };
-
 			FillRect(memdc, &rc, reinterpret_cast<HBRUSH>(COLOR_WINDOW + 1));
 		}
 
-		on_paint_user(memdc, lpUpdateRect);
+		on_paint_user(memdc, &ps.rcPaint);
 	}
 	else
 	{
@@ -600,6 +587,8 @@ void panel_window::on_paint(HDC dc, LPRECT lpUpdateRect)
 	BitBlt(dc, 0, 0, m_width, m_height, memdc, 0, 0, SRCCOPY);
 	SelectBitmap(memdc, oldbmp);
 	DeleteDC(memdc);
+
+	EndPaint(m_hwnd, &ps);
 }
 
 void panel_window::on_paint_error(HDC memdc)
@@ -624,7 +613,7 @@ void panel_window::on_paint_error(HDC memdc)
 		DEFAULT_PITCH | FF_DONTCARE,
 		L"Tahoma");
 
-	HFONT oldfont = (HFONT)SelectObject(memdc, newfont);
+	HFONT oldfont = SelectFont(memdc, newfont);
 
 	{
 		LOGBRUSH lbBack = { BS_SOLID, RGB(225, 60, 45), 0 };
