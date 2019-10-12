@@ -214,7 +214,7 @@ void host_timer_dispatcher::kill_timers(HWND hwnd)
 		{
 			if (elem.second->get_hwnd() == hwnd)
 			{
-				timersToDelete.push_back(elem.first);
+				timersToDelete.emplace_back(elem.first);
 			}
 		}
 	}

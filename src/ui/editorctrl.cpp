@@ -615,7 +615,7 @@ slist CScriptEditorCtrl::GetLinePartsInStyle(int line, const StyleAndWords& saw)
 			{
 				if (s.length() > 0)
 				{
-					sv.push_back(s);
+					sv.emplace_back(s);
 				}
 				s = "";
 			}
@@ -623,14 +623,14 @@ slist CScriptEditorCtrl::GetLinePartsInStyle(int line, const StyleAndWords& saw)
 		}
 		else if (s.length() > 0)
 		{
-			sv.push_back(s);
+			sv.emplace_back(s);
 			s = "";
 		}
 	}
 
 	if (s.length() > 0)
 	{
-		sv.push_back(s);
+		sv.emplace_back(s);
 	}
 
 	return sv;

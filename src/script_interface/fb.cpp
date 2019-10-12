@@ -238,27 +238,26 @@ STDMETHODIMP Fb::GetQueryItems(IMetadbHandleList* handles, BSTR query, IMetadbHa
 {
 	if (!pp) return E_POINTER;
 
-	metadb_handle_list* handles_ptr, dst_list;
-	search_filter_v2::ptr filter;
-
+	metadb_handle_list* handles_ptr = nullptr;
 	handles->get__ptr(reinterpret_cast<void**>(&handles_ptr));
-	dst_list = *handles_ptr;
-	auto uquery = string_utf8_from_wide(query);
+
+	search_filter_v2::ptr filter;
 
 	try
 	{
-		filter = search_filter_manager_v2::get()->create_ex(uquery, new service_impl_t<completion_notify_dummy>(), search_filter_manager_v2::KFlagSuppressNotify);
+		filter = search_filter_manager_v2::get()->create_ex(string_utf8_from_wide(query), new service_impl_t<completion_notify_dummy>(), search_filter_manager_v2::KFlagSuppressNotify);
 	}
 	catch (...)
 	{
-		return E_FAIL;
+		return E_INVALIDARG;
 	}
 
+	metadb_handle_list copy(*handles_ptr);
 	pfc::array_t<bool> mask;
-	mask.set_size(dst_list.get_count());
-	filter->test_multi(dst_list, mask.get_ptr());
-	dst_list.filter_mask(mask.get_ptr());
-	*pp = new com_object_impl_t<MetadbHandleList>(dst_list);
+	mask.set_size(copy.get_count());
+	filter->test_multi(copy, mask.get_ptr());
+	copy.filter_mask(mask.get_ptr());
+	*pp = new com_object_impl_t<MetadbHandleList>(copy);
 	return S_OK;
 }
 

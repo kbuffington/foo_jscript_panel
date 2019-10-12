@@ -75,7 +75,7 @@ STDMETHODIMP Plman::CreateAutoPlaylist(UINT playlistIndex, BSTR name, BSTR query
 	}
 	catch (...)
 	{
-		*p = SIZE_MAX;
+		*p = -1;
 		return S_OK;
 	}
 
