@@ -562,11 +562,7 @@ void panel_window::on_paint(HDC dc, LPRECT lpUpdateRect)
 	HDC memdc = CreateCompatibleDC(dc);
 	HBITMAP oldbmp = SelectBitmap(memdc, m_gr_bmp);
 
-	if (m_script_host->HasError())
-	{
-		on_paint_error(memdc);
-	}
-	else
+	if (m_script_host->Ready())
 	{
 		if (m_pseudo_transparent)
 		{
@@ -591,10 +587,14 @@ void panel_window::on_paint(HDC dc, LPRECT lpUpdateRect)
 		{
 			RECT rc = { 0, 0, m_width, m_height };
 
-			FillRect(memdc, &rc, (HBRUSH)(COLOR_WINDOW + 1));
+			FillRect(memdc, &rc, reinterpret_cast<HBRUSH>(COLOR_WINDOW + 1));
 		}
 
 		on_paint_user(memdc, lpUpdateRect);
+	}
+	else
+	{
+		on_paint_error(memdc);
 	}
 
 	BitBlt(dc, 0, 0, m_width, m_height, memdc, 0, 0, SRCCOPY);
@@ -644,22 +644,19 @@ void panel_window::on_paint_error(HDC memdc)
 
 void panel_window::on_paint_user(HDC memdc, LPRECT lpUpdateRect)
 {
-	if (m_script_host->Ready())
+	Gdiplus::Graphics gr(memdc);
+	const Gdiplus::Rect rect(lpUpdateRect->left, lpUpdateRect->top, lpUpdateRect->right - lpUpdateRect->left, lpUpdateRect->bottom - lpUpdateRect->top);
+	gr.SetClip(rect);
+	m_gr_wrap->put__ptr(&gr);
+
 	{
-		Gdiplus::Graphics gr(memdc);
-		const Gdiplus::Rect rect(lpUpdateRect->left, lpUpdateRect->top, lpUpdateRect->right - lpUpdateRect->left, lpUpdateRect->bottom - lpUpdateRect->top);
-		gr.SetClip(rect);
-		m_gr_wrap->put__ptr(&gr);
-
-		{
-			VARIANTARG args[1];
-			args[0].vt = VT_DISPATCH;
-			args[0].pdispVal = m_gr_wrap;
-			script_invoke(callback_id::on_paint, args, _countof(args));
-		}
-
-		m_gr_wrap->put__ptr(nullptr);
+		VARIANTARG args[1];
+		args[0].vt = VT_DISPATCH;
+		args[0].pdispVal = m_gr_wrap;
+		script_invoke(callback_id::on_paint, args, _countof(args));
 	}
+
+	m_gr_wrap->put__ptr(nullptr);
 }
 
 void panel_window::on_size(int w, int h)

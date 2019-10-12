@@ -90,7 +90,6 @@ script_host::script_host(host_comm* host)
 	, m_console(com_object_singleton_t<Console>::instance())
 	, m_ref_count(1)
 	, m_engine_inited(false)
-	, m_has_error(false)
 	, m_last_source_context(0) {}
 
 script_host::~script_host() {}
@@ -120,16 +119,8 @@ HRESULT script_host::Initialise()
 	if (SUCCEEDED(hr)) hr = m_script_engine->GetScriptDispatch(nullptr, &m_script_root);
 	if (SUCCEEDED(hr)) hr = ProcessScripts(parser);
 	if (SUCCEEDED(hr)) hr = InitCallbackMap();
-	if (SUCCEEDED(hr))
-	{
-		m_engine_inited = true;
-		m_has_error = false;
-	}
-	else
-	{
-		m_engine_inited = false;
-		m_has_error = true;
-	}
+	
+	m_engine_inited = SUCCEEDED(hr);
 	return hr;
 }
 
@@ -317,7 +308,6 @@ STDMETHODIMP script_host::OnScriptError(IActiveScriptError* err)
 {
 	if (!err) return E_POINTER;
 
-	m_has_error = true;
 	m_engine_inited = false;
 
 	DWORD ctx = 0;
@@ -416,14 +406,9 @@ ULONG STDMETHODCALLTYPE script_host::Release()
 	return n;
 }
 
-bool script_host::HasError()
-{
-	return m_has_error;
-}
-
 bool script_host::Ready()
 {
-	return m_engine_inited && m_script_engine;
+	return m_script_root && m_engine_inited && m_script_engine;
 }
 
 std::string script_host::ExtractValue(const std::string& source)
@@ -473,10 +458,11 @@ void script_host::Finalise()
 
 void script_host::InvokeCallback(t_size callbackId, VARIANTARG* argv, t_size argc, VARIANT* ret)
 {
-	if (!m_script_root || HasError() || !Ready() || m_callback_map.count(callbackId) == 0) return;
-
-	DISPPARAMS param = { argv, nullptr, argc, 0 };
-	m_script_root->Invoke(m_callback_map.at(callbackId), IID_NULL, LOCALE_USER_DEFAULT, DISPATCH_METHOD, &param, ret, nullptr, nullptr);
+	if (Ready() && m_callback_map.count(callbackId))
+	{
+		DISPPARAMS param = { argv, nullptr, argc, 0 };
+		m_script_root->Invoke(m_callback_map.at(callbackId), IID_NULL, LOCALE_USER_DEFAULT, DISPATCH_METHOD, &param, ret, nullptr, nullptr);
+	}
 }
 
 void script_host::ProcessScriptInfo(t_script_info& info)

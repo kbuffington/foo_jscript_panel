@@ -34,7 +34,6 @@ public:
 	STDMETHODIMP OnStateChange(SCRIPTSTATE state) override;
 	ULONG STDMETHODCALLTYPE AddRef() override;
 	ULONG STDMETHODCALLTYPE Release() override;
-	bool HasError();
 	bool Ready();
 	std::string ExtractValue(const std::string& source);
 	void Finalise();
@@ -52,7 +51,6 @@ private:
 	IUtilsPtr m_utils;
 	IWindowPtr m_window;
 	bool m_engine_inited;
-	bool m_has_error;
 	host_comm* m_host;
 	std::unordered_map<DWORD, pfc::string8_fast> m_context_to_path_map;
 	std::unordered_map<t_size, DISPID> m_callback_map;
