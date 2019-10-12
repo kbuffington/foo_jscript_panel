@@ -66,8 +66,8 @@ public:
 	HWND get_wnd() override
 	{
 		return m_hwnd;
-	}	
-	
+	}
+
 	IGdiFont* get_font_ui(t_size type) override
 	{
 		IGdiFont* ret = nullptr;

@@ -119,7 +119,7 @@ HRESULT script_host::Initialise()
 	if (SUCCEEDED(hr)) hr = m_script_engine->GetScriptDispatch(nullptr, &m_script_root);
 	if (SUCCEEDED(hr)) hr = ProcessScripts(parser);
 	if (SUCCEEDED(hr)) hr = InitCallbackMap();
-	
+
 	m_engine_inited = SUCCEEDED(hr);
 	return hr;
 }

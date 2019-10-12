@@ -565,10 +565,12 @@ STDMETHODIMP GdiGraphics::CalcTextHeight(BSTR str, IGdiFont* font, UINT* p)
 	HFONT hFont = nullptr;
 	font->get__HFont(reinterpret_cast<UINT*>(&hFont));
 	HDC dc = m_ptr->GetHDC();
-	HFONT oldfont = SelectFont(dc, hFont);
 
-	*p = helpers::get_text_height(dc, str, SysStringLen(str));
-	SelectFont(dc, oldfont);
+	{
+		SelectObjectScope scope(dc, hFont);
+		*p = helpers::get_text_height(dc, str, SysStringLen(str));
+	}
+
 	m_ptr->ReleaseHDC(dc);
 	return S_OK;
 }
@@ -580,10 +582,12 @@ STDMETHODIMP GdiGraphics::CalcTextWidth(BSTR str, IGdiFont* font, UINT* p)
 	HFONT hFont = nullptr;
 	font->get__HFont(reinterpret_cast<UINT*>(&hFont));
 	HDC dc = m_ptr->GetHDC();
-	HFONT oldfont = SelectFont(dc, hFont);
 
-	*p = helpers::get_text_width(dc, str, SysStringLen(str));
-	SelectFont(dc, oldfont);
+	{
+		SelectObjectScope scope(dc, hFont);
+		*p = helpers::get_text_width(dc, str, SysStringLen(str));
+	}
+
 	m_ptr->ReleaseHDC(dc);
 	return S_OK;
 }
@@ -724,14 +728,17 @@ STDMETHODIMP GdiGraphics::EstimateLineWrap(BSTR str, IGdiFont* font, int max_wid
 {
 	if (!m_ptr || !p) return E_POINTER;
 
+	helpers::wrapped_item_list result;
+
 	HFONT hFont = nullptr;
 	font->get__HFont(reinterpret_cast<UINT*>(&hFont));
 	HDC dc = m_ptr->GetHDC();
-	HFONT oldfont = SelectFont(dc, hFont);
 
-	helpers::wrapped_item_list result;
-	helpers::estimate_line_wrap(dc, str, max_width, result);
-	SelectFont(dc, oldfont);
+	{
+		SelectObjectScope scope(dc, hFont);
+		helpers::estimate_line_wrap(dc, str, max_width, result);
+	}
+
 	m_ptr->ReleaseHDC(dc);
 
 	const LONG count = result.size();
@@ -866,39 +873,41 @@ STDMETHODIMP GdiGraphics::GdiDrawText(BSTR str, IGdiFont* font, LONGLONG colour,
 	HFONT hFont = nullptr;
 	font->get__HFont(reinterpret_cast<UINT*>(&hFont));
 	HDC dc = m_ptr->GetHDC();
-	HFONT oldfont = SelectFont(dc, hFont);
 
-	RECT rc = { x, y, x + w, y + h };
-	DRAWTEXTPARAMS dpt = { sizeof(DRAWTEXTPARAMS), 4, 0, 0, 0 };
-
-	SetTextColor(dc, helpers::convert_argb_to_colorref(static_cast<t_size>(colour)));
-	SetBkMode(dc, TRANSPARENT);
-	SetTextAlign(dc, TA_LEFT | TA_TOP | TA_NOUPDATECP);
-
-	if (format & DT_CALCRECT)
 	{
-		RECT rc_calc = { 0 }, rc_old = { 0 };
+		RECT rc = { x, y, x + w, y + h };
+		SelectObjectScope scope(dc, hFont);
 
-		memcpy(&rc_calc, &rc, sizeof(RECT));
-		memcpy(&rc_old, &rc, sizeof(RECT));
+		SetTextColor(dc, helpers::convert_argb_to_colorref(static_cast<t_size>(colour)));
+		SetBkMode(dc, TRANSPARENT);
+		SetTextAlign(dc, TA_LEFT | TA_TOP | TA_NOUPDATECP);
 
-		DrawText(dc, str, -1, &rc_calc, format);
-
-		format &= ~DT_CALCRECT;
-
-		if (format & DT_VCENTER)
+		if (format & DT_CALCRECT)
 		{
-			rc.top = rc_old.top + (((rc_old.bottom - rc_old.top) - (rc_calc.bottom - rc_calc.top)) >> 1);
-			rc.bottom = rc.top + (rc_calc.bottom - rc_calc.top);
+			RECT rc_calc = { 0 }, rc_old = { 0 };
+
+			memcpy(&rc_calc, &rc, sizeof(RECT));
+			memcpy(&rc_old, &rc, sizeof(RECT));
+
+			DrawText(dc, str, -1, &rc_calc, format);
+
+			format &= ~DT_CALCRECT;
+
+			if (format & DT_VCENTER)
+			{
+				rc.top = rc_old.top + ((RECT_CY(rc_old) - RECT_CY(rc_calc)) >> 1);
+				rc.bottom = rc.top + RECT_CY(rc_calc);
+			}
+			else if (format & DT_BOTTOM)
+			{
+				rc.top = rc_old.bottom - RECT_CY(rc_calc);
+			}
 		}
-		else if (format & DT_BOTTOM)
-		{
-			rc.top = rc_old.bottom - (rc_calc.bottom - rc_calc.top);
-		}
+
+		DRAWTEXTPARAMS dpt = { sizeof(DRAWTEXTPARAMS), 4, 0, 0, 0 };
+		DrawTextEx(dc, str, -1, &rc, format, &dpt);
 	}
 
-	DrawTextEx(dc, str, -1, &rc, format, &dpt);
-	SelectFont(dc, oldfont);
 	m_ptr->ReleaseHDC(dc);
 	return S_OK;
 }

@@ -55,7 +55,7 @@ public:
 	panel_manager();
 
 	using api_item = std::pair<std::string, t_size>;
-	
+
 	static panel_manager& instance();
 
 	std::vector<api_item> get_apis();

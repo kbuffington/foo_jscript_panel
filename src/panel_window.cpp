@@ -561,35 +561,37 @@ void panel_window::on_paint()
 	PAINTSTRUCT ps;
 	HDC dc = BeginPaint(m_hwnd, &ps);
 	HDC memdc = CreateCompatibleDC(dc);
-	HBITMAP oldbmp = SelectBitmap(memdc, m_gr_bmp);
 
-	if (m_script_host->Ready())
 	{
-		if (m_pseudo_transparent)
+		SelectObjectScope scope(memdc, m_gr_bmp);
+
+		if (m_script_host->Ready())
 		{
-			HDC bkdc = CreateCompatibleDC(dc);
-			HBITMAP bkoldbmp = SelectBitmap(bkdc, m_gr_bmp_bk);
-			BitBlt(memdc, ps.rcPaint.left, ps.rcPaint.top, RECT_CX(ps.rcPaint), RECT_CY(ps.rcPaint), bkdc, ps.rcPaint.left, ps.rcPaint.top, SRCCOPY);
-			SelectBitmap(bkdc, bkoldbmp);
-			DeleteDC(bkdc);
+			if (m_pseudo_transparent)
+			{
+				HDC bkdc = CreateCompatibleDC(dc);
+				HBITMAP bkoldbmp = SelectBitmap(bkdc, m_gr_bmp_bk);
+				BitBlt(memdc, ps.rcPaint.left, ps.rcPaint.top, RECT_CX(ps.rcPaint), RECT_CY(ps.rcPaint), bkdc, ps.rcPaint.left, ps.rcPaint.top, SRCCOPY);
+				SelectBitmap(bkdc, bkoldbmp);
+				DeleteDC(bkdc);
+			}
+			else
+			{
+				RECT rc = { 0, 0, m_width, m_height };
+				FillRect(memdc, &rc, reinterpret_cast<HBRUSH>(COLOR_WINDOW + 1));
+			}
+
+			on_paint_user(memdc, &ps.rcPaint);
 		}
 		else
 		{
-			RECT rc = { 0, 0, m_width, m_height };
-			FillRect(memdc, &rc, reinterpret_cast<HBRUSH>(COLOR_WINDOW + 1));
+			on_paint_error(memdc);
 		}
 
-		on_paint_user(memdc, &ps.rcPaint);
-	}
-	else
-	{
-		on_paint_error(memdc);
+		BitBlt(dc, 0, 0, m_width, m_height, memdc, 0, 0, SRCCOPY);
 	}
 
-	BitBlt(dc, 0, 0, m_width, m_height, memdc, 0, 0, SRCCOPY);
-	SelectBitmap(memdc, oldbmp);
 	DeleteDC(memdc);
-
 	EndPaint(m_hwnd, &ps);
 }
 
@@ -615,7 +617,7 @@ void panel_window::on_paint_error(HDC memdc)
 		DEFAULT_PITCH | FF_DONTCARE,
 		L"Tahoma");
 
-	HFONT oldfont = SelectFont(memdc, newfont);
+	SelectObjectScope scope(memdc, newfont);
 
 	{
 		LOGBRUSH lbBack = { BS_SOLID, RGB(225, 60, 45), 0 };
@@ -629,8 +631,6 @@ void panel_window::on_paint_error(HDC memdc)
 
 		DeleteObject(hBack);
 	}
-
-	SelectObject(memdc, oldfont);
 }
 
 void panel_window::on_paint_user(HDC memdc, LPRECT lpUpdateRect)

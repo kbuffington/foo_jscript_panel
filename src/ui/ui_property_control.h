@@ -22,7 +22,7 @@ public:
 		if (m_data.empty()) return;
 
 		enum
-		{ 
+		{
 			ID_SELECTALL = 1,
 			ID_SELECTNONE,
 			ID_INVERTSEL,
