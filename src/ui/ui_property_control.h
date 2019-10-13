@@ -121,6 +121,15 @@ public:
 
 	void ExecuteDefaultAction(t_size index) override {}
 
+	void OnItemsRemoved(const pfc::bit_array& mask, t_size oldCount) override
+	{
+		__super::OnItemsRemoved(mask, oldCount);
+		if (m_data.empty())
+		{
+			::PostMessage(::GetAncestor(m_hWnd, GA_PARENT), UWM_PROPERTIES_CLEARED, 0, 0);
+		}
+	}
+
 	void OnSubItemClicked(t_size item, t_size sub_item, CPoint pt) override
 	{
 		if (sub_item == 1 && !m_data[item].is_bool)

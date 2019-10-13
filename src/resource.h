@@ -46,6 +46,7 @@
 //ui_property
 #define IDD_DIALOG_PROPERTY             170
 #define IDC_LIST_PROPERTIES             171
+#define IDC_CLEAR                       172
 
 //ui_replace
 #define IDD_DIALOG_REPLACE              180

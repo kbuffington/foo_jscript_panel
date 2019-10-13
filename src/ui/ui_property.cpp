@@ -6,6 +6,7 @@ static const CDialogResizeHelper::Param resize_data[] =
 	{ IDC_LIST_PROPERTIES, 0, 0, 1, 1 },
 	{ IDC_IMPORT, 0, 1, 0, 1 },
 	{ IDC_EXPORT, 0, 1, 0, 1 },
+	{ IDC_CLEAR, 0, 1, 0, 1 },
 	{ IDOK, 1, 1, 1, 1 },
 	{ IDCANCEL, 1, 1, 1, 1 },
 	{ IDC_APPLY, 1, 1, 1, 1 },
@@ -20,14 +21,27 @@ CDialogProperty::CDialogProperty(panel_window* p_parent) : m_parent(p_parent), m
 
 CDialogProperty::~CDialogProperty() {}
 
-BOOL CDialogProperty::OnInitDialog(HWND hwndFocus, LPARAM lParam)
+BOOL CDialogProperty::OnInitDialog(HWND, LPARAM)
 {
 	// Set caption text
 	uSetWindowText(m_hWnd, m_caption);
 
 	m_properties.CreateInDialog(*this, IDC_LIST_PROPERTIES);
 	LoadProperties();
+
+	clear_btn = GetDlgItem(IDC_CLEAR);
+	export_btn = GetDlgItem(IDC_EXPORT);
+
+	clear_btn.EnableWindow(m_properties.m_data.size());
+	export_btn.EnableWindow(m_properties.m_data.size());
 	return TRUE;
+}
+
+LRESULT CDialogProperty::OnPropertiesCleared(UINT, WPARAM, LPARAM, BOOL&)
+{
+	clear_btn.EnableWindow(false);
+	export_btn.EnableWindow(false);
+	return 0;
 }
 
 void CDialogProperty::Apply()
@@ -126,6 +140,15 @@ void CDialogProperty::LoadProperties(bool reload)
 	}
 
 	m_properties.ReloadData();
+
+	clear_btn.EnableWindow(m_properties.m_data.size());
+	export_btn.EnableWindow(m_properties.m_data.size());
+}
+
+void CDialogProperty::OnClearBnClicked(UINT, int, HWND)
+{
+	m_properties.SelectAll();
+	m_properties.RequestRemoveSelection();
 }
 
 void CDialogProperty::OnCloseCmd(UINT, int nID, HWND)
