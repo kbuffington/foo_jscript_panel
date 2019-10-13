@@ -61,10 +61,10 @@ struct t_script_info
 		id = 0;
 	}
 
-	slist imports;
 	std::string name;
 	std::string version;
 	std::string author;
+	str_list imports;
 	t_size id;
 };
 

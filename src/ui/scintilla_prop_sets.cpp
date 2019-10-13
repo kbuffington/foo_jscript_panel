@@ -46,7 +46,7 @@ void cfg_sci_prop_sets::get_data_raw(stream_writer* p_stream, abort_callback& p_
 
 void cfg_sci_prop_sets::import(const char* content)
 {
-	slist lines = helpers::split_string(content, "\r\n");
+	str_list lines = helpers::split_string(content, "\r\n");
 	t_str_map data_map;
 	for (const auto& line : lines)
 	{

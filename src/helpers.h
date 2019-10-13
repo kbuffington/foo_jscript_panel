@@ -45,7 +45,7 @@ namespace helpers
 	pfc::string8_fast get_profile_path();
 	pfc::string8_fast iterator_to_string(json::iterator j);
 	pfc::string8_fast read_file(const char* path);
-	slist split_string(const std::string& str, const std::string& delims);
+	str_list split_string(const std::string& str, const std::string& delims);
 	t_size detect_charset(const char* fileName);
 	void estimate_line_wrap(HDC hdc, const wchar_t* text, int max_width, wrapped_item_list& out);
 	void estimate_line_wrap_recur(HDC hdc, const wchar_t* text, int len, int max_width, wrapped_item_list& out);

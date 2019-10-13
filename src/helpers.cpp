@@ -491,9 +491,9 @@ namespace helpers
 		return content;
 	}
 
-	slist split_string(const std::string& str, const std::string& delims)
+	str_list split_string(const std::string& str, const std::string& delims)
 	{
-		slist output;
+		str_list output;
 		t_size first = 0;
 		while (first < str.size())
 		{

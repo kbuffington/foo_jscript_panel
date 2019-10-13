@@ -378,11 +378,11 @@ bool CScriptEditorCtrl::ParseStyle(const std::string& definition, EditorStyle& s
 {
 	if (definition.empty()) return false;
 
-	slist values = helpers::split_string(definition, ",");
+	str_list values = helpers::split_string(definition, ",");
 
 	for (const auto& value : values)
 	{
-		slist tmp = helpers::split_string(value, ":");
+		str_list tmp = helpers::split_string(value, ":");
 		auto opt = tmp[0];
 		auto secondary = tmp.size() == 2 ? tmp[1] : "";
 
@@ -599,43 +599,6 @@ int CScriptEditorCtrl::IndentOfBlock(int line)
 	return indentBlock;
 }
 
-slist CScriptEditorCtrl::GetLinePartsInStyle(int line, const StyleAndWords& saw)
-{
-	const bool separateCharacters = saw.IsSingleChar();
-	const int thisLineStart = PositionFromLine(line);
-	const int nextLineStart = PositionFromLine(line + 1);
-	slist sv;
-	std::string s;
-
-	for (int pos = thisLineStart; pos < nextLineStart; ++pos)
-	{
-		if (GetStyleAt(pos) == saw.styleNumber)
-		{
-			if (separateCharacters)
-			{
-				if (s.length() > 0)
-				{
-					sv.emplace_back(s);
-				}
-				s = "";
-			}
-			s += GetCharAt(pos);
-		}
-		else if (s.length() > 0)
-		{
-			sv.emplace_back(s);
-			s = "";
-		}
-	}
-
-	if (s.length() > 0)
-	{
-		sv.emplace_back(s);
-	}
-
-	return sv;
-}
-
 std::string CScriptEditorCtrl::GetCurrentLine()
 {
 	const int len = GetCurLine(nullptr, 0);
@@ -684,6 +647,43 @@ std::string CScriptEditorCtrl::GetNearestWords(const char* wordStart, t_size sea
 		words.append(it->first, 0, it->second);
 	}
 	return words;
+}
+
+str_list CScriptEditorCtrl::GetLinePartsInStyle(int line, const StyleAndWords& saw)
+{
+	const bool separateCharacters = saw.IsSingleChar();
+	const int thisLineStart = PositionFromLine(line);
+	const int nextLineStart = PositionFromLine(line + 1);
+	str_list sv;
+	std::string s;
+
+	for (int pos = thisLineStart; pos < nextLineStart; ++pos)
+	{
+		if (GetStyleAt(pos) == saw.styleNumber)
+		{
+			if (separateCharacters)
+			{
+				if (s.length() > 0)
+				{
+					sv.emplace_back(s);
+				}
+				s = "";
+			}
+			s += GetCharAt(pos);
+		}
+		else if (s.length() > 0)
+		{
+			sv.emplace_back(s);
+			s = "";
+		}
+	}
+
+	if (s.length() > 0)
+	{
+		sv.emplace_back(s);
+	}
+
+	return sv;
 }
 
 void CScriptEditorCtrl::AutoMarginWidth()
@@ -765,7 +765,7 @@ void CScriptEditorCtrl::AutomaticIndentation(int ch)
 	}
 	else if ((ch == '\r' || ch == '\n') && (selStart == thisLineStart))
 	{
-		const slist controlWords = GetLinePartsInStyle(curLine - 1, BlockEnd);
+		const str_list controlWords = GetLinePartsInStyle(curLine - 1, BlockEnd);
 		if (controlWords.size() && Includes(BlockEnd, controlWords[0]))
 		{
 			SetIndentation(curLine - 1, IndentOfBlock(curLine - 2) - indentSize);
