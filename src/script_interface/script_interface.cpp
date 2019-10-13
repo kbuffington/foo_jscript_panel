@@ -573,14 +573,14 @@ void GdiGraphics::GetRoundRectPath(Gdiplus::GraphicsPath& gp, const Gdiplus::Rec
 	gp.CloseFigure();
 }
 
-void GdiGraphics::SetFormat(int flags, Gdiplus::StringFormat& out)
+void GdiGraphics::SetFormat(int flags, Gdiplus::StringFormat& fmt)
 {
 	if (flags != 0)
 	{
-		out.SetAlignment((Gdiplus::StringAlignment)((flags >> 28) & 0x3));
-		out.SetLineAlignment((Gdiplus::StringAlignment)((flags >> 24) & 0x3));
-		out.SetTrimming((Gdiplus::StringTrimming)((flags >> 20) & 0x7));
-		out.SetFormatFlags((Gdiplus::StringFormatFlags)(flags & 0x7FFF));
+		fmt.SetAlignment((Gdiplus::StringAlignment)((flags >> 28) & 0x3));
+		fmt.SetLineAlignment((Gdiplus::StringAlignment)((flags >> 24) & 0x3));
+		fmt.SetTrimming((Gdiplus::StringTrimming)((flags >> 20) & 0x7));
+		fmt.SetFormatFlags((Gdiplus::StringFormatFlags)(flags & 0x7FFF));
 	}
 }
 
