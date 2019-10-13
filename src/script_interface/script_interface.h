@@ -130,6 +130,7 @@ protected:
 	GdiGraphics();
 
 	static void GetRoundRectPath(Gdiplus::GraphicsPath& gp, const Gdiplus::RectF& rect, float arc_width, float arc_height);
+	static void SetFormat(int flags, Gdiplus::StringFormat& out);
 
 public:
 	STDMETHODIMP Dispose() override

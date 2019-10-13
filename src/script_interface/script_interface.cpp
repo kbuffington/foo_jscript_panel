@@ -552,6 +552,17 @@ void GdiGraphics::GetRoundRectPath(Gdiplus::GraphicsPath& gp, const Gdiplus::Rec
 	gp.CloseFigure();
 }
 
+void GdiGraphics::SetFormat(int flags, Gdiplus::StringFormat& out)
+{
+	if (flags != 0)
+	{
+		out.SetAlignment((Gdiplus::StringAlignment)((flags >> 28) & 0x3));
+		out.SetLineAlignment((Gdiplus::StringAlignment)((flags >> 24) & 0x3));
+		out.SetTrimming((Gdiplus::StringTrimming)((flags >> 20) & 0x7));
+		out.SetFormatFlags((Gdiplus::StringFormatFlags)(flags & 0x7FFF));
+	}
+}
+
 STDMETHODIMP GdiGraphics::put__ptr(void* p)
 {
 	m_ptr = (Gdiplus::Graphics*)p;
@@ -709,17 +720,11 @@ STDMETHODIMP GdiGraphics::DrawString(BSTR str, IGdiFont* font, LONGLONG colour, 
 
 	Gdiplus::Font* fn = nullptr;
 	font->get__ptr(reinterpret_cast<void**>(&fn));
-	Gdiplus::SolidBrush br(static_cast<t_size>(colour));
+	
 	Gdiplus::StringFormat fmt(Gdiplus::StringFormat::GenericTypographic());
+	SetFormat(flags, fmt);
 
-	if (flags != 0)
-	{
-		fmt.SetAlignment((Gdiplus::StringAlignment)((flags >> 28) & 0x3));
-		fmt.SetLineAlignment((Gdiplus::StringAlignment)((flags >> 24) & 0x3));
-		fmt.SetTrimming((Gdiplus::StringTrimming)((flags >> 20) & 0x7));
-		fmt.SetFormatFlags((Gdiplus::StringFormatFlags)(flags & 0x7FFF));
-	}
-
+	Gdiplus::SolidBrush br(static_cast<t_size>(colour));
 	m_ptr->DrawString(str, -1, fn, Gdiplus::RectF(x, y, w, h), &fmt, &br);
 	return S_OK;
 }
@@ -919,15 +924,8 @@ STDMETHODIMP GdiGraphics::MeasureString(BSTR str, IGdiFont* font, float x, float
 	Gdiplus::Font* fn = nullptr;
 	font->get__ptr(reinterpret_cast<void**>(&fn));
 
-	Gdiplus::StringFormat fmt = Gdiplus::StringFormat::GenericTypographic();
-
-	if (flags != 0)
-	{
-		fmt.SetAlignment((Gdiplus::StringAlignment)((flags >> 28) & 0x3));
-		fmt.SetLineAlignment((Gdiplus::StringAlignment)((flags >> 24) & 0x3));
-		fmt.SetTrimming((Gdiplus::StringTrimming)((flags >> 20) & 0x7));
-		fmt.SetFormatFlags((Gdiplus::StringFormatFlags)(flags & 0x7FFF));
-	}
+	Gdiplus::StringFormat fmt(Gdiplus::StringFormat::GenericTypographic());
+	SetFormat(flags, fmt);
 
 	Gdiplus::RectF bound;
 	int chars, lines;
