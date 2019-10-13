@@ -4,7 +4,7 @@
 
 CDialogReplace::CDialogReplace(HWND p_hedit) : m_hedit(p_hedit), m_flags(0), m_havefound(false) {}
 
-BOOL CDialogReplace::OnInitDialog(HWND hwndFocus, LPARAM lParam)
+BOOL CDialogReplace::OnInitDialog(HWND, LPARAM)
 {
 	modeless_dialog_manager::g_add(m_hWnd);
 	m_replace.SubclassWindow(GetDlgItem(IDC_EDIT_REPLACE_TEXT), m_hWnd);

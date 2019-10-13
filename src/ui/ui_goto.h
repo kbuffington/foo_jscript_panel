@@ -15,7 +15,7 @@ public:
 		IDD = IDD_DIALOG_GOTO
 	};
 
-	BOOL OnInitDialog(HWND hwndFocus, LPARAM lParam);
+	BOOL OnInitDialog(HWND, LPARAM);
 	void OnCloseCmd(UINT uNotifyCode, int nID, HWND wndCtl);
 
 private:

@@ -37,7 +37,7 @@ public:
 	static bool FindPrevious(HWND hWnd, HWND hWndEdit, t_size flags, const char* which);
 	static bool FindResult(HWND hWnd, HWND hWndEdit, int pos, const char* which);
 
-	BOOL OnInitDialog(HWND hwndFocus, LPARAM lParam);
+	BOOL OnInitDialog(HWND, LPARAM);
 	LRESULT OnNotify(int idCtrl, LPNMHDR pnmh);
 	LRESULT OnUwmFindTextChanged(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 	LRESULT OnUwmKeyDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);

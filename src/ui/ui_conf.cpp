@@ -28,7 +28,7 @@ CDialogConf::CDialogConf(panel_window* p_parent) : m_parent(p_parent), m_dlgfind
 
 CDialogConf::~CDialogConf() {}
 
-BOOL CDialogConf::OnInitDialog(HWND hwndFocus, LPARAM lParam)
+BOOL CDialogConf::OnInitDialog(HWND, LPARAM)
 {
 	m_edge = GetDlgItem(IDC_EDGE_COMBO);
 	m_edit = GetDlgItem(IDC_EDIT);

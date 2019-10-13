@@ -15,7 +15,7 @@ public:
 		IDD = IDD_DIALOG_INPUT
 	};
 
-	BOOL OnInitDialog(HWND hwndFocus, LPARAM lParam);
+	BOOL OnInitDialog(HWND, LPARAM);
 	void GetValue(pfc::string_base& p_value);
 	void OnCloseCmd(UINT uNotifyCode, int nID, HWND wndCtl);
 

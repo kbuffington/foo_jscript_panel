@@ -5,7 +5,7 @@
 
 CDialogPref::CDialogPref(preferences_page_callback::ptr callback) : m_callback(callback), m_props(this) {}
 
-BOOL CDialogPref::OnInitDialog(HWND hwndFocus, LPARAM lParam)
+BOOL CDialogPref::OnInitDialog(HWND, LPARAM)
 {
 	m_props.CreateInDialog(*this, IDC_LIST_PREFERENCES);
 

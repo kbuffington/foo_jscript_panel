@@ -3,7 +3,7 @@
 
 CInputBox::CInputBox(const char* p_prompt, const char* p_caption, const char* p_value) : m_prompt(p_prompt), m_caption(p_caption), m_value(p_value) {}
 
-BOOL CInputBox::OnInitDialog(HWND hwndFocus, LPARAM lParam)
+BOOL CInputBox::OnInitDialog(HWND, LPARAM)
 {
 	uSetWindowText(m_hWnd, m_caption);
 	uSendDlgItemMessageText(m_hWnd, IDC_INPUT_PROMPT, WM_SETTEXT, 0, m_prompt);

@@ -4,7 +4,7 @@
 
 CDialogFind::CDialogFind(HWND p_hedit) : m_hedit(p_hedit), m_flags(0) {}
 
-BOOL CDialogFind::OnInitDialog(HWND hwndFocus, LPARAM lParam)
+BOOL CDialogFind::OnInitDialog(HWND, LPARAM)
 {
 	modeless_dialog_manager::g_add(m_hWnd);
 	m_find.SubclassWindow(GetDlgItem(IDC_EDIT_FIND_TEXT), m_hWnd);

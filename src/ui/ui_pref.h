@@ -17,7 +17,7 @@ public:
 		IDD = IDD_DIALOG_PREF
 	};
 
-	BOOL OnInitDialog(HWND hwndFocus, LPARAM lParam);
+	BOOL OnInitDialog(HWND, LPARAM);
 	HWND get_wnd() override;
 	t_size get_state() override;
 	void LoadProps(bool reset = false);

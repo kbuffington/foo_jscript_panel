@@ -25,7 +25,7 @@ public:
 		IDD = IDD_DIALOG_PROPERTY
 	};
 
-	BOOL OnInitDialog(HWND hwndFocus, LPARAM lParam);
+	BOOL OnInitDialog(HWND, LPARAM);
 	LRESULT OnPropertiesCleared(UINT, WPARAM, LPARAM, BOOL&);
 	void Apply();
 	void LoadProperties(bool reload = true);

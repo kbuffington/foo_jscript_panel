@@ -3,7 +3,7 @@
 
 CDialogGoto::CDialogGoto(HWND p_hedit) : m_hedit(p_hedit) {}
 
-BOOL CDialogGoto::OnInitDialog(HWND hwndFocus, LPARAM lParam)
+BOOL CDialogGoto::OnInitDialog(HWND, LPARAM)
 {
 	const int cur_pos = SendMessage(m_hedit, SCI_GETCURRENTPOS, 0, 0);
 	const int cur_line = SendMessage(m_hedit, SCI_LINEFROMPOSITION, cur_pos, 0) + 1;
