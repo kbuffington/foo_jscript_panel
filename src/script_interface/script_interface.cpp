@@ -530,6 +530,27 @@ STDMETHODIMP GdiFont::get_Style(int* p)
 
 GdiGraphics::GdiGraphics() : GdiObj<IGdiGraphics, Gdiplus::Graphics>(nullptr) {}
 
+bool GdiGraphics::GetPoints(VARIANT points, std::vector<Gdiplus::PointF>& out)
+{
+	helpers::com_array helper;
+	if (!helper.convert(&points)) return false;
+	const LONG count = helper.get_count();
+	if (count % 2 != 0) return false;
+
+	out.resize(count >> 1);
+
+	for (LONG i = 0; i < count; i += 2)
+	{
+		_variant_t varX, varY;
+
+		if (!helper.get_item(i, varX, VT_R4)) return false;
+		if (!helper.get_item(i + 1, varY, VT_R4)) return false;
+
+		out[i >> 1] = { varX.fltVal, varY.fltVal };
+	}
+	return true;
+}
+
 void GdiGraphics::GetRoundRectPath(Gdiplus::GraphicsPath& gp, const Gdiplus::RectF& rect, float arc_width, float arc_height)
 {
 	const float arc_dia_w = arc_width * 2;
@@ -667,22 +688,8 @@ STDMETHODIMP GdiGraphics::DrawPolygon(LONGLONG colour, float line_width, VARIANT
 {
 	if (!m_ptr) return E_POINTER;
 
-	helpers::com_array helper;
-	if (!helper.convert(&points)) return E_INVALIDARG;
-	const LONG count = helper.get_count();
-	if (count % 2 != 0) return E_INVALIDARG;
-
-	std::vector<Gdiplus::PointF> point_array(count / 2);
-
-	for (LONG i = 0; i < count / 2; ++i)
-	{
-		_variant_t varX, varY;
-
-		if (!helper.get_item(i * 2, varX, VT_R4)) return E_INVALIDARG;
-		if (!helper.get_item((i * 2) + 1, varY, VT_R4)) return E_INVALIDARG;
-
-		point_array[i] = { varX.fltVal, varY.fltVal };
-	}
+	std::vector<Gdiplus::PointF> point_array;
+	if (!GetPoints(points, point_array)) return E_INVALIDARG;
 
 	Gdiplus::Pen pen(static_cast<t_size>(colour), line_width);
 	m_ptr->DrawPolygon(&pen, point_array.data(), point_array.size());
@@ -788,22 +795,8 @@ STDMETHODIMP GdiGraphics::FillPolygon(LONGLONG colour, int fillmode, VARIANT poi
 {
 	if (!m_ptr) return E_POINTER;
 
-	helpers::com_array helper;
-	if (!helper.convert(&points)) return E_INVALIDARG;
-	const LONG count = helper.get_count();
-	if (count % 2 != 0) return E_INVALIDARG;
-
-	std::vector<Gdiplus::PointF> point_array(count / 2);
-
-	for (LONG i = 0; i < count / 2; ++i)
-	{
-		_variant_t varX, varY;
-
-		if (!helper.get_item(i * 2, varX, VT_R4)) return E_INVALIDARG;
-		if (!helper.get_item((i * 2) + 1, varY, VT_R4)) return E_INVALIDARG;
-
-		point_array[i] = { varX.fltVal, varY.fltVal };
-	}
+	std::vector<Gdiplus::PointF> point_array;
+	if (!GetPoints(points, point_array)) return E_INVALIDARG;
 
 	Gdiplus::SolidBrush br(static_cast<t_size>(colour));
 	m_ptr->FillPolygon(&br, point_array.data(), point_array.size(), (Gdiplus::FillMode)fillmode);
