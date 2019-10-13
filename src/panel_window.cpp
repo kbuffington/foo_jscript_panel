@@ -597,11 +597,7 @@ void panel_window::on_paint()
 
 void panel_window::on_paint_error(HDC memdc)
 {
-	const wchar_t errmsg[] = L"Aw, crashed :(";
-	RECT rc = { 0, 0, m_width, m_height };
-	SIZE sz = { 0 };
-
-	HFONT newfont = CreateFont(
+	const HFONT hFont = CreateFont(
 		20,
 		0,
 		0,
@@ -617,18 +613,16 @@ void panel_window::on_paint_error(HDC memdc)
 		DEFAULT_PITCH | FF_DONTCARE,
 		L"Tahoma");
 
-	SelectObjectScope scope(memdc, newfont);
-
 	{
 		LOGBRUSH lbBack = { BS_SOLID, RGB(225, 60, 45), 0 };
 		HBRUSH hBack = CreateBrushIndirect(&lbBack);
+		RECT rc = { 0, 0, m_width, m_height };
+		SelectObjectScope scope(memdc, hFont);
 
 		FillRect(memdc, &rc, hBack);
 		SetBkMode(memdc, TRANSPARENT);
-
 		SetTextColor(memdc, RGB(255, 255, 255));
-		DrawText(memdc, errmsg, -1, &rc, DT_CENTER | DT_VCENTER | DT_NOPREFIX | DT_SINGLELINE);
-
+		DrawText(memdc, L"Aw, crashed :(", -1, &rc, DT_CENTER | DT_VCENTER | DT_NOPREFIX | DT_SINGLELINE);
 		DeleteObject(hBack);
 	}
 }

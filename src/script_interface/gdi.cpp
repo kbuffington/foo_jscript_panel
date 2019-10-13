@@ -32,7 +32,7 @@ STDMETHODIMP Gdi::Font(BSTR name, float pxSize, int style, IGdiFont** pp)
 	Gdiplus::Font* font = new Gdiplus::Font(name, pxSize, style, Gdiplus::UnitPixel);
 	if (helpers::ensure_gdiplus_object(font))
 	{
-		HFONT hFont = CreateFont(
+		const HFONT hFont = CreateFont(
 			-static_cast<int>(pxSize),
 			0,
 			0,

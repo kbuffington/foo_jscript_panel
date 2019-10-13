@@ -41,24 +41,5 @@ namespace
 		return TRUE;
 	}
 
-	class gdiplus_init
-	{
-	public:
-		gdiplus_init()
-		{
-			Gdiplus::GdiplusStartupInput gdip_input;
-			Gdiplus::GdiplusStartup(&m_gdip_token, &gdip_input, nullptr);
-		}
-
-		~gdiplus_init()
-		{
-			Gdiplus::GdiplusShutdown(m_gdip_token);
-		}
-
-	private:
-		ULONG_PTR m_gdip_token;
-
-		PFC_CLASS_NOT_COPYABLE_EX(gdiplus_init);
-	};
-	gdiplus_init blah;
+	GdiplusScope scope;
 }

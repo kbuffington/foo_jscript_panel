@@ -2156,7 +2156,7 @@ Tooltip::Tooltip(HWND p_wndparent, const panel_tooltip_param_ptr& p_param_ptr) :
 	m_ti.uId = reinterpret_cast<UINT_PTR>(p_wndparent);
 	m_ti.lpszText = m_tip_buffer;
 
-	const HFONT font = CreateFont(
+	const HFONT hFont = CreateFont(
 		-static_cast<int>(m_panel_tooltip_param_ptr->font_size),
 		0,
 		0,
@@ -2174,7 +2174,7 @@ Tooltip::Tooltip(HWND p_wndparent, const panel_tooltip_param_ptr& p_param_ptr) :
 
 	SendMessage(m_wndtooltip, TTM_ADDTOOL, 0, reinterpret_cast<LPARAM>(&m_ti));
 	SendMessage(m_wndtooltip, TTM_ACTIVATE, FALSE, 0);
-	SendMessage(m_wndtooltip, WM_SETFONT, reinterpret_cast<WPARAM>(font), MAKELPARAM(FALSE, 0));
+	SendMessage(m_wndtooltip, WM_SETFONT, reinterpret_cast<WPARAM>(hFont), MAKELPARAM(FALSE, 0));
 
 	m_panel_tooltip_param_ptr->tooltip_hwnd = m_wndtooltip;
 }
