@@ -142,7 +142,7 @@ t_size host_timer_dispatcher::create_timer(HWND hwnd, t_size delay, bool isRepea
 	std::lock_guard<std::mutex> lock(m_timer_mutex);
 
 	t_size id = m_cur_timer_id++;
-	while (m_task_map.end() != m_task_map.find(id) && m_timer_map.end() != m_timer_map.find(id))
+	while (m_task_map.count(id) && m_timer_map.count(id))
 	{
 		id = m_cur_timer_id++;
 	}
@@ -179,9 +179,9 @@ void host_timer_dispatcher::create_thread()
 
 void host_timer_dispatcher::invoke_message(t_size timerId)
 {
-	if (m_task_map.end() != m_task_map.find(timerId))
+	if (m_task_map.count(timerId))
 	{
-		m_task_map[timerId]->invoke();
+		m_task_map.at(timerId)->invoke();
 	}
 }
 
@@ -190,17 +190,15 @@ void host_timer_dispatcher::kill_timer(t_size timerId)
 	{
 		std::lock_guard<std::mutex> lock(m_timer_mutex);
 
-		const auto timerIter = m_timer_map.find(timerId);
-		if (m_timer_map.end() != timerIter)
+		if (m_timer_map.count(timerId))
 		{
-			timerIter->second->stop();
+			m_timer_map.at(timerId)->stop();
 		}
 	}
 
-	const auto taskIter = m_task_map.find(timerId);
-	if (m_task_map.end() != taskIter)
+	if (m_task_map.count(timerId))
 	{
-		taskIter->second->release();
+		m_task_map.at(timerId)->release();
 	}
 }
 
@@ -227,17 +225,7 @@ void host_timer_dispatcher::kill_timers(HWND hwnd)
 
 void host_timer_dispatcher::on_task_complete(t_size timerId)
 {
-	if (m_task_map.end() != m_task_map.find(timerId))
-	{
-		m_task_map.erase(timerId);
-	}
-}
-
-void host_timer_dispatcher::on_timer_expire(t_size timerId)
-{
-	std::unique_lock<std::mutex> lock(m_timer_mutex);
-
-	m_timer_map.erase(timerId);
+	m_task_map.erase(timerId);
 }
 
 void host_timer_dispatcher::on_timer_stop_request(HWND hwnd, HANDLE hTimer, t_size timerId)
@@ -284,6 +272,7 @@ void host_timer_dispatcher::thread_main()
 	while (true)
 	{
 		thread_task threadTask;
+
 		{
 			std::unique_lock<std::mutex> lock(m_thread_task_mutex);
 
@@ -305,7 +294,12 @@ void host_timer_dispatcher::thread_main()
 		{
 		case killTimerTask:
 			DeleteTimerQueueTimer(m_timer_queue, threadTask.hTimer, INVALID_HANDLE_VALUE);
-			on_timer_expire(threadTask.timerId);
+
+			{
+				std::unique_lock<std::mutex> lock(m_timer_mutex);
+				m_timer_map.erase(threadTask.timerId);
+			}
+
 			break;
 		case shutdownTask:
 			DeleteTimerQueueEx(m_timer_queue, INVALID_HANDLE_VALUE);
