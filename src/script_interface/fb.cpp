@@ -245,7 +245,7 @@ STDMETHODIMP Fb::GetQueryItems(IMetadbHandleList* handles, BSTR query, IMetadbHa
 
 	try
 	{
-		filter = search_filter_manager_v2::get()->create_ex(string_utf8_from_wide(query), new service_impl_t<completion_notify_dummy>(), search_filter_manager_v2::KFlagSuppressNotify);
+		filter = search_filter_manager_v2::get()->create_ex(string_utf8_from_wide(query), fb2k::service_new<completion_notify_dummy>(), search_filter_manager_v2::KFlagSuppressNotify);
 	}
 	catch (...)
 	{
