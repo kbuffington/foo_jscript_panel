@@ -53,7 +53,7 @@ STDMETHODIMP Fb::CopyHandleListToClipboard(IMetadbHandleList* handles, VARIANT_B
 	if (!p) return E_POINTER;
 
 	metadb_handle_list* handles_ptr = nullptr;
-	handles->get__ptr(reinterpret_cast<void**>(&handles_ptr));
+	GET_PTR(handles, handles_ptr)
 
 	pfc::com_ptr_t<IDataObject> pDO = ole_interaction::get()->create_dataobject(*handles_ptr);
 	*p = TO_VARIANT_BOOL(SUCCEEDED(OleSetClipboard(pDO.get_ptr())));
@@ -109,7 +109,7 @@ STDMETHODIMP Fb::DoDragDrop(IMetadbHandleList* handles, UINT okEffects, UINT* p)
 	if (!p) return E_POINTER;
 
 	metadb_handle_list* handles_ptr = nullptr;
-	handles->get__ptr(reinterpret_cast<void**>(&handles_ptr));
+	GET_PTR(handles, handles_ptr)
 
 	if (!handles_ptr->get_count() || okEffects == DROPEFFECT_NONE)
 	{
@@ -239,7 +239,7 @@ STDMETHODIMP Fb::GetQueryItems(IMetadbHandleList* handles, BSTR query, IMetadbHa
 	if (!pp) return E_POINTER;
 
 	metadb_handle_list* handles_ptr = nullptr;
-	handles->get__ptr(reinterpret_cast<void**>(&handles_ptr));
+	GET_PTR(handles, handles_ptr)
 
 	search_filter_v2::ptr filter;
 
@@ -314,8 +314,7 @@ STDMETHODIMP Fb::IsMetadbInMediaLibrary(IMetadbHandle* handle, VARIANT_BOOL* p)
 	if (!p) return E_POINTER;
 
 	metadb_handle* ptr = nullptr;
-	handle->get__ptr(reinterpret_cast<void**>(&ptr));
-	if (!ptr) return E_INVALIDARG;
+	GET_PTR(handle, ptr)
 
 	*p = TO_VARIANT_BOOL(library_manager::get()->is_item_in_library(ptr));
 	return S_OK;

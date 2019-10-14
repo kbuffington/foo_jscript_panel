@@ -19,6 +19,10 @@
 #define TO_VARIANT_BOOL(v) ((v) ? (VARIANT_TRUE) : (VARIANT_FALSE))
 #define TO_BSTR(str) SysAllocString(string_wide_from_utf8_fast(str))
 
+#define GET_PTR(X, Y) \
+	X->get__ptr(reinterpret_cast<void**>(&Y)); \
+	if (!Y) return E_INVALIDARG;
+
 namespace jsp_guids
 {
 	constexpr GUID ui_pref = { 0x19681d48, 0xd90e, 0x4cb6,{ 0xbb, 0x6, 0x69, 0x5f, 0x42, 0x57, 0xbe, 0x23 } };
