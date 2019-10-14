@@ -208,11 +208,11 @@ void host_timer_dispatcher::kill_timers(HWND hwnd)
 
 	{
 		std::lock_guard<std::mutex> lock(m_timer_mutex);
-		for (const auto& elem : m_timer_map)
+		for (const auto& [id, timer] : m_timer_map)
 		{
-			if (elem.second->get_hwnd() == hwnd)
+			if (timer->get_hwnd() == hwnd)
 			{
-				timersToDelete.emplace_back(elem.first);
+				timersToDelete.emplace_back(id);
 			}
 		}
 	}
