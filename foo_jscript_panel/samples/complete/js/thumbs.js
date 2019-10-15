@@ -518,13 +518,11 @@ _.mixin({
 		}
 		
 		this.success = function (base) {
-			_(_.getElementsByTagName(this.xmlhttp.responseText, 'img'))
-				.filter(function (item) {
-					return item.src.indexOf('https://lastfm-img2.akamaized.net/i/u/avatar170s/') == 0;
-				})
+			_(_.getElementsByTagName(this.xmlhttp.responseText, 'a'))
+				.filter({ className : 'image-list-item' })
 				.take(this.properties.limit.value)
 				.forEach(function (item) {
-					var url = item.src.replace('avatar170s/', '');
+					var url = item.getElementsByTagName('img')[0].src.replace('avatar170s/', '');
 					var filename = base + url.substring(url.lastIndexOf('/') + 1) + '.jpg';
 					_.runCmd('cscript //nologo ' + _.q(this.vbs_file) + ' ' + _.q(url) + ' ' + _.q(filename), false);
 				}, this)
