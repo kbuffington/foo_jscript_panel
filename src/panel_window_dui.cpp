@@ -175,22 +175,23 @@ private:
 	ui_element_instance_callback::ptr m_callback;
 };
 
+template <class T>
 class my_ui_element : public ui_element
 {
 public:
 	GUID get_guid() override
 	{
-		return panel_window_dui::g_get_guid();
+		return T::g_get_guid();
 	}
 
 	GUID get_subclass() override
 	{
-		return panel_window_dui::g_get_subclass();
+		return T::g_get_subclass();
 	}
 
 	bool get_description(pfc::string_base& out) override
 	{
-		out = panel_window_dui::g_get_description();
+		out = T::g_get_description();
 		return true;
 	}
 
@@ -201,22 +202,22 @@ public:
 
 	ui_element_config::ptr get_default_configuration() override
 	{
-		return panel_window_dui::g_get_default_configuration();
+		return T::g_get_default_configuration();
 	}
 
 	ui_element_instance::ptr instantiate(HWND parent, ui_element_config::ptr cfg, ui_element_instance_callback::ptr callback) override
 	{
 		PFC_ASSERT(cfg->get_guid() == get_guid());
-		auto item = fb2k::service_new<panel_window_dui>(cfg, callback);
+		auto item = fb2k::service_new<T>(cfg, callback);
 		item->create(parent);
 		return item;
 	}
 
 	void get_name(pfc::string_base& out) override
 	{
-		panel_window_dui::g_get_name(out);
+		T::g_get_name(out);
 	}
 };
 
 // DUI panel instance
-static service_factory_t<my_ui_element> g_my_ui_element;
+static service_factory_t<my_ui_element<panel_window_dui>> g_my_ui_element;
