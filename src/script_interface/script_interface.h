@@ -129,7 +129,6 @@ class GdiGraphics : public GdiObj<IGdiGraphics, Gdiplus::Graphics>
 protected:
 	GdiGraphics();
 
-	static bool GetPoints(VARIANT points, std::vector<Gdiplus::PointF>& out);
 	static void GetRoundRectPath(Gdiplus::GraphicsPath& gp, const Gdiplus::RectF& rect, float arc_width, float arc_height);
 	static void SetFormat(int flags, Gdiplus::StringFormat& out);
 

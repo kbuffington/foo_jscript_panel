@@ -20,15 +20,8 @@ STDMETHODIMP Plman::AddLocations(UINT playlistIndex, VARIANT locations, VARIANT_
 	if (playlistIndex < api->get_playlist_count() && !api->playlist_lock_is_present(playlistIndex))
 	{
 		helpers::com_array helper;
-		if (!helper.convert(&locations)) return E_INVALIDARG;
-		const LONG count = helper.get_count();
 		pfc::string_list_impl list;
-		for (LONG i = 0; i < count; ++i)
-		{
-			_variant_t var;
-			if (!helper.get_item(i, var, VT_BSTR)) return E_INVALIDARG;
-			list.add_item(string_utf8_from_wide(var.bstrVal));
-		}
+		if (!helper.convert(locations, list)) return E_INVALIDARG;
 
 		playlist_incoming_item_filter_v2::get()->process_locations_async(
 			list,
@@ -407,10 +400,10 @@ STDMETHODIMP Plman::PlaylistItemCount(UINT playlistIndex, UINT* p)
 
 STDMETHODIMP Plman::RecyclerPurge(VARIANT affectedItems)
 {
+	helpers::com_array helper;
 	auto api = playlist_manager_v3::get();
 	pfc::bit_array_bittable affected(api->recycler_get_count());
-	helpers::com_array helper;
-	if (!helper.convert_to_bit_array(affectedItems, affected)) return E_INVALIDARG;
+	if (!helper.convert(affectedItems, affected)) return E_INVALIDARG;
 	if (helper.get_count())
 	{
 		api->recycler_purge(affected);
@@ -437,11 +430,10 @@ STDMETHODIMP Plman::RemoveItemFromPlaybackQueue(UINT index)
 
 STDMETHODIMP Plman::RemoveItemsFromPlaybackQueue(VARIANT affectedItems)
 {
+	helpers::com_array helper;
 	auto api = playlist_manager::get();
 	pfc::bit_array_bittable affected(api->queue_get_count());
-	helpers::com_array helper;
-
-	if (!helper.convert_to_bit_array(affectedItems, affected)) return E_INVALIDARG;
+	if (!helper.convert(affectedItems, affected)) return E_INVALIDARG;
 	if (helper.get_count())
 	{
 		api->queue_remove_mask(affected);
@@ -503,10 +495,10 @@ STDMETHODIMP Plman::SetPlaylistFocusItemByHandle(UINT playlistIndex, IMetadbHand
 
 STDMETHODIMP Plman::SetPlaylistSelection(UINT playlistIndex, VARIANT affectedItems, VARIANT_BOOL state)
 {
+	helpers::com_array helper;
 	auto api = playlist_manager::get();
 	pfc::bit_array_bittable affected(api->playlist_get_item_count(playlistIndex));
-	helpers::com_array helper;
-	if (!helper.convert_to_bit_array(affectedItems, affected)) return E_INVALIDARG;
+	if (!helper.convert(affectedItems, affected)) return E_INVALIDARG;
 	if (helper.get_count())
 	{
 		pfc::bit_array_val status(state != VARIANT_FALSE);

@@ -279,11 +279,11 @@ namespace helpers
 			return m_psa;
 		}
 
-		bool convert(VARIANT* v)
+		bool convert(const VARIANT& v)
 		{
-			if (v->vt != VT_DISPATCH || !v->pdispVal) return false;
+			if (v.vt != VT_DISPATCH || !v.pdispVal) return false;
 
-			IDispatch* pdisp = v->pdispVal;
+			IDispatch* pdisp = v.pdispVal;
 			DISPID id_length;
 			LPOLESTR slength = (LPOLESTR)L"length";
 			DISPPARAMS params = { 0 };
@@ -322,19 +322,45 @@ namespace helpers
 			return true;
 		}
 
-		bool convert_to_bit_array(VARIANT v, pfc::bit_array_bittable& out)
+		bool convert(const VARIANT& v, pfc::bit_array_bittable& out)
 		{
-			if (!convert(&v)) return false;
-			if (m_count == 0)
-			{
-				out.resize(0);
-				return true;
-			}
+			if (!convert(v)) return false;
+			if (m_count == 0) out.resize(0);
+
 			for (LONG i = 0; i < m_count; ++i)
 			{
 				_variant_t var;
 				if (!get_item(i, var, VT_I4)) return false;
 				out.set(var.lVal, true);
+			}
+			return true;
+		}
+
+		bool convert(const VARIANT& v, pfc::string_list_impl& out)
+		{
+			if (!convert(v)) return false;
+			for (LONG i = 0; i < m_count; ++i)
+			{
+				_variant_t var;
+				if (!get_item(i, var, VT_BSTR)) return false;
+				out.add_item(string_utf8_from_wide(var.bstrVal));
+			}
+			return true;
+		}
+
+		bool convert(const VARIANT& v, std::vector<Gdiplus::PointF>& out)
+		{
+			if (!convert(v)) return false;
+			if (m_count % 2 != 0) return false;
+
+			out.resize(m_count >> 1);
+
+			for (LONG i = 0; i < m_count; i += 2)
+			{
+				_variant_t varX, varY;
+				if (!get_item(i, varX, VT_R4)) return false;
+				if (!get_item(i + 1, varY, VT_R4)) return false;
+				out[i >> 1] = { varX.fltVal, varY.fltVal };
 			}
 			return true;
 		}
