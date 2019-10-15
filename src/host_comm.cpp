@@ -203,11 +203,11 @@ void host_comm::refresh_background(LPRECT lprcUpdate)
 	RedrawWindow(wnd_parent, &rect_parent, nullptr, RDW_INVALIDATE | RDW_ERASE | RDW_ERASENOW | RDW_UPDATENOW);
 
 	// Background bitmap
-	HBITMAP old_bmp = SelectBitmap(hdc_bk, m_gr_bmp_bk);
-
-	BitBlt(hdc_bk, rect_child.left, rect_child.top, RECT_CX(rect_child), RECT_CY(rect_child), dc_parent, pt.x, pt.y, SRCCOPY);
-
-	SelectBitmap(hdc_bk, old_bmp);
+	{
+		SelectObjectScope scope(hdc_bk, m_gr_bmp_bk);
+		BitBlt(hdc_bk, rect_child.left, rect_child.top, RECT_CX(rect_child), RECT_CY(rect_child), dc_parent, pt.x, pt.y, SRCCOPY);
+	}
+	
 	DeleteDC(hdc_bk);
 	ReleaseDC(wnd_parent, dc_parent);
 	DeleteRgn(rgn_child);

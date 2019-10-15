@@ -22,6 +22,7 @@ namespace Gdiplus
 
 #include <WinSock2.h>
 #include <Windows.h>
+#include <windowsx.h>
 #include <GdiPlus.h>
 #include <ActivScp.h>
 #include <ComDef.h>

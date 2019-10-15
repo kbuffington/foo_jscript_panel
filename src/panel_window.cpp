@@ -570,9 +570,12 @@ void panel_window::on_paint()
 			if (m_pseudo_transparent)
 			{
 				HDC bkdc = CreateCompatibleDC(dc);
-				HBITMAP bkoldbmp = SelectBitmap(bkdc, m_gr_bmp_bk);
-				BitBlt(memdc, ps.rcPaint.left, ps.rcPaint.top, RECT_CX(ps.rcPaint), RECT_CY(ps.rcPaint), bkdc, ps.rcPaint.left, ps.rcPaint.top, SRCCOPY);
-				SelectBitmap(bkdc, bkoldbmp);
+
+				{
+					SelectObjectScope scope(bkdc, m_gr_bmp_bk);
+					BitBlt(memdc, ps.rcPaint.left, ps.rcPaint.top, RECT_CX(ps.rcPaint), RECT_CY(ps.rcPaint), bkdc, ps.rcPaint.left, ps.rcPaint.top, SRCCOPY);
+				}
+				
 				DeleteDC(bkdc);
 			}
 			else

@@ -942,7 +942,7 @@ GdiRawBitmap::GdiRawBitmap(Gdiplus::Bitmap* p_bmp)
 
 	m_hdc = CreateCompatibleDC(nullptr);
 	m_hbmp = CreateHBITMAP(p_bmp);
-	m_hbmpold = SelectBitmap(m_hdc, m_hbmp);
+	m_hbmpold = static_cast<HBITMAP>(SelectObject(m_hdc, m_hbmp));
 }
 
 GdiRawBitmap::~GdiRawBitmap() {}
@@ -975,7 +975,7 @@ void GdiRawBitmap::FinalRelease()
 {
 	if (m_hdc)
 	{
-		SelectBitmap(m_hdc, m_hbmpold);
+		SelectObject(m_hdc, m_hbmpold);
 		DeleteDC(m_hdc);
 		m_hdc = nullptr;
 	}
