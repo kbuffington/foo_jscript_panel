@@ -2,10 +2,6 @@
 #include "script_interface.h"
 #include "thread_pool.h"
 
-#include <json.hpp>
-
-using json = nlohmann::json;
-
 namespace helpers
 {
 	struct custom_sort_data
@@ -43,7 +39,6 @@ namespace helpers
 	pfc::string8_fast get_fb2k_component_path();
 	pfc::string8_fast get_fb2k_path();
 	pfc::string8_fast get_profile_path();
-	pfc::string8_fast iterator_to_string(json::iterator j);
 	pfc::string8_fast read_file(const char* path);
 	str_list split_string(const std::string& str, const std::string& delims);
 	t_size detect_charset(const char* fileName);
@@ -254,6 +249,48 @@ namespace helpers
 		bool m_to_select;
 		t_size m_base;
 		t_size m_playlist;
+	};
+
+	class js_file_info_filter : public file_info_filter {
+	public:
+		using tag = std::pair<std::string, str_list>;
+
+		js_file_info_filter(const std::vector<tag>& tags) : m_tags(tags) {}
+
+		bool apply_filter(metadb_handle_ptr p_location, t_filestats p_stats, file_info& p_info)
+		{
+			for (const auto& [name, value] : m_tags)
+			{
+				p_info.meta_remove_field(name.c_str());
+				for (const auto& part : value)
+				{
+					p_info.meta_add(name.c_str(), part.c_str());
+				}
+			}
+			return true;
+		}
+
+		static str_list get_values(json j)
+		{
+			str_list values;
+			if (j.is_array())
+			{
+				for (auto& v : j)
+				{
+					std::string tmp = v.is_string() ? v.get<std::string>() : v.dump();
+					if (tmp.length()) values.emplace_back(tmp);
+				}
+			}
+			else
+			{
+				std::string tmp = j.is_string() ? j.get<std::string>() : j.dump();
+				if (tmp.length()) values.emplace_back(tmp);
+			}
+			return values;
+		}
+
+	private:
+		std::vector<tag> m_tags;
 	};
 
 	class com_array

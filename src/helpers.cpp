@@ -469,12 +469,6 @@ namespace helpers
 		return path;
 	}
 
-	pfc::string8_fast iterator_to_string(json::iterator j)
-	{
-		std::string value = j.value().type() == json::value_t::string ? j.value().get<std::string>() : j.value().dump();
-		return value.c_str();
-	}
-
 	pfc::string8_fast read_file(const char* path)
 	{
 		pfc::string8_fast content;

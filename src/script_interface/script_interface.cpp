@@ -1770,70 +1770,68 @@ STDMETHODIMP MetadbHandleList::UpdateFileInfoFromJSON(BSTR str)
 	const t_size count = m_handles.get_count();
 	if (count == 0) return E_POINTER;
 
-	pfc::list_t<file_info_impl> info;
-	info.set_size(count);
-
-	bool is_array;
 	json j = json::parse(string_utf8_from_wide(str).get_ptr(), nullptr, false);
 
 	if (j.is_array() && j.size() == count)
 	{
-		is_array = true;
+		pfc::list_t<file_info_impl> info;
+		info.set_size(count);
+
+		for (t_size i = 0; i < count; ++i)
+		{
+			if (!j[i].is_object() || j[i].size() == 0) return E_INVALIDARG;
+
+			info[i] = m_handles[i]->get_info_ref()->info();
+
+			for (auto& [name, value] : j[i].items())
+			{
+				if (name.empty()) return E_INVALIDARG;
+
+				info[i].meta_remove_field(name.c_str());
+
+				for (auto& v : helpers::js_file_info_filter::get_values(value))
+				{
+					info[i].meta_add(name.c_str(), v.c_str());
+				}
+			}
+		}
+
+		metadb_io_v2::get()->update_info_async_simple(
+			m_handles,
+			pfc::ptr_list_const_array_t<const file_info, file_info_impl*>(info.get_ptr(), info.get_count()),
+			core_api::get_main_window(),
+			metadb_io_v2::op_flag_delay_ui,
+			nullptr
+		);
+		return S_OK;
 	}
 	else if (j.is_object() && j.size() > 0)
 	{
-		is_array = false;
+		std::vector<helpers::js_file_info_filter::tag> tags;
+
+		for (auto& [name, value] : j.items())
+		{
+			if (name.empty()) return E_INVALIDARG;
+
+			helpers::js_file_info_filter::tag t;
+			t.first = name;
+			t.second = helpers::js_file_info_filter::get_values(value);
+			tags.emplace_back(t);
+		}
+
+		metadb_io_v2::get()->update_info_async(
+			m_handles,
+			fb2k::service_new<helpers::js_file_info_filter>(tags),
+			core_api::get_main_window(),
+			metadb_io_v2::op_flag_delay_ui,
+			nullptr
+		);
+		return S_OK;
 	}
 	else
 	{
 		return E_INVALIDARG;
 	}
-
-	for (t_size i = 0; i < count; ++i)
-	{
-		json obj = is_array ? j[i] : j;
-		if (!obj.is_object() || obj.size() == 0) return E_INVALIDARG;
-
-		info[i] = m_handles[i]->get_info_ref()->info();
-
-		for (json::iterator it = obj.begin(); it != obj.end(); ++it)
-		{
-			pfc::string8_fast key = (it.key()).c_str();
-			if (key.is_empty()) return E_INVALIDARG;
-
-			info[i].meta_remove_field(key);
-
-			if (it.value().is_array())
-			{
-				for (json::iterator ita = it.value().begin(); ita != it.value().end(); ++ita)
-				{
-					pfc::string8_fast value = helpers::iterator_to_string(ita);
-					if (value.get_length())
-					{
-						info[i].meta_add(key, value);
-					}
-				}
-			}
-			else
-			{
-				pfc::string8_fast value = helpers::iterator_to_string(it);
-				if (value.get_length())
-				{
-					info[i].meta_set(key, value);
-				}
-			}
-		}
-	}
-
-	metadb_io_v2::get()->update_info_async_simple(
-		m_handles,
-		pfc::ptr_list_const_array_t<const file_info, file_info_impl*>(info.get_ptr(), info.get_count()),
-		core_api::get_main_window(),
-		metadb_io_v2::op_flag_delay_ui,
-		nullptr
-	);
-
-	return S_OK;
 }
 
 STDMETHODIMP MetadbHandleList::get_Count(UINT* p)

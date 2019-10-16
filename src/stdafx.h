@@ -13,23 +13,18 @@
 #include <mutex>
 #include <vector>
 
+#include <json.hpp>
+using json = nlohmann::json;
+
+#include <Scintilla.h>
+#include <SciLexer.h>
+
 #define NOMINMAX
 namespace Gdiplus
 {
 	using std::min;
 	using std::max;
 };
-
-#include <WinSock2.h>
-#include <Windows.h>
-#include <windowsx.h>
-#include <GdiPlus.h>
-#include <ActivScp.h>
-#include <ComDef.h>
-#include <ShlObj.h>
-
-#include <Scintilla.h>
-#include <SciLexer.h>
 
 #include <resource.h>
 #include <foobar2000/helpers/foobar2000+atl.h>
@@ -40,6 +35,10 @@ namespace Gdiplus
 #include <libPPUI/CListControlComplete.h>
 #include <libPPUI/CListControl-Cells.h>
 #include <columns_ui-sdk/ui_extension.h>
+
+#include <ActivScp.h>
+#include <ComDef.h>
+#include <ShlObj.h>
 
 #ifdef _INC_WINDOWSX
 #undef SubclassWindow
