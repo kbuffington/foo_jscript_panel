@@ -1774,8 +1774,8 @@ STDMETHODIMP MetadbHandleList::UpdateFileInfoFromJSON(BSTR str)
 
 	if (j.is_array() && j.size() == count)
 	{
-		pfc::list_t<file_info_impl> info;
-		info.set_size(count);
+		std::vector<file_info_impl> info;
+		info.resize(count);
 
 		for (t_size i = 0; i < count; ++i)
 		{
@@ -1798,7 +1798,7 @@ STDMETHODIMP MetadbHandleList::UpdateFileInfoFromJSON(BSTR str)
 
 		metadb_io_v2::get()->update_info_async_simple(
 			m_handles,
-			pfc::ptr_list_const_array_t<const file_info, file_info_impl*>(info.get_ptr(), info.get_count()),
+			pfc::ptr_list_const_array_t<const file_info, file_info_impl*>(info.data(), info.size()),
 			core_api::get_main_window(),
 			metadb_io_v2::op_flag_delay_ui,
 			nullptr

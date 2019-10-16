@@ -90,6 +90,7 @@ script_host::script_host(host_comm* host)
 	, m_console(com_object_singleton_t<Console>::instance())
 	, m_ref_count(1)
 	, m_engine_inited(false)
+	, m_has_error(false)
 	, m_last_source_context(0) {}
 
 script_host::~script_host() {}
@@ -119,8 +120,16 @@ HRESULT script_host::Initialise()
 	if (SUCCEEDED(hr)) hr = m_script_engine->GetScriptDispatch(nullptr, &m_script_root);
 	if (SUCCEEDED(hr)) hr = ProcessScripts(parser);
 	if (SUCCEEDED(hr)) hr = InitCallbackMap();
-
-	m_engine_inited = SUCCEEDED(hr);
+	if (SUCCEEDED(hr))
+	{
+		m_engine_inited = true;
+		m_has_error = false;
+	}
+	else
+	{
+		m_engine_inited = false;
+		m_has_error = true;
+	}
 	return hr;
 }
 
@@ -309,6 +318,7 @@ STDMETHODIMP script_host::OnScriptError(IActiveScriptError* err)
 	if (!err) return E_POINTER;
 
 	m_engine_inited = false;
+	m_has_error = true;
 
 	DWORD ctx = 0;
 	EXCEPINFO excep = { 0 };
@@ -404,6 +414,11 @@ ULONG STDMETHODCALLTYPE script_host::Release()
 		delete this;
 	}
 	return n;
+}
+
+bool script_host::HasError()
+{
+	return m_has_error;
 }
 
 bool script_host::Ready()
