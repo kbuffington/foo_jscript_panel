@@ -618,7 +618,7 @@ void panel_window::on_paint()
 					SelectObjectScope scope_bk(bkdc, m_gr_bmp_bk);
 					BitBlt(memdc, ps.rcPaint.left, ps.rcPaint.top, RECT_CX(ps.rcPaint), RECT_CY(ps.rcPaint), bkdc, ps.rcPaint.left, ps.rcPaint.top, SRCCOPY);
 				}
-				
+
 				DeleteDC(bkdc);
 			}
 			else

@@ -245,7 +245,7 @@ STDMETHODIMP GdiBitmap::ApplyMask(IGdiBitmap* mask, VARIANT_BOOL* p)
 	}
 
 	const Gdiplus::Rect rect(0, 0, m_ptr->GetWidth(), m_ptr->GetHeight());
-	
+
 	Gdiplus::BitmapData bmpdata_mask = { 0 };
 	if (bitmap_mask->LockBits(&rect, Gdiplus::ImageLockModeRead, PixelFormat32bppARGB, &bmpdata_mask) != Gdiplus::Ok)
 	{
@@ -707,7 +707,7 @@ STDMETHODIMP GdiGraphics::DrawString(BSTR str, IGdiFont* font, LONGLONG colour, 
 
 	Gdiplus::Font* fn = nullptr;
 	GET_PTR(font, fn)
-	
+
 	Gdiplus::StringFormat fmt(Gdiplus::StringFormat::GenericTypographic());
 	SetFormat(flags, fmt);
 

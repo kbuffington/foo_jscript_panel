@@ -25,11 +25,7 @@ protected:
 	void build_context_menu(HMENU menu, int id_base);
 	void execute_context_menu_command(int id, int id_base);
 
-	HBITMAP m_gr_bmp;
-	HBITMAP m_gr_bmp_bk;
 	HDC m_hdc;
-	bool m_paint_pending;
-	bool m_suppress_drawing;
 
 private:
 	void create_context();
@@ -43,8 +39,12 @@ private:
 	void refresh_background(LPRECT lprcUpdate);
 
 	CComPtr<IDropTargetImpl> m_drop_target;
+	HBITMAP m_gr_bmp;
+	HBITMAP m_gr_bmp_bk;
 	IGdiGraphicsPtr m_gr_wrap;
 	bool m_is_droptarget_registered;
 	bool m_is_mouse_tracked;
+	bool m_paint_pending;
+	bool m_suppress_drawing;
 	script_host* m_script_host;
 };
