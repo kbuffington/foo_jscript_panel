@@ -141,21 +141,20 @@ namespace stats
 			}
 			else
 			{
-				pfc::avltree_t<metadb_index_hash> hashes;
-
+				std::set<metadb_index_hash> hashes;
 				for (t_size i = 0; i < count; ++i)
 				{
 					metadb_index_hash hash;
 					if (hashHandle(p_tracks[i], hash))
 					{
-						hashes += hash;
+						hashes.emplace(hash);
 					}
 				}
 
 				t_size total = 0;
-				for (auto it = hashes.first(); it.is_valid(); ++it)
+				for (const auto& hash : hashes)
 				{
-					total += get(*it).playcount;
+					total += get(hash).playcount;
 				}
 
 				if (total > 0)

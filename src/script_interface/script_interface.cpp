@@ -1691,19 +1691,18 @@ STDMETHODIMP MetadbHandleList::OrderByRelativePath()
 
 STDMETHODIMP MetadbHandleList::RefreshStats()
 {
-	pfc::avltree_t<metadb_index_hash> tmp;
+	std::set<metadb_index_hash> tmp;
 	for (t_size i = 0; i < m_handles.get_count(); ++i)
 	{
 		metadb_index_hash hash;
 		if (stats::hashHandle(m_handles[i], hash))
 		{
-			tmp += hash;
+			tmp.emplace(hash);
 		}
 	}
 	pfc::list_t<metadb_index_hash> hashes;
-	for (auto iter = tmp.first(); iter.is_valid(); ++iter)
+	for (const auto& hash : tmp)
 	{
-		const metadb_index_hash hash = *iter;
 		hashes += hash;
 	}
 	stats::theAPI()->dispatch_refresh(jsp_guids::metadb_index, hashes);
@@ -1774,8 +1773,7 @@ STDMETHODIMP MetadbHandleList::UpdateFileInfoFromJSON(BSTR str)
 
 	if (j.is_array() && j.size() == count)
 	{
-		std::vector<file_info_impl> info;
-		info.resize(count);
+		std::vector<file_info_impl> info(count);
 
 		for (t_size i = 0; i < count; ++i)
 		{
