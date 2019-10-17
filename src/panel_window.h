@@ -25,6 +25,12 @@ protected:
 	void build_context_menu(HMENU menu, int id_base);
 	void execute_context_menu_command(int id, int id_base);
 
+	HBITMAP m_gr_bmp;
+	HBITMAP m_gr_bmp_bk;
+	HDC m_hdc;
+	bool m_paint_pending;
+	bool m_suppress_drawing;
+
 private:
 	void create_context();
 	void delete_context();
@@ -33,6 +39,8 @@ private:
 	void on_paint_error(HDC memdc);
 	void on_paint_user(HDC memdc, LPRECT lpUpdateRect);
 	void on_size();
+	void redraw();
+	void refresh_background(LPRECT lprcUpdate);
 
 	CComPtr<IDropTargetImpl> m_drop_target;
 	IGdiGraphicsPtr m_gr_wrap;

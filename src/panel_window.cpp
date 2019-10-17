@@ -4,7 +4,16 @@
 #include "ui_conf.h"
 #include "ui_property.h"
 
-panel_window::panel_window() : m_script_host(new script_host(this)), m_is_mouse_tracked(false), m_is_droptarget_registered(false) {}
+panel_window::panel_window()
+	: m_script_host(new script_host(this))
+	, m_is_mouse_tracked(false)
+	, m_is_droptarget_registered(false)
+	, m_suppress_drawing(false)
+	, m_paint_pending(false)
+	, m_gr_bmp(nullptr)
+	, m_gr_bmp_bk(nullptr)
+	, m_hdc(nullptr)
+{}
 
 panel_window::~panel_window()
 {
@@ -685,6 +694,82 @@ void panel_window::on_size()
 	delete_context();
 	create_context();
 	script_invoke(callback_id::on_size);
+}
+
+void panel_window::redraw()
+{
+	m_paint_pending = false;
+	RedrawWindow(m_hwnd, nullptr, nullptr, RDW_INVALIDATE | RDW_UPDATENOW);
+}
+
+void panel_window::refresh_background(LPRECT lprcUpdate)
+{
+	HWND wnd_parent = GetAncestor(m_hwnd, GA_PARENT);
+
+	if (!wnd_parent || IsIconic(core_api::get_main_window()) || !IsWindowVisible(m_hwnd))
+		return;
+
+	// HACK: for Tab control
+	HWND hwnd = FindWindowEx(wnd_parent, nullptr, nullptr, nullptr);
+	while (hwnd != nullptr)
+	{
+		pfc::string8_fast name;
+		uGetClassName(hwnd, name);
+		if (name.equals("SysTabControl32"))
+		{
+			wnd_parent = hwnd;
+			break;
+		}
+		hwnd = FindWindowEx(wnd_parent, hwnd, nullptr, nullptr);
+	}
+
+	HDC dc_parent = GetDC(wnd_parent);
+	HDC hdc_bk = CreateCompatibleDC(dc_parent);
+	POINT pt = { 0, 0 };
+	RECT rect_child = { 0, 0, m_width, m_height };
+	RECT rect_parent;
+	HRGN rgn_child = nullptr;
+
+	if (lprcUpdate)
+	{
+		HRGN rgn = CreateRectRgnIndirect(lprcUpdate);
+		rgn_child = CreateRectRgnIndirect(&rect_child);
+		CombineRgn(rgn_child, rgn_child, rgn, RGN_DIFF);
+		DeleteRgn(rgn);
+	}
+	else
+	{
+		rgn_child = CreateRectRgn(0, 0, 0, 0);
+	}
+
+	ClientToScreen(m_hwnd, &pt);
+	ScreenToClient(wnd_parent, &pt);
+
+	CopyRect(&rect_parent, &rect_child);
+	ClientToScreen(m_hwnd, (LPPOINT)&rect_parent);
+	ClientToScreen(m_hwnd, (LPPOINT)&rect_parent + 1);
+	ScreenToClient(wnd_parent, (LPPOINT)&rect_parent);
+	ScreenToClient(wnd_parent, (LPPOINT)&rect_parent + 1);
+
+	// Force Repaint
+	m_suppress_drawing = true;
+	SetWindowRgn(m_hwnd, rgn_child, FALSE);
+	RedrawWindow(wnd_parent, &rect_parent, nullptr, RDW_INVALIDATE | RDW_ERASE | RDW_ERASENOW | RDW_UPDATENOW);
+
+	// Background bitmap
+	{
+		SelectObjectScope scope(hdc_bk, m_gr_bmp_bk);
+		BitBlt(hdc_bk, rect_child.left, rect_child.top, RECT_CX(rect_child), RECT_CY(rect_child), dc_parent, pt.x, pt.y, SRCCOPY);
+	}
+
+	DeleteDC(hdc_bk);
+	ReleaseDC(wnd_parent, dc_parent);
+	DeleteRgn(rgn_child);
+	SetWindowRgn(m_hwnd, nullptr, FALSE);
+	m_suppress_drawing = false;
+	if (m_edge_style) SendMessage(m_hwnd, WM_NCPAINT, 1, 0);
+	m_paint_pending = true;
+	RedrawWindow(m_hwnd, nullptr, nullptr, RDW_INVALIDATE | RDW_UPDATENOW);
 }
 
 void panel_window::repaint()

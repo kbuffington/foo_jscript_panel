@@ -11,17 +11,10 @@ protected:
 	virtual ~host_comm();
 
 	void load_config(stream_reader* reader, t_size size, abort_callback& abort);
-	void redraw();
-	void refresh_background(LPRECT lprcUpdate);
 	void reset_config();
 	void save_config(stream_writer* writer, abort_callback& abort) const;
 
-	HBITMAP m_gr_bmp;
-	HBITMAP m_gr_bmp_bk;
-	HDC m_hdc;
 	HWND m_hwnd;
-	bool m_paint_pending;
-	bool m_suppress_drawing;
 	int m_height;
 	int m_width;
 	panel_tooltip_param_ptr m_panel_tooltip_param_ptr;
@@ -57,7 +50,6 @@ public:
 	static pfc::string8_fast get_default_script_engine_str();
 
 	DWORD get_edge_style() const;
-	HDC get_hdc();
 	HWND get_hwnd();
 	int get_height();
 	int get_width();
