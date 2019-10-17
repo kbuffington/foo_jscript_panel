@@ -257,7 +257,7 @@ namespace helpers
 
 		js_file_info_filter(const std::vector<tag>& tags) : m_tags(tags) {}
 
-		bool apply_filter(metadb_handle_ptr p_location, t_filestats p_stats, file_info& p_info)
+		bool apply_filter(metadb_handle_ptr p_location, t_filestats p_stats, file_info& p_info) override
 		{
 			for (const auto& [name, value] : m_tags)
 			{

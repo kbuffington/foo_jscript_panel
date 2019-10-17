@@ -4,7 +4,7 @@ struct t_script_info
 {
 	t_script_info() : id(0) {}
 
-	std::vector<std::pair<std::string, std::string>> expand_table =
+	const std::vector<std::pair<std::string, std::string>> expand_table =
 	{
 		{ "%fb2k_profile_path%", helpers::get_profile_path().get_ptr() },
 		{ "%fb2k_component_path%", helpers::get_fb2k_component_path().get_ptr() },

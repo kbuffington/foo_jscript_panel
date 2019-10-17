@@ -73,7 +73,7 @@ public:
 	void AutoMarginWidth();
 	void AutomaticIndentation(int ch);
 	void ContinueCallTip();
-	void FillFunctionDefinition(int pos = -1);
+	void FillFunctionDefinition(int pos);
 	void Init();
 	void RestoreDefaultStyle();
 	void SetAllStylesFromTable();

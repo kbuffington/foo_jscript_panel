@@ -59,7 +59,7 @@ namespace stats
 		{
 			metadb_index_hash hash;
 			if (!hashHandle(handle, hash)) return false;
-			fields tmp = get(hash);
+			const fields tmp = get(hash);
 
 			switch (index)
 			{
@@ -94,24 +94,15 @@ namespace stats
 
 		void get_field_name(t_size index, pfc::string_base& out) override
 		{
-			switch (index)
+			static const std::array<pfc::string8_fast, 5> field_names =
 			{
-			case 0:
-				out = "jsp_playcount";
-				break;
-			case 1:
-				out = "jsp_loved";
-				break;
-			case 2:
-				out = "jsp_first_played";
-				break;
-			case 3:
-				out = "jsp_last_played";
-				break;
-			case 4:
-				out = "jsp_rating";
-				break;
-			}
+				"jsp_playcount",
+				"jsp_loved",
+				"jsp_first_played",
+				"jsp_last_played",
+				"jsp_rating"
+			};
+			out.set_string(field_names[index]);
 		}
 	};
 
@@ -151,11 +142,10 @@ namespace stats
 					}
 				}
 
-				t_size total = 0;
-				for (const auto& hash : hashes)
+				t_size total = std::accumulate(hashes.begin(), hashes.end(), 0, [](t_size t, const metadb_index_hash& hash)
 				{
-					total += get(hash).playcount;
-				}
+					return t + get(hash).playcount;
+				});
 
 				if (total > 0)
 				{
