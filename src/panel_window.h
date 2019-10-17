@@ -14,6 +14,8 @@ public:
 	LRESULT on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp) override;
 	class_data& get_class_data() const override;
 	bool show_configure_popup(HWND parent) override;
+	void repaint() override;
+	void repaint_rect(int x, int y, int w, int h) override;
 	void script_invoke(t_size callbackId, VARIANTARG* argv = nullptr, t_size argc = 0, VARIANT* ret = nullptr);
 	void show_property_popup(HWND parent) override;
 	void unload_script() override;
@@ -24,6 +26,8 @@ protected:
 	void execute_context_menu_command(int id, int id_base);
 
 private:
+	void create_context();
+	void delete_context();
 	void load_script();
 	void on_paint();
 	void on_paint_error(HDC memdc);

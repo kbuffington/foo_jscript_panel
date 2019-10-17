@@ -10,8 +10,6 @@ protected:
 	host_comm();
 	virtual ~host_comm();
 
-	void create_context();
-	void delete_context();
 	void load_config(stream_reader* reader, t_size size, abort_callback& abort);
 	void redraw();
 	void refresh_background(LPRECT lprcUpdate);
@@ -29,6 +27,17 @@ protected:
 	panel_tooltip_param_ptr m_panel_tooltip_param_ptr;
 	t_size m_instance_type;
 	ui_selection_holder::ptr m_selection_holder;
+
+public:
+	virtual DWORD get_colour_ui(t_size type) = 0;
+	virtual IGdiFont* get_font_ui(t_size type) = 0;
+	virtual bool show_configure_popup(HWND parent) = 0;
+	virtual void notify_size_limit_changed() = 0;
+	virtual void show_property_popup(HWND parent) = 0;
+	virtual void unload_script() = 0;
+	virtual void update_script() = 0;
+	virtual void repaint() = 0;
+	virtual void repaint_rect(int x, int y, int w, int h) = 0;
 
 public:
 	enum
@@ -54,15 +63,6 @@ public:
 	int get_width();
 	panel_tooltip_param_ptr& panel_tooltip();
 	t_size get_instance_type();
-	virtual DWORD get_colour_ui(t_size type) = 0;
-	virtual IGdiFont* get_font_ui(t_size type) = 0;
-	virtual bool show_configure_popup(HWND parent) = 0;
-	virtual void notify_size_limit_changed() = 0;
-	virtual void show_property_popup(HWND parent) = 0;
-	virtual void unload_script() = 0;
-	virtual void update_script() = 0;
-	void repaint();
-	void repaint_rect(int x, int y, int w, int h);
 
 	POINT m_max_size;
 	POINT m_min_size;

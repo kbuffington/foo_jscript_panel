@@ -495,6 +495,36 @@ void panel_window::build_context_menu(HMENU menu, int id_base)
 	uAppendMenu(menu, MF_STRING, id_base + 3, "&Configure...");
 }
 
+void panel_window::create_context()
+{
+	if (m_gr_bmp || m_gr_bmp_bk)
+	{
+		delete_context();
+	}
+
+	m_gr_bmp = CreateCompatibleBitmap(m_hdc, m_width, m_height);
+
+	if (m_pseudo_transparent)
+	{
+		m_gr_bmp_bk = CreateCompatibleBitmap(m_hdc, m_width, m_height);
+	}
+}
+
+void panel_window::delete_context()
+{
+	if (m_gr_bmp)
+	{
+		DeleteBitmap(m_gr_bmp);
+		m_gr_bmp = nullptr;
+	}
+
+	if (m_gr_bmp_bk)
+	{
+		DeleteBitmap(m_gr_bmp_bk);
+		m_gr_bmp_bk = nullptr;
+	}
+}
+
 void panel_window::execute_context_menu_command(int id, int id_base)
 {
 	switch (id - id_base)
@@ -655,6 +685,19 @@ void panel_window::on_size()
 	delete_context();
 	create_context();
 	script_invoke(callback_id::on_size);
+}
+
+void panel_window::repaint()
+{
+	m_paint_pending = true;
+	InvalidateRect(m_hwnd, nullptr, FALSE);
+}
+
+void panel_window::repaint_rect(int x, int y, int w, int h)
+{
+	m_paint_pending = true;
+	RECT rc = { x, y, x + w, y + h };
+	InvalidateRect(m_hwnd, &rc, FALSE);
 }
 
 void panel_window::script_invoke(t_size callbackId, VARIANTARG* argv, t_size argc, VARIANT* ret)
