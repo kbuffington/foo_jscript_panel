@@ -54,8 +54,8 @@ void CDialogReplace::OnFindTextChange(UINT uNotifyCode, int nID, HWND wndCtl)
 	uGetWindowText(GetDlgItem(IDC_EDIT_FIND_TEXT), m_find_text);
 	GetDlgItem(IDC_FIND_NEXT).EnableWindow(m_find_text.get_length());
 	GetDlgItem(IDC_FIND_PREVIOUS).EnableWindow(m_find_text.get_length());
-	GetDlgItem(IDC_REPLACE).EnableWindow(m_find_text.get_length() && m_replace_text.get_length());
-	GetDlgItem(IDC_REPLACE_ALL).EnableWindow(m_find_text.get_length() && m_replace_text.get_length());
+	GetDlgItem(IDC_REPLACE).EnableWindow(m_find_text.get_length());
+	GetDlgItem(IDC_REPLACE_ALL).EnableWindow(m_find_text.get_length());
 }
 
 void CDialogReplace::OnFlagCommand(UINT uNotifyCode, int nID, HWND wndCtl)
@@ -93,8 +93,6 @@ void CDialogReplace::OnReplaceAll(UINT uNotifyCode, int nID, HWND wndCtl)
 void CDialogReplace::OnReplaceTextChange(UINT uNotifyCode, int nID, HWND wndCtl)
 {
 	uGetWindowText(GetDlgItem(IDC_EDIT_REPLACE_TEXT), m_replace_text);
-	GetDlgItem(IDC_REPLACE).EnableWindow(m_find_text.get_length() && m_replace_text.get_length());
-	GetDlgItem(IDC_REPLACE_ALL).EnableWindow(m_find_text.get_length() && m_replace_text.get_length());
 }
 
 BOOL CDialogReplace::CEditWithReturn::SubclassWindow(HWND hWnd, HWND hParent)
