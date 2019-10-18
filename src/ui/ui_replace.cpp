@@ -1,5 +1,4 @@
 #include "stdafx.h"
-#include "ui_conf.h"
 #include "ui_replace.h"
 
 CDialogReplace::CDialogReplace(CScriptEditorCtrl* parent) : m_parent(parent), m_flags(0), m_havefound(false) {}
@@ -7,8 +6,8 @@ CDialogReplace::CDialogReplace(CScriptEditorCtrl* parent) : m_parent(parent), m_
 BOOL CDialogReplace::OnInitDialog(HWND, LPARAM)
 {
 	modeless_dialog_manager::g_add(m_hWnd);
-	m_find_edit.SubclassWindow(GetDlgItem(IDC_EDIT_FIND_TEXT), m_hWnd);
-	m_replace_edit.SubclassWindow(GetDlgItem(IDC_EDIT_REPLACE_TEXT), m_hWnd);
+	m_find_edit.SubclassWindow(GetDlgItem(IDC_EDIT_FIND_TEXT), m_hWnd, IDC_FIND_NEXT);
+	m_replace_edit.SubclassWindow(GetDlgItem(IDC_EDIT_REPLACE_TEXT), m_hWnd, IDC_REPLACE);
 	GetDlgItem(IDC_FIND_NEXT).EnableWindow(false);
 	GetDlgItem(IDC_FIND_PREVIOUS).EnableWindow(false);
 	GetDlgItem(IDC_REPLACE).EnableWindow(false);
@@ -29,24 +28,18 @@ void CDialogReplace::OnFinalMessage(HWND hWnd)
 
 void CDialogReplace::OnFindNext(UINT uNotifyCode, int nID, HWND wndCtl)
 {
-	if (m_find_text.get_length())
-	{
-		m_parent->last.find = m_find_text;
-		m_parent->last.flags = m_flags;
-		m_parent->last.wnd = m_hWnd;
-		m_havefound = m_parent->FindNext();
-	}
+	m_parent->last.find = m_find_text;
+	m_parent->last.flags = m_flags;
+	m_parent->last.wnd = m_hWnd;
+	m_havefound = m_parent->FindNext();
 }
 
 void CDialogReplace::OnFindPrevious(UINT uNotifyCode, int nID, HWND wndCtl)
 {
-	if (m_find_text.get_length())
-	{
-		m_parent->last.find = m_find_text;
-		m_parent->last.flags = m_flags;
-		m_parent->last.wnd = m_hWnd;
-		m_parent->FindPrevious();
-	}
+	m_parent->last.find = m_find_text;
+	m_parent->last.flags = m_flags;
+	m_parent->last.wnd = m_hWnd;
+	m_parent->FindPrevious();
 }
 
 void CDialogReplace::OnFindTextChange(UINT uNotifyCode, int nID, HWND wndCtl)
@@ -93,41 +86,4 @@ void CDialogReplace::OnReplaceAll(UINT uNotifyCode, int nID, HWND wndCtl)
 void CDialogReplace::OnReplaceTextChange(UINT uNotifyCode, int nID, HWND wndCtl)
 {
 	uGetWindowText(GetDlgItem(IDC_EDIT_REPLACE_TEXT), m_replace_text);
-}
-
-BOOL CDialogReplace::CEditWithReturn::SubclassWindow(HWND hWnd, HWND hParent)
-{
-	m_parent = hParent;
-	return parent::SubclassWindow(hWnd);
-}
-
-LRESULT CDialogReplace::CEditWithReturn::OnChar(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
-{
-	switch (wParam)
-	{
-	case '\n':
-	case '\r':
-	case '\t':
-	case '\x1b':
-		return 0;
-	}
-
-	return DefWindowProc(uMsg, wParam, lParam);
-}
-
-LRESULT CDialogReplace::CEditWithReturn::OnKeyDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
-{
-	switch (wParam)
-	{
-	case VK_RETURN:
-		::PostMessage(m_parent, WM_COMMAND, MAKEWPARAM(IDC_REPLACE, BN_CLICKED), reinterpret_cast<LPARAM>(m_hWnd));
-		return 0;
-	case VK_ESCAPE:
-		::PostMessage(m_parent, WM_COMMAND, MAKEWPARAM(IDCANCEL, BN_CLICKED), reinterpret_cast<LPARAM>(m_hWnd));
-		return 0;
-	case VK_TAB:
-		::PostMessage(m_parent, WM_NEXTDLGCTL, 0, 0);
-		return 0;
-	}
-	return DefWindowProc(uMsg, wParam, lParam);
 }

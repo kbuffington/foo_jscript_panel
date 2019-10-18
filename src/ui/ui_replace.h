@@ -1,4 +1,6 @@
 #pragma once
+#include "editorctrl.h"
+#include "ui_edit_return.h"
 
 class CDialogReplace : public CDialogImpl<CDialogReplace>
 {
@@ -34,24 +36,6 @@ public:
 	void OnReplaceTextChange(UINT uNotifyCode, int nID, HWND wndCtl);
 
 private:
-	class CEditWithReturn : public CWindowImpl<CEditWithReturn, CEdit>
-	{
-	public:
-		using parent = CWindowImpl<CEditWithReturn, CEdit>;
-
-		BEGIN_MSG_MAP(CEditWithReturn)
-			MESSAGE_HANDLER(WM_CHAR, OnChar)
-			MESSAGE_HANDLER(WM_KEYDOWN, OnKeyDown)
-		END_MSG_MAP()
-
-		BOOL SubclassWindow(HWND hWnd, HWND hParent);
-		LRESULT OnChar(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		LRESULT OnKeyDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-
-	private:
-		HWND m_parent;
-	};
-
 	bool m_havefound;
 	CEditWithReturn m_find_edit, m_replace_edit;
 	CScriptEditorCtrl* m_parent;

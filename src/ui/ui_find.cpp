@@ -7,7 +7,7 @@ CDialogFind::CDialogFind(CScriptEditorCtrl* parent) : m_parent(parent), m_flags(
 BOOL CDialogFind::OnInitDialog(HWND, LPARAM)
 {
 	modeless_dialog_manager::g_add(m_hWnd);
-	m_find_edit.SubclassWindow(GetDlgItem(IDC_EDIT_FIND_TEXT), m_hWnd);
+	m_find_edit.SubclassWindow(GetDlgItem(IDC_EDIT_FIND_TEXT), m_hWnd, IDC_FIND_NEXT);
 	GetDlgItem(IDC_FIND_NEXT).EnableWindow(false);
 	GetDlgItem(IDC_FIND_PREVIOUS).EnableWindow(false);
 	return TRUE;
@@ -53,41 +53,4 @@ void CDialogFind::OnFlagCommand(UINT uNotifyCode, int nID, HWND wndCtl)
 		m_flags |= m_parent->FlagMap.at(nID);
 	else
 		m_flags &= ~m_parent->FlagMap.at(nID);
-}
-
-BOOL CDialogFind::CEditWithReturn::SubclassWindow(HWND hWnd, HWND hParent)
-{
-	m_parent = hParent;
-	return parent::SubclassWindow(hWnd);
-}
-
-LRESULT CDialogFind::CEditWithReturn::OnChar(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
-{
-	switch (wParam)
-	{
-	case '\n':
-	case '\r':
-	case '\t':
-	case '\x1b':
-		return 0;
-	}
-
-	return DefWindowProc(uMsg, wParam, lParam);
-}
-
-LRESULT CDialogFind::CEditWithReturn::OnKeyDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
-{
-	switch (wParam)
-	{
-	case VK_RETURN:
-		::PostMessage(m_parent, WM_COMMAND, MAKEWPARAM(IDC_FIND_NEXT, BN_CLICKED), reinterpret_cast<LPARAM>(m_hWnd));
-		return 0;
-	case VK_ESCAPE:
-		::PostMessage(m_parent, WM_COMMAND, MAKEWPARAM(IDCANCEL, BN_CLICKED), reinterpret_cast<LPARAM>(m_hWnd));
-		return 0;
-	case VK_TAB:
-		::PostMessage(m_parent, WM_NEXTDLGCTL, 0, 0);
-		return 0;
-	}
-	return DefWindowProc(uMsg, wParam, lParam);
 }

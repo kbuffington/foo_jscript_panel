@@ -123,6 +123,9 @@
     <ClInclude Include="script_info.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ui\ui_edit_return.h">
+      <Filter>Header Files\ui</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="script_interface\console.cpp">
@@ -220,6 +223,9 @@
     </ClCompile>
     <ClCompile Include="panel_manager_callbacks.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\ui_edit_return.cpp">
+      <Filter>Source Files\ui</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
