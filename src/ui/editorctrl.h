@@ -22,6 +22,28 @@ public:
 		REFLECTED_COMMAND_CODE_HANDLER_EX(SCEN_CHANGE, OnChange)
 	END_MSG_MAP()
 
+	struct Last
+	{
+		Last() : wnd(nullptr), flags(0) {}
+
+		HWND wnd;
+		int flags;
+		std::string find;
+		std::string replace;
+	};
+
+	BOOL SubclassWindow(HWND hWnd);
+	bool FindNext();
+	bool FindPrevious();
+	void Replace();
+	void ReplaceAll();
+	void SetContent(const char* text);
+	void SetJScript();
+
+	Last last;
+	std::map<int, int> FlagMap;
+
+private:
 	enum IndentationStatus
 	{
 		isNone,
@@ -49,24 +71,7 @@ public:
 		bool IsSingleChar() const { return words.length() == 1; }
 	};
 
-	struct Last
-	{
-		Last() : wnd(nullptr), flags(0) {}
-
-		HWND wnd;
-		int flags;
-		std::string find;
-		std::string replace;
-	};
-
-	using FlagMap = std::map<int, int>;
-
-	static DWORD ParseHex(const std::string& hex);
-	static bool Contains(const std::string& str, char ch);
-	static bool Includes(const StyleAndWords& symbols, const std::string& value);
-	static bool ParseStyle(const std::string& definition, EditorStyle& style);
-
-	BOOL SubclassWindow(HWND hWnd);
+	DWORD ParseHex(const std::string& hex);
 	IndentationStatus GetIndentState(int line);
 	LRESULT OnChange(UINT uNotifyCode, int nID, HWND wndCtl);
 	LRESULT OnCharAdded(LPNMHDR pnmh);
@@ -74,11 +79,12 @@ public:
 	LRESULT OnUpdateUI(LPNMHDR pnmh);
 	LRESULT OnZoom(LPNMHDR pnmh);
 	Sci_CharacterRange GetSelection();
+	bool Contains(const std::string& str, char ch);
+	bool Includes(const StyleAndWords& symbols, const std::string& value);
 	bool FindBraceMatchPos(int& braceAtCaret, int& braceOpposite);
-	bool FindNext();
-	bool FindPrevious();
 	bool FindResult(int pos);
 	bool GetPropertyEx(const std::string& key, std::string& out);
+	bool ParseStyle(const std::string& definition, EditorStyle& style);
 	bool RangeIsAllWhitespace(int start, int end);
 	bool StartAutoComplete();
 	bool StartCallTip();
@@ -96,19 +102,11 @@ public:
 	void OpenFindDialog();
 	void OpenGotoDialog();
 	void OpenReplaceDialog();
-	void Replace();
-	void ReplaceAll();
 	void RestoreDefaultStyle();
 	void SetAllStylesFromTable();
-	void SetContent(const char* text);
-	void SetJScript();
 	void SetIndentation(int line, int indent);
 	void TrackWidth();
 
-	FlagMap Flags;
-	Last last;
-
-private:
 	CDialogFind* DlgFind;
 	CDialogReplace* DlgReplace;
 	StyleAndWords BlockEnd;

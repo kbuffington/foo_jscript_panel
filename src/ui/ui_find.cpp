@@ -50,9 +50,9 @@ void CDialogFind::OnFindTextChange(UINT uNotifyCode, int nID, HWND wndCtl)
 void CDialogFind::OnFlagCommand(UINT uNotifyCode, int nID, HWND wndCtl)
 {
 	if (uButton_GetCheck(m_hWnd, nID))
-		m_flags |= m_parent->Flags.at(nID);
+		m_flags |= m_parent->FlagMap.at(nID);
 	else
-		m_flags &= ~m_parent->Flags.at(nID);
+		m_flags &= ~m_parent->FlagMap.at(nID);
 }
 
 BOOL CDialogFind::CEditWithReturn::SubclassWindow(HWND hWnd, HWND hParent)

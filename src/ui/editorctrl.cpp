@@ -72,9 +72,9 @@ CScriptEditorCtrl::CScriptEditorCtrl()
 	, WordCharacters("_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
 	, apis(panel_manager::instance().get_apis())
 {
-	Flags =
+	FlagMap =
 	{
-		{ IDC_CHECK_MATCHCASE,  SCFIND_MATCHCASE },
+		{ IDC_CHECK_MATCHCASE, SCFIND_MATCHCASE },
 		{ IDC_CHECK_WHOLEWORD, SCFIND_WHOLEWORD },
 		{ IDC_CHECK_WORDSTART, SCFIND_WORDSTART },
 		{ IDC_CHECK_REGEXP, SCFIND_REGEXP }

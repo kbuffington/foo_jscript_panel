@@ -61,9 +61,9 @@ void CDialogReplace::OnFindTextChange(UINT uNotifyCode, int nID, HWND wndCtl)
 void CDialogReplace::OnFlagCommand(UINT uNotifyCode, int nID, HWND wndCtl)
 {
 	if (uButton_GetCheck(m_hWnd, nID))
-		m_flags |= m_parent->Flags.at(nID);
+		m_flags |= m_parent->FlagMap.at(nID);
 	else
-		m_flags &= ~m_parent->Flags.at(nID);
+		m_flags &= ~m_parent->FlagMap.at(nID);
 }
 
 void CDialogReplace::OnReplace(UINT uNotifyCode, int nID, HWND wndCtl)
