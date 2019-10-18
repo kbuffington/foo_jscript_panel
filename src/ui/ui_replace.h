@@ -3,7 +3,7 @@
 class CDialogReplace : public CDialogImpl<CDialogReplace>
 {
 public:
-	CDialogReplace(HWND p_hedit);
+	CDialogReplace(CScriptEditorCtrl* parent);
 
 	BEGIN_MSG_MAP(CDialogReplace)
 		MSG_WM_INITDIALOG(OnInitDialog)
@@ -54,7 +54,7 @@ private:
 
 	bool m_havefound;
 	CEditWithReturn m_find, m_replace;
-	HWND m_hedit;
+	CScriptEditorCtrl* m_parent;
 	int m_flags;
 	pfc::string8_fast m_reptext;
 	pfc::string8_fast m_text;

@@ -1,9 +1,6 @@
 #include "stdafx.h"
 #include "panel_window.h"
 #include "ui_conf.h"
-#include "ui_find.h"
-#include "ui_goto.h"
-#include "ui_replace.h"
 
 static const CDialogResizeHelper::Param resize_data[] =
 {
@@ -21,7 +18,7 @@ static const CDialogResizeHelper::Param resize_data[] =
 
 static const CRect resize_min_max(620, 381, 0, 0);
 
-CDialogConf::CDialogConf(panel_window* p_parent) : m_parent(p_parent), m_dlgfind(nullptr), m_dlgreplace(nullptr), m_lastFlags(0), m_resizer(resize_data, resize_min_max)
+CDialogConf::CDialogConf(panel_window* p_parent) : m_parent(p_parent), m_resizer(resize_data, resize_min_max)
 {
 	m_caption << JSP_NAME " Configuration (id:" << m_parent->m_script_info.id << ")";
 }
@@ -31,7 +28,6 @@ CDialogConf::~CDialogConf() {}
 BOOL CDialogConf::OnInitDialog(HWND, LPARAM)
 {
 	m_edge = GetDlgItem(IDC_EDGE_COMBO);
-	m_edit = GetDlgItem(IDC_EDIT);
 	m_engine = GetDlgItem(IDC_ENGINE_COMBO);
 	m_menu = GetMenu();
 	m_pseudo = GetDlgItem(IDC_PSEUDO_TRANSPARENT);
@@ -141,13 +137,19 @@ BOOL CDialogConf::OnInitDialog(HWND, LPARAM)
 	}
 
 	// Edit Control
-	m_editorctrl.SubclassWindow(m_edit);
+	m_editorctrl.SubclassWindow(GetDlgItem(IDC_EDIT));
 	m_editorctrl.SetJScript();
 	m_editorctrl.SetContent(m_parent->m_script_code);
 	m_editorctrl.EmptyUndoBuffer();
 	m_editorctrl.SetSavePoint();
 
 	return FALSE;
+}
+
+LRESULT CDialogConf::OnApply(UINT, WPARAM, LPARAM, BOOL&)
+{
+	Apply();
+	return 0;
 }
 
 LRESULT CDialogConf::OnNotify(int idCtrl, LPNMHDR pnmh)
@@ -167,106 +169,6 @@ LRESULT CDialogConf::OnNotify(int idCtrl, LPNMHDR pnmh)
 
 	SetMsgHandled(FALSE);
 	return 0;
-}
-
-LRESULT CDialogConf::OnUwmFindTextChanged(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
-{
-	m_lastFlags = wParam;
-	m_lastSearchText = reinterpret_cast<const char*>(lParam);
-	return 0;
-}
-
-LRESULT CDialogConf::OnUwmKeyDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
-{
-	const int modifiers = (IsKeyPressed(VK_SHIFT) ? SCMOD_SHIFT : 0) | (IsKeyPressed(VK_CONTROL) ? SCMOD_CTRL : 0) | (IsKeyPressed(VK_MENU) ? SCMOD_ALT : 0);
-
-	if (modifiers == SCMOD_CTRL)
-	{
-		switch (wParam)
-		{
-		case 'F':
-			OpenFindDialog();
-			break;
-
-		case 'H':
-			if (!m_dlgreplace)
-			{
-				m_dlgreplace = new CDialogReplace(m_edit);
-
-				if (!m_dlgreplace || !m_dlgreplace->Create(m_hWnd))
-				{
-					break;
-				}
-			}
-
-			m_dlgreplace->ShowWindow(SW_SHOW);
-			m_dlgreplace->SetFocus();
-			break;
-
-		case 'G':
-			{
-				modal_dialog_scope scope(m_hWnd);
-				CDialogGoto dlg(m_edit);
-				dlg.DoModal(m_hWnd);
-			}
-			break;
-
-		case 'S':
-			Apply();
-			break;
-		}
-	}
-	else if (wParam == VK_F3 && (modifiers == 0 || modifiers == SCMOD_SHIFT))
-	{
-		if (m_lastSearchText.get_length())
-		{
-			if (modifiers == 0) // Next
-			{
-				FindNext(m_hWnd, m_editorctrl.m_hWnd, m_lastFlags, m_lastSearchText);
-			}
-			else if (modifiers == SCMOD_SHIFT) // Previous
-			{
-				FindPrevious(m_hWnd, m_editorctrl.m_hWnd, m_lastFlags, m_lastSearchText);
-			}
-		}
-		else
-		{
-			OpenFindDialog();
-		}
-	}
-	return 0;
-}
-
-bool CDialogConf::FindNext(HWND hWnd, HWND hWndEdit, t_size flags, const char* which)
-{
-	SendMessage(::GetAncestor(hWndEdit, GA_PARENT), UWM_FIND_TEXT_CHANGED, flags, reinterpret_cast<LPARAM>(which));
-	SendMessage(hWndEdit, SCI_CHARRIGHT, 0, 0);
-	SendMessage(hWndEdit, SCI_SEARCHANCHOR, 0, 0);
-	const int pos = SendMessage(hWndEdit, SCI_SEARCHNEXT, flags, reinterpret_cast<LPARAM>(which));
-	return FindResult(hWnd, hWndEdit, pos, which);
-}
-
-bool CDialogConf::FindPrevious(HWND hWnd, HWND hWndEdit, t_size flags, const char* which)
-{
-	SendMessage(::GetAncestor(hWndEdit, GA_PARENT), UWM_FIND_TEXT_CHANGED, flags, reinterpret_cast<LPARAM>(which));
-	SendMessage(hWndEdit, SCI_SEARCHANCHOR, 0, 0);
-	const int pos = SendMessage(hWndEdit, SCI_SEARCHPREV, flags, reinterpret_cast<LPARAM>(which));
-	return FindResult(hWnd, hWndEdit, pos, which);
-}
-
-bool CDialogConf::FindResult(HWND hWnd, HWND hWndEdit, int pos, const char* which)
-{
-	if (pos != -1)
-	{
-		// Scroll to view
-		SendMessage(hWndEdit, SCI_SCROLLCARET, 0, 0);
-		return true;
-	}
-
-	pfc::string8_fast msg;
-	msg << "Cannot find \"" << which << "\"";
-	uMessageBox(hWnd, msg, JSP_NAME, MB_ICONINFORMATION | MB_SETFOREGROUND);
-	return false;
 }
 
 void CDialogConf::Apply()
@@ -361,16 +263,4 @@ void CDialogConf::OnReset(UINT uNotifyCode, int nID, HWND wndCtl)
 void CDialogConf::OnSamples(UINT uNotifyCode, int nID, HWND wndCtl)
 {
 	m_editorctrl.SetContent(helpers::read_file(file_path_display(m_samples[nID - ID_SAMPLES_BEGIN])));
-}
-
-void CDialogConf::OpenFindDialog()
-{
-	if (!m_dlgfind)
-	{
-		m_dlgfind = new CDialogFind(m_edit);
-		m_dlgfind->Create(m_hWnd);
-	}
-
-	m_dlgfind->ShowWindow(SW_SHOW);
-	m_dlgfind->SetFocus();
 }

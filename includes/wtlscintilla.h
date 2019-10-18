@@ -1908,6 +1908,16 @@ public:
 		ATLASSERT(::IsWindow(this->m_hWnd));
 		::SendMessage(this->m_hWnd, SCI_SETMODEVENTMASK, nMask, 0L);
 	}
+
+	//@}
+	/** @name Keyboard Commands */
+	//@{
+
+	void CharRight()
+	{
+		ATLASSERT(::IsWindow(this->m_hWnd));
+		::SendMessage(this->m_hWnd, SCI_CHARRIGHT, 0, 0L);
+	}
 };
 
 class CScintillaCtrl : public CScintillaImpl< CScintillaCtrl >

@@ -6,6 +6,9 @@
 
 #include <wtlscintilla.h>
 
+class CDialogFind;
+class CDialogReplace;
+
 class CScriptEditorCtrl : public CScintillaCtrl
 {
 public:
@@ -46,6 +49,18 @@ public:
 		bool IsSingleChar() const { return words.length() == 1; }
 	};
 
+	struct Last
+	{
+		Last() : wnd(nullptr), flags(0) {}
+
+		HWND wnd;
+		int flags;
+		std::string find;
+		std::string replace;
+	};
+
+	using FlagMap = std::map<int, int>;
+
 	static DWORD ParseHex(const std::string& hex);
 	static bool Contains(const std::string& str, char ch);
 	static bool Includes(const StyleAndWords& symbols, const std::string& value);
@@ -60,6 +75,9 @@ public:
 	LRESULT OnZoom(LPNMHDR pnmh);
 	Sci_CharacterRange GetSelection();
 	bool FindBraceMatchPos(int& braceAtCaret, int& braceOpposite);
+	bool FindNext();
+	bool FindPrevious();
+	bool FindResult(int pos);
 	bool GetPropertyEx(const std::string& key, std::string& out);
 	bool RangeIsAllWhitespace(int start, int end);
 	bool StartAutoComplete();
@@ -75,6 +93,11 @@ public:
 	void ContinueCallTip();
 	void FillFunctionDefinition(int pos);
 	void Init();
+	void OpenFindDialog();
+	void OpenGotoDialog();
+	void OpenReplaceDialog();
+	void Replace();
+	void ReplaceAll();
 	void RestoreDefaultStyle();
 	void SetAllStylesFromTable();
 	void SetContent(const char* text);
@@ -82,7 +105,12 @@ public:
 	void SetIndentation(int line, int indent);
 	void TrackWidth();
 
+	FlagMap Flags;
+	Last last;
+
 private:
+	CDialogFind* DlgFind;
+	CDialogReplace* DlgReplace;
 	StyleAndWords BlockEnd;
 	StyleAndWords BlockStart;
 	StyleAndWords StatementEnd;

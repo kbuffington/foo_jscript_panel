@@ -45,8 +45,7 @@ namespace jsp_guids
 
 enum t_user_message
 {
-	UWM_FIND_TEXT_CHANGED = WM_USER + 1,
-	UWM_KEYDOWN,
+	UWM_APPLY = WM_USER + 1,
 	UWM_PROPERTIES_CLEARED,
 	UWM_TIMER,
 	UWM_UNLOAD

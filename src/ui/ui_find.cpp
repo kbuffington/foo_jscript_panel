@@ -2,12 +2,14 @@
 #include "ui_conf.h"
 #include "ui_find.h"
 
-CDialogFind::CDialogFind(HWND p_hedit) : m_hedit(p_hedit), m_flags(0) {}
+CDialogFind::CDialogFind(CScriptEditorCtrl* parent) : m_parent(parent), m_flags(0) {}
 
 BOOL CDialogFind::OnInitDialog(HWND, LPARAM)
 {
 	modeless_dialog_manager::g_add(m_hWnd);
 	m_find.SubclassWindow(GetDlgItem(IDC_EDIT_FIND_TEXT), m_hWnd);
+	GetDlgItem(IDC_FIND_NEXT).EnableWindow(false);
+	GetDlgItem(IDC_FIND_PREVIOUS).EnableWindow(false);
 	return TRUE;
 }
 
@@ -24,49 +26,33 @@ void CDialogFind::OnFinalMessage(HWND hWnd)
 
 void CDialogFind::OnFindNext(UINT uNotifyCode, int nID, HWND wndCtl)
 {
-	if (m_text.get_length())
-	{
-		CDialogConf::FindNext(m_hWnd, m_hedit, m_flags, m_text.get_ptr());
-	}
+	m_parent->last.find = m_text;
+	m_parent->last.flags = m_flags;
+	m_parent->last.wnd = m_hWnd;
+	m_parent->FindNext();
 }
 
 void CDialogFind::OnFindPrevious(UINT uNotifyCode, int nID, HWND wndCtl)
 {
-	if (m_text.get_length())
-	{
-		CDialogConf::FindPrevious(m_hWnd, m_hedit, m_flags, m_text.get_ptr());
-	}
+	m_parent->last.find = m_text;
+	m_parent->last.flags = m_flags;
+	m_parent->last.wnd = m_hWnd;
+	m_parent->FindPrevious();
 }
 
 void CDialogFind::OnFindTextChange(UINT uNotifyCode, int nID, HWND wndCtl)
 {
 	uGetWindowText(GetDlgItem(IDC_EDIT_FIND_TEXT), m_text);
+	GetDlgItem(IDC_FIND_NEXT).EnableWindow(m_text.get_length());
+	GetDlgItem(IDC_FIND_PREVIOUS).EnableWindow(m_text.get_length());
 }
 
 void CDialogFind::OnFlagCommand(UINT uNotifyCode, int nID, HWND wndCtl)
 {
-	int flag = 0;
-
-	switch (nID)
-	{
-	case IDC_CHECK_MATCHCASE:
-		flag = SCFIND_MATCHCASE;
-		break;
-	case IDC_CHECK_WHOLEWORD:
-		flag = SCFIND_WHOLEWORD;
-		break;
-	case IDC_CHECK_WORDSTART:
-		flag = SCFIND_WORDSTART;
-		break;
-	case IDC_CHECK_REGEXP:
-		flag = SCFIND_REGEXP;
-		break;
-	}
-
 	if (uButton_GetCheck(m_hWnd, nID))
-		m_flags |= flag;
+		m_flags |= m_parent->Flags.at(nID);
 	else
-		m_flags &= ~flag;
+		m_flags &= ~m_parent->Flags.at(nID);
 }
 
 BOOL CDialogFind::CEditWithReturn::SubclassWindow(HWND hWnd, HWND hParent)

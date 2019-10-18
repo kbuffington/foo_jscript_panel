@@ -1,9 +1,10 @@
 #pragma once
+#include "editorctrl.h"
 
 class CDialogFind : public CDialogImpl<CDialogFind>
 {
 public:
-	CDialogFind(HWND p_hedit);
+	CDialogFind(CScriptEditorCtrl* parent);
 
 	BEGIN_MSG_MAP(CDialogFind)
 		MSG_WM_INITDIALOG(OnInitDialog)
@@ -47,7 +48,7 @@ private:
 	};
 
 	CEditWithReturn m_find;
-	HWND m_hedit;
+	CScriptEditorCtrl* m_parent;
 	int m_flags;
 	pfc::string8_fast m_text;
 };

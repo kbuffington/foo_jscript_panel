@@ -2,6 +2,9 @@
 #include "editorctrl.h"
 #include "helpers.h"
 #include "scintilla_prop_sets.h"
+#include "ui_find.h"
+#include "ui_goto.h"
+#include "ui_replace.h"
 
 enum
 {
@@ -64,8 +67,19 @@ CScriptEditorCtrl::CScriptEditorCtrl()
 	, CurrentCallTip(0)
 	, StartCalltipWord(0)
 	, LastPosCallTip(0)
+	, DlgFind(nullptr)
+	, DlgReplace(nullptr)
 	, WordCharacters("_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
-	, apis(panel_manager::instance().get_apis()) {}
+	, apis(panel_manager::instance().get_apis())
+{
+	Flags =
+	{
+		{ IDC_CHECK_MATCHCASE,  SCFIND_MATCHCASE },
+		{ IDC_CHECK_WHOLEWORD, SCFIND_WHOLEWORD },
+		{ IDC_CHECK_WORDSTART, SCFIND_WORDSTART },
+		{ IDC_CHECK_REGEXP, SCFIND_REGEXP }
+	};
+}
 
 BOOL CScriptEditorCtrl::SubclassWindow(HWND hWnd)
 {
@@ -215,9 +229,53 @@ LRESULT CScriptEditorCtrl::OnCharAdded(LPNMHDR pnmh)
 
 LRESULT CScriptEditorCtrl::OnKeyDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
+	const int modifiers = (IsKeyPressed(VK_SHIFT) ? SCMOD_SHIFT : 0) | (IsKeyPressed(VK_CONTROL) ? SCMOD_CTRL : 0) | (IsKeyPressed(VK_MENU) ? SCMOD_ALT : 0);
+
+	if (modifiers == SCMOD_CTRL)
+	{
+		switch (wParam)
+		{
+		case 'F':
+			OpenFindDialog();
+			break;
+
+		case 'H':
+			OpenReplaceDialog();
+			break;
+
+		case 'G':
+			fb2k::inMainThread([&]()
+			{
+				OpenGotoDialog();
+			});
+			break;
+
+		case 'S':
+			::PostMessage(::GetAncestor(m_hWnd, GA_PARENT), UWM_APPLY, 0, 0);
+			break;
+		}
+	}
+	else if (wParam == VK_F3 && (modifiers == 0 || modifiers == SCMOD_SHIFT))
+	{
+		if (last.find.length())
+		{
+			if (modifiers == 0) // Next
+			{
+				FindNext();
+			}
+			else if (modifiers == SCMOD_SHIFT) // Previous
+			{
+				FindPrevious();
+			}
+		}
+		else
+		{
+			OpenFindDialog();
+		}
+	}
+
 	bHandled = FALSE;
-	::PostMessage(::GetAncestor(m_hWnd, GA_PARENT), UWM_KEYDOWN, wParam, lParam);
-	return TRUE;
+	return 1;
 }
 
 LRESULT CScriptEditorCtrl::OnUpdateUI(LPNMHDR pnmh)
@@ -319,6 +377,36 @@ bool CScriptEditorCtrl::FindBraceMatchPos(int& braceAtCaret, int& braceOpposite)
 	}
 
 	return isInside;
+}
+
+bool CScriptEditorCtrl::FindNext()
+{
+	CharRight();
+	SearchAnchor();
+	const int pos = SearchNext(last.flags, last.find.c_str());
+	return FindResult(pos);
+}
+
+bool CScriptEditorCtrl::FindPrevious()
+{
+	SearchAnchor();
+	const int pos = SearchPrev(last.flags, last.find.c_str());
+	return FindResult(pos);
+}
+
+bool CScriptEditorCtrl::FindResult(int pos)
+{
+	if (pos != -1)
+	{
+		// Scroll to view
+		ScrollCaret();
+		return true;
+	}
+
+	pfc::string8_fast msg;
+	msg << "Cannot find \"" << last.find.c_str() << "\"";
+	uMessageBox(last.wnd, msg, JSP_NAME, MB_SYSTEMMODAL | MB_ICONINFORMATION);
+	return false;
 }
 
 bool CScriptEditorCtrl::GetPropertyEx(const std::string& key, std::string& out)
@@ -898,6 +986,73 @@ void CScriptEditorCtrl::Init()
 	{
 		SetProperty(key, val);
 	}
+}
+
+void CScriptEditorCtrl::OpenFindDialog()
+{
+	if (!DlgFind)
+	{
+		DlgFind = new CDialogFind(this);
+		DlgFind->Create(m_hWnd);
+	}
+
+	DlgFind->ShowWindow(SW_SHOW);
+	DlgFind->SetFocus();
+}
+
+void CScriptEditorCtrl::OpenGotoDialog()
+{
+	modal_dialog_scope scope(m_hWnd);
+	CDialogGoto dlg(m_hWnd);
+	dlg.DoModal(m_hWnd);
+}
+
+void CScriptEditorCtrl::OpenReplaceDialog()
+{
+	if (!DlgReplace)
+	{
+		DlgReplace = new CDialogReplace(this);
+		DlgReplace->Create(m_hWnd);
+	}
+
+	DlgReplace->ShowWindow(SW_SHOW);
+	DlgReplace->SetFocus();
+}
+
+void CScriptEditorCtrl::Replace()
+{
+	const Sci_CharacterRange crange = GetSelection();
+	SetTargetStart(crange.cpMin);
+	SetTargetEnd(crange.cpMax);
+	ReplaceTarget(last.replace.c_str(), last.replace.length());
+	SetSel(crange.cpMin + last.replace.length(), crange.cpMin);
+}
+
+void CScriptEditorCtrl::ReplaceAll()
+{
+	BeginUndoAction();
+	SetTargetStart(0);
+	SetTargetEnd(0);
+
+	while (true)
+	{
+		SetTargetStart(GetTargetEnd());
+		SetTargetEnd(GetLength());
+		SetSearchFlags(last.flags);
+
+		const int occurance = SearchInTarget(last.find.c_str(), last.find.length());
+
+		if (occurance == -1)
+		{
+			MessageBeep(MB_ICONINFORMATION);
+			break;
+		}
+
+		ReplaceTarget(last.replace.c_str(), last.replace.length());
+		SetSel(occurance + last.replace.length(), occurance);
+	}
+
+	EndUndoAction();
 }
 
 void CScriptEditorCtrl::RestoreDefaultStyle()
