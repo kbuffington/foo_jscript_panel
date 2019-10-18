@@ -53,9 +53,8 @@ private:
 	};
 
 	bool m_havefound;
-	CEditWithReturn m_find, m_replace;
+	CEditWithReturn m_find_edit, m_replace_edit;
 	CScriptEditorCtrl* m_parent;
 	int m_flags;
-	pfc::string8_fast m_reptext;
-	pfc::string8_fast m_text;
+	pfc::string8_fast m_find_text, m_replace_text;
 };

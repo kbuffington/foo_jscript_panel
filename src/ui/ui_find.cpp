@@ -7,7 +7,7 @@ CDialogFind::CDialogFind(CScriptEditorCtrl* parent) : m_parent(parent), m_flags(
 BOOL CDialogFind::OnInitDialog(HWND, LPARAM)
 {
 	modeless_dialog_manager::g_add(m_hWnd);
-	m_find.SubclassWindow(GetDlgItem(IDC_EDIT_FIND_TEXT), m_hWnd);
+	m_find_edit.SubclassWindow(GetDlgItem(IDC_EDIT_FIND_TEXT), m_hWnd);
 	GetDlgItem(IDC_FIND_NEXT).EnableWindow(false);
 	GetDlgItem(IDC_FIND_PREVIOUS).EnableWindow(false);
 	return TRUE;
@@ -26,7 +26,7 @@ void CDialogFind::OnFinalMessage(HWND hWnd)
 
 void CDialogFind::OnFindNext(UINT uNotifyCode, int nID, HWND wndCtl)
 {
-	m_parent->last.find = m_text;
+	m_parent->last.find = m_find_text;
 	m_parent->last.flags = m_flags;
 	m_parent->last.wnd = m_hWnd;
 	m_parent->FindNext();
@@ -34,7 +34,7 @@ void CDialogFind::OnFindNext(UINT uNotifyCode, int nID, HWND wndCtl)
 
 void CDialogFind::OnFindPrevious(UINT uNotifyCode, int nID, HWND wndCtl)
 {
-	m_parent->last.find = m_text;
+	m_parent->last.find = m_find_text;
 	m_parent->last.flags = m_flags;
 	m_parent->last.wnd = m_hWnd;
 	m_parent->FindPrevious();
@@ -42,9 +42,9 @@ void CDialogFind::OnFindPrevious(UINT uNotifyCode, int nID, HWND wndCtl)
 
 void CDialogFind::OnFindTextChange(UINT uNotifyCode, int nID, HWND wndCtl)
 {
-	uGetWindowText(GetDlgItem(IDC_EDIT_FIND_TEXT), m_text);
-	GetDlgItem(IDC_FIND_NEXT).EnableWindow(m_text.get_length());
-	GetDlgItem(IDC_FIND_PREVIOUS).EnableWindow(m_text.get_length());
+	uGetWindowText(GetDlgItem(IDC_EDIT_FIND_TEXT), m_find_text);
+	GetDlgItem(IDC_FIND_NEXT).EnableWindow(m_find_text.get_length());
+	GetDlgItem(IDC_FIND_PREVIOUS).EnableWindow(m_find_text.get_length());
 }
 
 void CDialogFind::OnFlagCommand(UINT uNotifyCode, int nID, HWND wndCtl)

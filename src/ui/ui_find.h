@@ -47,8 +47,8 @@ private:
 		HWND m_parent;
 	};
 
-	CEditWithReturn m_find;
+	CEditWithReturn m_find_edit;
 	CScriptEditorCtrl* m_parent;
 	int m_flags;
-	pfc::string8_fast m_text;
+	pfc::string8_fast m_find_text;
 };
