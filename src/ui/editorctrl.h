@@ -26,6 +26,9 @@ public:
 	{
 		Last() : wnd(nullptr), flags(0) {}
 
+		void update(HWND h, int fl, const std::string& f) { wnd = h; flags = fl; find = f; }
+		void update(HWND h, int fl, const std::string& f, const std::string& r) { wnd = h; flags = fl; find = f; replace = r; }
+
 		HWND wnd;
 		int flags;
 		std::string find;

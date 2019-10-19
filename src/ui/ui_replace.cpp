@@ -28,17 +28,13 @@ void CDialogReplace::OnFinalMessage(HWND hWnd)
 
 void CDialogReplace::OnFindNext(UINT uNotifyCode, int nID, HWND wndCtl)
 {
-	m_parent->last.find = m_find_text;
-	m_parent->last.flags = m_flags;
-	m_parent->last.wnd = m_hWnd;
+	m_parent->last.update(m_hWnd, m_flags, m_find_text.get_ptr());
 	m_havefound = m_parent->FindNext();
 }
 
 void CDialogReplace::OnFindPrevious(UINT uNotifyCode, int nID, HWND wndCtl)
 {
-	m_parent->last.find = m_find_text;
-	m_parent->last.flags = m_flags;
-	m_parent->last.wnd = m_hWnd;
+	m_parent->last.update(m_hWnd, m_flags, m_find_text.get_ptr());
 	m_parent->FindPrevious();
 }
 
@@ -63,10 +59,7 @@ void CDialogReplace::OnReplace(UINT uNotifyCode, int nID, HWND wndCtl)
 {
 	if (m_havefound)
 	{
-		m_parent->last.find = m_find_text;
-		m_parent->last.flags = m_flags;
-		m_parent->last.replace = m_replace_text;
-		m_parent->last.wnd = m_hWnd;
+		m_parent->last.update(m_hWnd, m_flags, m_find_text.get_ptr(), m_replace_text.get_ptr());
 		m_parent->Replace();
 		m_havefound = false;
 	}
@@ -76,10 +69,7 @@ void CDialogReplace::OnReplace(UINT uNotifyCode, int nID, HWND wndCtl)
 
 void CDialogReplace::OnReplaceAll(UINT uNotifyCode, int nID, HWND wndCtl)
 {
-	m_parent->last.find = m_find_text;
-	m_parent->last.flags = m_flags;
-	m_parent->last.replace = m_replace_text;
-	m_parent->last.wnd = m_hWnd;
+	m_parent->last.update(m_hWnd, m_flags, m_find_text.get_ptr(), m_replace_text.get_ptr());
 	m_parent->ReplaceAll();
 }
 

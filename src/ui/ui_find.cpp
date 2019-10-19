@@ -26,17 +26,13 @@ void CDialogFind::OnFinalMessage(HWND hWnd)
 
 void CDialogFind::OnFindNext(UINT uNotifyCode, int nID, HWND wndCtl)
 {
-	m_parent->last.find = m_find_text;
-	m_parent->last.flags = m_flags;
-	m_parent->last.wnd = m_hWnd;
+	m_parent->last.update(m_hWnd, m_flags, m_find_text.get_ptr());
 	m_parent->FindNext();
 }
 
 void CDialogFind::OnFindPrevious(UINT uNotifyCode, int nID, HWND wndCtl)
 {
-	m_parent->last.find = m_find_text;
-	m_parent->last.flags = m_flags;
-	m_parent->last.wnd = m_hWnd;
+	m_parent->last.update(m_hWnd, m_flags, m_find_text.get_ptr());
 	m_parent->FindPrevious();
 }
 
