@@ -1,9 +1,10 @@
 #pragma once
+#include "editorctrl.h"
 
 class CDialogGoto : public CDialogImpl<CDialogGoto>
 {
 public:
-	CDialogGoto(HWND p_hedit);
+	CDialogGoto(HWND parent, const pfc::string8_fast& text);
 
 	BEGIN_MSG_MAP(CDialogGoto)
 		MSG_WM_INITDIALOG(OnInitDialog)
@@ -19,5 +20,6 @@ public:
 	void OnCloseCmd(UINT uNotifyCode, int nID, HWND wndCtl);
 
 private:
-	HWND m_hedit;
+	HWND m_parent;
+	pfc::string8_fast m_text;
 };

@@ -1,5 +1,4 @@
 #include "stdafx.h"
-#include "ui_conf.h"
 #include "ui_find.h"
 
 CDialogFind::CDialogFind(CScriptEditorCtrl* parent) : m_parent(parent), m_flags(0) {}
