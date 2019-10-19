@@ -86,7 +86,7 @@ void host_comm::load_config(stream_reader* reader, t_size size, abort_callback& 
 			reader->skip_object(sizeof(false), abort); // HACK: skip over "delay load"
 			reader->skip_object(sizeof(GUID), abort); // HACK: skip over "GUID"
 			reader->read_object(&m_edge_style, sizeof(m_edge_style), abort);
-			m_config_prop.load(reader, abort);
+			m_panel_properties.load(reader, abort);
 			reader->skip_object(sizeof(false), abort); // HACK: skip over "disable before"
 			reader->skip_object(sizeof(false), abort); // HACK: skip over "grab focus"
 			reader->read_object(&m_wndpl, sizeof(m_wndpl), abort);
@@ -121,7 +121,7 @@ void host_comm::save_config(stream_writer* writer, abort_callback& abort) const
 		writer->write_object_t(false, abort); // HACK: write this in place of "delay load"
 		writer->write_object_t(pfc::guid_null, abort); // HACK: write this in place of "GUID"
 		writer->write_object(&m_edge_style, sizeof(m_edge_style), abort);
-		m_config_prop.save(writer, abort);
+		m_panel_properties.save(writer, abort);
 		writer->write_object_t(false, abort); // HACK: write this in place of "disable before"
 		writer->write_object_t(true, abort); // HACK: write this in place of "grab focus"
 		writer->write_object(&m_wndpl, sizeof(m_wndpl), abort);

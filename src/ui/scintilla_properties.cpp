@@ -23,7 +23,7 @@ static const std::vector<simple_key_val> init_table =
 	{"style.caret.line.back.alpha", "256"}
 };
 
-scintilla_properties g_scintilla_properties(jsp_guids::prop_sets);
+scintilla_properties g_scintilla_properties(jsp_guids::scintilla_properties);
 
 scintilla_properties::scintilla_properties(const GUID& p_guid) : cfg_var(p_guid)
 {
