@@ -3,8 +3,6 @@
 class CEditWithReturn : public CWindowImpl<CEditWithReturn, CEdit>
 {
 public:
-	using parent = CWindowImpl<CEditWithReturn, CEdit>;
-
 	BEGIN_MSG_MAP(CEditWithReturn)
 		MESSAGE_HANDLER(WM_CHAR, OnChar)
 		MESSAGE_HANDLER(WM_KEYDOWN, OnKeyDown)

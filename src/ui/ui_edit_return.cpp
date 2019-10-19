@@ -5,7 +5,7 @@ BOOL CEditWithReturn::SubclassWindow(HWND hWnd, HWND hParent, int what)
 {
 	m_parent = hParent;
 	m_what = what;
-	return parent::SubclassWindow(hWnd);
+	return __super::SubclassWindow(hWnd);
 }
 
 LRESULT CEditWithReturn::OnChar(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
