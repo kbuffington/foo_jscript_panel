@@ -14,7 +14,7 @@ void CDialogGoto::OnCloseCmd(UINT uNotifyCode, int nID, HWND wndCtl)
 	if (nID == IDOK)
 	{
 		uGetWindowText(GetDlgItem(IDC_EDIT_LINENUMBER), m_text);
-		const t_size i = pfc::atoui_ex(m_text.get_ptr(), m_text.length()) - 1;
+		const t_size i = pfc::atoui_ex(m_text.get_ptr(), m_text.get_length()) - 1;
 		SendMessage(m_parent, SCI_GOTOLINE, i, 0);
 	}
 	EndDialog(nID);

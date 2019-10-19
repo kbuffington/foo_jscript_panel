@@ -5,7 +5,7 @@ CDialogFind::CDialogFind(CScriptEditorCtrl* parent) : m_parent(parent), m_flags(
 
 BOOL CDialogFind::OnInitDialog(HWND, LPARAM)
 {
-	m_find_edit.SubclassWindow(GetDlgItem(IDC_EDIT_FIND_TEXT), m_hWnd, IDC_FIND_NEXT);
+	m_find_edit.SubclassWindow(GetDlgItem(IDC_EDIT_FIND_TEXT), IDC_FIND_NEXT);
 	return TRUE;
 }
 

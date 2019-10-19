@@ -5,8 +5,8 @@ CDialogReplace::CDialogReplace(CScriptEditorCtrl* parent) : m_parent(parent), m_
 
 BOOL CDialogReplace::OnInitDialog(HWND, LPARAM)
 {
-	m_find_edit.SubclassWindow(GetDlgItem(IDC_EDIT_FIND_TEXT), m_hWnd, IDC_FIND_NEXT);
-	m_replace_edit.SubclassWindow(GetDlgItem(IDC_EDIT_REPLACE_TEXT), m_hWnd, IDC_REPLACE);
+	m_find_edit.SubclassWindow(GetDlgItem(IDC_EDIT_FIND_TEXT), IDC_FIND_NEXT);
+	m_replace_edit.SubclassWindow(GetDlgItem(IDC_EDIT_REPLACE_TEXT), IDC_REPLACE);
 	return TRUE;
 }
 

@@ -251,7 +251,7 @@ LRESULT CScriptEditorCtrl::OnKeyDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BO
 			break;
 
 		case 'S':
-			::PostMessage(::GetAncestor(m_hWnd, GA_PARENT), UWM_APPLY, 0, 0);
+			::PostMessage(GetParent(), UWM_APPLY, 0, 0);
 			break;
 		}
 	}

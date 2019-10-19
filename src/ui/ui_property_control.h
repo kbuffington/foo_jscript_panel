@@ -126,7 +126,7 @@ public:
 		__super::OnItemsRemoved(mask, oldCount);
 		if (m_data.empty())
 		{
-			::PostMessage(::GetAncestor(m_hWnd, GA_PARENT), UWM_PROPERTIES_CLEARED, 0, 0);
+			::PostMessage(GetParent(), UWM_PROPERTIES_CLEARED, 0, 0);
 		}
 	}
 
