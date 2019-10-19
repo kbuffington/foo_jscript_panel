@@ -6,7 +6,6 @@ CDialogFind::CDialogFind(CScriptEditorCtrl* parent) : m_parent(parent), m_flags(
 
 BOOL CDialogFind::OnInitDialog(HWND, LPARAM)
 {
-	modeless_dialog_manager::g_add(m_hWnd);
 	m_find_edit.SubclassWindow(GetDlgItem(IDC_EDIT_FIND_TEXT), m_hWnd, IDC_FIND_NEXT);
 	return TRUE;
 }
@@ -14,12 +13,6 @@ BOOL CDialogFind::OnInitDialog(HWND, LPARAM)
 void CDialogFind::OnCancel(UINT uNotifyCode, int nID, HWND wndCtl)
 {
 	ShowWindow(SW_HIDE);
-}
-
-void CDialogFind::OnFinalMessage(HWND hWnd)
-{
-	modeless_dialog_manager::g_remove(m_hWnd);
-	delete this;
 }
 
 void CDialogFind::OnFindNext(UINT uNotifyCode, int nID, HWND wndCtl)

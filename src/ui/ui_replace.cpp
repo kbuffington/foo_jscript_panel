@@ -5,7 +5,6 @@ CDialogReplace::CDialogReplace(CScriptEditorCtrl* parent) : m_parent(parent), m_
 
 BOOL CDialogReplace::OnInitDialog(HWND, LPARAM)
 {
-	modeless_dialog_manager::g_add(m_hWnd);
 	m_find_edit.SubclassWindow(GetDlgItem(IDC_EDIT_FIND_TEXT), m_hWnd, IDC_FIND_NEXT);
 	m_replace_edit.SubclassWindow(GetDlgItem(IDC_EDIT_REPLACE_TEXT), m_hWnd, IDC_REPLACE);
 	return TRUE;
@@ -14,12 +13,6 @@ BOOL CDialogReplace::OnInitDialog(HWND, LPARAM)
 void CDialogReplace::OnCancel(UINT uNotifyCode, int nID, HWND wndCtl)
 {
 	ShowWindow(SW_HIDE);
-}
-
-void CDialogReplace::OnFinalMessage(HWND hWnd)
-{
-	modeless_dialog_manager::g_remove(m_hWnd);
-	delete this;
 }
 
 void CDialogReplace::OnFindNext(UINT uNotifyCode, int nID, HWND wndCtl)

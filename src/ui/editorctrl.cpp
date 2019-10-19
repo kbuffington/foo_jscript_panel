@@ -990,12 +990,8 @@ void CScriptEditorCtrl::Init()
 
 void CScriptEditorCtrl::OpenFindDialog()
 {
-	if (!DlgFind)
-	{
-		DlgFind = new CDialogFind(this);
-		DlgFind->Create(m_hWnd);
-	}
-
+	if (DlgReplace && DlgReplace->IsWindowVisible()) DlgReplace->ShowWindow(SW_HIDE);
+	if (!DlgFind) DlgFind = fb2k::newDialogEx<CDialogFind>(m_hWnd, this);
 	DlgFind->ShowWindow(SW_SHOW);
 	DlgFind->SetFocus();
 }
@@ -1009,12 +1005,8 @@ void CScriptEditorCtrl::OpenGotoDialog()
 
 void CScriptEditorCtrl::OpenReplaceDialog()
 {
-	if (!DlgReplace)
-	{
-		DlgReplace = new CDialogReplace(this);
-		DlgReplace->Create(m_hWnd);
-	}
-
+	if (DlgFind && DlgFind->IsWindowVisible()) DlgFind->ShowWindow(SW_HIDE);
+	if (!DlgReplace) DlgReplace = fb2k::newDialogEx<CDialogReplace>(m_hWnd, this);
 	DlgReplace->ShowWindow(SW_SHOW);
 	DlgReplace->SetFocus();
 }

@@ -26,7 +26,6 @@ public:
 
 	BOOL OnInitDialog(HWND, LPARAM);
 	void OnCancel(UINT uNotifyCode, int nID, HWND wndCtl);
-	void OnFinalMessage(HWND hWnd) override;
 	void OnFindNext(UINT uNotifyCode, int nID, HWND wndCtl);
 	void OnFindPrevious(UINT uNotifyCode, int nID, HWND wndCtl);
 	void OnFindTextChange(UINT uNotifyCode, int nID, HWND wndCtl);
