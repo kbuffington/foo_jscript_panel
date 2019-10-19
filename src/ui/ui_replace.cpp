@@ -8,10 +8,6 @@ BOOL CDialogReplace::OnInitDialog(HWND, LPARAM)
 	modeless_dialog_manager::g_add(m_hWnd);
 	m_find_edit.SubclassWindow(GetDlgItem(IDC_EDIT_FIND_TEXT), m_hWnd, IDC_FIND_NEXT);
 	m_replace_edit.SubclassWindow(GetDlgItem(IDC_EDIT_REPLACE_TEXT), m_hWnd, IDC_REPLACE);
-	GetDlgItem(IDC_FIND_NEXT).EnableWindow(false);
-	GetDlgItem(IDC_FIND_PREVIOUS).EnableWindow(false);
-	GetDlgItem(IDC_REPLACE).EnableWindow(false);
-	GetDlgItem(IDC_REPLACE_ALL).EnableWindow(false);
 	return TRUE;
 }
 

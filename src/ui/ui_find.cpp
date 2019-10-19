@@ -8,8 +8,6 @@ BOOL CDialogFind::OnInitDialog(HWND, LPARAM)
 {
 	modeless_dialog_manager::g_add(m_hWnd);
 	m_find_edit.SubclassWindow(GetDlgItem(IDC_EDIT_FIND_TEXT), m_hWnd, IDC_FIND_NEXT);
-	GetDlgItem(IDC_FIND_NEXT).EnableWindow(false);
-	GetDlgItem(IDC_FIND_PREVIOUS).EnableWindow(false);
 	return TRUE;
 }
 
