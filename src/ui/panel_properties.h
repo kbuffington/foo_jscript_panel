@@ -1,6 +1,6 @@
 #pragma once
 
-class properties
+class panel_properties
 {
 public:
 	using t_map = pfc::map_t<pfc::string_simple, _variant_t, pfc::comparator_stricmp_ascii>;

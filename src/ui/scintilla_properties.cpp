@@ -1,8 +1,8 @@
 #include "stdafx.h"
 #include "helpers.h"
-#include "scintilla_prop_sets.h"
+#include "scintilla_properties.h"
 
-static const std::vector<t_sci_prop_set> init_table =
+static const std::vector<simple_key_val> init_table =
 {
 	{"style.default", "font:Courier New,size:10"},
 	{"style.comment", "fore:#008000"},
@@ -23,14 +23,14 @@ static const std::vector<t_sci_prop_set> init_table =
 	{"style.caret.line.back.alpha", "256"}
 };
 
-cfg_sci_prop_sets g_sci_prop_sets(jsp_guids::prop_sets);
+scintilla_properties g_scintilla_properties(jsp_guids::prop_sets);
 
-cfg_sci_prop_sets::cfg_sci_prop_sets(const GUID& p_guid) : cfg_var(p_guid)
+scintilla_properties::scintilla_properties(const GUID& p_guid) : cfg_var(p_guid)
 {
 	init_data();
 }
 
-void cfg_sci_prop_sets::get_data_raw(stream_writer* p_stream, abort_callback& p_abort)
+void scintilla_properties::get_data_raw(stream_writer* p_stream, abort_callback& p_abort)
 {
 	try
 	{
@@ -44,10 +44,10 @@ void cfg_sci_prop_sets::get_data_raw(stream_writer* p_stream, abort_callback& p_
 	catch (...) {}
 }
 
-void cfg_sci_prop_sets::import(const char* content)
+void scintilla_properties::import(const char* content)
 {
 	str_list lines = helpers::split_string(content, "\r\n");
-	t_str_map data_map;
+	simple_map data_map;
 	for (const auto& line : lines)
 	{
 		if (line.empty() || line.at(0) == '#' || line.length() <= 3) continue;
@@ -61,19 +61,19 @@ void cfg_sci_prop_sets::import(const char* content)
 	merge_data(data_map);
 }
 
-void cfg_sci_prop_sets::init_data()
+void scintilla_properties::init_data()
 {
 	m_data = init_table;
 }
 
-void cfg_sci_prop_sets::load_preset(t_size idx)
+void scintilla_properties::load_preset(t_size idx)
 {
 	puResource pures = uLoadResource(core_api::get_my_instance(), uMAKEINTRESOURCE(idx), "TEXT");
 	pfc::string8_fast content(static_cast<const char*>(pures->GetPointer()), pures->GetSize());
 	import(content);
 }
 
-void cfg_sci_prop_sets::merge_data(const t_str_map& data_map)
+void scintilla_properties::merge_data(const simple_map& data_map)
 {
 	pfc::string8_fast tmp;
 	for (auto& [key, val] : m_data)
@@ -85,9 +85,9 @@ void cfg_sci_prop_sets::merge_data(const t_str_map& data_map)
 	}
 }
 
-void cfg_sci_prop_sets::set_data_raw(stream_reader* p_stream, t_size p_sizehint, abort_callback& p_abort)
+void scintilla_properties::set_data_raw(stream_reader* p_stream, t_size p_sizehint, abort_callback& p_abort)
 {
-	t_str_map data_map;
+	simple_map data_map;
 	pfc::string8_fast key, val;
 	t_size count;
 

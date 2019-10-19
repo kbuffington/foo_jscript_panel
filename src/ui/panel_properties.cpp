@@ -1,7 +1,7 @@
 #include "stdafx.h"
-#include "properties.h"
+#include "panel_properties.h"
 
-bool properties::get_config_item(const char* p_key, VARIANT& p_out)
+bool panel_properties::get_config_item(const char* p_key, VARIANT& p_out)
 {
 	_variant_t val;
 
@@ -20,7 +20,7 @@ bool properties::get_config_item(const char* p_key, VARIANT& p_out)
 	return false;
 }
 
-int properties::g_get_sizeof(VARTYPE p_vt)
+int panel_properties::g_get_sizeof(VARTYPE p_vt)
 {
 	switch (p_vt)
 	{
@@ -51,7 +51,7 @@ int properties::g_get_sizeof(VARTYPE p_vt)
 	}
 }
 
-void properties::g_load(t_map& data, stream_reader* reader, abort_callback& abort) throw()
+void panel_properties::g_load(t_map& data, stream_reader* reader, abort_callback& abort) throw()
 {
 	t_size count;
 	data.remove_all();
@@ -89,7 +89,7 @@ void properties::g_load(t_map& data, stream_reader* reader, abort_callback& abor
 	catch (...) {}
 }
 
-void properties::g_save(const t_map& data, stream_writer* writer, abort_callback& abort) throw()
+void panel_properties::g_save(const t_map& data, stream_writer* writer, abort_callback& abort) throw()
 {
 	try
 	{
@@ -114,17 +114,17 @@ void properties::g_save(const t_map& data, stream_writer* writer, abort_callback
 	catch (...) {}
 }
 
-void properties::load(stream_reader* reader, abort_callback& abort) throw()
+void panel_properties::load(stream_reader* reader, abort_callback& abort) throw()
 {
 	g_load(m_map, reader, abort);
 }
 
-void properties::save(stream_writer* writer, abort_callback& abort) const throw()
+void panel_properties::save(stream_writer* writer, abort_callback& abort) const throw()
 {
 	g_save(m_map, writer, abort);
 }
 
-void properties::set_config_item(const char* p_key, const VARIANT& p_val)
+void panel_properties::set_config_item(const char* p_key, const VARIANT& p_val)
 {
 	if (g_get_sizeof(p_val.vt) != 0)
 	{

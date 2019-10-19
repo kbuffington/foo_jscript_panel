@@ -1,6 +1,6 @@
 #pragma once
 #include "helpers.h"
-#include "properties.h"
+#include "panel_properties.h"
 #include "script_info.h"
 #include "script_interface.h"
 
@@ -64,7 +64,7 @@ public:
 	bool m_pseudo_transparent;
 	pfc::string8_fast m_script_code;
 	pfc::string8_fast m_script_engine_str;
-	properties m_config_prop;
+	panel_properties m_config_prop;
 	t_edge_style m_edge_style;
 	t_script_info m_script_info;
 };

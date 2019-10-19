@@ -95,7 +95,7 @@ void CDialogProperty::LoadProperties(bool reload)
 		m_dup_prop_map = m_parent->m_config_prop.m_map;
 	}
 
-	for (properties::t_map::const_iterator iter = m_dup_prop_map.first(); iter.is_valid(); ++iter)
+	for (panel_properties::t_map::const_iterator iter = m_dup_prop_map.first(); iter.is_valid(); ++iter)
 	{
 		MyCList::data_t d;
 		d.key = iter->m_key;
@@ -176,7 +176,7 @@ void CDialogProperty::OnExportBnClicked(UINT, int, HWND)
 		{
 			file_ptr io;
 			filesystem::g_open_write_new(io, path, fb2k::noAbort);
-			properties::g_save(m_dup_prop_map, io.get_ptr(), fb2k::noAbort);
+			panel_properties::g_save(m_dup_prop_map, io.get_ptr(), fb2k::noAbort);
 		}
 		catch (...) {}
 	}
@@ -192,7 +192,7 @@ void CDialogProperty::OnImportBnClicked(UINT, int, HWND)
 		{
 			file_ptr io;
 			filesystem::g_open_read(io, path, fb2k::noAbort);
-			properties::g_load(m_dup_prop_map, io.get_ptr(), fb2k::noAbort);
+			panel_properties::g_load(m_dup_prop_map, io.get_ptr(), fb2k::noAbort);
 			LoadProperties(false);
 		}
 		catch (...) {}

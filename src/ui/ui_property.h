@@ -1,6 +1,6 @@
 #pragma once
 #include "panel_window.h"
-#include "properties.h"
+#include "panel_properties.h"
 #include "ui_property_control.h"
 
 class CDialogProperty : public CDialogImpl<CDialogProperty>
@@ -40,5 +40,5 @@ private:
 	MyCList m_properties;
 	panel_window* m_parent;
 	pfc::string8_fast m_caption;
-	properties::t_map m_dup_prop_map;
+	panel_properties::t_map m_dup_prop_map;
 };
