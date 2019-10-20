@@ -178,12 +178,17 @@ namespace helpers
 
 	bool execute_mainmenu_command_by_name(const char* p_command)
 	{
-		pfc::map_t<GUID, mainmenu_group::ptr> group_guid_map;
+		auto hash = [](const GUID& g)
+		{
+			return hasher_md5::get()->process_single_string(pfc::print_guid(g).get_ptr()).xorHalve();
+		};
+
+		std::unordered_map<t_uint64, mainmenu_group::ptr> group_guid_map;
 
 		for (auto e = service_enum_t<mainmenu_group>(); !e.finished(); ++e)
 		{
 			auto ptr = *e;
-			group_guid_map.find_or_add(ptr->get_guid()) = ptr;
+			group_guid_map.emplace(hash(ptr->get_guid()), ptr);
 		}
 
 		for (auto e = service_enum_t<mainmenu_commands>(); !e.finished(); ++e)
@@ -196,7 +201,7 @@ namespace helpers
 				GUID parent = ptr->get_parent();
 				while (parent != pfc::guid_null)
 				{
-					mainmenu_group::ptr group_ptr = group_guid_map[parent];
+					mainmenu_group::ptr group_ptr = group_guid_map.at(hash(parent));
 					mainmenu_group_popup::ptr group_popup_ptr;
 
 					if (group_ptr->cast(group_popup_ptr))
