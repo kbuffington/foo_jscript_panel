@@ -91,8 +91,9 @@ void CDialogFindReplace::OnReplaceTextChange(UINT uNotifyCode, int nID, HWND wnd
 	uGetWindowText(m_window.at(IDC_EDIT_REPLACE), m_replace_text);
 }
 
-void CDialogFindReplace::SetMode(bool find)
+void CDialogFindReplace::SetMode(mode m)
 {
+	bool find = m == mode::find;
 	int cmd = find ? SW_HIDE : SW_SHOW;
 	m_window.at(IDC_LABEL_REPLACE).ShowWindow(cmd);
 	m_window.at(IDC_EDIT_REPLACE).ShowWindow(cmd);

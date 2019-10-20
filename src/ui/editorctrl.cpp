@@ -989,7 +989,7 @@ void CScriptEditorCtrl::Init()
 void CScriptEditorCtrl::OpenFindDialog()
 {
 	if (!DlgFindReplace) DlgFindReplace = fb2k::newDialogEx<CDialogFindReplace>(m_hWnd, this);
-	DlgFindReplace->SetMode(true); // true = find dialog
+	DlgFindReplace->SetMode(CDialogFindReplace::mode::find);
 }
 
 void CScriptEditorCtrl::OpenGotoDialog()
@@ -1005,7 +1005,7 @@ void CScriptEditorCtrl::OpenGotoDialog()
 void CScriptEditorCtrl::OpenReplaceDialog()
 {
 	if (!DlgFindReplace) DlgFindReplace = fb2k::newDialogEx<CDialogFindReplace>(m_hWnd, this);
-	DlgFindReplace->SetMode(false); // false = replace dialog
+	DlgFindReplace->SetMode(CDialogFindReplace::mode::replace);
 }
 
 void CScriptEditorCtrl::Replace()

@@ -4,6 +4,12 @@
 class CDialogFindReplace : public CDialogImpl<CDialogFindReplace>
 {
 public:
+	enum mode
+	{
+		find,
+		replace
+	};
+
 	CDialogFindReplace(CScriptEditorCtrl* parent);
 
 	BEGIN_MSG_MAP(CDialogFindReplace)
@@ -32,7 +38,7 @@ public:
 	void OnReplace(UINT uNotifyCode, int nID, HWND wndCtl);
 	void OnReplaceAll(UINT uNotifyCode, int nID, HWND wndCtl);
 	void OnReplaceTextChange(UINT uNotifyCode, int nID, HWND wndCtl);
-	void SetMode(bool find);
+	void SetMode(mode m);
 
 private:
 	class TabHack : public CWindowImpl<TabHack, CWindow>
