@@ -20,6 +20,7 @@ public:
 	void OnCloseCmd(UINT uNotifyCode, int nID, HWND wndCtl);
 
 private:
+	CEdit m_edit;
 	HWND m_parent;
 	pfc::string8_fast m_text;
 };

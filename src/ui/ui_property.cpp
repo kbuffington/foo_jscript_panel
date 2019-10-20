@@ -26,21 +26,18 @@ BOOL CDialogProperty::OnInitDialog(HWND, LPARAM)
 	// Set caption text
 	uSetWindowText(m_hWnd, m_caption);
 
+	m_clear_btn = GetDlgItem(IDC_BTN_CLEAR);
+	m_export_btn = GetDlgItem(IDC_BTN_EXPORT);
+
 	m_properties.CreateInDialog(*this, IDC_LIST_PROPERTIES);
 	LoadProperties();
-
-	clear_btn = GetDlgItem(IDC_BTN_CLEAR);
-	export_btn = GetDlgItem(IDC_BTN_EXPORT);
-
-	clear_btn.EnableWindow(m_properties.m_data.size());
-	export_btn.EnableWindow(m_properties.m_data.size());
 	return TRUE;
 }
 
 LRESULT CDialogProperty::OnPropertiesCleared(UINT, WPARAM, LPARAM, BOOL&)
 {
-	clear_btn.EnableWindow(false);
-	export_btn.EnableWindow(false);
+	m_clear_btn.EnableWindow(false);
+	m_export_btn.EnableWindow(false);
 	return 0;
 }
 
@@ -141,8 +138,8 @@ void CDialogProperty::LoadProperties(bool reload)
 
 	m_properties.ReloadData();
 
-	clear_btn.EnableWindow(m_properties.m_data.size());
-	export_btn.EnableWindow(m_properties.m_data.size());
+	m_clear_btn.EnableWindow(m_properties.m_data.size());
+	m_export_btn.EnableWindow(m_properties.m_data.size());
 }
 
 void CDialogProperty::OnClearBnClicked(UINT, int, HWND)

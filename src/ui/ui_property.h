@@ -35,7 +35,7 @@ public:
 	void OnImportBnClicked(UINT, int, HWND);
 
 private:
-	CButton clear_btn, export_btn;
+	CButton m_clear_btn, m_export_btn;
 	CDialogResizeHelper m_resizer;
 	MyCList m_properties;
 	panel_window* m_parent;
