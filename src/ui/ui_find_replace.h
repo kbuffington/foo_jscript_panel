@@ -1,6 +1,5 @@
 #pragma once
 #include "editorctrl.h"
-#include "ui_edit_return.h"
 
 class CDialogFindReplace : public CDialogImpl<CDialogFindReplace>
 {
@@ -37,11 +36,7 @@ public:
 
 private:
 	bool m_havefound;
-	CButton m_next_btn, m_previous_btn, m_replace_btn, m_replace_all_btn;
-	CEdit m_find_edit, m_replace_edit;
-	CEditWithReturn m_find_edit_ret, m_replace_edit_ret;
 	CScriptEditorCtrl* m_parent;
-	CWindow m_replace_label;
 	int m_flags;
 	pfc::string8_fast m_find_text, m_replace_text;
 };

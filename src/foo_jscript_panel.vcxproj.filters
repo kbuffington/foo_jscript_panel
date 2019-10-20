@@ -102,9 +102,6 @@
     <ClInclude Include="ui\ui_conf.h">
       <Filter>Header Files\ui</Filter>
     </ClInclude>
-    <ClInclude Include="ui\ui_edit_return.h">
-      <Filter>Header Files\ui</Filter>
-    </ClInclude>
     <ClInclude Include="ui\ui_goto.h">
       <Filter>Header Files\ui</Filter>
     </ClInclude>
@@ -201,9 +198,6 @@
       <Filter>Source Files\ui</Filter>
     </ClCompile>
     <ClCompile Include="ui\ui_conf.cpp">
-      <Filter>Source Files\ui</Filter>
-    </ClCompile>
-    <ClCompile Include="ui\ui_edit_return.cpp">
       <Filter>Source Files\ui</Filter>
     </ClCompile>
     <ClCompile Include="ui\ui_goto.cpp">
