@@ -38,7 +38,7 @@ private:
 	class TabHack : public CWindowImpl<TabHack, CWindow>
 	{
 	public:
-		BEGIN_MSG_MAP(CEditWithReturn)
+		BEGIN_MSG_MAP(TabHack)
 			MESSAGE_HANDLER(WM_CHAR, OnChar)
 			MESSAGE_HANDLER(WM_KEYDOWN, OnKeyDown)
 		END_MSG_MAP()
