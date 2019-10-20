@@ -35,8 +35,23 @@ public:
 	void SetMode(bool find);
 
 private:
+	class TabHack : public CWindowImpl<TabHack, CWindow>
+	{
+	public:
+		BEGIN_MSG_MAP(CEditWithReturn)
+			MESSAGE_HANDLER(WM_CHAR, OnChar)
+			MESSAGE_HANDLER(WM_KEYDOWN, OnKeyDown)
+		END_MSG_MAP()
+
+		BOOL SubclassWindow(HWND wnd);
+		LRESULT OnChar(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+		LRESULT OnKeyDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+	};
+
 	bool m_havefound;
 	CScriptEditorCtrl* m_parent;
 	int m_flags;
 	pfc::string8_fast m_find_text, m_replace_text;
+	std::map<int, CWindow> m_window;
+	std::vector<TabHack> m_hacks;
 };
