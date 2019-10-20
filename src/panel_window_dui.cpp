@@ -43,7 +43,7 @@ public:
 
 	DWORD get_colour_ui(t_size type) override
 	{
-		static const std::array<const GUID*, 4> guids =
+		static constexpr std::array<const GUID*, 4> guids =
 		{
 			&ui_color_text,
 			&ui_color_background,
@@ -72,7 +72,7 @@ public:
 	{
 		IGdiFont* ret = nullptr;
 
-		static const std::array<const GUID*, 6> guids =
+		static constexpr std::array<const GUID*, 6> guids =
 		{
 			&ui_font_default,
 			&ui_font_tabs,

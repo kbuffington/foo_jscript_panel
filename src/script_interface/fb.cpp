@@ -285,7 +285,7 @@ STDMETHODIMP Fb::GetSelectionType(UINT* p)
 {
 	if (!p) return E_POINTER;
 
-	static const std::array<const GUID*, 7> guids =
+	static constexpr std::array<const GUID*, 7> guids =
 	{
 		&contextmenu_item::caller_undefined,
 		&contextmenu_item::caller_active_playlist_selection,

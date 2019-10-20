@@ -391,7 +391,7 @@ namespace helpers
 
 	const GUID convert_artid_to_guid(t_size art_id)
 	{
-		static const std::array<const GUID*, 5> guids =
+		static constexpr std::array<const GUID*, 5> guids =
 		{
 			&album_art_ids::cover_front,
 			&album_art_ids::cover_back,

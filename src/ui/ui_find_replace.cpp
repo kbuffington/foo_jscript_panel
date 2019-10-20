@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "ui_find_replace.h"
 
-static const std::vector<int> ids =
+static constexpr std::array<int, 12> ids =
 {
 	IDC_EDIT_FIND,
 	IDC_EDIT_REPLACE,
