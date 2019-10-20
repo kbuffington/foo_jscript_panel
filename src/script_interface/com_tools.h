@@ -31,7 +31,7 @@ struct type_info_cache
 {
 	type_info_cache() : m_type_info(nullptr) {}
 
-	bool query(const ULONG& key, DISPID& value)
+	bool query(ULONG key, DISPID& value)
 	{
 		if (m_cache.count(key))
 		{
