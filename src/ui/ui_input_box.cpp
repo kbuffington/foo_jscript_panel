@@ -5,15 +5,13 @@ CInputBox::CInputBox(const char* p_prompt, const char* p_caption, const char* p_
 
 BOOL CInputBox::OnInitDialog(HWND, LPARAM)
 {
+	m_edit = GetDlgItem(IDC_EDIT_VALUE);
+	m_label = GetDlgItem(IDC_LABEL_PROMPT);
+
 	uSetWindowText(m_hWnd, m_caption);
-	uSendDlgItemMessageText(m_hWnd, IDC_INPUT_PROMPT, WM_SETTEXT, 0, m_prompt);
-	uSendDlgItemMessageText(m_hWnd, IDC_INPUT_VALUE, WM_SETTEXT, 0, m_value);
-
-	SendDlgItemMessage(IDC_INPUT_VALUE, EM_SETSEL, 0, -1);
-	::SetFocus(GetDlgItem(IDC_INPUT_VALUE));
-
+	uSetWindowText(m_label, m_prompt);
+	uSetWindowText(m_edit, m_value);
 	CenterWindow();
-
 	return FALSE;
 }
 
@@ -26,7 +24,7 @@ void CInputBox::OnCloseCmd(UINT uNotifyCode, int nID, HWND wndCtl)
 {
 	if (nID == IDOK)
 	{
-		uGetDlgItemText(m_hWnd, IDC_INPUT_VALUE, m_value);
+		uGetWindowText(m_edit, m_value);
 	}
 	EndDialog(nID);
 }

@@ -97,7 +97,7 @@ void CDialogPref::OnPresetsBnClicked(UINT, int, HWND)
 	uAppendMenu(menu, MF_STRING, IDR_RUBY, "Ruby Blue");
 
 	RECT rc;
-	::GetWindowRect(::GetDlgItem(m_hWnd, IDC_PRESETS), &rc);
+	::GetWindowRect(::GetDlgItem(m_hWnd, IDC_BTN_PRESETS), &rc);
 	const int idx = TrackPopupMenu(menu, TPM_RIGHTBUTTON | TPM_NONOTIFY | TPM_RETURNCMD, rc.left, rc.bottom, 0, m_hWnd, nullptr);
 	if (idx > 0)
 	{

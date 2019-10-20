@@ -105,9 +105,6 @@
     <ClInclude Include="ui\ui_edit_return.h">
       <Filter>Header Files\ui</Filter>
     </ClInclude>
-    <ClInclude Include="ui\ui_find.h">
-      <Filter>Header Files\ui</Filter>
-    </ClInclude>
     <ClInclude Include="ui\ui_goto.h">
       <Filter>Header Files\ui</Filter>
     </ClInclude>
@@ -123,7 +120,7 @@
     <ClInclude Include="ui\ui_property_control.h">
       <Filter>Header Files\ui</Filter>
     </ClInclude>
-    <ClInclude Include="ui\ui_replace.h">
+    <ClInclude Include="ui\ui_find_replace.h">
       <Filter>Header Files\ui</Filter>
     </ClInclude>
   </ItemGroup>
@@ -209,9 +206,6 @@
     <ClCompile Include="ui\ui_edit_return.cpp">
       <Filter>Source Files\ui</Filter>
     </ClCompile>
-    <ClCompile Include="ui\ui_find.cpp">
-      <Filter>Source Files\ui</Filter>
-    </ClCompile>
     <ClCompile Include="ui\ui_goto.cpp">
       <Filter>Source Files\ui</Filter>
     </ClCompile>
@@ -224,7 +218,7 @@
     <ClCompile Include="ui\ui_property.cpp">
       <Filter>Source Files\ui</Filter>
     </ClCompile>
-    <ClCompile Include="ui\ui_replace.cpp">
+    <ClCompile Include="ui\ui_find_replace.cpp">
       <Filter>Source Files\ui</Filter>
     </ClCompile>
   </ItemGroup>

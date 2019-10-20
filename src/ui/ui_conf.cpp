@@ -5,15 +5,15 @@
 static const CDialogResizeHelper::Param resize_data[] =
 {
 	{ IDC_EDIT, 0, 0, 1, 1 },
-	{ IDC_RESET, 0, 1, 0, 1 },
-	{ IDC_ENGINE_LABEL, 0, 1, 0, 1 },
-	{ IDC_ENGINE_COMBO, 0, 1, 0, 1 },
-	{ IDC_EDGE_LABEL, 0, 1, 0, 1 },
-	{ IDC_EDGE_COMBO, 0, 1, 0, 1 },
-	{ IDC_PSEUDO_TRANSPARENT, 0, 1, 0, 1 },
+	{ IDC_BTN_RESET, 0, 1, 0, 1 },
+	{ IDC_LABEL_ENGINE, 0, 1, 0, 1 },
+	{ IDC_COMBO_ENGINE, 0, 1, 0, 1 },
+	{ IDC_LABEL_EDGE, 0, 1, 0, 1 },
+	{ IDC_COMBO_EDGE, 0, 1, 0, 1 },
+	{ IDC_CHECK_PSEUDO_TRANSPARENT, 0, 1, 0, 1 },
 	{ IDOK, 1, 1, 1, 1 },
 	{ IDCANCEL, 1, 1, 1, 1 },
-	{ IDC_APPLY, 1, 1, 1, 1 },
+	{ IDC_BTN_APPLY, 1, 1, 1, 1 },
 };
 
 static const CRect resize_min_max(620, 381, 0, 0);
@@ -27,10 +27,10 @@ CDialogConf::~CDialogConf() {}
 
 BOOL CDialogConf::OnInitDialog(HWND, LPARAM)
 {
-	m_edge = GetDlgItem(IDC_EDGE_COMBO);
-	m_engine = GetDlgItem(IDC_ENGINE_COMBO);
+	m_edge = GetDlgItem(IDC_COMBO_EDGE);
+	m_engine = GetDlgItem(IDC_COMBO_ENGINE);
 	m_menu = GetMenu();
-	m_pseudo = GetDlgItem(IDC_PSEUDO_TRANSPARENT);
+	m_pseudo = GetDlgItem(IDC_CHECK_PSEUDO_TRANSPARENT);
 
 	pfc::string8_fast base = helpers::get_fb2k_component_path();
 
@@ -198,7 +198,7 @@ void CDialogConf::OnCloseCmd(UINT uNotifyCode, int nID, HWND wndCtl)
 	case IDOK:
 		Apply();
 		break;
-	case IDC_APPLY:
+	case IDC_BTN_APPLY:
 		Apply();
 		return;
 	case IDCANCEL:

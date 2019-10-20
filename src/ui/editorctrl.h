@@ -6,8 +6,7 @@
 
 #include <wtlscintilla.h>
 
-class CDialogFind;
-class CDialogReplace;
+class CDialogFindReplace;
 
 class CScriptEditorCtrl : public CScintillaCtrl
 {
@@ -26,7 +25,6 @@ public:
 	{
 		Last() : wnd(nullptr), flags(0) {}
 
-		void update(HWND h, int fl, const std::string& f) { wnd = h; flags = fl; find = f; }
 		void update(HWND h, int fl, const std::string& f, const std::string& r) { wnd = h; flags = fl; find = f; replace = r; }
 
 		HWND wnd;
@@ -110,8 +108,7 @@ private:
 	void SetIndentation(int line, int indent);
 	void TrackWidth();
 
-	CDialogFind* DlgFind;
-	CDialogReplace* DlgReplace;
+	CDialogFindReplace* DlgFindReplace;
 	StyleAndWords BlockEnd;
 	StyleAndWords BlockStart;
 	StyleAndWords StatementEnd;

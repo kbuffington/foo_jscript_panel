@@ -4,12 +4,12 @@
 static const CDialogResizeHelper::Param resize_data[] =
 {
 	{ IDC_LIST_PROPERTIES, 0, 0, 1, 1 },
-	{ IDC_IMPORT, 0, 1, 0, 1 },
-	{ IDC_EXPORT, 0, 1, 0, 1 },
-	{ IDC_CLEAR, 0, 1, 0, 1 },
+	{ IDC_BTN_IMPORT, 0, 1, 0, 1 },
+	{ IDC_BTN_EXPORT, 0, 1, 0, 1 },
+	{ IDC_BTN_CLEAR, 0, 1, 0, 1 },
 	{ IDOK, 1, 1, 1, 1 },
 	{ IDCANCEL, 1, 1, 1, 1 },
-	{ IDC_APPLY, 1, 1, 1, 1 },
+	{ IDC_BTN_APPLY, 1, 1, 1, 1 },
 };
 
 static const CRect resize_min_max(620, 381, 0, 0);
@@ -29,8 +29,8 @@ BOOL CDialogProperty::OnInitDialog(HWND, LPARAM)
 	m_properties.CreateInDialog(*this, IDC_LIST_PROPERTIES);
 	LoadProperties();
 
-	clear_btn = GetDlgItem(IDC_CLEAR);
-	export_btn = GetDlgItem(IDC_EXPORT);
+	clear_btn = GetDlgItem(IDC_BTN_CLEAR);
+	export_btn = GetDlgItem(IDC_BTN_EXPORT);
 
 	clear_btn.EnableWindow(m_properties.m_data.size());
 	export_btn.EnableWindow(m_properties.m_data.size());
@@ -159,7 +159,7 @@ void CDialogProperty::OnCloseCmd(UINT, int nID, HWND)
 		Apply();
 		break;
 
-	case IDC_APPLY:
+	case IDC_BTN_APPLY:
 		Apply();
 		return;
 	}

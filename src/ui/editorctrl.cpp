@@ -2,9 +2,8 @@
 #include "editorctrl.h"
 #include "helpers.h"
 #include "scintilla_properties.h"
-#include "ui_find.h"
+#include "ui_find_replace.h"
 #include "ui_goto.h"
-#include "ui_replace.h"
 
 enum
 {
@@ -67,8 +66,7 @@ CScriptEditorCtrl::CScriptEditorCtrl()
 	, CurrentCallTip(0)
 	, StartCalltipWord(0)
 	, LastPosCallTip(0)
-	, DlgFind(nullptr)
-	, DlgReplace(nullptr)
+	, DlgFindReplace(nullptr)
 	, WordCharacters("_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
 	, apis(panel_manager::instance().get_apis())
 {
@@ -990,10 +988,8 @@ void CScriptEditorCtrl::Init()
 
 void CScriptEditorCtrl::OpenFindDialog()
 {
-	if (DlgReplace && DlgReplace->IsWindowVisible()) DlgReplace->ShowWindow(SW_HIDE);
-	if (!DlgFind) DlgFind = fb2k::newDialogEx<CDialogFind>(m_hWnd, this);
-	DlgFind->ShowWindow(SW_SHOW);
-	DlgFind->SetFocus();
+	if (!DlgFindReplace) DlgFindReplace = fb2k::newDialogEx<CDialogFindReplace>(m_hWnd, this);
+	DlgFindReplace->SetMode(true); // true = find dialog
 }
 
 void CScriptEditorCtrl::OpenGotoDialog()
@@ -1008,10 +1004,8 @@ void CScriptEditorCtrl::OpenGotoDialog()
 
 void CScriptEditorCtrl::OpenReplaceDialog()
 {
-	if (DlgFind && DlgFind->IsWindowVisible()) DlgFind->ShowWindow(SW_HIDE);
-	if (!DlgReplace) DlgReplace = fb2k::newDialogEx<CDialogReplace>(m_hWnd, this);
-	DlgReplace->ShowWindow(SW_SHOW);
-	DlgReplace->SetFocus();
+	if (!DlgFindReplace) DlgFindReplace = fb2k::newDialogEx<CDialogFindReplace>(m_hWnd, this);
+	DlgFindReplace->SetMode(false); // false = replace dialog
 }
 
 void CScriptEditorCtrl::Replace()

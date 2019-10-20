@@ -2,26 +2,26 @@
 #include "editorctrl.h"
 #include "ui_edit_return.h"
 
-class CDialogReplace : public CDialogImpl<CDialogReplace>
+class CDialogFindReplace : public CDialogImpl<CDialogFindReplace>
 {
 public:
-	CDialogReplace(CScriptEditorCtrl* parent);
+	CDialogFindReplace(CScriptEditorCtrl* parent);
 
-	BEGIN_MSG_MAP(CDialogReplace)
+	BEGIN_MSG_MAP(CDialogFindReplace)
 		MSG_WM_INITDIALOG(OnInitDialog)
-		COMMAND_ID_HANDLER_EX(IDC_FIND_NEXT, OnFindNext)
-		COMMAND_ID_HANDLER_EX(IDC_FIND_PREVIOUS, OnFindPrevious)
+		COMMAND_ID_HANDLER_EX(IDC_BTN_NEXT, OnFindNext)
+		COMMAND_ID_HANDLER_EX(IDC_BTN_PREVIOUS, OnFindPrevious)
 		COMMAND_ID_HANDLER_EX(IDCANCEL, OnCancel)
-		COMMAND_ID_HANDLER_EX(IDC_REPLACE, OnReplace)
-		COMMAND_ID_HANDLER_EX(IDC_REPLACE_ALL, OnReplaceAll)
-		COMMAND_HANDLER_EX(IDC_EDIT_FIND_TEXT, EN_CHANGE, OnFindTextChange)
-		COMMAND_HANDLER_EX(IDC_EDIT_REPLACE_TEXT, EN_CHANGE, OnReplaceTextChange)
+		COMMAND_ID_HANDLER_EX(IDC_BTN_REPLACE, OnReplace)
+		COMMAND_ID_HANDLER_EX(IDC_BTN_REPLACE_ALL, OnReplaceAll)
+		COMMAND_HANDLER_EX(IDC_EDIT_FIND, EN_CHANGE, OnFindTextChange)
+		COMMAND_HANDLER_EX(IDC_EDIT_REPLACE, EN_CHANGE, OnReplaceTextChange)
 		COMMAND_RANGE_HANDLER_EX(IDC_CHECK_MATCHCASE, IDC_CHECK_REGEXP, OnFlagCommand)
 	END_MSG_MAP()
 
 	enum
 	{
-		IDD = IDD_DIALOG_REPLACE
+		IDD = IDD_DIALOG_FIND_REPLACE
 	};
 
 	BOOL OnInitDialog(HWND, LPARAM);
@@ -33,11 +33,15 @@ public:
 	void OnReplace(UINT uNotifyCode, int nID, HWND wndCtl);
 	void OnReplaceAll(UINT uNotifyCode, int nID, HWND wndCtl);
 	void OnReplaceTextChange(UINT uNotifyCode, int nID, HWND wndCtl);
+	void SetMode(bool find);
 
 private:
 	bool m_havefound;
-	CEditWithReturn m_find_edit, m_replace_edit;
+	CButton m_next_btn, m_previous_btn, m_replace_btn, m_replace_all_btn;
+	CEdit m_find_edit, m_replace_edit;
+	CEditWithReturn m_find_edit_ret, m_replace_edit_ret;
 	CScriptEditorCtrl* m_parent;
+	CWindow m_replace_label;
 	int m_flags;
 	pfc::string8_fast m_find_text, m_replace_text;
 };
