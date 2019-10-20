@@ -1,8 +1,7 @@
 #include "stdafx.h"
-#include "helpers.h"
 #include "scintilla_properties.h"
 
-static const std::vector<simple_key_val> init_table =
+static const std::vector<scintilla_properties::simple_key_val> init_table =
 {
 	{"style.default", "font:Courier New,size:10"},
 	{"style.comment", "fore:#008000"},
@@ -35,10 +34,10 @@ void scintilla_properties::get_data_raw(stream_writer* p_stream, abort_callback&
 	try
 	{
 		p_stream->write_lendian_t(m_data.size(), p_abort);
-		for (const auto& [key, val] : m_data)
+		for (const auto& [key, value] : m_data)
 		{
 			p_stream->write_string(key, p_abort);
-			p_stream->write_string(val, p_abort);
+			p_stream->write_string(value, p_abort);
 		}
 	}
 	catch (...) {}
@@ -75,12 +74,11 @@ void scintilla_properties::load_preset(t_size idx)
 
 void scintilla_properties::merge_data(const simple_map& data_map)
 {
-	pfc::string8_fast tmp;
-	for (auto& [key, val] : m_data)
+	for (auto& [key, value] : m_data)
 	{
-		if (data_map.query(key, tmp))
+		if (data_map.count(key))
 		{
-			val = tmp;
+			value = data_map.at(key);
 		}
 	}
 }
@@ -88,7 +86,7 @@ void scintilla_properties::merge_data(const simple_map& data_map)
 void scintilla_properties::set_data_raw(stream_reader* p_stream, t_size p_sizehint, abort_callback& p_abort)
 {
 	simple_map data_map;
-	pfc::string8_fast key, val;
+	pfc::string8_fast key, value;
 	t_size count;
 
 	try
@@ -97,8 +95,8 @@ void scintilla_properties::set_data_raw(stream_reader* p_stream, t_size p_sizehi
 		for (t_size i = 0; i < count; ++i)
 		{
 			p_stream->read_string(key, p_abort);
-			p_stream->read_string(val, p_abort);
-			data_map[key] = val;
+			p_stream->read_string(value, p_abort);
+			data_map.emplace(key, value);
 		}
 	}
 	catch (...)

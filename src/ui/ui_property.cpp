@@ -43,7 +43,7 @@ LRESULT CDialogProperty::OnPropertiesCleared(UINT, WPARAM, LPARAM, BOOL&)
 
 void CDialogProperty::Apply()
 {
-	m_dup_prop_map.remove_all();
+	m_dup_prop_map.clear();
 
 	for (const MyCList::data_t& d : m_properties.m_data)
 	{
@@ -53,7 +53,7 @@ void CDialogProperty::Apply()
 		{
 			source.vt = VT_BOOL;
 			source.boolVal = TO_VARIANT_BOOL(d.bool_value);
-			m_dup_prop_map[d.key] = source;
+			m_dup_prop_map.emplace(d.key, source);
 		}
 		else
 		{
@@ -62,17 +62,17 @@ void CDialogProperty::Apply()
 
 			if (d.is_string)
 			{
-				m_dup_prop_map[d.key] = source;
+				m_dup_prop_map.emplace(d.key, source);
 			}
 			else
 			{
 				if (SUCCEEDED(VariantChangeType(&dest, &source, 0, VT_R8)))
 				{
-					m_dup_prop_map[d.key] = dest;
+					m_dup_prop_map.emplace(d.key, dest);
 				}
 				else
 				{
-					m_dup_prop_map[d.key] = source;
+					m_dup_prop_map.emplace(d.key, source);
 				}
 			}
 		}
@@ -92,14 +92,14 @@ void CDialogProperty::LoadProperties(bool reload)
 		m_dup_prop_map = m_parent->m_panel_properties.m_map;
 	}
 
-	for (panel_properties::t_map::const_iterator iter = m_dup_prop_map.first(); iter.is_valid(); ++iter)
+	for (const auto& [key, value] : m_dup_prop_map)
 	{
 		MyCList::data_t d;
-		d.key = iter->m_key;
+		d.key = key;
 		d.is_bool = false;
 		d.is_string = false;
 
-		const _variant_t& v = iter->m_value;
+		const _variant_t& v = value;
 		_variant_t var;
 
 		switch (v.vt)

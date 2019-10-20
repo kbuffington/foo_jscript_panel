@@ -40,5 +40,5 @@ private:
 	MyCList m_properties;
 	panel_window* m_parent;
 	pfc::string8_fast m_caption;
-	panel_properties::t_map m_dup_prop_map;
+	panel_properties::property_map m_dup_prop_map;
 };

@@ -1,16 +1,17 @@
 #pragma once
-
-struct simple_key_val
-{
-	pfc::string_simple key, val;
-};
-
-using simple_map = pfc::map_t<pfc::string_simple, pfc::string_simple, pfc::comparator_stricmp_ascii>;
+#include "helpers.h"
 
 class scintilla_properties : public cfg_var
 {
 public:
 	scintilla_properties(const GUID& p_guid);
+
+	struct simple_key_val
+	{
+		pfc::string_simple key, value;
+	};
+
+	using simple_map = std::map<pfc::string_simple, pfc::string_simple, helpers::stricmp_ascii>;
 
 	void get_data_raw(stream_writer* p_stream, abort_callback& p_abort) override;
 	void import(const char* content);

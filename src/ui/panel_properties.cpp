@@ -3,17 +3,16 @@
 
 bool panel_properties::get_config_item(const char* p_key, VARIANT& p_out)
 {
-	_variant_t val;
-
-	if (m_map.query(p_key, val))
+	if (m_map.count(p_key))
 	{
+		_variant_t val = m_map.at(p_key);
 		if (g_get_sizeof(val.vt) != 0 && SUCCEEDED(VariantCopy(&p_out, &val)))
 		{
 			return true;
 		}
 		else
 		{
-			m_map.remove(p_key);
+			m_map.erase(p_key);
 		}
 	}
 
@@ -51,10 +50,10 @@ int panel_properties::g_get_sizeof(VARTYPE p_vt)
 	}
 }
 
-void panel_properties::g_load(t_map& data, stream_reader* reader, abort_callback& abort) throw()
+void panel_properties::g_load(property_map& data, stream_reader* reader, abort_callback& abort) throw()
 {
 	t_size count;
-	data.remove_all();
+	data.clear();
 
 	try
 	{
@@ -83,31 +82,31 @@ void panel_properties::g_load(t_map& data, stream_reader* reader, abort_callback
 				val.bstrVal = TO_BSTR(str);
 			}
 
-			data[key] = val;
+			data.emplace(key, val);
 		}
 	}
 	catch (...) {}
 }
 
-void panel_properties::g_save(const t_map& data, stream_writer* writer, abort_callback& abort) throw()
+void panel_properties::g_save(const property_map& data, stream_writer* writer, abort_callback& abort) throw()
 {
 	try
 	{
-		writer->write_lendian_t(data.get_count(), abort);
+		writer->write_lendian_t(data.size(), abort);
 
-		for (t_map::const_iterator iter = data.first(); iter.is_valid(); ++iter)
+		for (const auto& [key, value] : data)
 		{
-			writer->write_string(iter->m_key, abort);
-			writer->write_lendian_t(iter->m_value.vt, abort);
-			const int cbWrite = g_get_sizeof(iter->m_value.vt);
+			writer->write_string(key, abort);
+			writer->write_lendian_t(value.vt, abort);
+			const int cbWrite = g_get_sizeof(value.vt);
 
 			if (cbWrite > 0)
 			{
-				writer->write(&iter->m_value.bVal, cbWrite, abort);
+				writer->write(&value.bVal, cbWrite, abort);
 			}
 			else if (cbWrite == -1)
 			{
-				writer->write_string(string_utf8_from_wide(iter->m_value.bstrVal), abort);
+				writer->write_string(string_utf8_from_wide(value.bstrVal), abort);
 			}
 		}
 	}
@@ -132,6 +131,6 @@ void panel_properties::set_config_item(const char* p_key, const VARIANT& p_val)
 	}
 	else
 	{
-		m_map.remove(p_key);
+		m_map.erase(p_key);
 	}
 }

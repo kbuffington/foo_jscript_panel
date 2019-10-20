@@ -10,6 +10,14 @@ namespace helpers
 		t_size index;
 	};
 
+	struct stricmp_ascii
+	{
+		bool operator()(const pfc::string_simple& a, const pfc::string_simple& b) const
+		{
+			return pfc::stricmp_ascii(a, b) < 0;
+		}
+	};
+
 	struct wrapped_item
 	{
 		BSTR text;
