@@ -10,10 +10,7 @@ public:
 		COMMAND_RANGE_HANDLER_EX(IDOK, IDCANCEL, OnCloseCmd)
 	END_MSG_MAP()
 
-	enum
-	{
-		IDD = IDD_DIALOG_INPUT
-	};
+	enum { IDD = IDD_DIALOG_INPUT };
 
 	BOOL OnInitDialog(HWND, LPARAM);
 	void GetValue(pfc::string_base& p_value);

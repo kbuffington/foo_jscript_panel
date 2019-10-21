@@ -11,10 +11,7 @@ public:
 		COMMAND_RANGE_HANDLER_EX(IDOK, IDCANCEL, OnCloseCmd)
 	END_MSG_MAP()
 
-	enum
-	{
-		IDD = IDD_DIALOG_GOTO
-	};
+	enum { IDD = IDD_DIALOG_GOTO };
 
 	BOOL OnInitDialog(HWND, LPARAM);
 	void OnCloseCmd(UINT uNotifyCode, int nID, HWND wndCtl);

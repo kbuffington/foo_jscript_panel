@@ -4,12 +4,6 @@
 class CDialogFindReplace : public CDialogImpl<CDialogFindReplace>
 {
 public:
-	enum mode
-	{
-		find,
-		replace
-	};
-
 	CDialogFindReplace(CScriptEditorCtrl* parent);
 
 	BEGIN_MSG_MAP(CDialogFindReplace)
@@ -24,9 +18,12 @@ public:
 		COMMAND_RANGE_HANDLER_EX(IDC_CHECK_MATCHCASE, IDC_CHECK_REGEXP, OnFlagCommand)
 	END_MSG_MAP()
 
-	enum
+	enum { IDD = IDD_DIALOG_FIND_REPLACE };
+
+	enum mode
 	{
-		IDD = IDD_DIALOG_FIND_REPLACE
+		find,
+		replace
 	};
 
 	BOOL OnInitDialog(HWND, LPARAM);

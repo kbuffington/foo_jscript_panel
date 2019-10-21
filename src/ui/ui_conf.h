@@ -25,10 +25,7 @@ public:
 		REFLECT_NOTIFICATIONS()
 	END_MSG_MAP()
 
-	enum
-	{
-		IDD = IDD_DIALOG_CONF
-	};
+	enum { IDD = IDD_DIALOG_CONF };
 
 	BOOL OnInitDialog(HWND, LPARAM);
 	LRESULT OnApply(UINT, WPARAM, LPARAM, BOOL&);

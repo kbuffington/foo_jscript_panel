@@ -171,7 +171,7 @@ HRESULT script_host::InitCallbackMap()
 HRESULT script_host::InitScriptEngine()
 {
 	HRESULT hr = E_FAIL;
-	constexpr DWORD classContext = CLSCTX_INPROC_SERVER | CLSCTX_INPROC_HANDLER;
+	static constexpr DWORD classContext = CLSCTX_INPROC_SERVER | CLSCTX_INPROC_HANDLER;
 
 	if (helpers::supports_chakra() && _stricmp(m_host->m_script_engine_str, "Chakra") == 0)
 	{

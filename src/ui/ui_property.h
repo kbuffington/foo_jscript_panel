@@ -20,10 +20,7 @@ public:
 		COMMAND_HANDLER_EX(IDC_BTN_IMPORT, BN_CLICKED, OnImportBnClicked)
 	END_MSG_MAP()
 
-	enum
-	{
-		IDD = IDD_DIALOG_PROPERTY
-	};
+	enum { IDD = IDD_DIALOG_PROPERTY };
 
 	BOOL OnInitDialog(HWND, LPARAM);
 	LRESULT OnPropertiesCleared(UINT, WPARAM, LPARAM, BOOL&);

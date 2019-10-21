@@ -94,7 +94,7 @@ namespace stats
 
 		void get_field_name(t_size index, pfc::string_base& out) override
 		{
-			static const std::array<pfc::string8_fast, 5> field_names =
+			static constexpr std::array<const char*, 5> field_names =
 			{
 				"jsp_playcount",
 				"jsp_loved",
