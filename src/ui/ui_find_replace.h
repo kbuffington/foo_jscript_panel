@@ -37,6 +37,9 @@ public:
 	void OnReplaceTextChange(UINT uNotifyCode, int nID, HWND wndCtl);
 	void SetMode(mode m);
 
+	int m_flags;
+	pfc::string8_fast m_find_text, m_replace_text;
+
 private:
 	class TabHack : public CWindowImpl<TabHack, CWindow>
 	{
@@ -53,8 +56,6 @@ private:
 
 	bool m_havefound;
 	CScriptEditorCtrl* m_parent;
-	int m_flags;
-	pfc::string8_fast m_find_text, m_replace_text;
 	std::map<int, CWindow> m_window;
 	std::vector<TabHack> m_hacks;
 };

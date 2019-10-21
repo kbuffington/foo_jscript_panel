@@ -21,18 +21,6 @@ public:
 		REFLECTED_COMMAND_CODE_HANDLER_EX(SCEN_CHANGE, OnChange)
 	END_MSG_MAP()
 
-	struct Last
-	{
-		Last() : wnd(nullptr), flags(0) {}
-
-		void update(HWND h, int fl, const std::string& f, const std::string& r) { wnd = h; flags = fl; find = f; replace = r; }
-
-		HWND wnd;
-		int flags;
-		std::string find;
-		std::string replace;
-	};
-
 	BOOL SubclassWindow(HWND hWnd);
 	bool FindNext();
 	bool FindPrevious();
@@ -41,7 +29,6 @@ public:
 	void SetContent(const char* text);
 	void SetJScript();
 
-	Last last;
 	std::map<int, int> FlagMap;
 
 private:

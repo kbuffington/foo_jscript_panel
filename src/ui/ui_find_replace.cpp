@@ -41,13 +41,11 @@ void CDialogFindReplace::OnCancel(UINT uNotifyCode, int nID, HWND wndCtl)
 
 void CDialogFindReplace::OnFindNext(UINT uNotifyCode, int nID, HWND wndCtl)
 {
-	m_parent->last.update(m_hWnd, m_flags, m_find_text.get_ptr(), m_replace_text.get_ptr());
 	m_havefound = m_parent->FindNext();
 }
 
 void CDialogFindReplace::OnFindPrevious(UINT uNotifyCode, int nID, HWND wndCtl)
 {
-	m_parent->last.update(m_hWnd, m_flags, m_find_text.get_ptr(), m_replace_text.get_ptr());
 	m_parent->FindPrevious();
 }
 
@@ -72,7 +70,6 @@ void CDialogFindReplace::OnReplace(UINT uNotifyCode, int nID, HWND wndCtl)
 {
 	if (m_havefound)
 	{
-		m_parent->last.update(m_hWnd, m_flags, m_find_text.get_ptr(), m_replace_text.get_ptr());
 		m_parent->Replace();
 		m_havefound = false;
 	}
@@ -82,7 +79,6 @@ void CDialogFindReplace::OnReplace(UINT uNotifyCode, int nID, HWND wndCtl)
 
 void CDialogFindReplace::OnReplaceAll(UINT uNotifyCode, int nID, HWND wndCtl)
 {
-	m_parent->last.update(m_hWnd, m_flags, m_find_text.get_ptr(), m_replace_text.get_ptr());
 	m_parent->ReplaceAll();
 }
 

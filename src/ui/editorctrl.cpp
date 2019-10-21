@@ -254,7 +254,11 @@ LRESULT CScriptEditorCtrl::OnKeyDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BO
 	}
 	else if (wParam == VK_F3 && (modifiers == 0 || modifiers == SCMOD_SHIFT))
 	{
-		if (last.find.length())
+		if (!DlgFindReplace || DlgFindReplace->m_find_text.is_empty())
+		{
+			OpenFindDialog();
+		}
+		else
 		{
 			if (modifiers == 0) // Next
 			{
@@ -264,10 +268,6 @@ LRESULT CScriptEditorCtrl::OnKeyDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BO
 			{
 				FindPrevious();
 			}
-		}
-		else
-		{
-			OpenFindDialog();
 		}
 	}
 
@@ -380,14 +380,14 @@ bool CScriptEditorCtrl::FindNext()
 {
 	CharRight();
 	SearchAnchor();
-	const int pos = SearchNext(last.flags, last.find.c_str());
+	const int pos = SearchNext(DlgFindReplace->m_flags, DlgFindReplace->m_find_text.get_ptr());
 	return FindResult(pos);
 }
 
 bool CScriptEditorCtrl::FindPrevious()
 {
 	SearchAnchor();
-	const int pos = SearchPrev(last.flags, last.find.c_str());
+	const int pos = SearchPrev(DlgFindReplace->m_flags, DlgFindReplace->m_find_text.get_ptr());
 	return FindResult(pos);
 }
 
@@ -401,8 +401,8 @@ bool CScriptEditorCtrl::FindResult(int pos)
 	}
 
 	pfc::string8_fast msg;
-	msg << "Cannot find \"" << last.find.c_str() << "\"";
-	uMessageBox(last.wnd, msg, JSP_NAME, MB_SYSTEMMODAL | MB_ICONINFORMATION);
+	msg << "Cannot find \"" << DlgFindReplace->m_find_text.get_ptr() << "\"";
+	uMessageBox(DlgFindReplace->m_hWnd, msg, JSP_NAME, MB_SYSTEMMODAL | MB_ICONINFORMATION);
 	return false;
 }
 
@@ -1009,11 +1009,12 @@ void CScriptEditorCtrl::OpenReplaceDialog()
 
 void CScriptEditorCtrl::Replace()
 {
+	const char* replace = DlgFindReplace->m_replace_text.get_ptr();
 	const Sci_CharacterRange crange = GetSelection();
 	SetTargetStart(crange.cpMin);
 	SetTargetEnd(crange.cpMax);
-	ReplaceTarget(last.replace.c_str(), last.replace.length());
-	SetSel(crange.cpMin + last.replace.length(), crange.cpMin);
+	ReplaceTarget(replace, strlen(replace));
+	SetSel(crange.cpMin + strlen(replace), crange.cpMin);
 }
 
 void CScriptEditorCtrl::ReplaceAll()
@@ -1021,14 +1022,16 @@ void CScriptEditorCtrl::ReplaceAll()
 	BeginUndoAction();
 	SetTargetStart(0);
 	SetTargetEnd(0);
+	SetSearchFlags(DlgFindReplace->m_flags);
+	const char* find = DlgFindReplace->m_find_text.get_ptr();
+	const char* replace = DlgFindReplace->m_replace_text.get_ptr();
 
 	while (true)
 	{
 		SetTargetStart(GetTargetEnd());
 		SetTargetEnd(GetLength());
-		SetSearchFlags(last.flags);
-
-		const int occurance = SearchInTarget(last.find.c_str(), last.find.length());
+		
+		const int occurance = SearchInTarget(find, strlen(find));
 
 		if (occurance == -1)
 		{
@@ -1036,8 +1039,8 @@ void CScriptEditorCtrl::ReplaceAll()
 			break;
 		}
 
-		ReplaceTarget(last.replace.c_str(), last.replace.length());
-		SetSel(occurance + last.replace.length(), occurance);
+		ReplaceTarget(replace, strlen(replace));
+		SetSel(occurance + strlen(replace), occurance);
 	}
 
 	EndUndoAction();
