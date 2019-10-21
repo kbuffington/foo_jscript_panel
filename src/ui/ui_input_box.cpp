@@ -15,16 +15,8 @@ BOOL CInputBox::OnInitDialog(HWND, LPARAM)
 	return FALSE;
 }
 
-void CInputBox::GetValue(pfc::string_base& p_value)
-{
-	p_value = m_value;
-}
-
 void CInputBox::OnCloseCmd(UINT uNotifyCode, int nID, HWND wndCtl)
 {
-	if (nID == IDOK)
-	{
-		uGetWindowText(m_edit, m_value);
-	}
+	uGetWindowText(m_edit, m_value);
 	EndDialog(nID);
 }

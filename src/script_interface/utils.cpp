@@ -228,9 +228,7 @@ STDMETHODIMP Utils::InputBox(UINT window_id, BSTR prompt, BSTR caption, BSTR def
 		const int status = dlg.DoModal(HWND(window_id));
 		if (status == IDOK)
 		{
-			pfc::string8_fast str;
-			dlg.GetValue(str);
-			*p = TO_BSTR(str);
+			*p = TO_BSTR(dlg.m_value);
 		}
 		else if (status == IDCANCEL)
 		{
