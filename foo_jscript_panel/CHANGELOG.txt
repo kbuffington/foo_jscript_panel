@@ -1,3 +1,7 @@
+v2.3.0.2
+- FIX: Find/Replace dialog fixes.
+- FIX: Fix Thumbs sample so Last.fm artist art downloads work again.
+
 v2.3.0.1
 - FIX: Make utils.ColourPicker remember Custom colours for the lifetime
        of foobar2000 being open.
