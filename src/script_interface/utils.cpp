@@ -218,14 +218,15 @@ STDMETHODIMP Utils::InputBox(UINT window_id, BSTR prompt, BSTR caption, BSTR def
 	modal_dialog_scope scope;
 	if (scope.can_create())
 	{
-		scope.initialize(HWND(window_id));
+		HWND wnd = reinterpret_cast<HWND>(window_id);
+		scope.initialize(wnd);
 
 		auto uprompt = string_utf8_from_wide(prompt);
 		auto ucaption = string_utf8_from_wide(caption);
 		auto udef = string_utf8_from_wide(def);
 
 		CInputBox dlg(uprompt, ucaption, udef);
-		const int status = dlg.DoModal(HWND(window_id));
+		const int status = dlg.DoModal(wnd);
 		if (status == IDOK)
 		{
 			*p = TO_BSTR(dlg.m_value);
