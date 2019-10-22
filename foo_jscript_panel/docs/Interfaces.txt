@@ -984,19 +984,13 @@ interface IUtils {
 	Properties:
 		utils.Version (uint) (read)
 		/*
-		New in v1.2.0. Returns a 4 digit number corresponding to the version.
+		Returns a 4 digit number corresponding to the version.
 
-		v1.2.0 -> 1200
-		v1.2.1 -> 1210
+		v2.0.0 -> 2000
+		v2.3.0.1 -> 2301
 
-		If you try and access this in older components where it doesn't exist, the script will
-		crash so you can do a check like this.
-
-		if (!("Version" in utils)) {
-			fb.ShowPopupMessage("Current component version is less than v1.2.0. This script requires vX.X.X");
-		} else {
-			// Check the actual version.
-		}
+		Example:
+		if (utils.Version < 2300) fb.ShowPopupMessage("This script requires JScript Panel v2.3.0 or above.");
 		*/
 
 	Methods:
