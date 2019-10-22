@@ -16,7 +16,7 @@
 ```js
 window.Repaint();
 window.RepaintRect(x, y, w, h);
-IFbTitleFormat Eval() // returns an empty string when not playing
+ITitleFormat Eval() // returns an empty string when not playing
 ```
 
 - The following methods no longer support the previously optional `flags` parameter. All commands are ran if they exist. It no longer matters if they are hidden or not.
@@ -103,14 +103,14 @@ if ('DlgCode' in window) { window.DlgCode = 4; }
 - The preset colour schemes previously bundled inside the `Colour Schemes` folder can now be loaded directly from the main preferences under `Tools>JScript Panel`.
 - Add `utils.ListFiles` and `utils.ListFolders`. See `docs\interfaces.txt`.
 - Update `fb.CreateHandleList` to take an optional handle argument to create a list containing a single item. See `docs\interfaces.txt`.
-- Add `FbMetadbHandle` `GetAlbumArt` method which returns the image and path without the need for using `utils.GetAlbumArtAsync` and on_get_album_art_done(). See `docs\interfaces.txt`.
+- Add `IMetadbHandle` `GetAlbumArt` method which returns the image and path without the need for using `utils.GetAlbumArtAsync` and `on_get_album_art_done`. See `docs\interfaces.txt`.
 - `utils.FileTest` can now query files over 4GB in size when in `s` mode. See `docs\interfaces.txt`.
 - Various sample fixes.
 - Lots of internal code refactoring and external dependency updates.
 - If you browse the component folder and notice the `jscript.api` and `interface.api` files are missing, it's intentional. The contents are now included inside the component.
 
 ## v2.1.8
-- Add `FbMetadbHandleList` `RemoveAttachedImages` method.
+- Add `IMetadbHandleList` `RemoveAttachedImages` method.
 - There are no longer any limitations managing attached images. Working with the playing file is now supported. Thanks to Peter for the new `SDK` release and the help I needed!
 
 ## v2.1.7.2
@@ -122,7 +122,7 @@ if ('DlgCode' in window) { window.DlgCode = 4; }
 - Correctly bump `utils.Version` - it wasn't updated in `v2.1.7`.
 
 ## v2.1.7
-- Add `FbMetadbHandleList` `AttachImage` / `RemoveAttachedImage` methods. See `docs\interfaces.txt`. There are some limitations!!
+- Add `IMetadbHandleList` `AttachImage` / `RemoveAttachedImage` methods. See `docs\interfaces.txt`. There are some limitations!!
 
 ## v2.1.6
 - Add `IContextMenuManager` `InitContextPlaylist` method which shows playlist specific options not available when passing a handle list to `InitContext`.
@@ -145,12 +145,12 @@ if ('DlgCode' in window) { window.DlgCode = 4; }
 ## v2.1.4
 - Add `on_dsp_preset_changed` callback. See `docs\callbacks.txt`.
 - Add `fb.GetDSPPresets` and `fb.SetDSPPreset` methods. See `docs\interfaces.txt`.
-- Add `FbMetadbHandleList` `GetLibraryRelativePaths` method. See `docs\interfaces.txt`.
-- Add `FbMetadbHandleList` `Convert` method which converts a handle list to an array of handles. See `docs\interfaces.txt`.
+- Add `IMetadbHandleList` `GetLibraryRelativePaths` method. See `docs\interfaces.txt`.
+- Add `IMetadbHandleList` `Convert` method which converts a handle list to an array of handles. See `docs\interfaces.txt`.
 
 ## v2.1.3
 - Add `fb.GetOutputDevices` and `fb.SetOutputDevice` methods. See `docs\interfaces.txt`.
-- Add on_output_device_changed callback. See `docs\callbacks.txt`.
+- Add `on_output_device_changed` callback. See `docs\callbacks.txt`.
 - `JSPlaylist` / `JS Smooth Browser/Playlist`, make right click behaviour consistent with other playlist/library viewers. Holding `Shift` should now show hidden context menu items.
 - Playback now restarts when changing replaygain mode with `fb.ReplaygainMode`.
 
@@ -171,7 +171,7 @@ if ('DlgCode' in window) { window.DlgCode = 4; }
 ## v2.1.0
 - Requires `foobar2000` `v1.4` `Beta 8` or later.
 - The drag/drop functionality has been completely rewritten by TheQwertiest. This will break all existing scripts which allow dragging in files from external sources. The ability to drag handle lists from `JScript Panel` to other panels has been added. The included playlist samples have been updated so they're compatible but they do not make use of the new functionality.
-- A new on_replaygain_mode_changed callback has been added. See `docs\callbacks.txt`.
+- Add `on_replaygain_mode_changed` callback. See `docs\callbacks.txt`.
 - The behaviour of `plman.AddLocations` with the `select` argument set to `true` has been slightly modified. See `docs\interfaces.txt`.
 
 https://github.com/marc2k3/foo_jscript_panel/wiki/Drag-and-Drop
@@ -184,10 +184,10 @@ https://github.com/marc2k3/foo_jscript_panel/wiki/Breaking-Changes
 - `JSPlaylist` has been updated for full clipboard functionality with updated context menu items and keyboard shortcut support (`CTRL+C`, `CTRL+X` and `CTRL+V`).
 
 ## v2.0.5
-- Add IFbTitleFormat EvalWithMetadbs method that takes a handle list as an argument. Returns a VBArray. See `docs\interfaces.txt`.
-- `plman.SortPlaylistsByName()`. See `docs\interfaces.txt`.
+- Add `ITitleFormat` `EvalWithMetadbs` method that takes a handle list as an argument. Returns a VBArray. See `docs\interfaces.txt`.
+- Add `plman.SortPlaylistsByName`. See `docs\interfaces.txt`.
 - The `FbMetadbHandleList` `OrderByRelativePath` method now takes subsong index in to account. Thanks to WilB for reporting.
-- `plman.GetPlaybackQueueContents` has been restored after being removed in the `v2` cleanse. It's the only way to determine if a single playlist item has been queued more than once. Note that each `IFbPlaybackQueueItem` is read-only. See `docs\interfaces.txt`.
+- `plman.GetPlaybackQueueContents` has been restored after being removed in the `v2` cleanse. It's the only way to determine if a single playlist item has been queued more than once. Note that each `IPlaybackQueueItem` is read-only. See `docs\interfaces.txt`.
 - The `Properties` dialog size and layout have been tweaked.
 
 ## v2.0.4
@@ -230,7 +230,7 @@ window.GetColorDUI -> window.GetColourDUI
 IGdiBitmap GetColorScheme -> GetColourScheme
 ```
 
-- The `IFbPlaybackQueueItem` interface and `plman.CreatePlaybackQueueItem` method have been removed.
+- The `IPlaybackQueueItem` interface and `plman.CreatePlaybackQueueItem` method have been removed.
 - `plman.GetPlaybackQueueContents` has been replaced with `plman.GetPlaybackQueueHandles` which returns a handle list. You can check the `Count` property so there is no longer any need for `plman.GetPlaybackQueueCount` and `plman.IsPlaybackQueueActive` which have been removed.
 - `on_refresh_background_done` and `window.GetBackgroundImage` have both been removed.
 - The `IGdiBitmap` `BoxBlur` method has been removed. Use `StackBlur` instead.
@@ -269,17 +269,17 @@ https://github.com/marc2k3/foo_jscript_panel/wiki/Playback-Stats
 - On failure, these now return `-1`.
 
 ```
-IFbFileInfo InfoFind
-IFbFileInfo MetaFind
-IFbMetadbHandleList BSearch
-IFbMetadbHandleList Find
+IFileInfo InfoFind
+IFileInfo MetaFind
+IMetadbHandleList BSearch
+IMetadbHandleList Find
 plman.ActivePlaylist
 plman.CreateAutoPlaylist
 plman.PlayingPlaylist
 ```
 
 - Remove the whole `IStyleTextRender` interface. Anything that uses `gdi.CreateStyleTextRender` or was based on `glow text sample.txt` will no longer work
-- Remove these `IFbPlaylistRecyclerManager` properties/methods:
+- Remove these `IPlaylistRecyclerManager` properties/methods:
 
 ```
 Id
@@ -291,7 +291,7 @@ RestoreById
 - Support for IE7/IE8/WINE users has been dropped. Your computer must have `IE9` or later installed.
 - The `UpdateFileInfoSimple` handle and handle list methods are now gone.
 - A new `UpdateFileInfoFromJSON` method has been added. If anyone needs help with this, just ask.
-- You can now create an empty handle list with `fb.CreateHandleList()`. See `docs\interfaces.txt`.
+- Add `fb.CreateHandleList` method for creating empty handle lists. See `docs\interfaces.txt`.
 
 ## v1.2.4
 - Add `utils.ColorPicker` which is a popup dialog for selecting colours. See `docs\interfaces.txt`, `samples\basic\Color Picker.txt`.
@@ -313,7 +313,7 @@ RestoreById
 ## v1.2.3
 - Add `fb.ReplaygainMode`. Can be used to retrieve or set the value. See `docs\interfaces.txt`.
 - Hide `JScript Panel` main menu items. Given they're meant for binding to to keyboard shortcuts/standard buttons, there is no need for them to be visible. Hold `Shift` if you really want to access them from the menu.
-- Fix `FbMetadbHandleList` `MakeUnion` method and update docs with examples for `MakeUnion`, `MakeDifference` and `MakeIntersection` methods.
+- Fix `IMetadbHandleList` `MakeUnion` method and update docs with examples for `MakeUnion`, `MakeDifference` and `MakeIntersection` methods.
 
 ## v1.2.2
 - Add new `on_main_menu` callback. 10 main menu items have been created meaning you can now bind them to global keyboard shortcuts, standard toolbar buttons, etc and have them run your own custom code. See `docs\callbacks.txt`.
@@ -386,7 +386,7 @@ RestoreById
 - Add `fb.GetLibraryRelativePath(handle)`.
 
 ## v1.0.6
-- Add `FbMetadbHandleList UpdateFileInfoSimple` method.
+- Add `IMetadbHandleList UpdateFileInfoSimple` method.
 
 ## v1.0.5
 - Update `Columns UI` `SDK`.
@@ -448,11 +448,11 @@ fb.ShowAutoPlaylistUI
 - `plman.GetPlaylistFocusItemHandle` has been removed because it's identical to `fb.GetFocusItem` which is more commonly used.
 - `utils.GetAlbumArt` removed as the corresponding function has been removed from the `foobar2000` `SDK`. `utils.GetAlbumArtAsync`, `utils.GetAlbumArtEmbedded` and `utils.GetAlbumArtV2` are still present.
 - `AppendMenuItem` no longer accepts `MF_POPUP` as a flag. Use `AppendTo` instead.
-- Remove `on_tooltip_custom_paint()` callback. `window.CreateTooltip` has been updated to accept custom font paramters. See `docs\interfaces.txt`.
+- Remove `on_tooltip_custom_paint` callback. `window.CreateTooltip` has been updated to accept custom font paramters. See `docs\interfaces.txt`.
 - `Properties` dialog has a larger default size.
 - `Safe mode` is no longer an option.
 - Tidy up samples.
-- Tidy up preprocessors. You no longer have to specify these when using the `on_metadb_changed()` callback.
+- Tidy up preprocessors. You no longer have to specify these when using the `on_metadb_changed` callback.
 
 ```js
 // @feature "v1.4"
@@ -460,12 +460,12 @@ fb.ShowAutoPlaylistUI
 ```
 
 - Due to the above change, `on_metadb_changed` will only receive a `handle list` and never a `handle` as the first argument. Also, `on_selection_changed` won't receive a `handle` argument.
-- Add `fb.GetLibraryItems()`. Returns a handle list of all items in library.
+- Add `fb.GetLibraryItems()` method. Returns a handle list of all items in library.
 - Add `fb.IsLibraryEnabled()`.
 - Add `fb.ShowLibrarySearchUI(query)` opens the `Library>Search` window populated with the query you set.
-- Add `on_library_items_added()` callback.
-- Add `on_library_items_removed()` callback.
-- Add `on_library_items_changed()` callback.
+- Add `on_library_items_added` callback.
+- Add `on_library_items_removed` callback.
+- Add `on_library_items_changed` callback.
 - Add `plman.AddLocations(playlistIndex, paths[, select])`.
 - Add `plman.ClearPlaylist(playlistIndex)`. Use to clear a specified playlist. `fb.ClearPlaylist` still exists because it is just a shortcut to the `Edit` menu command which clears the active playlist.
 - Add `plman.GetQueryItems(source_handlelist, query)` returns an unsorted handle list. Consider using `OrderByFormat`, etc on the result.
@@ -478,4 +478,4 @@ fb.ShowAutoPlaylistUI
 - Default right click menu now has a `Reload` script option. This saves opening/closing the dialog when working on external files. In addition, a new `window.Reload` method has been added so you can force a panel reload with your own menus, buttons, etc.
 - Script errors are now displayed in a popup window in addition to the `Console` like it was previously.
 - `EstimateLineWrap` no longer leaves stray punctuation when wrapping text at end of line.
-- `IFbMetadbHandle` `FileSize` now works with `JScript` engine. Previously, it only worked with `JScript9`.
+- `IMetadbHandle` `FileSize` now works with `JScript` engine. Previously, it only worked with `JScript9`.
