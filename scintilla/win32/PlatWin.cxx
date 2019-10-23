@@ -2360,7 +2360,7 @@ public:
 	}
 };
 
-const TCHAR ListBoxX_ClassName[] = TEXT("ListBoxX");
+const TCHAR ListBoxX_ClassName[] = TEXT("ListBoxXJSP2");
 
 ListBox::ListBox() noexcept {
 }
