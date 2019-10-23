@@ -701,7 +701,7 @@ std::string CScriptEditorCtrl::GetNearestWord(const char* wordStart, t_size sear
 
 	for (; it < apis.end(); ++it)
 	{
-		if (searchLen > it->first.length() || !Contains(WordCharacters, it->first.at(searchLen)))
+		if (searchLen >= it->first.length() || !Contains(WordCharacters, it->first.at(searchLen)))
 		{
 			if (wordIndex <= 0)
 			{
