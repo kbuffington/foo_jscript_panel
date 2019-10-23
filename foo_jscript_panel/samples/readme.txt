@@ -38,7 +38,7 @@ If you have Microsoft Office installed, you should have the wingdings fonts. If 
 search for them.
 
 USAGE:
-Simply copy the text from any .txt file inside the various folders in to a panel's configuration dialog.
+From the Configuration Window simply use the "Samples" menu to quickly select the one you want.
 
 IMPORTANT:
 Remember that any future component installation will overwrite all files in this directory
