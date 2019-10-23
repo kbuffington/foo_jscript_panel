@@ -83,8 +83,9 @@ BOOL CDialogConf::OnInitDialog(HWND, LPARAM)
 	// Generate links menu
 	HMENU links = CreateMenu();
 	uAppendMenu(links, MF_STRING, ID_LINKS_BEGIN, "Wiki");
-	uAppendMenu(links, MF_STRING, ID_LINKS_BEGIN + 1, "Releases");
-	uAppendMenu(links, MF_STRING, ID_LINKS_BEGIN + 2, "Report an issue");
+	uAppendMenu(links, MF_STRING, ID_LINKS_BEGIN + 1, "Changelog");
+	uAppendMenu(links, MF_STRING, ID_LINKS_BEGIN + 2, "Releases");
+	uAppendMenu(links, MF_STRING, ID_LINKS_BEGIN + 3, "Report an issue");
 	uAppendMenu(m_menu, MF_STRING | MF_POPUP, reinterpret_cast<UINT_PTR>(links), "Links");
 
 	// Set caption text
@@ -243,9 +244,10 @@ void CDialogConf::OnFileExport(UINT uNotifyCode, int nID, HWND wndCtl)
 
 void CDialogConf::OnLinks(UINT uNotifyCode, int nID, HWND wndCtl)
 {
-	static const std::array<const wchar_t*, 3> links =
+	static constexpr std::array<const wchar_t*, 4> links =
 	{
 		L"https://github.com/marc2k3/foo_jscript_panel/wiki",
+		L"https://github.com/marc2k3/foo_jscript_panel/blob/master/CHANGELOG.md",
 		L"https://github.com/marc2k3/foo_jscript_panel/releases",
 		L"https://github.com/marc2k3/foo_jscript_panel/issues"
 	};
