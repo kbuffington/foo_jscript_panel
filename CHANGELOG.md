@@ -1,3 +1,6 @@
+## v2.3.1
+- Fix a nasty editor bug that caused the component to crash while typing. Versions `2.3.0`-`v2.3.0.2` were all affected so upgrading immediately is highly recommended!
+
 ## v2.3.0.2
 - `Find`/`Replace` dialog fixes.
 - Fix `Thumbs` sample so [Last.fm](https://last.fm) artist art downloads work again.
