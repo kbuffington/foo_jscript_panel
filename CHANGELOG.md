@@ -50,7 +50,7 @@ utils.IsFile(filename)
 utils.IsFolder(folder)
 ```
 
-- The `Grab focus` checkbox in the [Configuration Window](https://github.com/marc2k3/foo_jscript_panel/wiki/Configuration-Window) and the `dragdrop` preprocessor have both been removed. Both features are disabled by default but are automatically enabled if relevantt callbacks like `on_drag_drop` or `on_key_up` are present in the script.
+- The `Grab focus` checkbox in the [Configuration Window](https://github.com/marc2k3/foo_jscript_panel/wiki/Configuration-Window) and the `dragdrop` `PREPROCESSOR` have both been removed. Both features are disabled by default but are automatically enabled if relevant callbacks like `on_drag_drop` or `on_key_up` are present in the script.
 
 ## v2.2.2.4
 - Fix bug introduced in `v2.2.2.1` which prevented images loaded with `gdi.Image` / `gdi.LoadImageAsync` being deleted/overwritten after `Dispose()` had been called.
@@ -98,9 +98,9 @@ if ('DlgCode' in window) { window.DlgCode = 4; }
 ```
 
 - `fb.RunMainMenuCommand`, `fb.RunContextCommand`, `fb.RunContextCommandWithMetadb` have all been rewritten and must be supplied with the full path to their commands. Case is not important. You should use forward slashes with no spaces. eg: `fb.RunMainMenuCommand("Library/Search")`.
-- All files imported to the [Configuration Window](https://github.com/marc2k3/foo_jscript_panel/wiki/Configuration-Window), Preferences>Tools or included in a script via the `import` preprocessor directive must be `UTF8` encoded (with or without `BOM`). `utils.ReadTextFile` is unaffected although it should have better UTF8 detection than before.
-- The default `write_bom` argument for `utils.WriteTextFile` when omitted is now False.
-- The code that parses the preprocessor section has been rewritten from scratch. The only difference is that double quotes in the name/author no longer need to be escaped so they will be duplicated if you did this previously.
+- All files imported to the [Configuration Window](https://github.com/marc2k3/foo_jscript_panel/wiki/Configuration-Window), Preferences>Tools or included in a script via the `import` `PREPROCESSOR` directive must be `UTF8` encoded (with or without `BOM`). `utils.ReadTextFile` is unaffected although it should have better `UTF8` detection than before.
+- The default `write_bom` argument for `utils.WriteTextFile` when omitted is now `false`.
+- The code that parses the `PREPROCESSOR` section has been rewritten from scratch. The only difference is that double quotes in the name/author no longer need to be escaped so they will be duplicated if you did this previously.
 - `window.GetColourCUI` and `window.GetFontCUI` no longer accept the previously optional `client_guid` argument.
 - Add menu toolbar to [Configuration Window](https://github.com/marc2k3/foo_jscript_panel/wiki/Configuration-Window) which provides quick access to all included samples and docs. You can now Import/Export scripts via the `File` menu. The `Reset` option now properly resets all settings.
 - The preset colour schemes previously bundled inside the `Colour Schemes` folder can now be loaded directly from the main preferences under `Tools>JScript Panel`.
@@ -189,7 +189,7 @@ https://github.com/marc2k3/foo_jscript_panel/wiki/Breaking-Changes
 ## v2.0.5
 - Add `ITitleFormat` `EvalWithMetadbs` method that takes a handle list as an argument. Returns a VBArray. See `docs\interfaces.txt`.
 - Add `plman.SortPlaylistsByName`. See `docs\interfaces.txt`.
-- The `FbMetadbHandleList` `OrderByRelativePath` method now takes subsong index in to account. Thanks to WilB for reporting.
+- The `IMetadbHandleList` `OrderByRelativePath` method now takes subsong index in to account. Thanks to WilB for reporting.
 - `plman.GetPlaybackQueueContents` has been restored after being removed in the `v2` cleanse. It's the only way to determine if a single playlist item has been queued more than once. Note that each `IPlaybackQueueItem` is read-only. See `docs\interfaces.txt`.
 - The `Properties` dialog size and layout have been tweaked.
 
@@ -291,7 +291,7 @@ RestoreById
 ```
 
 ## v1.3.0
-- Support for IE7/IE8/WINE users has been dropped. Your computer must have `IE9` or later installed.
+- Support for `IE7`, `IE8` and `WINE` users has been dropped. Your computer must have `IE9` or later installed.
 - The `UpdateFileInfoSimple` handle and handle list methods are now gone.
 - A new `UpdateFileInfoFromJSON` method has been added. If anyone needs help with this, just ask.
 - Add `fb.CreateHandleList` method for creating empty handle lists. See `docs\interfaces.txt`.
@@ -455,7 +455,7 @@ fb.ShowAutoPlaylistUI
 - `Properties` dialog has a larger default size.
 - `Safe mode` is no longer an option.
 - Tidy up samples.
-- Tidy up preprocessors. You no longer have to specify these when using the `on_metadb_changed` callback.
+- Tidy up `PREPROCESSOR` handling. You no longer have to specify these when using the `on_metadb_changed` callback.
 
 ```js
 // @feature "v1.4"
