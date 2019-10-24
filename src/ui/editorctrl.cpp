@@ -4,6 +4,10 @@
 #include "ui_find_replace.h"
 #include "ui_goto.h"
 
+// Large portions taken from SciTE
+// Copyright 1998-2005 by Neil Hodgson <neilh@scintilla.org>
+// https://github.com/marc2k3/foo_jscript_panel/tree/master/foo_jscript_panel/licenses
+
 enum
 {
 	ESF_NONE = 0,
@@ -365,7 +369,7 @@ bool CScriptEditorCtrl::FindBraceMatchPos(int& braceAtCaret, int& braceOpposite)
 
 	if (braceAtCaret >= 0)
 	{
-		braceOpposite = BraceMatch(braceAtCaret);
+		braceOpposite = BraceMatch(braceAtCaret, 0);
 
 		if (braceOpposite > braceAtCaret)
 			isInside = isAfter;
@@ -413,7 +417,6 @@ bool CScriptEditorCtrl::GetPropertyEx(const std::string& key, std::string& out)
 	if (len == 0) return false;
 
 	std::vector<char> buff(len + 1);
-	buff[len] = 0;
 	GetPropertyExpanded(key.c_str(), buff.data());
 	out = buff.data();
 	return true;
@@ -686,10 +689,10 @@ int CScriptEditorCtrl::IndentOfBlock(int line)
 
 std::string CScriptEditorCtrl::GetCurrentLine()
 {
-	const int len = GetCurLine(nullptr, 0);
-	std::string text(len, '\0');
-	GetCurLine(&text[0], len);
-	return text.substr(0, text.length() - 1);
+	const int len = GetCurLine(0, nullptr);
+	std::vector<char> buff(len + 1);
+	GetCurLine(buff.size(), buff.data());
+	return buff.data();
 }
 
 std::string CScriptEditorCtrl::GetNearestWord(const char* wordStart, t_size searchLen, int wordIndex)
@@ -1013,7 +1016,7 @@ void CScriptEditorCtrl::Replace()
 	const Sci_CharacterRange crange = GetSelection();
 	SetTargetStart(crange.cpMin);
 	SetTargetEnd(crange.cpMax);
-	ReplaceTarget(replace, strlen(replace));
+	ReplaceTarget(strlen(replace), replace);
 	SetSel(crange.cpMin + strlen(replace), crange.cpMin);
 }
 
@@ -1031,7 +1034,7 @@ void CScriptEditorCtrl::ReplaceAll()
 		SetTargetStart(GetTargetEnd());
 		SetTargetEnd(GetLength());
 		
-		const int occurance = SearchInTarget(find, strlen(find));
+		const int occurance = SearchInTarget(strlen(find), find);
 
 		if (occurance == -1)
 		{
@@ -1039,7 +1042,7 @@ void CScriptEditorCtrl::ReplaceAll()
 			break;
 		}
 
-		ReplaceTarget(replace, strlen(replace));
+		ReplaceTarget(strlen(replace), replace);
 		SetSel(occurance + strlen(replace), occurance);
 	}
 

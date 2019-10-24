@@ -180,9 +180,10 @@ void CDialogConf::Apply()
 	m_parent->m_pseudo_transparent = m_pseudo.IsChecked();
 
 	// Get script text
-	std::vector<char> code(m_editorctrl.GetTextLength() + 1);
-	m_editorctrl.GetText(code.data(), code.size());
-	m_parent->m_script_code = code.data();
+	const int len = m_editorctrl.GetTextLength();
+	std::vector<char> buff(len + 1);
+	m_editorctrl.GetText(buff.size(), buff.data());
+	m_parent->m_script_code = buff.data();
 	m_parent->update_script();
 
 	// Window position
@@ -233,12 +234,9 @@ void CDialogConf::OnFileExport(UINT uNotifyCode, int nID, HWND wndCtl)
 	if (uGetOpenFileName(m_hWnd, "Text files|*.txt|All files|*.*", 0, "txt", "Save as", nullptr, filename, TRUE))
 	{
 		const int len = m_editorctrl.GetTextLength();
-		pfc::string8_fast text;
-
-		m_editorctrl.GetText(text.lock_buffer(len), len + 1);
-		text.unlock_buffer();
-
-		helpers::write_file(filename, text);
+		std::vector<char> buff(len + 1);
+		m_editorctrl.GetText(buff.size(), buff.data());
+		helpers::write_file(filename, buff.data());
 	}
 }
 

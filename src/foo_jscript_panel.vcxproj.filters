@@ -120,6 +120,9 @@
     <ClInclude Include="ui\ui_find_replace.h">
       <Filter>Header Files\ui</Filter>
     </ClInclude>
+    <ClInclude Include="ui\wtlscintilla.h">
+      <Filter>Header Files\ui</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="script_interface\console.cpp">
