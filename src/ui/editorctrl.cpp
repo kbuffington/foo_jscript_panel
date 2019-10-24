@@ -968,7 +968,7 @@ void CScriptEditorCtrl::Init()
 
 	// Tabs and indentation
 	SetUseTabs(false);
-	SetTabIndents(false);
+	SetTabIndents(true);
 	SetBackSpaceUnIndents(true);
 	SetTabWidth(4);
 	SetIndent(4);
@@ -1033,7 +1033,7 @@ void CScriptEditorCtrl::ReplaceAll()
 	{
 		SetTargetStart(GetTargetEnd());
 		SetTargetEnd(GetLength());
-		
+
 		const int occurance = SearchInTarget(strlen(find), find);
 
 		if (occurance == -1)
