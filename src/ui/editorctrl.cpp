@@ -255,7 +255,7 @@ LRESULT CScriptEditorCtrl::OnKeyDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BO
 			break;
 
 		case 'S':
-			::PostMessage(GetParent(), WM_COMMAND, MAKEWPARAM(IDC_BTN_APPLY, BN_CLICKED), 0);
+			::PostMessage(GetParent(), WM_COMMAND, MAKEWPARAM(IDC_BTN_APPLY, BN_CLICKED), reinterpret_cast<LPARAM>(m_hWnd));
 			break;
 		}
 	}

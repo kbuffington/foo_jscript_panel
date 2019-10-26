@@ -130,8 +130,8 @@ LRESULT CDialogFindReplace::KeyHack::OnKeyDown(UINT uMsg, WPARAM wParam, LPARAM 
 	case VK_RETURN:
 		if (m_ret)
 		{
-			::PostMessage(GetParent(), WM_COMMAND, MAKEWPARAM(IDC_BTN_NEXT, BN_CLICKED), (LPARAM)m_hWnd);
-			return FALSE;
+			::PostMessage(GetParent(), WM_COMMAND, MAKEWPARAM(IDC_BTN_NEXT, BN_CLICKED), reinterpret_cast<LPARAM>(m_hWnd));
+			return 0;
 		}
 		break;
 	case VK_ESCAPE:
