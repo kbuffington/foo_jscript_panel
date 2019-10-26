@@ -45,8 +45,7 @@ namespace jsp_guids
 
 enum t_user_message
 {
-	UWM_APPLY = WM_USER + 1,
-	UWM_PROPERTIES_CLEARED,
+	UWM_PROPERTIES_CLEARED = WM_USER + 1,
 	UWM_TIMER,
 	UWM_UNLOAD
 };

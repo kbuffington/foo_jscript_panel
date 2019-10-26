@@ -93,12 +93,6 @@ BOOL CDialogConf::OnInitDialog(HWND, LPARAM)
 	return FALSE;
 }
 
-LRESULT CDialogConf::OnApply(UINT, WPARAM, LPARAM, BOOL&)
-{
-	Apply();
-	return 0;
-}
-
 LRESULT CDialogConf::OnNotify(int idCtrl, LPNMHDR pnmh)
 {
 	pfc::string8_fast caption = m_caption;

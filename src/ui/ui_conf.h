@@ -13,7 +13,6 @@ public:
 		CHAIN_MSG_MAP_MEMBER(m_resizer)
 		MSG_WM_INITDIALOG(OnInitDialog)
 		MSG_WM_NOTIFY(OnNotify)
-		MESSAGE_HANDLER(UWM_APPLY, OnApply)
 		COMMAND_ID_HANDLER_EX(ID_FILE_IMPORT, OnFileImport)
 		COMMAND_ID_HANDLER_EX(ID_FILE_EXPORT, OnFileExport)
 		COMMAND_ID_HANDLER_EX(IDC_BTN_RESET, OnReset)
@@ -28,7 +27,6 @@ public:
 	enum { IDD = IDD_DIALOG_CONF };
 
 	BOOL OnInitDialog(HWND, LPARAM);
-	LRESULT OnApply(UINT, WPARAM, LPARAM, BOOL&);
 	LRESULT OnNotify(int idCtrl, LPNMHDR pnmh);
 	void Apply();
 	void BuildMenu();
