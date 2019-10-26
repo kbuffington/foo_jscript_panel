@@ -4,7 +4,7 @@
 
 class CDialogFindReplace;
 
-class CScriptEditorCtrl : public CScintillaCtrl
+class CScriptEditorCtrl : public CScintillaImpl<CScriptEditorCtrl>
 {
 public:
 	CScriptEditorCtrl();
@@ -17,7 +17,7 @@ public:
 		REFLECTED_COMMAND_CODE_HANDLER_EX(SCEN_CHANGE, OnChange)
 	END_MSG_MAP()
 
-	BOOL SubclassWindow(HWND hWnd);
+	BOOL SubclassWindow(HWND hwnd);
 	bool FindNext();
 	bool FindPrevious();
 	void Replace();

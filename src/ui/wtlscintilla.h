@@ -4,34 +4,35 @@ template <class T>
 class CScintillaImpl : public CWindowImpl<T, CWindow, CControlWinTraits>
 {
 public:
-	DECLARE_WND_SUPERCLASS2(nullptr, CScintillaImpl, CWindow::GetWndClassName())
+	DECLARE_WND_SUPERCLASS2(_T("WTL_ScintillaCtrl"), CScintillaImpl, CWindow::GetWndClassName())
 
-	LRESULT Call(UINT Msg, WPARAM wParam = 0, LPARAM lParam = 0)
+	void SetFnPtr()
 	{
 		ATLASSERT(::IsWindow(this->m_hWnd));
-		return ::SendMessage(this->m_hWnd, Msg, wParam, lParam);
+		fn = reinterpret_cast<FunctionDirect>(::SendMessage(this->m_hWnd, SCI_GETDIRECTFUNCTION, 0, 0));
+		ptr = ::SendMessage(this->m_hWnd, SCI_GETDIRECTPOINTER, 0, 0);
 	}
 
-	// Auto-generated from Scintilla.iface
+	// Auto-generated from Scintilla.iface by scintilla_iface.js
 
 	void AddText(int length, const char* text)
 	{
-		Call(SCI_ADDTEXT, static_cast<WPARAM>(length), reinterpret_cast<LPARAM>(text));
+		Call(SCI_ADDTEXT, length, reinterpret_cast<intptr_t>(text));
 	}
 
 	void AddStyledText(int length, const char* c)
 	{
-		Call(SCI_ADDSTYLEDTEXT, static_cast<WPARAM>(length), reinterpret_cast<LPARAM>(c));
+		Call(SCI_ADDSTYLEDTEXT, length, reinterpret_cast<intptr_t>(c));
 	}
 
 	void InsertText(int pos, const char* text)
 	{
-		Call(SCI_INSERTTEXT, static_cast<WPARAM>(pos), reinterpret_cast<LPARAM>(text));
+		Call(SCI_INSERTTEXT, pos, reinterpret_cast<intptr_t>(text));
 	}
 
 	void ChangeInsertion(int length, const char* text)
 	{
-		Call(SCI_CHANGEINSERTION, static_cast<WPARAM>(length), reinterpret_cast<LPARAM>(text));
+		Call(SCI_CHANGEINSERTION, length, reinterpret_cast<intptr_t>(text));
 	}
 
 	void ClearAll()
@@ -41,7 +42,7 @@ public:
 
 	void DeleteRange(int start, int lengthDelete)
 	{
-		Call(SCI_DELETERANGE, static_cast<WPARAM>(start), lengthDelete);
+		Call(SCI_DELETERANGE, start, lengthDelete);
 	}
 
 	void ClearDocumentStyle()
@@ -51,27 +52,27 @@ public:
 
 	int GetLength()
 	{
-		return Call(SCI_GETLENGTH);
+		return static_cast<int>(Call(SCI_GETLENGTH));
 	}
 
 	int GetCharAt(int pos)
 	{
-		return Call(SCI_GETCHARAT, static_cast<WPARAM>(pos));
+		return static_cast<int>(Call(SCI_GETCHARAT, pos));
 	}
 
 	int GetCurrentPos()
 	{
-		return Call(SCI_GETCURRENTPOS);
+		return static_cast<int>(Call(SCI_GETCURRENTPOS));
 	}
 
 	int GetAnchor()
 	{
-		return Call(SCI_GETANCHOR);
+		return static_cast<int>(Call(SCI_GETANCHOR));
 	}
 
 	int GetStyleAt(int pos)
 	{
-		return Call(SCI_GETSTYLEAT, static_cast<WPARAM>(pos));
+		return static_cast<int>(Call(SCI_GETSTYLEAT, pos));
 	}
 
 	void Redo()
@@ -81,7 +82,7 @@ public:
 
 	void SetUndoCollection(bool collectUndo)
 	{
-		Call(SCI_SETUNDOCOLLECTION, static_cast<WPARAM>(collectUndo));
+		Call(SCI_SETUNDOCOLLECTION, collectUndo);
 	}
 
 	void SelectAll()
@@ -96,7 +97,7 @@ public:
 
 	int GetStyledText(void* tr)
 	{
-		return Call(SCI_GETSTYLEDTEXT, 0, reinterpret_cast<LPARAM>(tr));
+		return static_cast<int>(Call(SCI_GETSTYLEDTEXT, 0, reinterpret_cast<intptr_t>(tr)));
 	}
 
 	bool CanRedo()
@@ -106,12 +107,12 @@ public:
 
 	int MarkerLineFromHandle(int markerHandle)
 	{
-		return Call(SCI_MARKERLINEFROMHANDLE, static_cast<WPARAM>(markerHandle));
+		return static_cast<int>(Call(SCI_MARKERLINEFROMHANDLE, markerHandle));
 	}
 
 	void MarkerDeleteHandle(int markerHandle)
 	{
-		Call(SCI_MARKERDELETEHANDLE, static_cast<WPARAM>(markerHandle));
+		Call(SCI_MARKERDELETEHANDLE, markerHandle);
 	}
 
 	bool GetUndoCollection()
@@ -121,82 +122,82 @@ public:
 
 	int GetViewWS()
 	{
-		return Call(SCI_GETVIEWWS);
+		return static_cast<int>(Call(SCI_GETVIEWWS));
 	}
 
 	void SetViewWS(int viewWS)
 	{
-		Call(SCI_SETVIEWWS, static_cast<WPARAM>(viewWS));
+		Call(SCI_SETVIEWWS, viewWS);
 	}
 
 	int GetTabDrawMode()
 	{
-		return Call(SCI_GETTABDRAWMODE);
+		return static_cast<int>(Call(SCI_GETTABDRAWMODE));
 	}
 
 	void SetTabDrawMode(int tabDrawMode)
 	{
-		Call(SCI_SETTABDRAWMODE, static_cast<WPARAM>(tabDrawMode));
+		Call(SCI_SETTABDRAWMODE, tabDrawMode);
 	}
 
 	int PositionFromPoint(int x, int y)
 	{
-		return Call(SCI_POSITIONFROMPOINT, static_cast<WPARAM>(x), y);
+		return static_cast<int>(Call(SCI_POSITIONFROMPOINT, x, y));
 	}
 
 	int PositionFromPointClose(int x, int y)
 	{
-		return Call(SCI_POSITIONFROMPOINTCLOSE, static_cast<WPARAM>(x), y);
+		return static_cast<int>(Call(SCI_POSITIONFROMPOINTCLOSE, x, y));
 	}
 
 	void GotoLine(int line)
 	{
-		Call(SCI_GOTOLINE, static_cast<WPARAM>(line));
+		Call(SCI_GOTOLINE, line);
 	}
 
 	void GotoPos(int caret)
 	{
-		Call(SCI_GOTOPOS, static_cast<WPARAM>(caret));
+		Call(SCI_GOTOPOS, caret);
 	}
 
 	void SetAnchor(int anchor)
 	{
-		Call(SCI_SETANCHOR, static_cast<WPARAM>(anchor));
+		Call(SCI_SETANCHOR, anchor);
 	}
 
 	int GetCurLine(int length, char* text)
 	{
-		return Call(SCI_GETCURLINE, static_cast<WPARAM>(length), reinterpret_cast<LPARAM>(text));
+		return static_cast<int>(Call(SCI_GETCURLINE, length, reinterpret_cast<intptr_t>(text)));
 	}
 
 	int GetEndStyled()
 	{
-		return Call(SCI_GETENDSTYLED);
+		return static_cast<int>(Call(SCI_GETENDSTYLED));
 	}
 
 	void ConvertEOLs(int eolMode)
 	{
-		Call(SCI_CONVERTEOLS, static_cast<WPARAM>(eolMode));
+		Call(SCI_CONVERTEOLS, eolMode);
 	}
 
 	int GetEOLMode()
 	{
-		return Call(SCI_GETEOLMODE);
+		return static_cast<int>(Call(SCI_GETEOLMODE));
 	}
 
 	void SetEOLMode(int eolMode)
 	{
-		Call(SCI_SETEOLMODE, static_cast<WPARAM>(eolMode));
+		Call(SCI_SETEOLMODE, eolMode);
 	}
 
 	void StartStyling(int start, int unused)
 	{
-		Call(SCI_STARTSTYLING, static_cast<WPARAM>(start), unused);
+		Call(SCI_STARTSTYLING, start, unused);
 	}
 
 	void SetStyling(int length, int style)
 	{
-		Call(SCI_SETSTYLING, static_cast<WPARAM>(length), style);
+		Call(SCI_SETSTYLING, length, style);
 	}
 
 	bool GetBufferedDraw()
@@ -206,187 +207,197 @@ public:
 
 	void SetBufferedDraw(bool buffered)
 	{
-		Call(SCI_SETBUFFEREDDRAW, static_cast<WPARAM>(buffered));
+		Call(SCI_SETBUFFEREDDRAW, buffered);
 	}
 
 	void SetTabWidth(int tabWidth)
 	{
-		Call(SCI_SETTABWIDTH, static_cast<WPARAM>(tabWidth));
+		Call(SCI_SETTABWIDTH, tabWidth);
 	}
 
 	int GetTabWidth()
 	{
-		return Call(SCI_GETTABWIDTH);
+		return static_cast<int>(Call(SCI_GETTABWIDTH));
+	}
+
+	void SetTabMinimumWidth(int pixels)
+	{
+		Call(SCI_SETTABMINIMUMWIDTH, pixels);
+	}
+
+	int GetTabMinimumWidth()
+	{
+		return static_cast<int>(Call(SCI_GETTABMINIMUMWIDTH));
 	}
 
 	void ClearTabStops(int line)
 	{
-		Call(SCI_CLEARTABSTOPS, static_cast<WPARAM>(line));
+		Call(SCI_CLEARTABSTOPS, line);
 	}
 
 	void AddTabStop(int line, int x)
 	{
-		Call(SCI_ADDTABSTOP, static_cast<WPARAM>(line), x);
+		Call(SCI_ADDTABSTOP, line, x);
 	}
 
 	int GetNextTabStop(int line, int x)
 	{
-		return Call(SCI_GETNEXTTABSTOP, static_cast<WPARAM>(line), x);
+		return static_cast<int>(Call(SCI_GETNEXTTABSTOP, line, x));
 	}
 
 	void SetCodePage(int codePage)
 	{
-		Call(SCI_SETCODEPAGE, static_cast<WPARAM>(codePage));
+		Call(SCI_SETCODEPAGE, codePage);
 	}
 
 	int GetIMEInteraction()
 	{
-		return Call(SCI_GETIMEINTERACTION);
+		return static_cast<int>(Call(SCI_GETIMEINTERACTION));
 	}
 
 	void SetIMEInteraction(int imeInteraction)
 	{
-		Call(SCI_SETIMEINTERACTION, static_cast<WPARAM>(imeInteraction));
+		Call(SCI_SETIMEINTERACTION, imeInteraction);
 	}
 
 	void MarkerDefine(int markerNumber, int markerSymbol)
 	{
-		Call(SCI_MARKERDEFINE, static_cast<WPARAM>(markerNumber), markerSymbol);
+		Call(SCI_MARKERDEFINE, markerNumber, markerSymbol);
 	}
 
 	void MarkerSetFore(int markerNumber, int fore)
 	{
-		Call(SCI_MARKERSETFORE, static_cast<WPARAM>(markerNumber), fore);
+		Call(SCI_MARKERSETFORE, markerNumber, fore);
 	}
 
 	void MarkerSetBack(int markerNumber, int back)
 	{
-		Call(SCI_MARKERSETBACK, static_cast<WPARAM>(markerNumber), back);
+		Call(SCI_MARKERSETBACK, markerNumber, back);
 	}
 
 	void MarkerSetBackSelected(int markerNumber, int back)
 	{
-		Call(SCI_MARKERSETBACKSELECTED, static_cast<WPARAM>(markerNumber), back);
+		Call(SCI_MARKERSETBACKSELECTED, markerNumber, back);
 	}
 
 	void MarkerEnableHighlight(bool enabled)
 	{
-		Call(SCI_MARKERENABLEHIGHLIGHT, static_cast<WPARAM>(enabled));
+		Call(SCI_MARKERENABLEHIGHLIGHT, enabled);
 	}
 
 	int MarkerAdd(int line, int markerNumber)
 	{
-		return Call(SCI_MARKERADD, static_cast<WPARAM>(line), markerNumber);
+		return static_cast<int>(Call(SCI_MARKERADD, line, markerNumber));
 	}
 
 	void MarkerDelete(int line, int markerNumber)
 	{
-		Call(SCI_MARKERDELETE, static_cast<WPARAM>(line), markerNumber);
+		Call(SCI_MARKERDELETE, line, markerNumber);
 	}
 
 	void MarkerDeleteAll(int markerNumber)
 	{
-		Call(SCI_MARKERDELETEALL, static_cast<WPARAM>(markerNumber));
+		Call(SCI_MARKERDELETEALL, markerNumber);
 	}
 
 	int MarkerGet(int line)
 	{
-		return Call(SCI_MARKERGET, static_cast<WPARAM>(line));
+		return static_cast<int>(Call(SCI_MARKERGET, line));
 	}
 
 	int MarkerNext(int lineStart, int markerMask)
 	{
-		return Call(SCI_MARKERNEXT, static_cast<WPARAM>(lineStart), markerMask);
+		return static_cast<int>(Call(SCI_MARKERNEXT, lineStart, markerMask));
 	}
 
 	int MarkerPrevious(int lineStart, int markerMask)
 	{
-		return Call(SCI_MARKERPREVIOUS, static_cast<WPARAM>(lineStart), markerMask);
+		return static_cast<int>(Call(SCI_MARKERPREVIOUS, lineStart, markerMask));
 	}
 
 	void MarkerDefinePixmap(int markerNumber, const char* pixmap)
 	{
-		Call(SCI_MARKERDEFINEPIXMAP, static_cast<WPARAM>(markerNumber), reinterpret_cast<LPARAM>(pixmap));
+		Call(SCI_MARKERDEFINEPIXMAP, markerNumber, reinterpret_cast<intptr_t>(pixmap));
 	}
 
 	void MarkerAddSet(int line, int markerSet)
 	{
-		Call(SCI_MARKERADDSET, static_cast<WPARAM>(line), markerSet);
+		Call(SCI_MARKERADDSET, line, markerSet);
 	}
 
 	void MarkerSetAlpha(int markerNumber, int alpha)
 	{
-		Call(SCI_MARKERSETALPHA, static_cast<WPARAM>(markerNumber), alpha);
+		Call(SCI_MARKERSETALPHA, markerNumber, alpha);
 	}
 
 	void SetMarginTypeN(int margin, int marginType)
 	{
-		Call(SCI_SETMARGINTYPEN, static_cast<WPARAM>(margin), marginType);
+		Call(SCI_SETMARGINTYPEN, margin, marginType);
 	}
 
 	int GetMarginTypeN(int margin)
 	{
-		return Call(SCI_GETMARGINTYPEN, static_cast<WPARAM>(margin));
+		return static_cast<int>(Call(SCI_GETMARGINTYPEN, margin));
 	}
 
 	void SetMarginWidthN(int margin, int pixelWidth)
 	{
-		Call(SCI_SETMARGINWIDTHN, static_cast<WPARAM>(margin), pixelWidth);
+		Call(SCI_SETMARGINWIDTHN, margin, pixelWidth);
 	}
 
 	int GetMarginWidthN(int margin)
 	{
-		return Call(SCI_GETMARGINWIDTHN, static_cast<WPARAM>(margin));
+		return static_cast<int>(Call(SCI_GETMARGINWIDTHN, margin));
 	}
 
 	void SetMarginMaskN(int margin, int mask)
 	{
-		Call(SCI_SETMARGINMASKN, static_cast<WPARAM>(margin), mask);
+		Call(SCI_SETMARGINMASKN, margin, mask);
 	}
 
 	int GetMarginMaskN(int margin)
 	{
-		return Call(SCI_GETMARGINMASKN, static_cast<WPARAM>(margin));
+		return static_cast<int>(Call(SCI_GETMARGINMASKN, margin));
 	}
 
 	void SetMarginSensitiveN(int margin, bool sensitive)
 	{
-		Call(SCI_SETMARGINSENSITIVEN, static_cast<WPARAM>(margin), sensitive);
+		Call(SCI_SETMARGINSENSITIVEN, margin, sensitive);
 	}
 
 	bool GetMarginSensitiveN(int margin)
 	{
-		return Call(SCI_GETMARGINSENSITIVEN, static_cast<WPARAM>(margin));
+		return Call(SCI_GETMARGINSENSITIVEN, margin);
 	}
 
 	void SetMarginCursorN(int margin, int cursor)
 	{
-		Call(SCI_SETMARGINCURSORN, static_cast<WPARAM>(margin), cursor);
+		Call(SCI_SETMARGINCURSORN, margin, cursor);
 	}
 
 	int GetMarginCursorN(int margin)
 	{
-		return Call(SCI_GETMARGINCURSORN, static_cast<WPARAM>(margin));
+		return static_cast<int>(Call(SCI_GETMARGINCURSORN, margin));
 	}
 
 	void SetMarginBackN(int margin, int back)
 	{
-		Call(SCI_SETMARGINBACKN, static_cast<WPARAM>(margin), back);
+		Call(SCI_SETMARGINBACKN, margin, back);
 	}
 
 	int GetMarginBackN(int margin)
 	{
-		return Call(SCI_GETMARGINBACKN, static_cast<WPARAM>(margin));
+		return static_cast<int>(Call(SCI_GETMARGINBACKN, margin));
 	}
 
 	void SetMargins(int margins)
 	{
-		Call(SCI_SETMARGINS, static_cast<WPARAM>(margins));
+		Call(SCI_SETMARGINS, margins);
 	}
 
 	int GetMargins()
 	{
-		return Call(SCI_GETMARGINS);
+		return static_cast<int>(Call(SCI_GETMARGINS));
 	}
 
 	void StyleClearAll()
@@ -396,37 +407,37 @@ public:
 
 	void StyleSetFore(int style, int fore)
 	{
-		Call(SCI_STYLESETFORE, static_cast<WPARAM>(style), fore);
+		Call(SCI_STYLESETFORE, style, fore);
 	}
 
 	void StyleSetBack(int style, int back)
 	{
-		Call(SCI_STYLESETBACK, static_cast<WPARAM>(style), back);
+		Call(SCI_STYLESETBACK, style, back);
 	}
 
 	void StyleSetBold(int style, bool bold)
 	{
-		Call(SCI_STYLESETBOLD, static_cast<WPARAM>(style), bold);
+		Call(SCI_STYLESETBOLD, style, bold);
 	}
 
 	void StyleSetItalic(int style, bool italic)
 	{
-		Call(SCI_STYLESETITALIC, static_cast<WPARAM>(style), italic);
+		Call(SCI_STYLESETITALIC, style, italic);
 	}
 
 	void StyleSetSize(int style, int sizePoints)
 	{
-		Call(SCI_STYLESETSIZE, static_cast<WPARAM>(style), sizePoints);
+		Call(SCI_STYLESETSIZE, style, sizePoints);
 	}
 
 	void StyleSetFont(int style, const char* fontName)
 	{
-		Call(SCI_STYLESETFONT, static_cast<WPARAM>(style), reinterpret_cast<LPARAM>(fontName));
+		Call(SCI_STYLESETFONT, style, reinterpret_cast<intptr_t>(fontName));
 	}
 
 	void StyleSetEOLFilled(int style, bool eolFilled)
 	{
-		Call(SCI_STYLESETEOLFILLED, static_cast<WPARAM>(style), eolFilled);
+		Call(SCI_STYLESETEOLFILLED, style, eolFilled);
 	}
 
 	void StyleResetDefault()
@@ -436,127 +447,127 @@ public:
 
 	void StyleSetUnderline(int style, bool underline)
 	{
-		Call(SCI_STYLESETUNDERLINE, static_cast<WPARAM>(style), underline);
+		Call(SCI_STYLESETUNDERLINE, style, underline);
 	}
 
 	int StyleGetFore(int style)
 	{
-		return Call(SCI_STYLEGETFORE, static_cast<WPARAM>(style));
+		return static_cast<int>(Call(SCI_STYLEGETFORE, style));
 	}
 
 	int StyleGetBack(int style)
 	{
-		return Call(SCI_STYLEGETBACK, static_cast<WPARAM>(style));
+		return static_cast<int>(Call(SCI_STYLEGETBACK, style));
 	}
 
 	bool StyleGetBold(int style)
 	{
-		return Call(SCI_STYLEGETBOLD, static_cast<WPARAM>(style));
+		return Call(SCI_STYLEGETBOLD, style);
 	}
 
 	bool StyleGetItalic(int style)
 	{
-		return Call(SCI_STYLEGETITALIC, static_cast<WPARAM>(style));
+		return Call(SCI_STYLEGETITALIC, style);
 	}
 
 	int StyleGetSize(int style)
 	{
-		return Call(SCI_STYLEGETSIZE, static_cast<WPARAM>(style));
+		return static_cast<int>(Call(SCI_STYLEGETSIZE, style));
 	}
 
 	int StyleGetFont(int style, char* fontName)
 	{
-		return Call(SCI_STYLEGETFONT, static_cast<WPARAM>(style), reinterpret_cast<LPARAM>(fontName));
+		return static_cast<int>(Call(SCI_STYLEGETFONT, style, reinterpret_cast<intptr_t>(fontName)));
 	}
 
 	bool StyleGetEOLFilled(int style)
 	{
-		return Call(SCI_STYLEGETEOLFILLED, static_cast<WPARAM>(style));
+		return Call(SCI_STYLEGETEOLFILLED, style);
 	}
 
 	bool StyleGetUnderline(int style)
 	{
-		return Call(SCI_STYLEGETUNDERLINE, static_cast<WPARAM>(style));
+		return Call(SCI_STYLEGETUNDERLINE, style);
 	}
 
 	int StyleGetCase(int style)
 	{
-		return Call(SCI_STYLEGETCASE, static_cast<WPARAM>(style));
+		return static_cast<int>(Call(SCI_STYLEGETCASE, style));
 	}
 
 	int StyleGetCharacterSet(int style)
 	{
-		return Call(SCI_STYLEGETCHARACTERSET, static_cast<WPARAM>(style));
+		return static_cast<int>(Call(SCI_STYLEGETCHARACTERSET, style));
 	}
 
 	bool StyleGetVisible(int style)
 	{
-		return Call(SCI_STYLEGETVISIBLE, static_cast<WPARAM>(style));
+		return Call(SCI_STYLEGETVISIBLE, style);
 	}
 
 	bool StyleGetChangeable(int style)
 	{
-		return Call(SCI_STYLEGETCHANGEABLE, static_cast<WPARAM>(style));
+		return Call(SCI_STYLEGETCHANGEABLE, style);
 	}
 
 	bool StyleGetHotSpot(int style)
 	{
-		return Call(SCI_STYLEGETHOTSPOT, static_cast<WPARAM>(style));
+		return Call(SCI_STYLEGETHOTSPOT, style);
 	}
 
 	void StyleSetCase(int style, int caseVisible)
 	{
-		Call(SCI_STYLESETCASE, static_cast<WPARAM>(style), caseVisible);
+		Call(SCI_STYLESETCASE, style, caseVisible);
 	}
 
 	void StyleSetSizeFractional(int style, int sizeHundredthPoints)
 	{
-		Call(SCI_STYLESETSIZEFRACTIONAL, static_cast<WPARAM>(style), sizeHundredthPoints);
+		Call(SCI_STYLESETSIZEFRACTIONAL, style, sizeHundredthPoints);
 	}
 
 	int StyleGetSizeFractional(int style)
 	{
-		return Call(SCI_STYLEGETSIZEFRACTIONAL, static_cast<WPARAM>(style));
+		return static_cast<int>(Call(SCI_STYLEGETSIZEFRACTIONAL, style));
 	}
 
 	void StyleSetWeight(int style, int weight)
 	{
-		Call(SCI_STYLESETWEIGHT, static_cast<WPARAM>(style), weight);
+		Call(SCI_STYLESETWEIGHT, style, weight);
 	}
 
 	int StyleGetWeight(int style)
 	{
-		return Call(SCI_STYLEGETWEIGHT, static_cast<WPARAM>(style));
+		return static_cast<int>(Call(SCI_STYLEGETWEIGHT, style));
 	}
 
 	void StyleSetCharacterSet(int style, int characterSet)
 	{
-		Call(SCI_STYLESETCHARACTERSET, static_cast<WPARAM>(style), characterSet);
+		Call(SCI_STYLESETCHARACTERSET, style, characterSet);
 	}
 
 	void StyleSetHotSpot(int style, bool hotspot)
 	{
-		Call(SCI_STYLESETHOTSPOT, static_cast<WPARAM>(style), hotspot);
+		Call(SCI_STYLESETHOTSPOT, style, hotspot);
 	}
 
 	void SetSelFore(bool useSetting, int fore)
 	{
-		Call(SCI_SETSELFORE, static_cast<WPARAM>(useSetting), fore);
+		Call(SCI_SETSELFORE, useSetting, fore);
 	}
 
 	void SetSelBack(bool useSetting, int back)
 	{
-		Call(SCI_SETSELBACK, static_cast<WPARAM>(useSetting), back);
+		Call(SCI_SETSELBACK, useSetting, back);
 	}
 
 	int GetSelAlpha()
 	{
-		return Call(SCI_GETSELALPHA);
+		return static_cast<int>(Call(SCI_GETSELALPHA));
 	}
 
 	void SetSelAlpha(int alpha)
 	{
-		Call(SCI_SETSELALPHA, static_cast<WPARAM>(alpha));
+		Call(SCI_SETSELALPHA, alpha);
 	}
 
 	bool GetSelEOLFilled()
@@ -566,22 +577,22 @@ public:
 
 	void SetSelEOLFilled(bool filled)
 	{
-		Call(SCI_SETSELEOLFILLED, static_cast<WPARAM>(filled));
+		Call(SCI_SETSELEOLFILLED, filled);
 	}
 
 	void SetCaretFore(int fore)
 	{
-		Call(SCI_SETCARETFORE, static_cast<WPARAM>(fore));
+		Call(SCI_SETCARETFORE, fore);
 	}
 
 	void AssignCmdKey(int keyDefinition, int sciCommand)
 	{
-		Call(SCI_ASSIGNCMDKEY, static_cast<WPARAM>(keyDefinition), sciCommand);
+		Call(SCI_ASSIGNCMDKEY, keyDefinition, sciCommand);
 	}
 
 	void ClearCmdKey(int keyDefinition)
 	{
-		Call(SCI_CLEARCMDKEY, static_cast<WPARAM>(keyDefinition));
+		Call(SCI_CLEARCMDKEY, keyDefinition);
 	}
 
 	void ClearAllCmdKeys()
@@ -591,42 +602,42 @@ public:
 
 	void SetStylingEx(int length, const char* styles)
 	{
-		Call(SCI_SETSTYLINGEX, static_cast<WPARAM>(length), reinterpret_cast<LPARAM>(styles));
+		Call(SCI_SETSTYLINGEX, length, reinterpret_cast<intptr_t>(styles));
 	}
 
 	void StyleSetVisible(int style, bool visible)
 	{
-		Call(SCI_STYLESETVISIBLE, static_cast<WPARAM>(style), visible);
+		Call(SCI_STYLESETVISIBLE, style, visible);
 	}
 
 	int GetCaretPeriod()
 	{
-		return Call(SCI_GETCARETPERIOD);
+		return static_cast<int>(Call(SCI_GETCARETPERIOD));
 	}
 
 	void SetCaretPeriod(int periodMilliseconds)
 	{
-		Call(SCI_SETCARETPERIOD, static_cast<WPARAM>(periodMilliseconds));
+		Call(SCI_SETCARETPERIOD, periodMilliseconds);
 	}
 
 	void SetWordChars(const char* characters)
 	{
-		Call(SCI_SETWORDCHARS, 0, reinterpret_cast<LPARAM>(characters));
+		Call(SCI_SETWORDCHARS, 0, reinterpret_cast<intptr_t>(characters));
 	}
 
 	int GetWordChars(char* characters)
 	{
-		return Call(SCI_GETWORDCHARS, 0, reinterpret_cast<LPARAM>(characters));
+		return static_cast<int>(Call(SCI_GETWORDCHARS, 0, reinterpret_cast<intptr_t>(characters)));
 	}
 
 	void SetCharacterCategoryOptimization(int countCharacters)
 	{
-		Call(SCI_SETCHARACTERCATEGORYOPTIMIZATION, static_cast<WPARAM>(countCharacters));
+		Call(SCI_SETCHARACTERCATEGORYOPTIMIZATION, countCharacters);
 	}
 
 	int GetCharacterCategoryOptimization()
 	{
-		return Call(SCI_GETCHARACTERCATEGORYOPTIMIZATION);
+		return static_cast<int>(Call(SCI_GETCHARACTERCATEGORYOPTIMIZATION));
 	}
 
 	void BeginUndoAction()
@@ -641,97 +652,97 @@ public:
 
 	void IndicSetStyle(int indicator, int indicatorStyle)
 	{
-		Call(SCI_INDICSETSTYLE, static_cast<WPARAM>(indicator), indicatorStyle);
+		Call(SCI_INDICSETSTYLE, indicator, indicatorStyle);
 	}
 
 	int IndicGetStyle(int indicator)
 	{
-		return Call(SCI_INDICGETSTYLE, static_cast<WPARAM>(indicator));
+		return static_cast<int>(Call(SCI_INDICGETSTYLE, indicator));
 	}
 
 	void IndicSetFore(int indicator, int fore)
 	{
-		Call(SCI_INDICSETFORE, static_cast<WPARAM>(indicator), fore);
+		Call(SCI_INDICSETFORE, indicator, fore);
 	}
 
 	int IndicGetFore(int indicator)
 	{
-		return Call(SCI_INDICGETFORE, static_cast<WPARAM>(indicator));
+		return static_cast<int>(Call(SCI_INDICGETFORE, indicator));
 	}
 
 	void IndicSetUnder(int indicator, bool under)
 	{
-		Call(SCI_INDICSETUNDER, static_cast<WPARAM>(indicator), under);
+		Call(SCI_INDICSETUNDER, indicator, under);
 	}
 
 	bool IndicGetUnder(int indicator)
 	{
-		return Call(SCI_INDICGETUNDER, static_cast<WPARAM>(indicator));
+		return Call(SCI_INDICGETUNDER, indicator);
 	}
 
 	void IndicSetHoverStyle(int indicator, int indicatorStyle)
 	{
-		Call(SCI_INDICSETHOVERSTYLE, static_cast<WPARAM>(indicator), indicatorStyle);
+		Call(SCI_INDICSETHOVERSTYLE, indicator, indicatorStyle);
 	}
 
 	int IndicGetHoverStyle(int indicator)
 	{
-		return Call(SCI_INDICGETHOVERSTYLE, static_cast<WPARAM>(indicator));
+		return static_cast<int>(Call(SCI_INDICGETHOVERSTYLE, indicator));
 	}
 
 	void IndicSetHoverFore(int indicator, int fore)
 	{
-		Call(SCI_INDICSETHOVERFORE, static_cast<WPARAM>(indicator), fore);
+		Call(SCI_INDICSETHOVERFORE, indicator, fore);
 	}
 
 	int IndicGetHoverFore(int indicator)
 	{
-		return Call(SCI_INDICGETHOVERFORE, static_cast<WPARAM>(indicator));
+		return static_cast<int>(Call(SCI_INDICGETHOVERFORE, indicator));
 	}
 
 	void IndicSetFlags(int indicator, int flags)
 	{
-		Call(SCI_INDICSETFLAGS, static_cast<WPARAM>(indicator), flags);
+		Call(SCI_INDICSETFLAGS, indicator, flags);
 	}
 
 	int IndicGetFlags(int indicator)
 	{
-		return Call(SCI_INDICGETFLAGS, static_cast<WPARAM>(indicator));
+		return static_cast<int>(Call(SCI_INDICGETFLAGS, indicator));
 	}
 
 	void SetWhitespaceFore(bool useSetting, int fore)
 	{
-		Call(SCI_SETWHITESPACEFORE, static_cast<WPARAM>(useSetting), fore);
+		Call(SCI_SETWHITESPACEFORE, useSetting, fore);
 	}
 
 	void SetWhitespaceBack(bool useSetting, int back)
 	{
-		Call(SCI_SETWHITESPACEBACK, static_cast<WPARAM>(useSetting), back);
+		Call(SCI_SETWHITESPACEBACK, useSetting, back);
 	}
 
 	void SetWhitespaceSize(int size)
 	{
-		Call(SCI_SETWHITESPACESIZE, static_cast<WPARAM>(size));
+		Call(SCI_SETWHITESPACESIZE, size);
 	}
 
 	int GetWhitespaceSize()
 	{
-		return Call(SCI_GETWHITESPACESIZE);
+		return static_cast<int>(Call(SCI_GETWHITESPACESIZE));
 	}
 
 	void SetLineState(int line, int state)
 	{
-		Call(SCI_SETLINESTATE, static_cast<WPARAM>(line), state);
+		Call(SCI_SETLINESTATE, line, state);
 	}
 
 	int GetLineState(int line)
 	{
-		return Call(SCI_GETLINESTATE, static_cast<WPARAM>(line));
+		return static_cast<int>(Call(SCI_GETLINESTATE, line));
 	}
 
 	int GetMaxLineState()
 	{
-		return Call(SCI_GETMAXLINESTATE);
+		return static_cast<int>(Call(SCI_GETMAXLINESTATE));
 	}
 
 	bool GetCaretLineVisible()
@@ -741,37 +752,37 @@ public:
 
 	void SetCaretLineVisible(bool show)
 	{
-		Call(SCI_SETCARETLINEVISIBLE, static_cast<WPARAM>(show));
+		Call(SCI_SETCARETLINEVISIBLE, show);
 	}
 
 	int GetCaretLineBack()
 	{
-		return Call(SCI_GETCARETLINEBACK);
+		return static_cast<int>(Call(SCI_GETCARETLINEBACK));
 	}
 
 	void SetCaretLineBack(int back)
 	{
-		Call(SCI_SETCARETLINEBACK, static_cast<WPARAM>(back));
+		Call(SCI_SETCARETLINEBACK, back);
 	}
 
 	int GetCaretLineFrame()
 	{
-		return Call(SCI_GETCARETLINEFRAME);
+		return static_cast<int>(Call(SCI_GETCARETLINEFRAME));
 	}
 
 	void SetCaretLineFrame(int width)
 	{
-		Call(SCI_SETCARETLINEFRAME, static_cast<WPARAM>(width));
+		Call(SCI_SETCARETLINEFRAME, width);
 	}
 
 	void StyleSetChangeable(int style, bool changeable)
 	{
-		Call(SCI_STYLESETCHANGEABLE, static_cast<WPARAM>(style), changeable);
+		Call(SCI_STYLESETCHANGEABLE, style, changeable);
 	}
 
 	void AutoCShow(int lengthEntered, const char* itemList)
 	{
-		Call(SCI_AUTOCSHOW, static_cast<WPARAM>(lengthEntered), reinterpret_cast<LPARAM>(itemList));
+		Call(SCI_AUTOCSHOW, lengthEntered, reinterpret_cast<intptr_t>(itemList));
 	}
 
 	void AutoCCancel()
@@ -786,7 +797,7 @@ public:
 
 	int AutoCPosStart()
 	{
-		return Call(SCI_AUTOCPOSSTART);
+		return static_cast<int>(Call(SCI_AUTOCPOSSTART));
 	}
 
 	void AutoCComplete()
@@ -796,27 +807,27 @@ public:
 
 	void AutoCStops(const char* characterSet)
 	{
-		Call(SCI_AUTOCSTOPS, 0, reinterpret_cast<LPARAM>(characterSet));
+		Call(SCI_AUTOCSTOPS, 0, reinterpret_cast<intptr_t>(characterSet));
 	}
 
 	void AutoCSetSeparator(int separatorCharacter)
 	{
-		Call(SCI_AUTOCSETSEPARATOR, static_cast<WPARAM>(separatorCharacter));
+		Call(SCI_AUTOCSETSEPARATOR, separatorCharacter);
 	}
 
 	int AutoCGetSeparator()
 	{
-		return Call(SCI_AUTOCGETSEPARATOR);
+		return static_cast<int>(Call(SCI_AUTOCGETSEPARATOR));
 	}
 
 	void AutoCSelect(const char* select)
 	{
-		Call(SCI_AUTOCSELECT, 0, reinterpret_cast<LPARAM>(select));
+		Call(SCI_AUTOCSELECT, 0, reinterpret_cast<intptr_t>(select));
 	}
 
 	void AutoCSetCancelAtStart(bool cancel)
 	{
-		Call(SCI_AUTOCSETCANCELATSTART, static_cast<WPARAM>(cancel));
+		Call(SCI_AUTOCSETCANCELATSTART, cancel);
 	}
 
 	bool AutoCGetCancelAtStart()
@@ -826,12 +837,12 @@ public:
 
 	void AutoCSetFillUps(const char* characterSet)
 	{
-		Call(SCI_AUTOCSETFILLUPS, 0, reinterpret_cast<LPARAM>(characterSet));
+		Call(SCI_AUTOCSETFILLUPS, 0, reinterpret_cast<intptr_t>(characterSet));
 	}
 
 	void AutoCSetChooseSingle(bool chooseSingle)
 	{
-		Call(SCI_AUTOCSETCHOOSESINGLE, static_cast<WPARAM>(chooseSingle));
+		Call(SCI_AUTOCSETCHOOSESINGLE, chooseSingle);
 	}
 
 	bool AutoCGetChooseSingle()
@@ -841,7 +852,7 @@ public:
 
 	void AutoCSetIgnoreCase(bool ignoreCase)
 	{
-		Call(SCI_AUTOCSETIGNORECASE, static_cast<WPARAM>(ignoreCase));
+		Call(SCI_AUTOCSETIGNORECASE, ignoreCase);
 	}
 
 	bool AutoCGetIgnoreCase()
@@ -851,12 +862,12 @@ public:
 
 	void UserListShow(int listType, const char* itemList)
 	{
-		Call(SCI_USERLISTSHOW, static_cast<WPARAM>(listType), reinterpret_cast<LPARAM>(itemList));
+		Call(SCI_USERLISTSHOW, listType, reinterpret_cast<intptr_t>(itemList));
 	}
 
 	void AutoCSetAutoHide(bool autoHide)
 	{
-		Call(SCI_AUTOCSETAUTOHIDE, static_cast<WPARAM>(autoHide));
+		Call(SCI_AUTOCSETAUTOHIDE, autoHide);
 	}
 
 	bool AutoCGetAutoHide()
@@ -866,7 +877,7 @@ public:
 
 	void AutoCSetDropRestOfWord(bool dropRestOfWord)
 	{
-		Call(SCI_AUTOCSETDROPRESTOFWORD, static_cast<WPARAM>(dropRestOfWord));
+		Call(SCI_AUTOCSETDROPRESTOFWORD, dropRestOfWord);
 	}
 
 	bool AutoCGetDropRestOfWord()
@@ -876,7 +887,7 @@ public:
 
 	void RegisterImage(int type, const char* xpmData)
 	{
-		Call(SCI_REGISTERIMAGE, static_cast<WPARAM>(type), reinterpret_cast<LPARAM>(xpmData));
+		Call(SCI_REGISTERIMAGE, type, reinterpret_cast<intptr_t>(xpmData));
 	}
 
 	void ClearRegisteredImages()
@@ -886,47 +897,47 @@ public:
 
 	int AutoCGetTypeSeparator()
 	{
-		return Call(SCI_AUTOCGETTYPESEPARATOR);
+		return static_cast<int>(Call(SCI_AUTOCGETTYPESEPARATOR));
 	}
 
 	void AutoCSetTypeSeparator(int separatorCharacter)
 	{
-		Call(SCI_AUTOCSETTYPESEPARATOR, static_cast<WPARAM>(separatorCharacter));
+		Call(SCI_AUTOCSETTYPESEPARATOR, separatorCharacter);
 	}
 
 	void AutoCSetMaxWidth(int characterCount)
 	{
-		Call(SCI_AUTOCSETMAXWIDTH, static_cast<WPARAM>(characterCount));
+		Call(SCI_AUTOCSETMAXWIDTH, characterCount);
 	}
 
 	int AutoCGetMaxWidth()
 	{
-		return Call(SCI_AUTOCGETMAXWIDTH);
+		return static_cast<int>(Call(SCI_AUTOCGETMAXWIDTH));
 	}
 
 	void AutoCSetMaxHeight(int rowCount)
 	{
-		Call(SCI_AUTOCSETMAXHEIGHT, static_cast<WPARAM>(rowCount));
+		Call(SCI_AUTOCSETMAXHEIGHT, rowCount);
 	}
 
 	int AutoCGetMaxHeight()
 	{
-		return Call(SCI_AUTOCGETMAXHEIGHT);
+		return static_cast<int>(Call(SCI_AUTOCGETMAXHEIGHT));
 	}
 
 	void SetIndent(int indentSize)
 	{
-		Call(SCI_SETINDENT, static_cast<WPARAM>(indentSize));
+		Call(SCI_SETINDENT, indentSize);
 	}
 
 	int GetIndent()
 	{
-		return Call(SCI_GETINDENT);
+		return static_cast<int>(Call(SCI_GETINDENT));
 	}
 
 	void SetUseTabs(bool useTabs)
 	{
-		Call(SCI_SETUSETABS, static_cast<WPARAM>(useTabs));
+		Call(SCI_SETUSETABS, useTabs);
 	}
 
 	bool GetUseTabs()
@@ -936,37 +947,37 @@ public:
 
 	void SetLineIndentation(int line, int indentation)
 	{
-		Call(SCI_SETLINEINDENTATION, static_cast<WPARAM>(line), indentation);
+		Call(SCI_SETLINEINDENTATION, line, indentation);
 	}
 
 	int GetLineIndentation(int line)
 	{
-		return Call(SCI_GETLINEINDENTATION, static_cast<WPARAM>(line));
+		return static_cast<int>(Call(SCI_GETLINEINDENTATION, line));
 	}
 
 	int GetLineIndentPosition(int line)
 	{
-		return Call(SCI_GETLINEINDENTPOSITION, static_cast<WPARAM>(line));
+		return static_cast<int>(Call(SCI_GETLINEINDENTPOSITION, line));
 	}
 
 	int GetColumn(int pos)
 	{
-		return Call(SCI_GETCOLUMN, static_cast<WPARAM>(pos));
+		return static_cast<int>(Call(SCI_GETCOLUMN, pos));
 	}
 
 	int CountCharacters(int start, int end)
 	{
-		return Call(SCI_COUNTCHARACTERS, static_cast<WPARAM>(start), end);
+		return static_cast<int>(Call(SCI_COUNTCHARACTERS, start, end));
 	}
 
 	int CountCodeUnits(int start, int end)
 	{
-		return Call(SCI_COUNTCODEUNITS, static_cast<WPARAM>(start), end);
+		return static_cast<int>(Call(SCI_COUNTCODEUNITS, start, end));
 	}
 
 	void SetHScrollBar(bool visible)
 	{
-		Call(SCI_SETHSCROLLBAR, static_cast<WPARAM>(visible));
+		Call(SCI_SETHSCROLLBAR, visible);
 	}
 
 	bool GetHScrollBar()
@@ -976,37 +987,37 @@ public:
 
 	void SetIndentationGuides(int indentView)
 	{
-		Call(SCI_SETINDENTATIONGUIDES, static_cast<WPARAM>(indentView));
+		Call(SCI_SETINDENTATIONGUIDES, indentView);
 	}
 
 	int GetIndentationGuides()
 	{
-		return Call(SCI_GETINDENTATIONGUIDES);
+		return static_cast<int>(Call(SCI_GETINDENTATIONGUIDES));
 	}
 
 	void SetHighlightGuide(int column)
 	{
-		Call(SCI_SETHIGHLIGHTGUIDE, static_cast<WPARAM>(column));
+		Call(SCI_SETHIGHLIGHTGUIDE, column);
 	}
 
 	int GetHighlightGuide()
 	{
-		return Call(SCI_GETHIGHLIGHTGUIDE);
+		return static_cast<int>(Call(SCI_GETHIGHLIGHTGUIDE));
 	}
 
 	int GetLineEndPosition(int line)
 	{
-		return Call(SCI_GETLINEENDPOSITION, static_cast<WPARAM>(line));
+		return static_cast<int>(Call(SCI_GETLINEENDPOSITION, line));
 	}
 
 	int GetCodePage()
 	{
-		return Call(SCI_GETCODEPAGE);
+		return static_cast<int>(Call(SCI_GETCODEPAGE));
 	}
 
 	int GetCaretFore()
 	{
-		return Call(SCI_GETCARETFORE);
+		return static_cast<int>(Call(SCI_GETCARETFORE));
 	}
 
 	bool GetReadOnly()
@@ -1016,77 +1027,77 @@ public:
 
 	void SetCurrentPos(int caret)
 	{
-		Call(SCI_SETCURRENTPOS, static_cast<WPARAM>(caret));
+		Call(SCI_SETCURRENTPOS, caret);
 	}
 
 	void SetSelectionStart(int anchor)
 	{
-		Call(SCI_SETSELECTIONSTART, static_cast<WPARAM>(anchor));
+		Call(SCI_SETSELECTIONSTART, anchor);
 	}
 
 	int GetSelectionStart()
 	{
-		return Call(SCI_GETSELECTIONSTART);
+		return static_cast<int>(Call(SCI_GETSELECTIONSTART));
 	}
 
 	void SetSelectionEnd(int caret)
 	{
-		Call(SCI_SETSELECTIONEND, static_cast<WPARAM>(caret));
+		Call(SCI_SETSELECTIONEND, caret);
 	}
 
 	int GetSelectionEnd()
 	{
-		return Call(SCI_GETSELECTIONEND);
+		return static_cast<int>(Call(SCI_GETSELECTIONEND));
 	}
 
 	void SetEmptySelection(int caret)
 	{
-		Call(SCI_SETEMPTYSELECTION, static_cast<WPARAM>(caret));
+		Call(SCI_SETEMPTYSELECTION, caret);
 	}
 
 	void SetPrintMagnification(int magnification)
 	{
-		Call(SCI_SETPRINTMAGNIFICATION, static_cast<WPARAM>(magnification));
+		Call(SCI_SETPRINTMAGNIFICATION, magnification);
 	}
 
 	int GetPrintMagnification()
 	{
-		return Call(SCI_GETPRINTMAGNIFICATION);
+		return static_cast<int>(Call(SCI_GETPRINTMAGNIFICATION));
 	}
 
 	void SetPrintColourMode(int mode)
 	{
-		Call(SCI_SETPRINTCOLOURMODE, static_cast<WPARAM>(mode));
+		Call(SCI_SETPRINTCOLOURMODE, mode);
 	}
 
 	int GetPrintColourMode()
 	{
-		return Call(SCI_GETPRINTCOLOURMODE);
+		return static_cast<int>(Call(SCI_GETPRINTCOLOURMODE));
 	}
 
 	int FindText(int searchFlags, void* ft)
 	{
-		return Call(SCI_FINDTEXT, static_cast<WPARAM>(searchFlags), reinterpret_cast<LPARAM>(ft));
+		return static_cast<int>(Call(SCI_FINDTEXT, searchFlags, reinterpret_cast<intptr_t>(ft)));
 	}
 
 	int FormatRange(bool draw, void* fr)
 	{
-		return Call(SCI_FORMATRANGE, static_cast<WPARAM>(draw), reinterpret_cast<LPARAM>(fr));
+		return static_cast<int>(Call(SCI_FORMATRANGE, draw, reinterpret_cast<intptr_t>(fr)));
 	}
 
 	int GetFirstVisibleLine()
 	{
-		return Call(SCI_GETFIRSTVISIBLELINE);
+		return static_cast<int>(Call(SCI_GETFIRSTVISIBLELINE));
 	}
 
 	int GetLine(int line, char* text)
 	{
-		return Call(SCI_GETLINE, static_cast<WPARAM>(line), reinterpret_cast<LPARAM>(text));
+		return static_cast<int>(Call(SCI_GETLINE, line, reinterpret_cast<intptr_t>(text)));
 	}
 
 	int GetLineCount()
 	{
-		return Call(SCI_GETLINECOUNT);
+		return static_cast<int>(Call(SCI_GETLINECOUNT));
 	}
 
 	void SetMarginLeft(int pixelWidth)
@@ -1096,7 +1107,7 @@ public:
 
 	int GetMarginLeft()
 	{
-		return Call(SCI_GETMARGINLEFT);
+		return static_cast<int>(Call(SCI_GETMARGINLEFT));
 	}
 
 	void SetMarginRight(int pixelWidth)
@@ -1106,7 +1117,7 @@ public:
 
 	int GetMarginRight()
 	{
-		return Call(SCI_GETMARGINRIGHT);
+		return static_cast<int>(Call(SCI_GETMARGINRIGHT));
 	}
 
 	bool GetModify()
@@ -1116,47 +1127,47 @@ public:
 
 	void SetSel(int anchor, int caret)
 	{
-		Call(SCI_SETSEL, static_cast<WPARAM>(anchor), caret);
+		Call(SCI_SETSEL, anchor, caret);
 	}
 
 	int GetSelText(char* text)
 	{
-		return Call(SCI_GETSELTEXT, 0, reinterpret_cast<LPARAM>(text));
+		return static_cast<int>(Call(SCI_GETSELTEXT, 0, reinterpret_cast<intptr_t>(text)));
 	}
 
 	int GetTextRange(void* tr)
 	{
-		return Call(SCI_GETTEXTRANGE, 0, reinterpret_cast<LPARAM>(tr));
+		return static_cast<int>(Call(SCI_GETTEXTRANGE, 0, reinterpret_cast<intptr_t>(tr)));
 	}
 
 	void HideSelection(bool hide)
 	{
-		Call(SCI_HIDESELECTION, static_cast<WPARAM>(hide));
+		Call(SCI_HIDESELECTION, hide);
 	}
 
 	int PointXFromPosition(int pos)
 	{
-		return Call(SCI_POINTXFROMPOSITION, 0, pos);
+		return static_cast<int>(Call(SCI_POINTXFROMPOSITION, 0, pos));
 	}
 
 	int PointYFromPosition(int pos)
 	{
-		return Call(SCI_POINTYFROMPOSITION, 0, pos);
+		return static_cast<int>(Call(SCI_POINTYFROMPOSITION, 0, pos));
 	}
 
 	int LineFromPosition(int pos)
 	{
-		return Call(SCI_LINEFROMPOSITION, static_cast<WPARAM>(pos));
+		return static_cast<int>(Call(SCI_LINEFROMPOSITION, pos));
 	}
 
 	int PositionFromLine(int line)
 	{
-		return Call(SCI_POSITIONFROMLINE, static_cast<WPARAM>(line));
+		return static_cast<int>(Call(SCI_POSITIONFROMLINE, line));
 	}
 
 	void LineScroll(int columns, int lines)
 	{
-		Call(SCI_LINESCROLL, static_cast<WPARAM>(columns), lines);
+		Call(SCI_LINESCROLL, columns, lines);
 	}
 
 	void ScrollCaret()
@@ -1166,17 +1177,17 @@ public:
 
 	void ScrollRange(int secondary, int primary)
 	{
-		Call(SCI_SCROLLRANGE, static_cast<WPARAM>(secondary), primary);
+		Call(SCI_SCROLLRANGE, secondary, primary);
 	}
 
 	void ReplaceSel(const char* text)
 	{
-		Call(SCI_REPLACESEL, 0, reinterpret_cast<LPARAM>(text));
+		Call(SCI_REPLACESEL, 0, reinterpret_cast<intptr_t>(text));
 	}
 
 	void SetReadOnly(bool readOnly)
 	{
-		Call(SCI_SETREADONLY, static_cast<WPARAM>(readOnly));
+		Call(SCI_SETREADONLY, readOnly);
 	}
 
 	void Null()
@@ -1226,32 +1237,32 @@ public:
 
 	void SetText(const char* text)
 	{
-		Call(SCI_SETTEXT, 0, reinterpret_cast<LPARAM>(text));
+		Call(SCI_SETTEXT, 0, reinterpret_cast<intptr_t>(text));
 	}
 
 	int GetText(int length, char* text)
 	{
-		return Call(SCI_GETTEXT, static_cast<WPARAM>(length), reinterpret_cast<LPARAM>(text));
+		return static_cast<int>(Call(SCI_GETTEXT, length, reinterpret_cast<intptr_t>(text)));
 	}
 
 	int GetTextLength()
 	{
-		return Call(SCI_GETTEXTLENGTH);
+		return static_cast<int>(Call(SCI_GETTEXTLENGTH));
 	}
 
 	void* GetDirectFunction()
 	{
-		return Call(SCI_GETDIRECTFUNCTION);
+		return reinterpret_cast<void*>(Call(SCI_GETDIRECTFUNCTION));
 	}
 
 	void* GetDirectPointer()
 	{
-		return Call(SCI_GETDIRECTPOINTER);
+		return reinterpret_cast<void*>(Call(SCI_GETDIRECTPOINTER));
 	}
 
 	void SetOvertype(bool overType)
 	{
-		Call(SCI_SETOVERTYPE, static_cast<WPARAM>(overType));
+		Call(SCI_SETOVERTYPE, overType);
 	}
 
 	bool GetOvertype()
@@ -1261,42 +1272,42 @@ public:
 
 	void SetCaretWidth(int pixelWidth)
 	{
-		Call(SCI_SETCARETWIDTH, static_cast<WPARAM>(pixelWidth));
+		Call(SCI_SETCARETWIDTH, pixelWidth);
 	}
 
 	int GetCaretWidth()
 	{
-		return Call(SCI_GETCARETWIDTH);
+		return static_cast<int>(Call(SCI_GETCARETWIDTH));
 	}
 
 	void SetTargetStart(int start)
 	{
-		Call(SCI_SETTARGETSTART, static_cast<WPARAM>(start));
+		Call(SCI_SETTARGETSTART, start);
 	}
 
 	int GetTargetStart()
 	{
-		return Call(SCI_GETTARGETSTART);
+		return static_cast<int>(Call(SCI_GETTARGETSTART));
 	}
 
 	void SetTargetEnd(int end)
 	{
-		Call(SCI_SETTARGETEND, static_cast<WPARAM>(end));
+		Call(SCI_SETTARGETEND, end);
 	}
 
 	int GetTargetEnd()
 	{
-		return Call(SCI_GETTARGETEND);
+		return static_cast<int>(Call(SCI_GETTARGETEND));
 	}
 
 	void SetTargetRange(int start, int end)
 	{
-		Call(SCI_SETTARGETRANGE, static_cast<WPARAM>(start), end);
+		Call(SCI_SETTARGETRANGE, start, end);
 	}
 
 	int GetTargetText(char* text)
 	{
-		return Call(SCI_GETTARGETTEXT, 0, reinterpret_cast<LPARAM>(text));
+		return static_cast<int>(Call(SCI_GETTARGETTEXT, 0, reinterpret_cast<intptr_t>(text)));
 	}
 
 	void TargetFromSelection()
@@ -1311,32 +1322,32 @@ public:
 
 	int ReplaceTarget(int length, const char* text)
 	{
-		return Call(SCI_REPLACETARGET, static_cast<WPARAM>(length), reinterpret_cast<LPARAM>(text));
+		return static_cast<int>(Call(SCI_REPLACETARGET, length, reinterpret_cast<intptr_t>(text)));
 	}
 
 	int ReplaceTargetRE(int length, const char* text)
 	{
-		return Call(SCI_REPLACETARGETRE, static_cast<WPARAM>(length), reinterpret_cast<LPARAM>(text));
+		return static_cast<int>(Call(SCI_REPLACETARGETRE, length, reinterpret_cast<intptr_t>(text)));
 	}
 
 	int SearchInTarget(int length, const char* text)
 	{
-		return Call(SCI_SEARCHINTARGET, static_cast<WPARAM>(length), reinterpret_cast<LPARAM>(text));
+		return static_cast<int>(Call(SCI_SEARCHINTARGET, length, reinterpret_cast<intptr_t>(text)));
 	}
 
 	void SetSearchFlags(int searchFlags)
 	{
-		Call(SCI_SETSEARCHFLAGS, static_cast<WPARAM>(searchFlags));
+		Call(SCI_SETSEARCHFLAGS, searchFlags);
 	}
 
 	int GetSearchFlags()
 	{
-		return Call(SCI_GETSEARCHFLAGS);
+		return static_cast<int>(Call(SCI_GETSEARCHFLAGS));
 	}
 
 	void CallTipShow(int pos, const char* definition)
 	{
-		Call(SCI_CALLTIPSHOW, static_cast<WPARAM>(pos), reinterpret_cast<LPARAM>(definition));
+		Call(SCI_CALLTIPSHOW, pos, reinterpret_cast<intptr_t>(definition));
 	}
 
 	void CallTipCancel()
@@ -1351,92 +1362,92 @@ public:
 
 	int CallTipPosStart()
 	{
-		return Call(SCI_CALLTIPPOSSTART);
+		return static_cast<int>(Call(SCI_CALLTIPPOSSTART));
 	}
 
 	void CallTipSetPosStart(int posStart)
 	{
-		Call(SCI_CALLTIPSETPOSSTART, static_cast<WPARAM>(posStart));
+		Call(SCI_CALLTIPSETPOSSTART, posStart);
 	}
 
 	void CallTipSetHlt(int highlightStart, int highlightEnd)
 	{
-		Call(SCI_CALLTIPSETHLT, static_cast<WPARAM>(highlightStart), highlightEnd);
+		Call(SCI_CALLTIPSETHLT, highlightStart, highlightEnd);
 	}
 
 	void CallTipSetBack(int back)
 	{
-		Call(SCI_CALLTIPSETBACK, static_cast<WPARAM>(back));
+		Call(SCI_CALLTIPSETBACK, back);
 	}
 
 	void CallTipSetFore(int fore)
 	{
-		Call(SCI_CALLTIPSETFORE, static_cast<WPARAM>(fore));
+		Call(SCI_CALLTIPSETFORE, fore);
 	}
 
 	void CallTipSetForeHlt(int fore)
 	{
-		Call(SCI_CALLTIPSETFOREHLT, static_cast<WPARAM>(fore));
+		Call(SCI_CALLTIPSETFOREHLT, fore);
 	}
 
 	void CallTipUseStyle(int tabSize)
 	{
-		Call(SCI_CALLTIPUSESTYLE, static_cast<WPARAM>(tabSize));
+		Call(SCI_CALLTIPUSESTYLE, tabSize);
 	}
 
 	void CallTipSetPosition(bool above)
 	{
-		Call(SCI_CALLTIPSETPOSITION, static_cast<WPARAM>(above));
+		Call(SCI_CALLTIPSETPOSITION, above);
 	}
 
 	int VisibleFromDocLine(int docLine)
 	{
-		return Call(SCI_VISIBLEFROMDOCLINE, static_cast<WPARAM>(docLine));
+		return static_cast<int>(Call(SCI_VISIBLEFROMDOCLINE, docLine));
 	}
 
 	int DocLineFromVisible(int displayLine)
 	{
-		return Call(SCI_DOCLINEFROMVISIBLE, static_cast<WPARAM>(displayLine));
+		return static_cast<int>(Call(SCI_DOCLINEFROMVISIBLE, displayLine));
 	}
 
 	int WrapCount(int docLine)
 	{
-		return Call(SCI_WRAPCOUNT, static_cast<WPARAM>(docLine));
+		return static_cast<int>(Call(SCI_WRAPCOUNT, docLine));
 	}
 
 	void SetFoldLevel(int line, int level)
 	{
-		Call(SCI_SETFOLDLEVEL, static_cast<WPARAM>(line), level);
+		Call(SCI_SETFOLDLEVEL, line, level);
 	}
 
 	int GetFoldLevel(int line)
 	{
-		return Call(SCI_GETFOLDLEVEL, static_cast<WPARAM>(line));
+		return static_cast<int>(Call(SCI_GETFOLDLEVEL, line));
 	}
 
 	int GetLastChild(int line, int level)
 	{
-		return Call(SCI_GETLASTCHILD, static_cast<WPARAM>(line), level);
+		return static_cast<int>(Call(SCI_GETLASTCHILD, line, level));
 	}
 
 	int GetFoldParent(int line)
 	{
-		return Call(SCI_GETFOLDPARENT, static_cast<WPARAM>(line));
+		return static_cast<int>(Call(SCI_GETFOLDPARENT, line));
 	}
 
 	void ShowLines(int lineStart, int lineEnd)
 	{
-		Call(SCI_SHOWLINES, static_cast<WPARAM>(lineStart), lineEnd);
+		Call(SCI_SHOWLINES, lineStart, lineEnd);
 	}
 
 	void HideLines(int lineStart, int lineEnd)
 	{
-		Call(SCI_HIDELINES, static_cast<WPARAM>(lineStart), lineEnd);
+		Call(SCI_HIDELINES, lineStart, lineEnd);
 	}
 
 	bool GetLineVisible(int line)
 	{
-		return Call(SCI_GETLINEVISIBLE, static_cast<WPARAM>(line));
+		return Call(SCI_GETLINEVISIBLE, line);
 	}
 
 	bool GetAllLinesVisible()
@@ -1446,92 +1457,92 @@ public:
 
 	void SetFoldExpanded(int line, bool expanded)
 	{
-		Call(SCI_SETFOLDEXPANDED, static_cast<WPARAM>(line), expanded);
+		Call(SCI_SETFOLDEXPANDED, line, expanded);
 	}
 
 	bool GetFoldExpanded(int line)
 	{
-		return Call(SCI_GETFOLDEXPANDED, static_cast<WPARAM>(line));
+		return Call(SCI_GETFOLDEXPANDED, line);
 	}
 
 	void ToggleFold(int line)
 	{
-		Call(SCI_TOGGLEFOLD, static_cast<WPARAM>(line));
+		Call(SCI_TOGGLEFOLD, line);
 	}
 
 	void ToggleFoldShowText(int line, const char* text)
 	{
-		Call(SCI_TOGGLEFOLDSHOWTEXT, static_cast<WPARAM>(line), reinterpret_cast<LPARAM>(text));
+		Call(SCI_TOGGLEFOLDSHOWTEXT, line, reinterpret_cast<intptr_t>(text));
 	}
 
 	void FoldDisplayTextSetStyle(int style)
 	{
-		Call(SCI_FOLDDISPLAYTEXTSETSTYLE, static_cast<WPARAM>(style));
+		Call(SCI_FOLDDISPLAYTEXTSETSTYLE, style);
 	}
 
 	int FoldDisplayTextGetStyle()
 	{
-		return Call(SCI_FOLDDISPLAYTEXTGETSTYLE);
+		return static_cast<int>(Call(SCI_FOLDDISPLAYTEXTGETSTYLE));
 	}
 
 	void SetDefaultFoldDisplayText(const char* text)
 	{
-		Call(SCI_SETDEFAULTFOLDDISPLAYTEXT, 0, reinterpret_cast<LPARAM>(text));
+		Call(SCI_SETDEFAULTFOLDDISPLAYTEXT, 0, reinterpret_cast<intptr_t>(text));
 	}
 
 	int GetDefaultFoldDisplayText(char* text)
 	{
-		return Call(SCI_GETDEFAULTFOLDDISPLAYTEXT, 0, reinterpret_cast<LPARAM>(text));
+		return static_cast<int>(Call(SCI_GETDEFAULTFOLDDISPLAYTEXT, 0, reinterpret_cast<intptr_t>(text)));
 	}
 
 	void FoldLine(int line, int action)
 	{
-		Call(SCI_FOLDLINE, static_cast<WPARAM>(line), action);
+		Call(SCI_FOLDLINE, line, action);
 	}
 
 	void FoldChildren(int line, int action)
 	{
-		Call(SCI_FOLDCHILDREN, static_cast<WPARAM>(line), action);
+		Call(SCI_FOLDCHILDREN, line, action);
 	}
 
 	void ExpandChildren(int line, int level)
 	{
-		Call(SCI_EXPANDCHILDREN, static_cast<WPARAM>(line), level);
+		Call(SCI_EXPANDCHILDREN, line, level);
 	}
 
 	void FoldAll(int action)
 	{
-		Call(SCI_FOLDALL, static_cast<WPARAM>(action));
+		Call(SCI_FOLDALL, action);
 	}
 
 	void EnsureVisible(int line)
 	{
-		Call(SCI_ENSUREVISIBLE, static_cast<WPARAM>(line));
+		Call(SCI_ENSUREVISIBLE, line);
 	}
 
 	void SetAutomaticFold(int automaticFold)
 	{
-		Call(SCI_SETAUTOMATICFOLD, static_cast<WPARAM>(automaticFold));
+		Call(SCI_SETAUTOMATICFOLD, automaticFold);
 	}
 
 	int GetAutomaticFold()
 	{
-		return Call(SCI_GETAUTOMATICFOLD);
+		return static_cast<int>(Call(SCI_GETAUTOMATICFOLD));
 	}
 
 	void SetFoldFlags(int flags)
 	{
-		Call(SCI_SETFOLDFLAGS, static_cast<WPARAM>(flags));
+		Call(SCI_SETFOLDFLAGS, flags);
 	}
 
 	void EnsureVisibleEnforcePolicy(int line)
 	{
-		Call(SCI_ENSUREVISIBLEENFORCEPOLICY, static_cast<WPARAM>(line));
+		Call(SCI_ENSUREVISIBLEENFORCEPOLICY, line);
 	}
 
 	void SetTabIndents(bool tabIndents)
 	{
-		Call(SCI_SETTABINDENTS, static_cast<WPARAM>(tabIndents));
+		Call(SCI_SETTABINDENTS, tabIndents);
 	}
 
 	bool GetTabIndents()
@@ -1541,7 +1552,7 @@ public:
 
 	void SetBackSpaceUnIndents(bool bsUnIndents)
 	{
-		Call(SCI_SETBACKSPACEUNINDENTS, static_cast<WPARAM>(bsUnIndents));
+		Call(SCI_SETBACKSPACEUNINDENTS, bsUnIndents);
 	}
 
 	bool GetBackSpaceUnIndents()
@@ -1551,112 +1562,112 @@ public:
 
 	void SetMouseDwellTime(int periodMilliseconds)
 	{
-		Call(SCI_SETMOUSEDWELLTIME, static_cast<WPARAM>(periodMilliseconds));
+		Call(SCI_SETMOUSEDWELLTIME, periodMilliseconds);
 	}
 
 	int GetMouseDwellTime()
 	{
-		return Call(SCI_GETMOUSEDWELLTIME);
+		return static_cast<int>(Call(SCI_GETMOUSEDWELLTIME));
 	}
 
 	int WordStartPosition(int pos, bool onlyWordCharacters)
 	{
-		return Call(SCI_WORDSTARTPOSITION, static_cast<WPARAM>(pos), onlyWordCharacters);
+		return static_cast<int>(Call(SCI_WORDSTARTPOSITION, pos, onlyWordCharacters));
 	}
 
 	int WordEndPosition(int pos, bool onlyWordCharacters)
 	{
-		return Call(SCI_WORDENDPOSITION, static_cast<WPARAM>(pos), onlyWordCharacters);
+		return static_cast<int>(Call(SCI_WORDENDPOSITION, pos, onlyWordCharacters));
 	}
 
 	bool IsRangeWord(int start, int end)
 	{
-		return Call(SCI_ISRANGEWORD, static_cast<WPARAM>(start), end);
+		return Call(SCI_ISRANGEWORD, start, end);
 	}
 
 	void SetIdleStyling(int idleStyling)
 	{
-		Call(SCI_SETIDLESTYLING, static_cast<WPARAM>(idleStyling));
+		Call(SCI_SETIDLESTYLING, idleStyling);
 	}
 
 	int GetIdleStyling()
 	{
-		return Call(SCI_GETIDLESTYLING);
+		return static_cast<int>(Call(SCI_GETIDLESTYLING));
 	}
 
 	void SetWrapMode(int wrapMode)
 	{
-		Call(SCI_SETWRAPMODE, static_cast<WPARAM>(wrapMode));
+		Call(SCI_SETWRAPMODE, wrapMode);
 	}
 
 	int GetWrapMode()
 	{
-		return Call(SCI_GETWRAPMODE);
+		return static_cast<int>(Call(SCI_GETWRAPMODE));
 	}
 
 	void SetWrapVisualFlags(int wrapVisualFlags)
 	{
-		Call(SCI_SETWRAPVISUALFLAGS, static_cast<WPARAM>(wrapVisualFlags));
+		Call(SCI_SETWRAPVISUALFLAGS, wrapVisualFlags);
 	}
 
 	int GetWrapVisualFlags()
 	{
-		return Call(SCI_GETWRAPVISUALFLAGS);
+		return static_cast<int>(Call(SCI_GETWRAPVISUALFLAGS));
 	}
 
 	void SetWrapVisualFlagsLocation(int wrapVisualFlagsLocation)
 	{
-		Call(SCI_SETWRAPVISUALFLAGSLOCATION, static_cast<WPARAM>(wrapVisualFlagsLocation));
+		Call(SCI_SETWRAPVISUALFLAGSLOCATION, wrapVisualFlagsLocation);
 	}
 
 	int GetWrapVisualFlagsLocation()
 	{
-		return Call(SCI_GETWRAPVISUALFLAGSLOCATION);
+		return static_cast<int>(Call(SCI_GETWRAPVISUALFLAGSLOCATION));
 	}
 
 	void SetWrapStartIndent(int indent)
 	{
-		Call(SCI_SETWRAPSTARTINDENT, static_cast<WPARAM>(indent));
+		Call(SCI_SETWRAPSTARTINDENT, indent);
 	}
 
 	int GetWrapStartIndent()
 	{
-		return Call(SCI_GETWRAPSTARTINDENT);
+		return static_cast<int>(Call(SCI_GETWRAPSTARTINDENT));
 	}
 
 	void SetWrapIndentMode(int wrapIndentMode)
 	{
-		Call(SCI_SETWRAPINDENTMODE, static_cast<WPARAM>(wrapIndentMode));
+		Call(SCI_SETWRAPINDENTMODE, wrapIndentMode);
 	}
 
 	int GetWrapIndentMode()
 	{
-		return Call(SCI_GETWRAPINDENTMODE);
+		return static_cast<int>(Call(SCI_GETWRAPINDENTMODE));
 	}
 
 	void SetLayoutCache(int cacheMode)
 	{
-		Call(SCI_SETLAYOUTCACHE, static_cast<WPARAM>(cacheMode));
+		Call(SCI_SETLAYOUTCACHE, cacheMode);
 	}
 
 	int GetLayoutCache()
 	{
-		return Call(SCI_GETLAYOUTCACHE);
+		return static_cast<int>(Call(SCI_GETLAYOUTCACHE));
 	}
 
 	void SetScrollWidth(int pixelWidth)
 	{
-		Call(SCI_SETSCROLLWIDTH, static_cast<WPARAM>(pixelWidth));
+		Call(SCI_SETSCROLLWIDTH, pixelWidth);
 	}
 
 	int GetScrollWidth()
 	{
-		return Call(SCI_GETSCROLLWIDTH);
+		return static_cast<int>(Call(SCI_GETSCROLLWIDTH));
 	}
 
 	void SetScrollWidthTracking(bool tracking)
 	{
-		Call(SCI_SETSCROLLWIDTHTRACKING, static_cast<WPARAM>(tracking));
+		Call(SCI_SETSCROLLWIDTHTRACKING, tracking);
 	}
 
 	bool GetScrollWidthTracking()
@@ -1666,12 +1677,12 @@ public:
 
 	int TextWidth(int style, const char* text)
 	{
-		return Call(SCI_TEXTWIDTH, static_cast<WPARAM>(style), reinterpret_cast<LPARAM>(text));
+		return static_cast<int>(Call(SCI_TEXTWIDTH, style, reinterpret_cast<intptr_t>(text)));
 	}
 
 	void SetEndAtLastLine(bool endAtLastLine)
 	{
-		Call(SCI_SETENDATLASTLINE, static_cast<WPARAM>(endAtLastLine));
+		Call(SCI_SETENDATLASTLINE, endAtLastLine);
 	}
 
 	bool GetEndAtLastLine()
@@ -1681,12 +1692,12 @@ public:
 
 	int TextHeight(int line)
 	{
-		return Call(SCI_TEXTHEIGHT, static_cast<WPARAM>(line));
+		return static_cast<int>(Call(SCI_TEXTHEIGHT, line));
 	}
 
 	void SetVScrollBar(bool visible)
 	{
-		Call(SCI_SETVSCROLLBAR, static_cast<WPARAM>(visible));
+		Call(SCI_SETVSCROLLBAR, visible);
 	}
 
 	bool GetVScrollBar()
@@ -1696,47 +1707,47 @@ public:
 
 	void AppendText(int length, const char* text)
 	{
-		Call(SCI_APPENDTEXT, static_cast<WPARAM>(length), reinterpret_cast<LPARAM>(text));
+		Call(SCI_APPENDTEXT, length, reinterpret_cast<intptr_t>(text));
 	}
 
 	int GetPhasesDraw()
 	{
-		return Call(SCI_GETPHASESDRAW);
+		return static_cast<int>(Call(SCI_GETPHASESDRAW));
 	}
 
 	void SetPhasesDraw(int phases)
 	{
-		Call(SCI_SETPHASESDRAW, static_cast<WPARAM>(phases));
+		Call(SCI_SETPHASESDRAW, phases);
 	}
 
 	void SetFontQuality(int fontQuality)
 	{
-		Call(SCI_SETFONTQUALITY, static_cast<WPARAM>(fontQuality));
+		Call(SCI_SETFONTQUALITY, fontQuality);
 	}
 
 	int GetFontQuality()
 	{
-		return Call(SCI_GETFONTQUALITY);
+		return static_cast<int>(Call(SCI_GETFONTQUALITY));
 	}
 
 	void SetFirstVisibleLine(int displayLine)
 	{
-		Call(SCI_SETFIRSTVISIBLELINE, static_cast<WPARAM>(displayLine));
+		Call(SCI_SETFIRSTVISIBLELINE, displayLine);
 	}
 
 	void SetMultiPaste(int multiPaste)
 	{
-		Call(SCI_SETMULTIPASTE, static_cast<WPARAM>(multiPaste));
+		Call(SCI_SETMULTIPASTE, multiPaste);
 	}
 
 	int GetMultiPaste()
 	{
-		return Call(SCI_GETMULTIPASTE);
+		return static_cast<int>(Call(SCI_GETMULTIPASTE));
 	}
 
 	int GetTag(int tagNumber, char* tagValue)
 	{
-		return Call(SCI_GETTAG, static_cast<WPARAM>(tagNumber), reinterpret_cast<LPARAM>(tagValue));
+		return static_cast<int>(Call(SCI_GETTAG, tagNumber, reinterpret_cast<intptr_t>(tagValue)));
 	}
 
 	void LinesJoin()
@@ -1746,27 +1757,27 @@ public:
 
 	void LinesSplit(int pixelWidth)
 	{
-		Call(SCI_LINESSPLIT, static_cast<WPARAM>(pixelWidth));
+		Call(SCI_LINESSPLIT, pixelWidth);
 	}
 
 	void SetFoldMarginColour(bool useSetting, int back)
 	{
-		Call(SCI_SETFOLDMARGINCOLOUR, static_cast<WPARAM>(useSetting), back);
+		Call(SCI_SETFOLDMARGINCOLOUR, useSetting, back);
 	}
 
 	void SetFoldMarginHiColour(bool useSetting, int fore)
 	{
-		Call(SCI_SETFOLDMARGINHICOLOUR, static_cast<WPARAM>(useSetting), fore);
+		Call(SCI_SETFOLDMARGINHICOLOUR, useSetting, fore);
 	}
 
 	void SetAccessibility(int accessibility)
 	{
-		Call(SCI_SETACCESSIBILITY, static_cast<WPARAM>(accessibility));
+		Call(SCI_SETACCESSIBILITY, accessibility);
 	}
 
 	int GetAccessibility()
 	{
-		return Call(SCI_GETACCESSIBILITY);
+		return static_cast<int>(Call(SCI_GETACCESSIBILITY));
 	}
 
 	void LineDown()
@@ -2071,32 +2082,32 @@ public:
 
 	int LineLength(int line)
 	{
-		return Call(SCI_LINELENGTH, static_cast<WPARAM>(line));
+		return static_cast<int>(Call(SCI_LINELENGTH, line));
 	}
 
 	void BraceHighlight(int posA, int posB)
 	{
-		Call(SCI_BRACEHIGHLIGHT, static_cast<WPARAM>(posA), posB);
+		Call(SCI_BRACEHIGHLIGHT, posA, posB);
 	}
 
 	void BraceHighlightIndicator(bool useSetting, int indicator)
 	{
-		Call(SCI_BRACEHIGHLIGHTINDICATOR, static_cast<WPARAM>(useSetting), indicator);
+		Call(SCI_BRACEHIGHLIGHTINDICATOR, useSetting, indicator);
 	}
 
 	void BraceBadLight(int pos)
 	{
-		Call(SCI_BRACEBADLIGHT, static_cast<WPARAM>(pos));
+		Call(SCI_BRACEBADLIGHT, pos);
 	}
 
 	void BraceBadLightIndicator(bool useSetting, int indicator)
 	{
-		Call(SCI_BRACEBADLIGHTINDICATOR, static_cast<WPARAM>(useSetting), indicator);
+		Call(SCI_BRACEBADLIGHTINDICATOR, useSetting, indicator);
 	}
 
 	int BraceMatch(int pos, int maxReStyle)
 	{
-		return Call(SCI_BRACEMATCH, static_cast<WPARAM>(pos), maxReStyle);
+		return static_cast<int>(Call(SCI_BRACEMATCH, pos, maxReStyle));
 	}
 
 	bool GetViewEOL()
@@ -2106,57 +2117,57 @@ public:
 
 	void SetViewEOL(bool visible)
 	{
-		Call(SCI_SETVIEWEOL, static_cast<WPARAM>(visible));
+		Call(SCI_SETVIEWEOL, visible);
 	}
 
 	void* GetDocPointer()
 	{
-		return Call(SCI_GETDOCPOINTER);
+		return reinterpret_cast<void*>(Call(SCI_GETDOCPOINTER));
 	}
 
 	void SetDocPointer(void* doc)
 	{
-		Call(SCI_SETDOCPOINTER, 0, reinterpret_cast<LPARAM>(doc));
+		Call(SCI_SETDOCPOINTER, 0, reinterpret_cast<intptr_t>(doc));
 	}
 
 	void SetModEventMask(int eventMask)
 	{
-		Call(SCI_SETMODEVENTMASK, static_cast<WPARAM>(eventMask));
+		Call(SCI_SETMODEVENTMASK, eventMask);
 	}
 
 	int GetEdgeColumn()
 	{
-		return Call(SCI_GETEDGECOLUMN);
+		return static_cast<int>(Call(SCI_GETEDGECOLUMN));
 	}
 
 	void SetEdgeColumn(int column)
 	{
-		Call(SCI_SETEDGECOLUMN, static_cast<WPARAM>(column));
+		Call(SCI_SETEDGECOLUMN, column);
 	}
 
 	int GetEdgeMode()
 	{
-		return Call(SCI_GETEDGEMODE);
+		return static_cast<int>(Call(SCI_GETEDGEMODE));
 	}
 
 	void SetEdgeMode(int edgeMode)
 	{
-		Call(SCI_SETEDGEMODE, static_cast<WPARAM>(edgeMode));
+		Call(SCI_SETEDGEMODE, edgeMode);
 	}
 
 	int GetEdgeColour()
 	{
-		return Call(SCI_GETEDGECOLOUR);
+		return static_cast<int>(Call(SCI_GETEDGECOLOUR));
 	}
 
 	void SetEdgeColour(int edgeColour)
 	{
-		Call(SCI_SETEDGECOLOUR, static_cast<WPARAM>(edgeColour));
+		Call(SCI_SETEDGECOLOUR, edgeColour);
 	}
 
 	void MultiEdgeAddLine(int column, int edgeColour)
 	{
-		Call(SCI_MULTIEDGEADDLINE, static_cast<WPARAM>(column), edgeColour);
+		Call(SCI_MULTIEDGEADDLINE, column, edgeColour);
 	}
 
 	void MultiEdgeClearAll()
@@ -2171,22 +2182,22 @@ public:
 
 	int SearchNext(int searchFlags, const char* text)
 	{
-		return Call(SCI_SEARCHNEXT, static_cast<WPARAM>(searchFlags), reinterpret_cast<LPARAM>(text));
+		return static_cast<int>(Call(SCI_SEARCHNEXT, searchFlags, reinterpret_cast<intptr_t>(text)));
 	}
 
 	int SearchPrev(int searchFlags, const char* text)
 	{
-		return Call(SCI_SEARCHPREV, static_cast<WPARAM>(searchFlags), reinterpret_cast<LPARAM>(text));
+		return static_cast<int>(Call(SCI_SEARCHPREV, searchFlags, reinterpret_cast<intptr_t>(text)));
 	}
 
 	int LinesOnScreen()
 	{
-		return Call(SCI_LINESONSCREEN);
+		return static_cast<int>(Call(SCI_LINESONSCREEN));
 	}
 
 	void UsePopUp(int popUpMode)
 	{
-		Call(SCI_USEPOPUP, static_cast<WPARAM>(popUpMode));
+		Call(SCI_USEPOPUP, popUpMode);
 	}
 
 	bool SelectionIsRectangle()
@@ -2196,42 +2207,42 @@ public:
 
 	void SetZoom(int zoomInPoints)
 	{
-		Call(SCI_SETZOOM, static_cast<WPARAM>(zoomInPoints));
+		Call(SCI_SETZOOM, zoomInPoints);
 	}
 
 	int GetZoom()
 	{
-		return Call(SCI_GETZOOM);
+		return static_cast<int>(Call(SCI_GETZOOM));
 	}
 
 	void* CreateDocument(int bytes, int documentOptions)
 	{
-		return Call(SCI_CREATEDOCUMENT, static_cast<WPARAM>(bytes), documentOptions);
+		return reinterpret_cast<void*>(Call(SCI_CREATEDOCUMENT, bytes, documentOptions));
 	}
 
 	void AddRefDocument(void* doc)
 	{
-		Call(SCI_ADDREFDOCUMENT, 0, reinterpret_cast<LPARAM>(doc));
+		Call(SCI_ADDREFDOCUMENT, 0, reinterpret_cast<intptr_t>(doc));
 	}
 
 	void ReleaseDocument(void* doc)
 	{
-		Call(SCI_RELEASEDOCUMENT, 0, reinterpret_cast<LPARAM>(doc));
+		Call(SCI_RELEASEDOCUMENT, 0, reinterpret_cast<intptr_t>(doc));
 	}
 
 	int GetDocumentOptions()
 	{
-		return Call(SCI_GETDOCUMENTOPTIONS);
+		return static_cast<int>(Call(SCI_GETDOCUMENTOPTIONS));
 	}
 
 	int GetModEventMask()
 	{
-		return Call(SCI_GETMODEVENTMASK);
+		return static_cast<int>(Call(SCI_GETMODEVENTMASK));
 	}
 
 	void SetCommandEvents(bool commandEvents)
 	{
-		Call(SCI_SETCOMMANDEVENTS, static_cast<WPARAM>(commandEvents));
+		Call(SCI_SETCOMMANDEVENTS, commandEvents);
 	}
 
 	bool GetCommandEvents()
@@ -2241,7 +2252,7 @@ public:
 
 	void SetFocus(bool focus)
 	{
-		Call(SCI_SETFOCUS, static_cast<WPARAM>(focus));
+		Call(SCI_SETFOCUS, focus);
 	}
 
 	bool GetFocus()
@@ -2251,17 +2262,17 @@ public:
 
 	void SetStatus(int status)
 	{
-		Call(SCI_SETSTATUS, static_cast<WPARAM>(status));
+		Call(SCI_SETSTATUS, status);
 	}
 
 	int GetStatus()
 	{
-		return Call(SCI_GETSTATUS);
+		return static_cast<int>(Call(SCI_GETSTATUS));
 	}
 
 	void SetMouseDownCaptures(bool captures)
 	{
-		Call(SCI_SETMOUSEDOWNCAPTURES, static_cast<WPARAM>(captures));
+		Call(SCI_SETMOUSEDOWNCAPTURES, captures);
 	}
 
 	bool GetMouseDownCaptures()
@@ -2271,7 +2282,7 @@ public:
 
 	void SetMouseWheelCaptures(bool captures)
 	{
-		Call(SCI_SETMOUSEWHEELCAPTURES, static_cast<WPARAM>(captures));
+		Call(SCI_SETMOUSEWHEELCAPTURES, captures);
 	}
 
 	bool GetMouseWheelCaptures()
@@ -2281,22 +2292,22 @@ public:
 
 	void SetCursor(int cursorType)
 	{
-		Call(SCI_SETCURSOR, static_cast<WPARAM>(cursorType));
+		Call(SCI_SETCURSOR, cursorType);
 	}
 
 	int GetCursor()
 	{
-		return Call(SCI_GETCURSOR);
+		return static_cast<int>(Call(SCI_GETCURSOR));
 	}
 
 	void SetControlCharSymbol(int symbol)
 	{
-		Call(SCI_SETCONTROLCHARSYMBOL, static_cast<WPARAM>(symbol));
+		Call(SCI_SETCONTROLCHARSYMBOL, symbol);
 	}
 
 	int GetControlCharSymbol()
 	{
-		return Call(SCI_GETCONTROLCHARSYMBOL);
+		return static_cast<int>(Call(SCI_GETCONTROLCHARSYMBOL));
 	}
 
 	void WordPartLeft()
@@ -2321,7 +2332,7 @@ public:
 
 	void SetVisiblePolicy(int visiblePolicy, int visibleSlop)
 	{
-		Call(SCI_SETVISIBLEPOLICY, static_cast<WPARAM>(visiblePolicy), visibleSlop);
+		Call(SCI_SETVISIBLEPOLICY, visiblePolicy, visibleSlop);
 	}
 
 	void DelLineLeft()
@@ -2336,12 +2347,12 @@ public:
 
 	void SetXOffset(int xOffset)
 	{
-		Call(SCI_SETXOFFSET, static_cast<WPARAM>(xOffset));
+		Call(SCI_SETXOFFSET, xOffset);
 	}
 
 	int GetXOffset()
 	{
-		return Call(SCI_GETXOFFSET);
+		return static_cast<int>(Call(SCI_GETXOFFSET));
 	}
 
 	void ChooseCaretX()
@@ -2356,47 +2367,47 @@ public:
 
 	void SetXCaretPolicy(int caretPolicy, int caretSlop)
 	{
-		Call(SCI_SETXCARETPOLICY, static_cast<WPARAM>(caretPolicy), caretSlop);
+		Call(SCI_SETXCARETPOLICY, caretPolicy, caretSlop);
 	}
 
 	void SetYCaretPolicy(int caretPolicy, int caretSlop)
 	{
-		Call(SCI_SETYCARETPOLICY, static_cast<WPARAM>(caretPolicy), caretSlop);
+		Call(SCI_SETYCARETPOLICY, caretPolicy, caretSlop);
 	}
 
 	void SetPrintWrapMode(int wrapMode)
 	{
-		Call(SCI_SETPRINTWRAPMODE, static_cast<WPARAM>(wrapMode));
+		Call(SCI_SETPRINTWRAPMODE, wrapMode);
 	}
 
 	int GetPrintWrapMode()
 	{
-		return Call(SCI_GETPRINTWRAPMODE);
+		return static_cast<int>(Call(SCI_GETPRINTWRAPMODE));
 	}
 
 	void SetHotspotActiveFore(bool useSetting, int fore)
 	{
-		Call(SCI_SETHOTSPOTACTIVEFORE, static_cast<WPARAM>(useSetting), fore);
+		Call(SCI_SETHOTSPOTACTIVEFORE, useSetting, fore);
 	}
 
 	int GetHotspotActiveFore()
 	{
-		return Call(SCI_GETHOTSPOTACTIVEFORE);
+		return static_cast<int>(Call(SCI_GETHOTSPOTACTIVEFORE));
 	}
 
 	void SetHotspotActiveBack(bool useSetting, int back)
 	{
-		Call(SCI_SETHOTSPOTACTIVEBACK, static_cast<WPARAM>(useSetting), back);
+		Call(SCI_SETHOTSPOTACTIVEBACK, useSetting, back);
 	}
 
 	int GetHotspotActiveBack()
 	{
-		return Call(SCI_GETHOTSPOTACTIVEBACK);
+		return static_cast<int>(Call(SCI_GETHOTSPOTACTIVEBACK));
 	}
 
 	void SetHotspotActiveUnderline(bool underline)
 	{
-		Call(SCI_SETHOTSPOTACTIVEUNDERLINE, static_cast<WPARAM>(underline));
+		Call(SCI_SETHOTSPOTACTIVEUNDERLINE, underline);
 	}
 
 	bool GetHotspotActiveUnderline()
@@ -2406,7 +2417,7 @@ public:
 
 	void SetHotspotSingleLine(bool singleLine)
 	{
-		Call(SCI_SETHOTSPOTSINGLELINE, static_cast<WPARAM>(singleLine));
+		Call(SCI_SETHOTSPOTSINGLELINE, singleLine);
 	}
 
 	bool GetHotspotSingleLine()
@@ -2436,42 +2447,42 @@ public:
 
 	int PositionBefore(int pos)
 	{
-		return Call(SCI_POSITIONBEFORE, static_cast<WPARAM>(pos));
+		return static_cast<int>(Call(SCI_POSITIONBEFORE, pos));
 	}
 
 	int PositionAfter(int pos)
 	{
-		return Call(SCI_POSITIONAFTER, static_cast<WPARAM>(pos));
+		return static_cast<int>(Call(SCI_POSITIONAFTER, pos));
 	}
 
 	int PositionRelative(int pos, int relative)
 	{
-		return Call(SCI_POSITIONRELATIVE, static_cast<WPARAM>(pos), relative);
+		return static_cast<int>(Call(SCI_POSITIONRELATIVE, pos, relative));
 	}
 
 	int PositionRelativeCodeUnits(int pos, int relative)
 	{
-		return Call(SCI_POSITIONRELATIVECODEUNITS, static_cast<WPARAM>(pos), relative);
+		return static_cast<int>(Call(SCI_POSITIONRELATIVECODEUNITS, pos, relative));
 	}
 
 	void CopyRange(int start, int end)
 	{
-		Call(SCI_COPYRANGE, static_cast<WPARAM>(start), end);
+		Call(SCI_COPYRANGE, start, end);
 	}
 
 	void CopyText(int length, const char* text)
 	{
-		Call(SCI_COPYTEXT, static_cast<WPARAM>(length), reinterpret_cast<LPARAM>(text));
+		Call(SCI_COPYTEXT, length, reinterpret_cast<intptr_t>(text));
 	}
 
 	void SetSelectionMode(int selectionMode)
 	{
-		Call(SCI_SETSELECTIONMODE, static_cast<WPARAM>(selectionMode));
+		Call(SCI_SETSELECTIONMODE, selectionMode);
 	}
 
 	int GetSelectionMode()
 	{
-		return Call(SCI_GETSELECTIONMODE);
+		return static_cast<int>(Call(SCI_GETSELECTIONMODE));
 	}
 
 	bool GetMoveExtendsSelection()
@@ -2481,12 +2492,12 @@ public:
 
 	int GetLineSelStartPosition(int line)
 	{
-		return Call(SCI_GETLINESELSTARTPOSITION, static_cast<WPARAM>(line));
+		return static_cast<int>(Call(SCI_GETLINESELSTARTPOSITION, line));
 	}
 
 	int GetLineSelEndPosition(int line)
 	{
-		return Call(SCI_GETLINESELENDPOSITION, static_cast<WPARAM>(line));
+		return static_cast<int>(Call(SCI_GETLINESELENDPOSITION, line));
 	}
 
 	void LineDownRectExtend()
@@ -2576,22 +2587,22 @@ public:
 
 	void SetWhitespaceChars(const char* characters)
 	{
-		Call(SCI_SETWHITESPACECHARS, 0, reinterpret_cast<LPARAM>(characters));
+		Call(SCI_SETWHITESPACECHARS, 0, reinterpret_cast<intptr_t>(characters));
 	}
 
 	int GetWhitespaceChars(char* characters)
 	{
-		return Call(SCI_GETWHITESPACECHARS, 0, reinterpret_cast<LPARAM>(characters));
+		return static_cast<int>(Call(SCI_GETWHITESPACECHARS, 0, reinterpret_cast<intptr_t>(characters)));
 	}
 
 	void SetPunctuationChars(const char* characters)
 	{
-		Call(SCI_SETPUNCTUATIONCHARS, 0, reinterpret_cast<LPARAM>(characters));
+		Call(SCI_SETPUNCTUATIONCHARS, 0, reinterpret_cast<intptr_t>(characters));
 	}
 
 	int GetPunctuationChars(char* characters)
 	{
-		return Call(SCI_GETPUNCTUATIONCHARS, 0, reinterpret_cast<LPARAM>(characters));
+		return static_cast<int>(Call(SCI_GETPUNCTUATIONCHARS, 0, reinterpret_cast<intptr_t>(characters)));
 	}
 
 	void SetCharsDefault()
@@ -2601,77 +2612,77 @@ public:
 
 	int AutoCGetCurrent()
 	{
-		return Call(SCI_AUTOCGETCURRENT);
+		return static_cast<int>(Call(SCI_AUTOCGETCURRENT));
 	}
 
 	int AutoCGetCurrentText(char* text)
 	{
-		return Call(SCI_AUTOCGETCURRENTTEXT, 0, reinterpret_cast<LPARAM>(text));
+		return static_cast<int>(Call(SCI_AUTOCGETCURRENTTEXT, 0, reinterpret_cast<intptr_t>(text)));
 	}
 
 	void AutoCSetCaseInsensitiveBehaviour(int behaviour)
 	{
-		Call(SCI_AUTOCSETCASEINSENSITIVEBEHAVIOUR, static_cast<WPARAM>(behaviour));
+		Call(SCI_AUTOCSETCASEINSENSITIVEBEHAVIOUR, behaviour);
 	}
 
 	int AutoCGetCaseInsensitiveBehaviour()
 	{
-		return Call(SCI_AUTOCGETCASEINSENSITIVEBEHAVIOUR);
+		return static_cast<int>(Call(SCI_AUTOCGETCASEINSENSITIVEBEHAVIOUR));
 	}
 
 	void AutoCSetMulti(int multi)
 	{
-		Call(SCI_AUTOCSETMULTI, static_cast<WPARAM>(multi));
+		Call(SCI_AUTOCSETMULTI, multi);
 	}
 
 	int AutoCGetMulti()
 	{
-		return Call(SCI_AUTOCGETMULTI);
+		return static_cast<int>(Call(SCI_AUTOCGETMULTI));
 	}
 
 	void AutoCSetOrder(int order)
 	{
-		Call(SCI_AUTOCSETORDER, static_cast<WPARAM>(order));
+		Call(SCI_AUTOCSETORDER, order);
 	}
 
 	int AutoCGetOrder()
 	{
-		return Call(SCI_AUTOCGETORDER);
+		return static_cast<int>(Call(SCI_AUTOCGETORDER));
 	}
 
 	void Allocate(int bytes)
 	{
-		Call(SCI_ALLOCATE, static_cast<WPARAM>(bytes));
+		Call(SCI_ALLOCATE, bytes);
 	}
 
 	int TargetAsUTF8(char* s)
 	{
-		return Call(SCI_TARGETASUTF8, 0, reinterpret_cast<LPARAM>(s));
+		return static_cast<int>(Call(SCI_TARGETASUTF8, 0, reinterpret_cast<intptr_t>(s)));
 	}
 
 	void SetLengthForEncode(int bytes)
 	{
-		Call(SCI_SETLENGTHFORENCODE, static_cast<WPARAM>(bytes));
+		Call(SCI_SETLENGTHFORENCODE, bytes);
 	}
 
 	int EncodedFromUTF8(const char* utf8, char* encoded)
 	{
-		return Call(SCI_ENCODEDFROMUTF8, reinterpret_cast<WPARAM>(utf8), reinterpret_cast<LPARAM>(encoded));
+		return static_cast<int>(Call(SCI_ENCODEDFROMUTF8, reinterpret_cast<uintptr_t>(utf8), reinterpret_cast<intptr_t>(encoded)));
 	}
 
 	int FindColumn(int line, int column)
 	{
-		return Call(SCI_FINDCOLUMN, static_cast<WPARAM>(line), column);
+		return static_cast<int>(Call(SCI_FINDCOLUMN, line, column));
 	}
 
 	int GetCaretSticky()
 	{
-		return Call(SCI_GETCARETSTICKY);
+		return static_cast<int>(Call(SCI_GETCARETSTICKY));
 	}
 
 	void SetCaretSticky(int useCaretStickyBehaviour)
 	{
-		Call(SCI_SETCARETSTICKY, static_cast<WPARAM>(useCaretStickyBehaviour));
+		Call(SCI_SETCARETSTICKY, useCaretStickyBehaviour);
 	}
 
 	void ToggleCaretSticky()
@@ -2681,7 +2692,7 @@ public:
 
 	void SetPasteConvertEndings(bool convert)
 	{
-		Call(SCI_SETPASTECONVERTENDINGS, static_cast<WPARAM>(convert));
+		Call(SCI_SETPASTECONVERTENDINGS, convert);
 	}
 
 	bool GetPasteConvertEndings()
@@ -2696,82 +2707,82 @@ public:
 
 	void SetCaretLineBackAlpha(int alpha)
 	{
-		Call(SCI_SETCARETLINEBACKALPHA, static_cast<WPARAM>(alpha));
+		Call(SCI_SETCARETLINEBACKALPHA, alpha);
 	}
 
 	int GetCaretLineBackAlpha()
 	{
-		return Call(SCI_GETCARETLINEBACKALPHA);
+		return static_cast<int>(Call(SCI_GETCARETLINEBACKALPHA));
 	}
 
 	void SetCaretStyle(int caretStyle)
 	{
-		Call(SCI_SETCARETSTYLE, static_cast<WPARAM>(caretStyle));
+		Call(SCI_SETCARETSTYLE, caretStyle);
 	}
 
 	int GetCaretStyle()
 	{
-		return Call(SCI_GETCARETSTYLE);
+		return static_cast<int>(Call(SCI_GETCARETSTYLE));
 	}
 
 	void SetIndicatorCurrent(int indicator)
 	{
-		Call(SCI_SETINDICATORCURRENT, static_cast<WPARAM>(indicator));
+		Call(SCI_SETINDICATORCURRENT, indicator);
 	}
 
 	int GetIndicatorCurrent()
 	{
-		return Call(SCI_GETINDICATORCURRENT);
+		return static_cast<int>(Call(SCI_GETINDICATORCURRENT));
 	}
 
 	void SetIndicatorValue(int value)
 	{
-		Call(SCI_SETINDICATORVALUE, static_cast<WPARAM>(value));
+		Call(SCI_SETINDICATORVALUE, value);
 	}
 
 	int GetIndicatorValue()
 	{
-		return Call(SCI_GETINDICATORVALUE);
+		return static_cast<int>(Call(SCI_GETINDICATORVALUE));
 	}
 
 	void IndicatorFillRange(int start, int lengthFill)
 	{
-		Call(SCI_INDICATORFILLRANGE, static_cast<WPARAM>(start), lengthFill);
+		Call(SCI_INDICATORFILLRANGE, start, lengthFill);
 	}
 
 	void IndicatorClearRange(int start, int lengthClear)
 	{
-		Call(SCI_INDICATORCLEARRANGE, static_cast<WPARAM>(start), lengthClear);
+		Call(SCI_INDICATORCLEARRANGE, start, lengthClear);
 	}
 
 	int IndicatorAllOnFor(int pos)
 	{
-		return Call(SCI_INDICATORALLONFOR, static_cast<WPARAM>(pos));
+		return static_cast<int>(Call(SCI_INDICATORALLONFOR, pos));
 	}
 
 	int IndicatorValueAt(int indicator, int pos)
 	{
-		return Call(SCI_INDICATORVALUEAT, static_cast<WPARAM>(indicator), pos);
+		return static_cast<int>(Call(SCI_INDICATORVALUEAT, indicator, pos));
 	}
 
 	int IndicatorStart(int indicator, int pos)
 	{
-		return Call(SCI_INDICATORSTART, static_cast<WPARAM>(indicator), pos);
+		return static_cast<int>(Call(SCI_INDICATORSTART, indicator, pos));
 	}
 
 	int IndicatorEnd(int indicator, int pos)
 	{
-		return Call(SCI_INDICATOREND, static_cast<WPARAM>(indicator), pos);
+		return static_cast<int>(Call(SCI_INDICATOREND, indicator, pos));
 	}
 
 	void SetPositionCache(int size)
 	{
-		Call(SCI_SETPOSITIONCACHE, static_cast<WPARAM>(size));
+		Call(SCI_SETPOSITIONCACHE, size);
 	}
 
 	int GetPositionCache()
 	{
-		return Call(SCI_GETPOSITIONCACHE);
+		return static_cast<int>(Call(SCI_GETPOSITIONCACHE));
 	}
 
 	void CopyAllowLine()
@@ -2781,92 +2792,92 @@ public:
 
 	void* GetCharacterPointer()
 	{
-		return Call(SCI_GETCHARACTERPOINTER);
+		return reinterpret_cast<void*>(Call(SCI_GETCHARACTERPOINTER));
 	}
 
 	void* GetRangePointer(int start, int lengthRange)
 	{
-		return Call(SCI_GETRANGEPOINTER, static_cast<WPARAM>(start), lengthRange);
+		return reinterpret_cast<void*>(Call(SCI_GETRANGEPOINTER, start, lengthRange));
 	}
 
 	int GetGapPosition()
 	{
-		return Call(SCI_GETGAPPOSITION);
+		return static_cast<int>(Call(SCI_GETGAPPOSITION));
 	}
 
 	void IndicSetAlpha(int indicator, int alpha)
 	{
-		Call(SCI_INDICSETALPHA, static_cast<WPARAM>(indicator), alpha);
+		Call(SCI_INDICSETALPHA, indicator, alpha);
 	}
 
 	int IndicGetAlpha(int indicator)
 	{
-		return Call(SCI_INDICGETALPHA, static_cast<WPARAM>(indicator));
+		return static_cast<int>(Call(SCI_INDICGETALPHA, indicator));
 	}
 
 	void IndicSetOutlineAlpha(int indicator, int alpha)
 	{
-		Call(SCI_INDICSETOUTLINEALPHA, static_cast<WPARAM>(indicator), alpha);
+		Call(SCI_INDICSETOUTLINEALPHA, indicator, alpha);
 	}
 
 	int IndicGetOutlineAlpha(int indicator)
 	{
-		return Call(SCI_INDICGETOUTLINEALPHA, static_cast<WPARAM>(indicator));
+		return static_cast<int>(Call(SCI_INDICGETOUTLINEALPHA, indicator));
 	}
 
 	void SetExtraAscent(int extraAscent)
 	{
-		Call(SCI_SETEXTRAASCENT, static_cast<WPARAM>(extraAscent));
+		Call(SCI_SETEXTRAASCENT, extraAscent);
 	}
 
 	int GetExtraAscent()
 	{
-		return Call(SCI_GETEXTRAASCENT);
+		return static_cast<int>(Call(SCI_GETEXTRAASCENT));
 	}
 
 	void SetExtraDescent(int extraDescent)
 	{
-		Call(SCI_SETEXTRADESCENT, static_cast<WPARAM>(extraDescent));
+		Call(SCI_SETEXTRADESCENT, extraDescent);
 	}
 
 	int GetExtraDescent()
 	{
-		return Call(SCI_GETEXTRADESCENT);
+		return static_cast<int>(Call(SCI_GETEXTRADESCENT));
 	}
 
 	int MarkerSymbolDefined(int markerNumber)
 	{
-		return Call(SCI_MARKERSYMBOLDEFINED, static_cast<WPARAM>(markerNumber));
+		return static_cast<int>(Call(SCI_MARKERSYMBOLDEFINED, markerNumber));
 	}
 
 	void MarginSetText(int line, const char* text)
 	{
-		Call(SCI_MARGINSETTEXT, static_cast<WPARAM>(line), reinterpret_cast<LPARAM>(text));
+		Call(SCI_MARGINSETTEXT, line, reinterpret_cast<intptr_t>(text));
 	}
 
 	int MarginGetText(int line, char* text)
 	{
-		return Call(SCI_MARGINGETTEXT, static_cast<WPARAM>(line), reinterpret_cast<LPARAM>(text));
+		return static_cast<int>(Call(SCI_MARGINGETTEXT, line, reinterpret_cast<intptr_t>(text)));
 	}
 
 	void MarginSetStyle(int line, int style)
 	{
-		Call(SCI_MARGINSETSTYLE, static_cast<WPARAM>(line), style);
+		Call(SCI_MARGINSETSTYLE, line, style);
 	}
 
 	int MarginGetStyle(int line)
 	{
-		return Call(SCI_MARGINGETSTYLE, static_cast<WPARAM>(line));
+		return static_cast<int>(Call(SCI_MARGINGETSTYLE, line));
 	}
 
 	void MarginSetStyles(int line, const char* styles)
 	{
-		Call(SCI_MARGINSETSTYLES, static_cast<WPARAM>(line), reinterpret_cast<LPARAM>(styles));
+		Call(SCI_MARGINSETSTYLES, line, reinterpret_cast<intptr_t>(styles));
 	}
 
 	int MarginGetStyles(int line, char* styles)
 	{
-		return Call(SCI_MARGINGETSTYLES, static_cast<WPARAM>(line), reinterpret_cast<LPARAM>(styles));
+		return static_cast<int>(Call(SCI_MARGINGETSTYLES, line, reinterpret_cast<intptr_t>(styles)));
 	}
 
 	void MarginTextClearAll()
@@ -2876,57 +2887,57 @@ public:
 
 	void MarginSetStyleOffset(int style)
 	{
-		Call(SCI_MARGINSETSTYLEOFFSET, static_cast<WPARAM>(style));
+		Call(SCI_MARGINSETSTYLEOFFSET, style);
 	}
 
 	int MarginGetStyleOffset()
 	{
-		return Call(SCI_MARGINGETSTYLEOFFSET);
+		return static_cast<int>(Call(SCI_MARGINGETSTYLEOFFSET));
 	}
 
 	void SetMarginOptions(int marginOptions)
 	{
-		Call(SCI_SETMARGINOPTIONS, static_cast<WPARAM>(marginOptions));
+		Call(SCI_SETMARGINOPTIONS, marginOptions);
 	}
 
 	int GetMarginOptions()
 	{
-		return Call(SCI_GETMARGINOPTIONS);
+		return static_cast<int>(Call(SCI_GETMARGINOPTIONS));
 	}
 
 	void AnnotationSetText(int line, const char* text)
 	{
-		Call(SCI_ANNOTATIONSETTEXT, static_cast<WPARAM>(line), reinterpret_cast<LPARAM>(text));
+		Call(SCI_ANNOTATIONSETTEXT, line, reinterpret_cast<intptr_t>(text));
 	}
 
 	int AnnotationGetText(int line, char* text)
 	{
-		return Call(SCI_ANNOTATIONGETTEXT, static_cast<WPARAM>(line), reinterpret_cast<LPARAM>(text));
+		return static_cast<int>(Call(SCI_ANNOTATIONGETTEXT, line, reinterpret_cast<intptr_t>(text)));
 	}
 
 	void AnnotationSetStyle(int line, int style)
 	{
-		Call(SCI_ANNOTATIONSETSTYLE, static_cast<WPARAM>(line), style);
+		Call(SCI_ANNOTATIONSETSTYLE, line, style);
 	}
 
 	int AnnotationGetStyle(int line)
 	{
-		return Call(SCI_ANNOTATIONGETSTYLE, static_cast<WPARAM>(line));
+		return static_cast<int>(Call(SCI_ANNOTATIONGETSTYLE, line));
 	}
 
 	void AnnotationSetStyles(int line, const char* styles)
 	{
-		Call(SCI_ANNOTATIONSETSTYLES, static_cast<WPARAM>(line), reinterpret_cast<LPARAM>(styles));
+		Call(SCI_ANNOTATIONSETSTYLES, line, reinterpret_cast<intptr_t>(styles));
 	}
 
 	int AnnotationGetStyles(int line, char* styles)
 	{
-		return Call(SCI_ANNOTATIONGETSTYLES, static_cast<WPARAM>(line), reinterpret_cast<LPARAM>(styles));
+		return static_cast<int>(Call(SCI_ANNOTATIONGETSTYLES, line, reinterpret_cast<intptr_t>(styles)));
 	}
 
 	int AnnotationGetLines(int line)
 	{
-		return Call(SCI_ANNOTATIONGETLINES, static_cast<WPARAM>(line));
+		return static_cast<int>(Call(SCI_ANNOTATIONGETLINES, line));
 	}
 
 	void AnnotationClearAll()
@@ -2936,22 +2947,22 @@ public:
 
 	void AnnotationSetVisible(int visible)
 	{
-		Call(SCI_ANNOTATIONSETVISIBLE, static_cast<WPARAM>(visible));
+		Call(SCI_ANNOTATIONSETVISIBLE, visible);
 	}
 
 	int AnnotationGetVisible()
 	{
-		return Call(SCI_ANNOTATIONGETVISIBLE);
+		return static_cast<int>(Call(SCI_ANNOTATIONGETVISIBLE));
 	}
 
 	void AnnotationSetStyleOffset(int style)
 	{
-		Call(SCI_ANNOTATIONSETSTYLEOFFSET, static_cast<WPARAM>(style));
+		Call(SCI_ANNOTATIONSETSTYLEOFFSET, style);
 	}
 
 	int AnnotationGetStyleOffset()
 	{
-		return Call(SCI_ANNOTATIONGETSTYLEOFFSET);
+		return static_cast<int>(Call(SCI_ANNOTATIONGETSTYLEOFFSET));
 	}
 
 	void ReleaseAllExtendedStyles()
@@ -2961,27 +2972,27 @@ public:
 
 	int AllocateExtendedStyles(int numberStyles)
 	{
-		return Call(SCI_ALLOCATEEXTENDEDSTYLES, static_cast<WPARAM>(numberStyles));
+		return static_cast<int>(Call(SCI_ALLOCATEEXTENDEDSTYLES, numberStyles));
 	}
 
 	void AddUndoAction(int token, int flags)
 	{
-		Call(SCI_ADDUNDOACTION, static_cast<WPARAM>(token), flags);
+		Call(SCI_ADDUNDOACTION, token, flags);
 	}
 
 	int CharPositionFromPoint(int x, int y)
 	{
-		return Call(SCI_CHARPOSITIONFROMPOINT, static_cast<WPARAM>(x), y);
+		return static_cast<int>(Call(SCI_CHARPOSITIONFROMPOINT, x, y));
 	}
 
 	int CharPositionFromPointClose(int x, int y)
 	{
-		return Call(SCI_CHARPOSITIONFROMPOINTCLOSE, static_cast<WPARAM>(x), y);
+		return static_cast<int>(Call(SCI_CHARPOSITIONFROMPOINTCLOSE, x, y));
 	}
 
 	void SetMouseSelectionRectangularSwitch(bool mouseSelectionRectangularSwitch)
 	{
-		Call(SCI_SETMOUSESELECTIONRECTANGULARSWITCH, static_cast<WPARAM>(mouseSelectionRectangularSwitch));
+		Call(SCI_SETMOUSESELECTIONRECTANGULARSWITCH, mouseSelectionRectangularSwitch);
 	}
 
 	bool GetMouseSelectionRectangularSwitch()
@@ -2991,7 +3002,7 @@ public:
 
 	void SetMultipleSelection(bool multipleSelection)
 	{
-		Call(SCI_SETMULTIPLESELECTION, static_cast<WPARAM>(multipleSelection));
+		Call(SCI_SETMULTIPLESELECTION, multipleSelection);
 	}
 
 	bool GetMultipleSelection()
@@ -3001,7 +3012,7 @@ public:
 
 	void SetAdditionalSelectionTyping(bool additionalSelectionTyping)
 	{
-		Call(SCI_SETADDITIONALSELECTIONTYPING, static_cast<WPARAM>(additionalSelectionTyping));
+		Call(SCI_SETADDITIONALSELECTIONTYPING, additionalSelectionTyping);
 	}
 
 	bool GetAdditionalSelectionTyping()
@@ -3011,7 +3022,7 @@ public:
 
 	void SetAdditionalCaretsBlink(bool additionalCaretsBlink)
 	{
-		Call(SCI_SETADDITIONALCARETSBLINK, static_cast<WPARAM>(additionalCaretsBlink));
+		Call(SCI_SETADDITIONALCARETSBLINK, additionalCaretsBlink);
 	}
 
 	bool GetAdditionalCaretsBlink()
@@ -3021,7 +3032,7 @@ public:
 
 	void SetAdditionalCaretsVisible(bool additionalCaretsVisible)
 	{
-		Call(SCI_SETADDITIONALCARETSVISIBLE, static_cast<WPARAM>(additionalCaretsVisible));
+		Call(SCI_SETADDITIONALCARETSVISIBLE, additionalCaretsVisible);
 	}
 
 	bool GetAdditionalCaretsVisible()
@@ -3031,7 +3042,7 @@ public:
 
 	int GetSelections()
 	{
-		return Call(SCI_GETSELECTIONS);
+		return static_cast<int>(Call(SCI_GETSELECTIONS));
 	}
 
 	bool GetSelectionEmpty()
@@ -3046,177 +3057,177 @@ public:
 
 	void SetSelection(int caret, int anchor)
 	{
-		Call(SCI_SETSELECTION, static_cast<WPARAM>(caret), anchor);
+		Call(SCI_SETSELECTION, caret, anchor);
 	}
 
 	void AddSelection(int caret, int anchor)
 	{
-		Call(SCI_ADDSELECTION, static_cast<WPARAM>(caret), anchor);
+		Call(SCI_ADDSELECTION, caret, anchor);
 	}
 
 	void DropSelectionN(int selection)
 	{
-		Call(SCI_DROPSELECTIONN, static_cast<WPARAM>(selection));
+		Call(SCI_DROPSELECTIONN, selection);
 	}
 
 	void SetMainSelection(int selection)
 	{
-		Call(SCI_SETMAINSELECTION, static_cast<WPARAM>(selection));
+		Call(SCI_SETMAINSELECTION, selection);
 	}
 
 	int GetMainSelection()
 	{
-		return Call(SCI_GETMAINSELECTION);
+		return static_cast<int>(Call(SCI_GETMAINSELECTION));
 	}
 
 	void SetSelectionNCaret(int selection, int caret)
 	{
-		Call(SCI_SETSELECTIONNCARET, static_cast<WPARAM>(selection), caret);
+		Call(SCI_SETSELECTIONNCARET, selection, caret);
 	}
 
 	int GetSelectionNCaret(int selection)
 	{
-		return Call(SCI_GETSELECTIONNCARET, static_cast<WPARAM>(selection));
+		return static_cast<int>(Call(SCI_GETSELECTIONNCARET, selection));
 	}
 
 	void SetSelectionNAnchor(int selection, int anchor)
 	{
-		Call(SCI_SETSELECTIONNANCHOR, static_cast<WPARAM>(selection), anchor);
+		Call(SCI_SETSELECTIONNANCHOR, selection, anchor);
 	}
 
 	int GetSelectionNAnchor(int selection)
 	{
-		return Call(SCI_GETSELECTIONNANCHOR, static_cast<WPARAM>(selection));
+		return static_cast<int>(Call(SCI_GETSELECTIONNANCHOR, selection));
 	}
 
 	void SetSelectionNCaretVirtualSpace(int selection, int space)
 	{
-		Call(SCI_SETSELECTIONNCARETVIRTUALSPACE, static_cast<WPARAM>(selection), space);
+		Call(SCI_SETSELECTIONNCARETVIRTUALSPACE, selection, space);
 	}
 
 	int GetSelectionNCaretVirtualSpace(int selection)
 	{
-		return Call(SCI_GETSELECTIONNCARETVIRTUALSPACE, static_cast<WPARAM>(selection));
+		return static_cast<int>(Call(SCI_GETSELECTIONNCARETVIRTUALSPACE, selection));
 	}
 
 	void SetSelectionNAnchorVirtualSpace(int selection, int space)
 	{
-		Call(SCI_SETSELECTIONNANCHORVIRTUALSPACE, static_cast<WPARAM>(selection), space);
+		Call(SCI_SETSELECTIONNANCHORVIRTUALSPACE, selection, space);
 	}
 
 	int GetSelectionNAnchorVirtualSpace(int selection)
 	{
-		return Call(SCI_GETSELECTIONNANCHORVIRTUALSPACE, static_cast<WPARAM>(selection));
+		return static_cast<int>(Call(SCI_GETSELECTIONNANCHORVIRTUALSPACE, selection));
 	}
 
 	void SetSelectionNStart(int selection, int anchor)
 	{
-		Call(SCI_SETSELECTIONNSTART, static_cast<WPARAM>(selection), anchor);
+		Call(SCI_SETSELECTIONNSTART, selection, anchor);
 	}
 
 	int GetSelectionNStart(int selection)
 	{
-		return Call(SCI_GETSELECTIONNSTART, static_cast<WPARAM>(selection));
+		return static_cast<int>(Call(SCI_GETSELECTIONNSTART, selection));
 	}
 
 	void SetSelectionNEnd(int selection, int caret)
 	{
-		Call(SCI_SETSELECTIONNEND, static_cast<WPARAM>(selection), caret);
+		Call(SCI_SETSELECTIONNEND, selection, caret);
 	}
 
 	int GetSelectionNEnd(int selection)
 	{
-		return Call(SCI_GETSELECTIONNEND, static_cast<WPARAM>(selection));
+		return static_cast<int>(Call(SCI_GETSELECTIONNEND, selection));
 	}
 
 	void SetRectangularSelectionCaret(int caret)
 	{
-		Call(SCI_SETRECTANGULARSELECTIONCARET, static_cast<WPARAM>(caret));
+		Call(SCI_SETRECTANGULARSELECTIONCARET, caret);
 	}
 
 	int GetRectangularSelectionCaret()
 	{
-		return Call(SCI_GETRECTANGULARSELECTIONCARET);
+		return static_cast<int>(Call(SCI_GETRECTANGULARSELECTIONCARET));
 	}
 
 	void SetRectangularSelectionAnchor(int anchor)
 	{
-		Call(SCI_SETRECTANGULARSELECTIONANCHOR, static_cast<WPARAM>(anchor));
+		Call(SCI_SETRECTANGULARSELECTIONANCHOR, anchor);
 	}
 
 	int GetRectangularSelectionAnchor()
 	{
-		return Call(SCI_GETRECTANGULARSELECTIONANCHOR);
+		return static_cast<int>(Call(SCI_GETRECTANGULARSELECTIONANCHOR));
 	}
 
 	void SetRectangularSelectionCaretVirtualSpace(int space)
 	{
-		Call(SCI_SETRECTANGULARSELECTIONCARETVIRTUALSPACE, static_cast<WPARAM>(space));
+		Call(SCI_SETRECTANGULARSELECTIONCARETVIRTUALSPACE, space);
 	}
 
 	int GetRectangularSelectionCaretVirtualSpace()
 	{
-		return Call(SCI_GETRECTANGULARSELECTIONCARETVIRTUALSPACE);
+		return static_cast<int>(Call(SCI_GETRECTANGULARSELECTIONCARETVIRTUALSPACE));
 	}
 
 	void SetRectangularSelectionAnchorVirtualSpace(int space)
 	{
-		Call(SCI_SETRECTANGULARSELECTIONANCHORVIRTUALSPACE, static_cast<WPARAM>(space));
+		Call(SCI_SETRECTANGULARSELECTIONANCHORVIRTUALSPACE, space);
 	}
 
 	int GetRectangularSelectionAnchorVirtualSpace()
 	{
-		return Call(SCI_GETRECTANGULARSELECTIONANCHORVIRTUALSPACE);
+		return static_cast<int>(Call(SCI_GETRECTANGULARSELECTIONANCHORVIRTUALSPACE));
 	}
 
 	void SetVirtualSpaceOptions(int virtualSpaceOptions)
 	{
-		Call(SCI_SETVIRTUALSPACEOPTIONS, static_cast<WPARAM>(virtualSpaceOptions));
+		Call(SCI_SETVIRTUALSPACEOPTIONS, virtualSpaceOptions);
 	}
 
 	int GetVirtualSpaceOptions()
 	{
-		return Call(SCI_GETVIRTUALSPACEOPTIONS);
+		return static_cast<int>(Call(SCI_GETVIRTUALSPACEOPTIONS));
 	}
 
 	void SetRectangularSelectionModifier(int modifier)
 	{
-		Call(SCI_SETRECTANGULARSELECTIONMODIFIER, static_cast<WPARAM>(modifier));
+		Call(SCI_SETRECTANGULARSELECTIONMODIFIER, modifier);
 	}
 
 	int GetRectangularSelectionModifier()
 	{
-		return Call(SCI_GETRECTANGULARSELECTIONMODIFIER);
+		return static_cast<int>(Call(SCI_GETRECTANGULARSELECTIONMODIFIER));
 	}
 
 	void SetAdditionalSelFore(int fore)
 	{
-		Call(SCI_SETADDITIONALSELFORE, static_cast<WPARAM>(fore));
+		Call(SCI_SETADDITIONALSELFORE, fore);
 	}
 
 	void SetAdditionalSelBack(int back)
 	{
-		Call(SCI_SETADDITIONALSELBACK, static_cast<WPARAM>(back));
+		Call(SCI_SETADDITIONALSELBACK, back);
 	}
 
 	void SetAdditionalSelAlpha(int alpha)
 	{
-		Call(SCI_SETADDITIONALSELALPHA, static_cast<WPARAM>(alpha));
+		Call(SCI_SETADDITIONALSELALPHA, alpha);
 	}
 
 	int GetAdditionalSelAlpha()
 	{
-		return Call(SCI_GETADDITIONALSELALPHA);
+		return static_cast<int>(Call(SCI_GETADDITIONALSELALPHA));
 	}
 
 	void SetAdditionalCaretFore(int fore)
 	{
-		Call(SCI_SETADDITIONALCARETFORE, static_cast<WPARAM>(fore));
+		Call(SCI_SETADDITIONALCARETFORE, fore);
 	}
 
 	int GetAdditionalCaretFore()
 	{
-		return Call(SCI_GETADDITIONALCARETFORE);
+		return static_cast<int>(Call(SCI_GETADDITIONALCARETFORE));
 	}
 
 	void RotateSelection()
@@ -3241,12 +3252,12 @@ public:
 
 	int ChangeLexerState(int start, int end)
 	{
-		return Call(SCI_CHANGELEXERSTATE, static_cast<WPARAM>(start), end);
+		return static_cast<int>(Call(SCI_CHANGELEXERSTATE, start, end));
 	}
 
 	int ContractedFoldNext(int lineStart)
 	{
-		return Call(SCI_CONTRACTEDFOLDNEXT, static_cast<WPARAM>(lineStart));
+		return static_cast<int>(Call(SCI_CONTRACTEDFOLDNEXT, lineStart));
 	}
 
 	void VerticalCentreCaret()
@@ -3266,37 +3277,37 @@ public:
 
 	void SetIdentifier(int identifier)
 	{
-		Call(SCI_SETIDENTIFIER, static_cast<WPARAM>(identifier));
+		Call(SCI_SETIDENTIFIER, identifier);
 	}
 
 	int GetIdentifier()
 	{
-		return Call(SCI_GETIDENTIFIER);
+		return static_cast<int>(Call(SCI_GETIDENTIFIER));
 	}
 
 	void RGBAImageSetWidth(int width)
 	{
-		Call(SCI_RGBAIMAGESETWIDTH, static_cast<WPARAM>(width));
+		Call(SCI_RGBAIMAGESETWIDTH, width);
 	}
 
 	void RGBAImageSetHeight(int height)
 	{
-		Call(SCI_RGBAIMAGESETHEIGHT, static_cast<WPARAM>(height));
+		Call(SCI_RGBAIMAGESETHEIGHT, height);
 	}
 
 	void RGBAImageSetScale(int scalePercent)
 	{
-		Call(SCI_RGBAIMAGESETSCALE, static_cast<WPARAM>(scalePercent));
+		Call(SCI_RGBAIMAGESETSCALE, scalePercent);
 	}
 
 	void MarkerDefineRGBAImage(int markerNumber, const char* pixels)
 	{
-		Call(SCI_MARKERDEFINERGBAIMAGE, static_cast<WPARAM>(markerNumber), reinterpret_cast<LPARAM>(pixels));
+		Call(SCI_MARKERDEFINERGBAIMAGE, markerNumber, reinterpret_cast<intptr_t>(pixels));
 	}
 
 	void RegisterRGBAImage(int type, const char* pixels)
 	{
-		Call(SCI_REGISTERRGBAIMAGE, static_cast<WPARAM>(type), reinterpret_cast<LPARAM>(pixels));
+		Call(SCI_REGISTERRGBAIMAGE, type, reinterpret_cast<intptr_t>(pixels));
 	}
 
 	void ScrollToStart()
@@ -3311,27 +3322,27 @@ public:
 
 	void SetTechnology(int technology)
 	{
-		Call(SCI_SETTECHNOLOGY, static_cast<WPARAM>(technology));
+		Call(SCI_SETTECHNOLOGY, technology);
 	}
 
 	int GetTechnology()
 	{
-		return Call(SCI_GETTECHNOLOGY);
+		return static_cast<int>(Call(SCI_GETTECHNOLOGY));
 	}
 
 	void* CreateLoader(int bytes, int documentOptions)
 	{
-		return Call(SCI_CREATELOADER, static_cast<WPARAM>(bytes), documentOptions);
+		return reinterpret_cast<void*>(Call(SCI_CREATELOADER, bytes, documentOptions));
 	}
 
 	void FindIndicatorShow(int start, int end)
 	{
-		Call(SCI_FINDINDICATORSHOW, static_cast<WPARAM>(start), end);
+		Call(SCI_FINDINDICATORSHOW, start, end);
 	}
 
 	void FindIndicatorFlash(int start, int end)
 	{
-		Call(SCI_FINDINDICATORFLASH, static_cast<WPARAM>(start), end);
+		Call(SCI_FINDINDICATORFLASH, start, end);
 	}
 
 	void FindIndicatorHide()
@@ -3356,37 +3367,37 @@ public:
 
 	void SetCaretLineVisibleAlways(bool alwaysVisible)
 	{
-		Call(SCI_SETCARETLINEVISIBLEALWAYS, static_cast<WPARAM>(alwaysVisible));
+		Call(SCI_SETCARETLINEVISIBLEALWAYS, alwaysVisible);
 	}
 
 	void SetLineEndTypesAllowed(int lineEndBitSet)
 	{
-		Call(SCI_SETLINEENDTYPESALLOWED, static_cast<WPARAM>(lineEndBitSet));
+		Call(SCI_SETLINEENDTYPESALLOWED, lineEndBitSet);
 	}
 
 	int GetLineEndTypesAllowed()
 	{
-		return Call(SCI_GETLINEENDTYPESALLOWED);
+		return static_cast<int>(Call(SCI_GETLINEENDTYPESALLOWED));
 	}
 
 	int GetLineEndTypesActive()
 	{
-		return Call(SCI_GETLINEENDTYPESACTIVE);
+		return static_cast<int>(Call(SCI_GETLINEENDTYPESACTIVE));
 	}
 
 	void SetRepresentation(const char* encodedCharacter, const char* representation)
 	{
-		Call(SCI_SETREPRESENTATION, reinterpret_cast<WPARAM>(encodedCharacter), reinterpret_cast<LPARAM>(representation));
+		Call(SCI_SETREPRESENTATION, reinterpret_cast<uintptr_t>(encodedCharacter), reinterpret_cast<intptr_t>(representation));
 	}
 
 	int GetRepresentation(const char* encodedCharacter, char* representation)
 	{
-		return Call(SCI_GETREPRESENTATION, reinterpret_cast<WPARAM>(encodedCharacter), reinterpret_cast<LPARAM>(representation));
+		return static_cast<int>(Call(SCI_GETREPRESENTATION, reinterpret_cast<uintptr_t>(encodedCharacter), reinterpret_cast<intptr_t>(representation)));
 	}
 
 	void ClearRepresentation(const char* encodedCharacter)
 	{
-		Call(SCI_CLEARREPRESENTATION, reinterpret_cast<WPARAM>(encodedCharacter));
+		Call(SCI_CLEARREPRESENTATION, reinterpret_cast<uintptr_t>(encodedCharacter));
 	}
 
 	void StartRecord()
@@ -3401,112 +3412,112 @@ public:
 
 	void SetLexer(int lexer)
 	{
-		Call(SCI_SETLEXER, static_cast<WPARAM>(lexer));
+		Call(SCI_SETLEXER, lexer);
 	}
 
 	int GetLexer()
 	{
-		return Call(SCI_GETLEXER);
+		return static_cast<int>(Call(SCI_GETLEXER));
 	}
 
 	void Colourise(int start, int end)
 	{
-		Call(SCI_COLOURISE, static_cast<WPARAM>(start), end);
+		Call(SCI_COLOURISE, start, end);
 	}
 
 	void SetProperty(const char* key, const char* value)
 	{
-		Call(SCI_SETPROPERTY, reinterpret_cast<WPARAM>(key), reinterpret_cast<LPARAM>(value));
+		Call(SCI_SETPROPERTY, reinterpret_cast<uintptr_t>(key), reinterpret_cast<intptr_t>(value));
 	}
 
 	void SetKeyWords(int keyWordSet, const char* keyWords)
 	{
-		Call(SCI_SETKEYWORDS, static_cast<WPARAM>(keyWordSet), reinterpret_cast<LPARAM>(keyWords));
+		Call(SCI_SETKEYWORDS, keyWordSet, reinterpret_cast<intptr_t>(keyWords));
 	}
 
 	void SetLexerLanguage(const char* language)
 	{
-		Call(SCI_SETLEXERLANGUAGE, 0, reinterpret_cast<LPARAM>(language));
+		Call(SCI_SETLEXERLANGUAGE, 0, reinterpret_cast<intptr_t>(language));
 	}
 
 	void LoadLexerLibrary(const char* path)
 	{
-		Call(SCI_LOADLEXERLIBRARY, 0, reinterpret_cast<LPARAM>(path));
+		Call(SCI_LOADLEXERLIBRARY, 0, reinterpret_cast<intptr_t>(path));
 	}
 
 	int GetProperty(const char* key, char* value)
 	{
-		return Call(SCI_GETPROPERTY, reinterpret_cast<WPARAM>(key), reinterpret_cast<LPARAM>(value));
+		return static_cast<int>(Call(SCI_GETPROPERTY, reinterpret_cast<uintptr_t>(key), reinterpret_cast<intptr_t>(value)));
 	}
 
 	int GetPropertyExpanded(const char* key, char* value)
 	{
-		return Call(SCI_GETPROPERTYEXPANDED, reinterpret_cast<WPARAM>(key), reinterpret_cast<LPARAM>(value));
+		return static_cast<int>(Call(SCI_GETPROPERTYEXPANDED, reinterpret_cast<uintptr_t>(key), reinterpret_cast<intptr_t>(value)));
 	}
 
 	int GetPropertyInt(const char* key, int defaultValue)
 	{
-		return Call(SCI_GETPROPERTYINT, reinterpret_cast<WPARAM>(key), defaultValue);
+		return static_cast<int>(Call(SCI_GETPROPERTYINT, reinterpret_cast<uintptr_t>(key), defaultValue));
 	}
 
 	int GetLexerLanguage(char* language)
 	{
-		return Call(SCI_GETLEXERLANGUAGE, 0, reinterpret_cast<LPARAM>(language));
+		return static_cast<int>(Call(SCI_GETLEXERLANGUAGE, 0, reinterpret_cast<intptr_t>(language)));
 	}
 
 	void* PrivateLexerCall(int operation, void* pointer)
 	{
-		return Call(SCI_PRIVATELEXERCALL, static_cast<WPARAM>(operation), reinterpret_cast<LPARAM>(pointer));
+		return reinterpret_cast<void*>(Call(SCI_PRIVATELEXERCALL, operation, reinterpret_cast<intptr_t>(pointer)));
 	}
 
 	int PropertyNames(char* names)
 	{
-		return Call(SCI_PROPERTYNAMES, 0, reinterpret_cast<LPARAM>(names));
+		return static_cast<int>(Call(SCI_PROPERTYNAMES, 0, reinterpret_cast<intptr_t>(names)));
 	}
 
 	int PropertyType(const char* name)
 	{
-		return Call(SCI_PROPERTYTYPE, reinterpret_cast<WPARAM>(name));
+		return static_cast<int>(Call(SCI_PROPERTYTYPE, reinterpret_cast<uintptr_t>(name)));
 	}
 
 	int DescribeProperty(const char* name, char* description)
 	{
-		return Call(SCI_DESCRIBEPROPERTY, reinterpret_cast<WPARAM>(name), reinterpret_cast<LPARAM>(description));
+		return static_cast<int>(Call(SCI_DESCRIBEPROPERTY, reinterpret_cast<uintptr_t>(name), reinterpret_cast<intptr_t>(description)));
 	}
 
 	int DescribeKeyWordSets(char* descriptions)
 	{
-		return Call(SCI_DESCRIBEKEYWORDSETS, 0, reinterpret_cast<LPARAM>(descriptions));
+		return static_cast<int>(Call(SCI_DESCRIBEKEYWORDSETS, 0, reinterpret_cast<intptr_t>(descriptions)));
 	}
 
 	int GetLineEndTypesSupported()
 	{
-		return Call(SCI_GETLINEENDTYPESSUPPORTED);
+		return static_cast<int>(Call(SCI_GETLINEENDTYPESSUPPORTED));
 	}
 
 	int AllocateSubStyles(int styleBase, int numberStyles)
 	{
-		return Call(SCI_ALLOCATESUBSTYLES, static_cast<WPARAM>(styleBase), numberStyles);
+		return static_cast<int>(Call(SCI_ALLOCATESUBSTYLES, styleBase, numberStyles));
 	}
 
 	int GetSubStylesStart(int styleBase)
 	{
-		return Call(SCI_GETSUBSTYLESSTART, static_cast<WPARAM>(styleBase));
+		return static_cast<int>(Call(SCI_GETSUBSTYLESSTART, styleBase));
 	}
 
 	int GetSubStylesLength(int styleBase)
 	{
-		return Call(SCI_GETSUBSTYLESLENGTH, static_cast<WPARAM>(styleBase));
+		return static_cast<int>(Call(SCI_GETSUBSTYLESLENGTH, styleBase));
 	}
 
 	int GetStyleFromSubStyle(int subStyle)
 	{
-		return Call(SCI_GETSTYLEFROMSUBSTYLE, static_cast<WPARAM>(subStyle));
+		return static_cast<int>(Call(SCI_GETSTYLEFROMSUBSTYLE, subStyle));
 	}
 
 	int GetPrimaryStyleFromStyle(int style)
 	{
-		return Call(SCI_GETPRIMARYSTYLEFROMSTYLE, static_cast<WPARAM>(style));
+		return static_cast<int>(Call(SCI_GETPRIMARYSTYLEFROMSTYLE, style));
 	}
 
 	void FreeSubStyles()
@@ -3516,77 +3527,82 @@ public:
 
 	void SetIdentifiers(int style, const char* identifiers)
 	{
-		Call(SCI_SETIDENTIFIERS, static_cast<WPARAM>(style), reinterpret_cast<LPARAM>(identifiers));
+		Call(SCI_SETIDENTIFIERS, style, reinterpret_cast<intptr_t>(identifiers));
 	}
 
 	int DistanceToSecondaryStyles()
 	{
-		return Call(SCI_DISTANCETOSECONDARYSTYLES);
+		return static_cast<int>(Call(SCI_DISTANCETOSECONDARYSTYLES));
 	}
 
 	int GetSubStyleBases(char* styles)
 	{
-		return Call(SCI_GETSUBSTYLEBASES, 0, reinterpret_cast<LPARAM>(styles));
+		return static_cast<int>(Call(SCI_GETSUBSTYLEBASES, 0, reinterpret_cast<intptr_t>(styles)));
 	}
 
 	int GetNamedStyles()
 	{
-		return Call(SCI_GETNAMEDSTYLES);
+		return static_cast<int>(Call(SCI_GETNAMEDSTYLES));
 	}
 
 	int NameOfStyle(int style, char* name)
 	{
-		return Call(SCI_NAMEOFSTYLE, static_cast<WPARAM>(style), reinterpret_cast<LPARAM>(name));
+		return static_cast<int>(Call(SCI_NAMEOFSTYLE, style, reinterpret_cast<intptr_t>(name)));
 	}
 
 	int TagsOfStyle(int style, char* tags)
 	{
-		return Call(SCI_TAGSOFSTYLE, static_cast<WPARAM>(style), reinterpret_cast<LPARAM>(tags));
+		return static_cast<int>(Call(SCI_TAGSOFSTYLE, style, reinterpret_cast<intptr_t>(tags)));
 	}
 
 	int DescriptionOfStyle(int style, char* description)
 	{
-		return Call(SCI_DESCRIPTIONOFSTYLE, static_cast<WPARAM>(style), reinterpret_cast<LPARAM>(description));
+		return static_cast<int>(Call(SCI_DESCRIPTIONOFSTYLE, style, reinterpret_cast<intptr_t>(description)));
 	}
 
 	int GetBidirectional()
 	{
-		return Call(SCI_GETBIDIRECTIONAL);
+		return static_cast<int>(Call(SCI_GETBIDIRECTIONAL));
 	}
 
 	void SetBidirectional(int bidirectional)
 	{
-		Call(SCI_SETBIDIRECTIONAL, static_cast<WPARAM>(bidirectional));
+		Call(SCI_SETBIDIRECTIONAL, bidirectional);
 	}
 
 	int GetLineCharacterIndex()
 	{
-		return Call(SCI_GETLINECHARACTERINDEX);
+		return static_cast<int>(Call(SCI_GETLINECHARACTERINDEX));
 	}
 
 	void AllocateLineCharacterIndex(int lineCharacterIndex)
 	{
-		Call(SCI_ALLOCATELINECHARACTERINDEX, static_cast<WPARAM>(lineCharacterIndex));
+		Call(SCI_ALLOCATELINECHARACTERINDEX, lineCharacterIndex);
 	}
 
 	void ReleaseLineCharacterIndex(int lineCharacterIndex)
 	{
-		Call(SCI_RELEASELINECHARACTERINDEX, static_cast<WPARAM>(lineCharacterIndex));
+		Call(SCI_RELEASELINECHARACTERINDEX, lineCharacterIndex);
 	}
 
 	int LineFromIndexPosition(int pos, int lineCharacterIndex)
 	{
-		return Call(SCI_LINEFROMINDEXPOSITION, static_cast<WPARAM>(pos), lineCharacterIndex);
+		return static_cast<int>(Call(SCI_LINEFROMINDEXPOSITION, pos, lineCharacterIndex));
 	}
 
 	int IndexPositionFromLine(int line, int lineCharacterIndex)
 	{
-		return Call(SCI_INDEXPOSITIONFROMLINE, static_cast<WPARAM>(line), lineCharacterIndex);
+		return static_cast<int>(Call(SCI_INDEXPOSITIONFROMLINE, line, lineCharacterIndex));
 	}
 
-};
+private:
+	using FunctionDirect = intptr_t(*)(intptr_t ptr, unsigned int msg, uintptr_t wParam, intptr_t lParam);
 
-class CScintillaCtrl : public CScintillaImpl<CScintillaCtrl>
-{
-	DECLARE_WND_SUPERCLASS(_T("WTL_ScintillaCtrl"), GetWndClassName())
+	intptr_t Call(unsigned int msg, uintptr_t wParam = 0, intptr_t lParam = 0)
+	{
+		return fn(ptr, msg, wParam, lParam);
+	}
+
+	FunctionDirect fn;
+	intptr_t ptr;
 };

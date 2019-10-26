@@ -82,12 +82,15 @@ CScriptEditorCtrl::CScriptEditorCtrl()
 	};
 }
 
-BOOL CScriptEditorCtrl::SubclassWindow(HWND hWnd)
+BOOL CScriptEditorCtrl::SubclassWindow(HWND hwnd)
 {
-	const BOOL bRet = CScintillaCtrl::SubclassWindow(hWnd);
+	const BOOL bRet = CScintillaImpl::SubclassWindow(hwnd);
 
 	if (bRet)
+	{
+		SetFnPtr();
 		Init();
+	}
 
 	return bRet;
 }
