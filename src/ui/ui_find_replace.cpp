@@ -19,7 +19,7 @@ static constexpr std::array<int, 12> ids =
 
 CDialogFindReplace::CDialogFindReplace(CScriptEditorCtrl* parent) : m_parent(parent), m_flags(0), m_havefound(false)
 {
-	m_hacks.assign(ids.size(), TabHack());
+	m_hacks.assign(ids.size(), KeyHack());
 }
 
 BOOL CDialogFindReplace::OnInitDialog(HWND, LPARAM)
@@ -29,7 +29,7 @@ BOOL CDialogFindReplace::OnInitDialog(HWND, LPARAM)
 		const int id = ids[i];
 		HWND hwnd = GetDlgItem(id);
 		m_window[id] = hwnd;
-		m_hacks[i].SubclassWindow(hwnd);
+		m_hacks[i].SubclassWindow(hwnd, id != IDC_BTN_PREVIOUS && id != IDC_BTN_REPLACE && id != IDC_BTN_REPLACE_ALL && id != IDCANCEL);
 	}
 	return TRUE;
 }
@@ -101,12 +101,15 @@ void CDialogFindReplace::SetMode(mode m)
 	SetFocus();
 }
 
-BOOL CDialogFindReplace::TabHack::SubclassWindow(HWND hwnd)
+CDialogFindReplace::KeyHack::KeyHack() : m_ret(false) {}
+
+BOOL CDialogFindReplace::KeyHack::SubclassWindow(HWND hwnd, bool ret)
 {
+	m_ret = ret;
 	return __super::SubclassWindow(hwnd);
 }
 
-LRESULT CDialogFindReplace::TabHack::OnChar(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+LRESULT CDialogFindReplace::KeyHack::OnChar(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
 	switch (wParam)
 	{
@@ -120,10 +123,17 @@ LRESULT CDialogFindReplace::TabHack::OnChar(UINT uMsg, WPARAM wParam, LPARAM lPa
 	return DefWindowProc(uMsg, wParam, lParam);
 }
 
-LRESULT CDialogFindReplace::TabHack::OnKeyDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+LRESULT CDialogFindReplace::KeyHack::OnKeyDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
 	switch (wParam)
 	{
+	case VK_RETURN:
+		if (m_ret)
+		{
+			::PostMessage(GetParent(), WM_COMMAND, MAKEWPARAM(IDC_BTN_NEXT, BN_CLICKED), (LPARAM)m_hWnd);
+			return FALSE;
+		}
+		break;
 	case VK_ESCAPE:
 		::PostMessage(GetParent(), WM_COMMAND, MAKEWPARAM(IDCANCEL, BN_CLICKED), reinterpret_cast<LPARAM>(m_hWnd));
 		return 0;

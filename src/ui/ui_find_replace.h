@@ -41,21 +41,26 @@ public:
 	pfc::string8_fast m_find_text, m_replace_text;
 
 private:
-	class TabHack : public CWindowImpl<TabHack, CWindow>
+	class KeyHack : public CWindowImpl<KeyHack, CWindow>
 	{
 	public:
-		BEGIN_MSG_MAP(TabHack)
+		KeyHack();
+
+		BEGIN_MSG_MAP(KeyHack)
 			MESSAGE_HANDLER(WM_CHAR, OnChar)
 			MESSAGE_HANDLER(WM_KEYDOWN, OnKeyDown)
 		END_MSG_MAP()
 
-		BOOL SubclassWindow(HWND hwnd);
+		BOOL SubclassWindow(HWND hwnd, bool ret);
 		LRESULT OnChar(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		LRESULT OnKeyDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+
+	private:
+		bool m_ret;
 	};
 
 	bool m_havefound;
 	CScriptEditorCtrl* m_parent;
 	std::map<int, CWindow> m_window;
-	std::vector<TabHack> m_hacks;
+	std::vector<KeyHack> m_hacks;
 };
