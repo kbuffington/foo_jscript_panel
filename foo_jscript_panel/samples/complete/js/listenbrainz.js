@@ -197,7 +197,7 @@ _.mixin({
 				tmp[key] = [];
 				for (var j = 0; j < f.MetaValueCount(i); j++) {
 					var value = f.MetaValue(i, j);
-					if (key.indexOf('musicbrainz') == 0) {
+					if (_.startsWith(key, 'musicbrainz')) {
 						// if Picard has written multiple MBIDs as a string, use the first one
 						value = value.substring(0, 36);
 						if (_.isUUID(value)) {

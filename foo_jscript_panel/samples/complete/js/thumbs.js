@@ -150,7 +150,7 @@ _.mixin({
 			if (panel.metadb) {
 				if (this.properties.source.value == 0) { // custom folder
 					var temp_folder = this.properties.tf.value.replace('%profile%', fb.ProfilePath);
-					temp_folder = temp_folder.indexOf(fb.ProfilePath) == 0 ? fb.ProfilePath + panel.tf(temp_folder.substring(fb.ProfilePath.length, temp_folder.length)) : panel.tf(temp_folder);
+					temp_folder = _.startsWith(temp_folder, fb.ProfilePath) ? fb.ProfilePath + panel.tf(temp_folder.substring(fb.ProfilePath.length, temp_folder.length)) : panel.tf(temp_folder);
 					if (this.folder == temp_folder) {
 						return;
 					}

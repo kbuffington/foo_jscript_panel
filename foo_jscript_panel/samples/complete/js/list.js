@@ -161,7 +161,7 @@ _.mixin({
 					break;
 				case x > this.x + this.text_x && x < this.x + this.text_x + Math.min(this.data[this.index].width, this.text_width):
 					window.SetCursor(IDC_HAND);
-					if (this.data[this.index].url.indexOf('http') == 0) {
+					if (_.startsWith(this.data[this.index].url, 'http')) {
 						_.tt(this.data[this.index].url);
 					} else {
 						_.tt('Autoplaylist: ' + this.data[this.index].url);
@@ -190,7 +190,7 @@ _.mixin({
 					}
 					break;
 				case x > this.x + this.text_x && x < this.x + this.text_x + Math.min(this.data[this.index].width, this.text_width):
-					if (this.data[this.index].url.indexOf('http') == 0) {
+					if (_.startsWith(this.data[this.index].url, 'http')) {
 						_.run(this.data[this.index].url);
 					} else {
 						plman.CreateAutoPlaylist(plman.PlaylistCount, this.data[this.index].name, this.data[this.index].url);
