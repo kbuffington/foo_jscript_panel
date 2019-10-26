@@ -31,6 +31,7 @@ public:
 	LRESULT OnApply(UINT, WPARAM, LPARAM, BOOL&);
 	LRESULT OnNotify(int idCtrl, LPNMHDR pnmh);
 	void Apply();
+	void BuildMenu();
 	void OnCloseCmd(UINT uNotifyCode, int nID, HWND wndCtl);
 	void OnDocs(UINT uNotifyCode, int nID, HWND wndCtl);
 	void OnFileImport(UINT uNotifyCode, int nID, HWND wndCtl);
@@ -40,9 +41,9 @@ public:
 	void OnSamples(UINT uNotifyCode, int nID, HWND wndCtl);
 
 private:
-	CCheckBox m_pseudo;
-	CComboBox m_edge;
-	CComboBox m_engine;
+	CCheckBox m_pseudo_check;
+	CComboBox m_edge_combo;
+	CComboBox m_engine_combo;
 	CDialogResizeHelper m_resizer;
 	CMenu m_menu;
 	CScriptEditorCtrl m_editorctrl;

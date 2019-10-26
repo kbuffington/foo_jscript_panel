@@ -6,7 +6,7 @@ class panel_window_dui : public panel_window, public ui_element_instance
 public:
 	panel_window_dui(ui_element_config::ptr cfg, ui_element_instance_callback::ptr callback) : m_callback(callback)
 	{
-		m_instance_type = KInstanceTypeDUI;
+		m_instance_type = instance_type::dui;
 		set_configuration(cfg);
 	}
 

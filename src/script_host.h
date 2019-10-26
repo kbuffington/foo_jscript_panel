@@ -39,7 +39,7 @@ public:
 	std::string ExtractValue(const std::string& source);
 	void Finalise();
 	void InvokeCallback(t_size callbackId, VARIANTARG* argv = nullptr, t_size argc = 0, VARIANT* ret = nullptr);
-	void ProcessScriptInfo(t_script_info& info);
+	void ProcessScriptInfo(script_info& info);
 
 private:
 	DWORD m_last_source_context;

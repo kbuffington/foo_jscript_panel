@@ -21,14 +21,6 @@ public:
 	{
 		if (m_data.empty()) return;
 
-		enum
-		{
-			ID_SELECTALL = 1,
-			ID_SELECTNONE,
-			ID_INVERTSEL,
-			ID_REMOVE
-		};
-
 		point = this->GetContextMenuPoint(point);
 		CMenu menu;
 		menu.CreatePopupMenu();

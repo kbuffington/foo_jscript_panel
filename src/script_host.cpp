@@ -480,7 +480,7 @@ void script_host::InvokeCallback(t_size callbackId, VARIANTARG* argv, t_size arg
 	}
 }
 
-void script_host::ProcessScriptInfo(t_script_info& info)
+void script_host::ProcessScriptInfo(script_info& info)
 {
 	info.clear();
 	info.id = reinterpret_cast<t_size>(m_host->get_hwnd());

@@ -767,7 +767,7 @@ void panel_window::refresh_background(LPRECT lprcUpdate)
 	DeleteRgn(rgn_child);
 	SetWindowRgn(m_hwnd, nullptr, FALSE);
 	m_suppress_drawing = false;
-	if (m_edge_style) SendMessage(m_hwnd, WM_NCPAINT, 1, 0);
+	if (m_edge_style != edge_style::none) SendMessage(m_hwnd, WM_NCPAINT, 1, 0);
 	m_paint_pending = true;
 	RedrawWindow(m_hwnd, nullptr, nullptr, RDW_INVALIDATE | RDW_UPDATENOW);
 }

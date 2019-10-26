@@ -4,35 +4,20 @@
 class my_mainmenu_commands : public mainmenu_commands
 {
 public:
-	enum
-	{
-		cmd_one = 0,
-		cmd_two,
-		cmd_three,
-		cmd_four,
-		cmd_five,
-		cmd_six,
-		cmd_seven,
-		cmd_eight,
-		cmd_nine,
-		cmd_ten,
-		cmd_total
-	};
-
 	GUID get_command(t_size p_index) override
 	{
 		switch (p_index)
 		{
-		case cmd_one: return jsp_guids::menu_one;
-		case cmd_two: return jsp_guids::menu_two;
-		case cmd_three: return jsp_guids::menu_three;
-		case cmd_four: return jsp_guids::menu_four;
-		case cmd_five: return jsp_guids::menu_five;
-		case cmd_six: return jsp_guids::menu_six;
-		case cmd_seven: return jsp_guids::menu_seven;
-		case cmd_eight: return jsp_guids::menu_eight;
-		case cmd_nine: return jsp_guids::menu_nine;
-		case cmd_ten: return jsp_guids::menu_ten;
+		case 0: return jsp_guids::menu_one;
+		case 1: return jsp_guids::menu_two;
+		case 2: return jsp_guids::menu_three;
+		case 3: return jsp_guids::menu_four;
+		case 4: return jsp_guids::menu_five;
+		case 5: return jsp_guids::menu_six;
+		case 6: return jsp_guids::menu_seven;
+		case 7: return jsp_guids::menu_eight;
+		case 8: return jsp_guids::menu_nine;
+		case 9: return jsp_guids::menu_ten;
 		default: uBugCheck();
 		}
 	}
@@ -57,7 +42,7 @@ public:
 
 	t_size get_command_count() override
 	{
-		return cmd_total;
+		return 10;
 	}
 
 	void execute(t_size p_index, service_ptr_t<service_base> p_callback) override

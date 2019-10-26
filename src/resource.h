@@ -16,7 +16,7 @@
 #define IDC_BTN_IMPORT                  107
 #define IDC_BTN_EXPORT                  108
 
-//ui_conf
+// ui_conf
 #define IDD_DIALOG_CONF                 110
 #define IDC_EDIT                        112
 #define IDC_BTN_RESET                   113
@@ -26,40 +26,46 @@
 #define IDC_COMBO_EDGE                  117
 #define IDC_CHECK_PSEUDO_TRANSPARENT    118
 
-//ui_goto
-#define IDD_DIALOG_GOTO                 130
-#define IDC_EDIT_LINENUMBER             131
+// ui_goto
+#define IDD_DIALOG_GOTO                 120
+#define IDC_EDIT_LINENUMBER             121
 
-//ui_input_box
-#define IDD_DIALOG_INPUT                140
-#define IDC_LABEL_PROMPT                141
-#define IDC_EDIT_VALUE                  142
+// ui_input_box
+#define IDD_DIALOG_INPUT                130
+#define IDC_LABEL_PROMPT                131
+#define IDC_EDIT_VALUE                  132
 
-//ui_pref
-#define IDD_DIALOG_PREF                 160
-#define IDC_LIST_PREFERENCES            161
-#define IDC_BTN_PRESETS                 162
+// ui_pref
+#define IDD_DIALOG_PREF                 140
+#define IDC_LIST_PREFERENCES            141
+#define IDC_BTN_PRESETS                 142
 
-//ui_property
-#define IDD_DIALOG_PROPERTY             170
-#define IDC_LIST_PROPERTIES             171
-#define IDC_BTN_CLEAR                   172
+// ui_property
+#define IDD_DIALOG_PROPERTY             150
+#define IDC_LIST_PROPERTIES             151
+#define IDC_BTN_CLEAR                   152
 
-//ui_find_replace
-#define IDD_DIALOG_FIND_REPLACE         180
-#define IDC_EDIT_FIND                   181
-#define IDC_EDIT_REPLACE                182
-#define IDC_CHECK_MATCHCASE             183
-#define IDC_CHECK_WHOLEWORD             184
-#define IDC_CHECK_WORDSTART             185
-#define IDC_CHECK_REGEXP                186
-#define IDC_BTN_NEXT                    187
-#define IDC_BTN_PREVIOUS                188
-#define IDC_BTN_REPLACE                 189
-#define IDC_BTN_REPLACE_ALL             190
-#define IDC_LABEL_REPLACE               191
+// ui_property_control
+#define ID_SELECTALL                    160
+#define ID_SELECTNONE                   161
+#define ID_INVERTSEL                    162
+#define ID_REMOVE                       163
 
-//menu
+// ui_find_replace
+#define IDD_DIALOG_FIND_REPLACE         170
+#define IDC_EDIT_FIND                   171
+#define IDC_EDIT_REPLACE                172
+#define IDC_CHECK_MATCHCASE             173
+#define IDC_CHECK_WHOLEWORD             174
+#define IDC_CHECK_WORDSTART             175
+#define IDC_CHECK_REGEXP                176
+#define IDC_BTN_NEXT                    177
+#define IDC_BTN_PREVIOUS                178
+#define IDC_BTN_REPLACE                 179
+#define IDC_BTN_REPLACE_ALL             180
+#define IDC_LABEL_REPLACE               181
+
+// menu
 #define IDR_MENU                        200
 #define ID_FILE_IMPORT                  201
 #define ID_FILE_EXPORT                  202

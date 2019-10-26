@@ -73,7 +73,14 @@ namespace helpers
 	class embed_thread : public threaded_process_callback
 	{
 	public:
-		embed_thread(t_size action, album_art_data_ptr data, metadb_handle_list_cref handles, t_size art_id) : m_action(action), m_data(data), m_handles(handles), m_art_id(art_id) {}
+		enum class actions
+		{
+			attach,
+			remove,
+			remove_all
+		};
+
+		embed_thread(actions action, album_art_data_ptr data, metadb_handle_list_cref handles, t_size art_id) : m_action(action), m_data(data), m_handles(handles), m_art_id(art_id) {}
 
 		void run(threaded_process_status& p_status, abort_callback& p_abort) override
 		{
@@ -94,13 +101,13 @@ namespace helpers
 						album_art_editor_instance_ptr aaep = ptr->open(nullptr, path, p_abort);
 						switch (m_action)
 						{
-						case attach:
+						case actions::attach:
 							aaep->set(what, m_data, p_abort);
 							break;
-						case remove:
+						case actions::remove:
 							aaep->remove(what);
 							break;
-						case remove_all:
+						case actions::remove_all:
 							aaep->remove_all_();
 							break;
 						}
@@ -111,22 +118,12 @@ namespace helpers
 			}
 		}
 
-		enum
-		{
-			attach,
-			remove,
-			remove_all
-		};
-
-		enum
-		{
-			flags = threaded_process::flag_show_progress | threaded_process::flag_show_delayed | threaded_process::flag_show_item
-		};
+		static const t_size flags = threaded_process::flag_show_progress | threaded_process::flag_show_delayed | threaded_process::flag_show_item;
 
 	private:
+		actions m_action;
 		album_art_data_ptr m_data;
 		metadb_handle_list m_handles;
-		t_size m_action;
 		t_size m_art_id;
 	};
 

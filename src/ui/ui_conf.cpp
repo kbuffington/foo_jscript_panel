@@ -27,66 +27,12 @@ CDialogConf::~CDialogConf() {}
 
 BOOL CDialogConf::OnInitDialog(HWND, LPARAM)
 {
-	m_edge = GetDlgItem(IDC_COMBO_EDGE);
-	m_engine = GetDlgItem(IDC_COMBO_ENGINE);
-	m_menu = GetMenu();
-	m_pseudo = GetDlgItem(IDC_CHECK_PSEUDO_TRANSPARENT);
+	// Init
+	m_edge_combo = GetDlgItem(IDC_COMBO_EDGE);
+	m_engine_combo = GetDlgItem(IDC_COMBO_ENGINE);
+	m_pseudo_check = GetDlgItem(IDC_CHECK_PSEUDO_TRANSPARENT);
 
-	pfc::string8_fast base = helpers::get_fb2k_component_path();
-
-	// Generate samples menu
-	HMENU samples = CreateMenu();
-
-	pfc::string_list_impl folders;
-	helpers::list_folders(base + "samples\\", folders);
-
-	t_size i, j, count;
-
-	count = folders.get_count();
-
-	for (i = 0; i < count; ++i)
-	{
-		HMENU sub = CreatePopupMenu();
-		pfc::string8_fast folder = folders[i];
-
-		pfc::string_list_impl sub_files;
-		helpers::list_files(folder, false, sub_files);
-
-		for (j = 0; j < sub_files.get_count(); ++j)
-		{
-			m_samples.add_item(sub_files[j]);
-			pfc::string8_fast display = pfc::string_filename(sub_files[j]);
-			uAppendMenu(sub, MF_STRING, ID_SAMPLES_BEGIN + m_samples.get_count() - 1, display);
-		}
-
-		str_list path_split = helpers::split_string(folder.get_ptr(), "\\");
-		uAppendMenu(samples, MF_STRING | MF_POPUP, reinterpret_cast<UINT_PTR>(sub), path_split[path_split.size() - 1].c_str());
-	}
-
-	uAppendMenu(m_menu, MF_STRING | MF_POPUP, reinterpret_cast<UINT_PTR>(samples), "Samples");
-
-	// Generate docs menu
-	HMENU docs = CreateMenu();
-
-	helpers::list_files(base + "docs\\", false, m_docs);
-	count = m_docs.get_count();
-
-	for (i = 0; i < count; ++i)
-	{
-		pfc::string8_fast display;
-		uFixAmpersandChars_v2(pfc::string_filename(m_docs[i]), display);
-		uAppendMenu(docs, MF_STRING, ID_DOCS_BEGIN + i, display);
-	}
-
-	uAppendMenu(m_menu, MF_STRING | MF_POPUP, reinterpret_cast<UINT_PTR>(docs), "Docs");
-
-	// Generate links menu
-	HMENU links = CreateMenu();
-	uAppendMenu(links, MF_STRING, ID_LINKS_BEGIN, "Wiki");
-	uAppendMenu(links, MF_STRING, ID_LINKS_BEGIN + 1, "Changelog");
-	uAppendMenu(links, MF_STRING, ID_LINKS_BEGIN + 2, "Releases");
-	uAppendMenu(links, MF_STRING, ID_LINKS_BEGIN + 3, "Report an issue");
-	uAppendMenu(m_menu, MF_STRING | MF_POPUP, reinterpret_cast<UINT_PTR>(links), "Links");
+	BuildMenu();
 
 	// Set caption text
 	uSetWindowText(m_hWnd, m_caption);
@@ -103,38 +49,38 @@ BOOL CDialogConf::OnInitDialog(HWND, LPARAM)
 	}
 
 	// Script Engine
-	m_engine.AddString(L"Chakra");
-	m_engine.AddString(L"JScript");
+	m_engine_combo.AddString(L"Chakra");
+	m_engine_combo.AddString(L"JScript");
 
 	if (helpers::supports_chakra())
 	{
-		uComboBox_SelectString(m_engine, m_parent->m_script_engine_str);
+		uComboBox_SelectString(m_engine_combo, m_parent->m_script_engine_str);
 	}
 	else
 	{
-		uComboBox_SelectString(m_engine, "JScript");
-		m_engine.EnableWindow(false);
+		uComboBox_SelectString(m_engine_combo, "JScript");
+		m_engine_combo.EnableWindow(false);
 	}
 
 	// Edge Style & Pseudo Transparent
-	m_edge.AddString(L"None");
-	m_edge.AddString(L"Sunken");
-	m_edge.AddString(L"Grey");
+	m_edge_combo.AddString(L"None");
+	m_edge_combo.AddString(L"Sunken");
+	m_edge_combo.AddString(L"Grey");
 
-	if (m_parent->get_instance_type() == host_comm::KInstanceTypeDUI)
+	if (m_parent->is_dui())
 	{
 		// disable both options in DUI
-		m_edge.SetCurSel(0);
-		m_edge.EnableWindow(false);
+		m_edge_combo.SetCurSel(0);
+		m_edge_combo.EnableWindow(false);
 
-		m_pseudo.SetCheck(false);
-		m_pseudo.EnableWindow(false);
+		m_pseudo_check.SetCheck(false);
+		m_pseudo_check.EnableWindow(false);
 	}
 	else
 	{
-		m_edge.SetCurSel(m_parent->m_edge_style);
+		m_edge_combo.SetCurSel(static_cast<int>(m_parent->m_edge_style));
 
-		m_pseudo.SetCheck(m_parent->m_pseudo_transparent);
+		m_pseudo_check.SetCheck(m_parent->m_pseudo_transparent);
 	}
 
 	// Edit Control
@@ -175,9 +121,9 @@ LRESULT CDialogConf::OnNotify(int idCtrl, LPNMHDR pnmh)
 void CDialogConf::Apply()
 {
 	// Save panel settings
-	uGetWindowText(m_engine, m_parent->m_script_engine_str);
-	m_parent->m_edge_style = static_cast<host_comm::t_edge_style>(m_edge.GetCurSel());
-	m_parent->m_pseudo_transparent = m_pseudo.IsChecked();
+	uGetWindowText(m_engine_combo, m_parent->m_script_engine_str);
+	m_parent->m_edge_style = static_cast<host_comm::edge_style>(m_edge_combo.GetCurSel());
+	m_parent->m_pseudo_transparent = m_pseudo_check.IsChecked();
 
 	// Get script text
 	const int len = m_editorctrl.GetTextLength();
@@ -191,6 +137,64 @@ void CDialogConf::Apply()
 
 	// Save point
 	m_editorctrl.SetSavePoint();
+}
+
+void CDialogConf::BuildMenu()
+{
+	m_menu = GetMenu();
+
+	pfc::string8_fast base = helpers::get_fb2k_component_path();
+
+	HMENU samples = CreateMenu();
+
+	pfc::string_list_impl folders;
+	helpers::list_folders(base + "samples\\", folders);
+
+	t_size i, j, count;
+
+	count = folders.get_count();
+
+	for (i = 0; i < count; ++i)
+	{
+		HMENU sub = CreatePopupMenu();
+		pfc::string8_fast folder = folders[i];
+
+		pfc::string_list_impl sub_files;
+		helpers::list_files(folder, false, sub_files);
+
+		for (j = 0; j < sub_files.get_count(); ++j)
+		{
+			m_samples.add_item(sub_files[j]);
+			pfc::string8_fast display = pfc::string_filename(sub_files[j]);
+			uAppendMenu(sub, MF_STRING, ID_SAMPLES_BEGIN + m_samples.get_count() - 1, display);
+		}
+
+		str_list path_split = helpers::split_string(folder.get_ptr(), "\\");
+		uAppendMenu(samples, MF_STRING | MF_POPUP, reinterpret_cast<UINT_PTR>(sub), path_split[path_split.size() - 1].c_str());
+	}
+
+	uAppendMenu(m_menu, MF_STRING | MF_POPUP, reinterpret_cast<UINT_PTR>(samples), "Samples");
+
+	HMENU docs = CreateMenu();
+
+	helpers::list_files(base + "docs\\", false, m_docs);
+	count = m_docs.get_count();
+
+	for (i = 0; i < count; ++i)
+	{
+		pfc::string8_fast display;
+		uFixAmpersandChars_v2(pfc::string_filename(m_docs[i]), display);
+		uAppendMenu(docs, MF_STRING, ID_DOCS_BEGIN + i, display);
+	}
+
+	uAppendMenu(m_menu, MF_STRING | MF_POPUP, reinterpret_cast<UINT_PTR>(docs), "Docs");
+
+	HMENU links = CreateMenu();
+	uAppendMenu(links, MF_STRING, ID_LINKS_BEGIN, "Wiki");
+	uAppendMenu(links, MF_STRING, ID_LINKS_BEGIN + 1, "Changelog");
+	uAppendMenu(links, MF_STRING, ID_LINKS_BEGIN + 2, "Releases");
+	uAppendMenu(links, MF_STRING, ID_LINKS_BEGIN + 3, "Report an issue");
+	uAppendMenu(m_menu, MF_STRING | MF_POPUP, reinterpret_cast<UINT_PTR>(links), "Links");
 }
 
 void CDialogConf::OnCloseCmd(UINT uNotifyCode, int nID, HWND wndCtl)
@@ -254,9 +258,9 @@ void CDialogConf::OnLinks(UINT uNotifyCode, int nID, HWND wndCtl)
 
 void CDialogConf::OnReset(UINT uNotifyCode, int nID, HWND wndCtl)
 {
-	uComboBox_SelectString(m_engine, host_comm::get_default_script_engine_str());
-	m_edge.SetCurSel(0);
-	m_pseudo.SetCheck(false);
+	uComboBox_SelectString(m_engine_combo, host_comm::get_default_script_engine_str());
+	m_edge_combo.SetCurSel(0);
+	m_pseudo_check.SetCheck(false);
 	m_editorctrl.SetContent(host_comm::get_default_script_code());
 }
 

@@ -8,8 +8,8 @@ host_comm::host_comm()
 	, m_dragdrop(false)
 	, m_grabfocus(false)
 	, m_pseudo_transparent(false)
-	, m_edge_style(NO_EDGE)
-	, m_instance_type(KInstanceTypeCUI)
+	, m_edge_style(edge_style::none)
+	, m_instance_type(instance_type::cui)
 	, m_script_info()
 	, m_panel_tooltip_param_ptr(new panel_tooltip_param)
 	, m_max_size { INT_MAX, INT_MAX }
@@ -25,10 +25,10 @@ DWORD host_comm::get_edge_style() const
 {
 	switch (m_edge_style)
 	{
-	case SUNKEN_EDGE:
+	case edge_style::sunken:
 		return WS_EX_CLIENTEDGE;
 
-	case GREY_EDGE:
+	case edge_style::grey:
 		return WS_EX_STATICEDGE;
 
 	default:
@@ -39,6 +39,11 @@ DWORD host_comm::get_edge_style() const
 HWND host_comm::get_hwnd()
 {
 	return m_hwnd;
+}
+
+bool host_comm::is_dui()
+{
+	return m_instance_type == instance_type::dui;
 }
 
 int host_comm::get_height()
@@ -66,11 +71,6 @@ pfc::string8_fast host_comm::get_default_script_code()
 pfc::string8_fast host_comm::get_default_script_engine_str()
 {
 	return helpers::supports_chakra() ? "Chakra" : "JScript";
-}
-
-t_size host_comm::get_instance_type()
-{
-	return m_instance_type;
 }
 
 void host_comm::load_config(stream_reader* reader, t_size size, abort_callback& abort)
@@ -108,7 +108,7 @@ void host_comm::reset_config()
 	m_script_code = get_default_script_code();
 	m_pseudo_transparent = false;
 	m_wndpl.length = 0;
-	m_edge_style = NO_EDGE;
+	m_edge_style = edge_style::none;
 }
 
 void host_comm::save_config(stream_writer* writer, abort_callback& abort) const

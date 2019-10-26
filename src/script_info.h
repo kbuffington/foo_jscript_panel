@@ -1,8 +1,8 @@
 #pragma once
 
-struct t_script_info
+struct script_info
 {
-	t_script_info() : id(0) {}
+	script_info() : id(0) {}
 
 	const std::vector<std::pair<std::string, std::string>> expand_table =
 	{

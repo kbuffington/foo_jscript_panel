@@ -66,7 +66,7 @@ STDMETHODIMP Window::CreateTooltip(BSTR name, float pxSize, int style, ITooltip*
 STDMETHODIMP Window::GetColourCUI(UINT type, int* p)
 {
 	if (!p) return E_POINTER;
-	if (m_host->get_instance_type() != host_comm::KInstanceTypeCUI) return E_NOTIMPL;
+	if (m_host->is_dui()) return E_NOTIMPL;
 
 	*p = m_host->get_colour_ui(type);
 	return S_OK;
@@ -75,7 +75,7 @@ STDMETHODIMP Window::GetColourCUI(UINT type, int* p)
 STDMETHODIMP Window::GetColourDUI(UINT type, int* p)
 {
 	if (!p) return E_POINTER;
-	if (m_host->get_instance_type() != host_comm::KInstanceTypeDUI) return E_NOTIMPL;
+	if (!m_host->is_dui()) return E_NOTIMPL;
 
 	*p = m_host->get_colour_ui(type);
 	return S_OK;
@@ -84,7 +84,7 @@ STDMETHODIMP Window::GetColourDUI(UINT type, int* p)
 STDMETHODIMP Window::GetFontCUI(UINT type, IGdiFont** pp)
 {
 	if (!pp) return E_POINTER;
-	if (m_host->get_instance_type() != host_comm::KInstanceTypeCUI) return E_NOTIMPL;
+	if (m_host->is_dui()) return E_NOTIMPL;
 
 	*pp = m_host->get_font_ui(type);
 	return S_OK;
@@ -93,7 +93,7 @@ STDMETHODIMP Window::GetFontCUI(UINT type, IGdiFont** pp)
 STDMETHODIMP Window::GetFontDUI(UINT type, IGdiFont** pp)
 {
 	if (!pp) return E_POINTER;
-	if (m_host->get_instance_type() != host_comm::KInstanceTypeDUI) return E_NOTIMPL;
+	if (!m_host->is_dui()) return E_NOTIMPL;
 
 	*pp = m_host->get_font_ui(type);
 	return S_OK;
@@ -221,7 +221,7 @@ STDMETHODIMP Window::get_InstanceType(UINT* p)
 {
 	if (!p) return E_POINTER;
 
-	*p = m_host->get_instance_type();
+	*p = m_host->is_dui() ? 1 : 0;
 	return S_OK;
 }
 

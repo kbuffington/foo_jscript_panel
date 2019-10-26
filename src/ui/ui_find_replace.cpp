@@ -27,9 +27,9 @@ BOOL CDialogFindReplace::OnInitDialog(HWND, LPARAM)
 	for (t_size i = 0; i < ids.size(); ++i)
 	{
 		const int id = ids[i];
-		HWND wnd = GetDlgItem(id);
-		m_window[id] = wnd;
-		m_hacks[i].SubclassWindow(wnd);
+		HWND hwnd = GetDlgItem(id);
+		m_window[id] = hwnd;
+		m_hacks[i].SubclassWindow(hwnd);
 	}
 	return TRUE;
 }
@@ -101,9 +101,9 @@ void CDialogFindReplace::SetMode(mode m)
 	SetFocus();
 }
 
-BOOL CDialogFindReplace::TabHack::SubclassWindow(HWND wnd)
+BOOL CDialogFindReplace::TabHack::SubclassWindow(HWND hwnd)
 {
-	return __super::SubclassWindow(wnd);
+	return __super::SubclassWindow(hwnd);
 }
 
 LRESULT CDialogFindReplace::TabHack::OnChar(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)

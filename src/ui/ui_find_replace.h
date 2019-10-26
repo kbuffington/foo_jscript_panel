@@ -20,7 +20,7 @@ public:
 
 	enum { IDD = IDD_DIALOG_FIND_REPLACE };
 
-	enum mode
+	enum class mode
 	{
 		find,
 		replace
@@ -49,7 +49,7 @@ private:
 			MESSAGE_HANDLER(WM_KEYDOWN, OnKeyDown)
 		END_MSG_MAP()
 
-		BOOL SubclassWindow(HWND wnd);
+		BOOL SubclassWindow(HWND hwnd);
 		LRESULT OnChar(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		LRESULT OnKeyDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 	};

@@ -28,7 +28,7 @@ public:
 	std::map<int, int> FlagMap;
 
 private:
-	enum IndentationStatus
+	enum class IndentationStatus
 	{
 		isNone,
 		isBlockStart,
@@ -70,8 +70,6 @@ private:
 	bool GetPropertyEx(const std::string& key, std::string& out);
 	bool ParseStyle(const std::string& definition, EditorStyle& style);
 	bool RangeIsAllWhitespace(int start, int end);
-	bool StartAutoComplete();
-	bool StartCallTip();
 	int GetCaretInLine();
 	int IndentOfBlock(int line);
 	std::string GetCurrentLine();
@@ -89,6 +87,8 @@ private:
 	void RestoreDefaultStyle();
 	void SetAllStylesFromTable();
 	void SetIndentation(int line, int indent);
+	void StartAutoComplete();
+	void StartCallTip();
 	void TrackWidth();
 
 	CDialogFindReplace* DlgFindReplace;

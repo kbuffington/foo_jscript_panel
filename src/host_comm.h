@@ -9,15 +9,21 @@ protected:
 	host_comm();
 	virtual ~host_comm();
 
+	enum class instance_type
+	{
+		cui,
+		dui,
+	};
+
 	void load_config(stream_reader* reader, t_size size, abort_callback& abort);
 	void reset_config();
 	void save_config(stream_writer* writer, abort_callback& abort) const;
 
 	HWND m_hwnd;
+	instance_type m_instance_type;
 	int m_height;
 	int m_width;
 	panel_tooltip_param_ptr m_panel_tooltip_param_ptr;
-	t_size m_instance_type;
 	ui_selection_holder::ptr m_selection_holder;
 
 public:
@@ -32,17 +38,11 @@ public:
 	virtual void repaint_rect(int x, int y, int w, int h) = 0;
 
 public:
-	enum
+	enum class edge_style : char
 	{
-		KInstanceTypeCUI = 0,
-		KInstanceTypeDUI,
-	};
-
-	enum t_edge_style : char
-	{
-		NO_EDGE = 0,
-		SUNKEN_EDGE,
-		GREY_EDGE,
+		none,
+		sunken,
+		grey,
 	};
 
 	static pfc::string8_fast get_default_script_code();
@@ -50,10 +50,10 @@ public:
 
 	DWORD get_edge_style() const;
 	HWND get_hwnd();
+	bool is_dui();
 	int get_height();
 	int get_width();
 	panel_tooltip_param_ptr& panel_tooltip();
-	t_size get_instance_type();
 
 	POINT m_max_size;
 	POINT m_min_size;
@@ -61,9 +61,9 @@ public:
 	bool m_dragdrop;
 	bool m_grabfocus;
 	bool m_pseudo_transparent;
+	edge_style m_edge_style;
 	pfc::string8_fast m_script_code;
 	pfc::string8_fast m_script_engine_str;
 	panel_properties m_panel_properties;
-	t_edge_style m_edge_style;
-	t_script_info m_script_info;
+	script_info m_script_info;
 };

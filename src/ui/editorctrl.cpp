@@ -133,23 +133,23 @@ DWORD CScriptEditorCtrl::ParseHex(const std::string& hex)
 
 CScriptEditorCtrl::IndentationStatus CScriptEditorCtrl::GetIndentState(int line)
 {
-	IndentationStatus indentState = isNone;
+	IndentationStatus indentState = IndentationStatus::isNone;
 	for (const std::string& sIndent : GetLinePartsInStyle(line, StatementIndent))
 	{
 		if (Includes(StatementIndent, sIndent))
-			indentState = isKeyWordStart;
+			indentState = IndentationStatus::isKeyWordStart;
 	}
 	for (const std::string& sEnd : GetLinePartsInStyle(line, StatementEnd))
 	{
 		if (Includes(StatementEnd, sEnd))
-			indentState = isNone;
+			indentState = IndentationStatus::isNone;
 	}
 	for (const std::string& sBlock : GetLinePartsInStyle(line, BlockEnd))
 	{
 		if (Includes(BlockEnd, sBlock))
-			indentState = isBlockEnd;
+			indentState = IndentationStatus::isBlockEnd;
 		if (Includes(BlockStart, sBlock))
-			indentState = isBlockStart;
+			indentState = IndentationStatus::isBlockStart;
 	}
 	return indentState;
 }
@@ -562,83 +562,6 @@ bool CScriptEditorCtrl::RangeIsAllWhitespace(int start, int end)
 	return true;
 }
 
-bool CScriptEditorCtrl::StartAutoComplete()
-{
-	std::string line = GetCurrentLine();
-	const int current = GetCaretInLine();
-
-	int startword = current;
-
-	while (startword > 0 && (Contains(WordCharacters, line[startword - 1]) || line[startword - 1] == '.'))
-	{
-		startword--;
-	}
-
-	std::string root = line.substr(startword, current - startword);
-
-	std::string words = GetNearestWords(root.c_str(), root.length());
-	if (words.empty()) return false;
-
-	AutoCShow(root.length(), words.c_str());
-	return true;
-}
-
-bool CScriptEditorCtrl::StartCallTip()
-{
-	CurrentCallTip = 0;
-	CurrentCallTipWord = "";
-	std::string line = GetCurrentLine();
-	int current = GetCaretInLine();
-	int pos = GetCurrentPos();
-	int braces = 0;
-
-	do
-	{
-		while (current > 0 && (braces || line[current - 1] != '('))
-		{
-			if (line[current - 1] == '(')
-				braces--;
-			else if (line[current - 1] == ')')
-				braces++;
-
-			current--;
-			pos--;
-		}
-
-		if (current > 0)
-		{
-			current--;
-			pos--;
-		}
-		else
-		{
-			break;
-		}
-
-		while (current > 0 && isspace(line[current - 1]))
-		{
-			current--;
-			pos--;
-		}
-	} while (current > 0 && !Contains(WordCharacters, line[current - 1]));
-
-	if (current <= 0)
-		return true;
-
-	StartCalltipWord = current - 1;
-
-	while (StartCalltipWord > 0 && (Contains(WordCharacters, line[StartCalltipWord - 1]) || line[StartCalltipWord - 1] == '.'))
-	{
-		--StartCalltipWord;
-	}
-
-	line.at(current) = '\0';
-	CurrentCallTipWord = line.c_str() + StartCalltipWord;
-	FunctionDefinition = "";
-	FillFunctionDefinition(pos);
-	return true;
-}
-
 int CScriptEditorCtrl::GetCaretInLine()
 {
 	const int caret = GetCurrentPos();
@@ -655,32 +578,32 @@ int CScriptEditorCtrl::IndentOfBlock(int line)
 	const int indentSize = GetIndent();
 	int indentBlock = GetLineIndentation(line);
 	int backLine = line;
-	IndentationStatus indentState = isNone;
+	IndentationStatus indentState = IndentationStatus::isNone;
 
 	int lineLimit = line - 10;
 	if (lineLimit < 0)
 		lineLimit = 0;
 
-	while ((backLine >= lineLimit) && (indentState == 0))
+	while ((backLine >= lineLimit) && (indentState == IndentationStatus::isNone))
 	{
 		indentState = GetIndentState(backLine);
 
-		if (indentState != 0)
+		if (indentState != IndentationStatus::isNone)
 		{
 			indentBlock = GetLineIndentation(backLine);
 
-			if (indentState == isBlockStart)
+			if (indentState == IndentationStatus::isBlockStart)
 			{
 				indentBlock += indentSize;
 			}
 
-			if (indentState == isBlockEnd)
+			if (indentState == IndentationStatus::isBlockEnd)
 			{
 				if (indentBlock < 0)
 					indentBlock = 0;
 			}
 
-			if ((indentState == isKeyWordStart) && (backLine == line))
+			if ((indentState == IndentationStatus::isKeyWordStart) && (backLine == line))
 				indentBlock += indentSize;
 		}
 
@@ -846,7 +769,7 @@ void CScriptEditorCtrl::AutomaticIndentation(int ch)
 	}
 	else if (ch == '{')
 	{
-		if ((GetIndentState(curLine - 1) == isKeyWordStart))
+		if ((GetIndentState(curLine - 1) == IndentationStatus::isKeyWordStart))
 		{
 			if (RangeIsAllWhitespace(thisLineStart, selStart - 1))
 			{
@@ -1177,6 +1100,81 @@ void CScriptEditorCtrl::SetIndentation(int line, int indent)
 	}
 
 	SetSel(crange.cpMin, crange.cpMax);
+}
+
+void CScriptEditorCtrl::StartAutoComplete()
+{
+	std::string line = GetCurrentLine();
+	const int current = GetCaretInLine();
+
+	int startword = current;
+
+	while (startword > 0 && (Contains(WordCharacters, line[startword - 1]) || line[startword - 1] == '.'))
+	{
+		startword--;
+	}
+
+	std::string root = line.substr(startword, current - startword);
+
+	std::string words = GetNearestWords(root.c_str(), root.length());
+	if (words.length())
+	{
+		AutoCShow(root.length(), words.c_str());
+	}
+}
+
+void CScriptEditorCtrl::StartCallTip()
+{
+	CurrentCallTip = 0;
+	CurrentCallTipWord = "";
+	std::string line = GetCurrentLine();
+	int current = GetCaretInLine();
+	int pos = GetCurrentPos();
+	int braces = 0;
+
+	do
+	{
+		while (current > 0 && (braces || line[current - 1] != '('))
+		{
+			if (line[current - 1] == '(')
+				braces--;
+			else if (line[current - 1] == ')')
+				braces++;
+
+			current--;
+			pos--;
+		}
+
+		if (current > 0)
+		{
+			current--;
+			pos--;
+		}
+		else
+		{
+			break;
+		}
+
+		while (current > 0 && isspace(line[current - 1]))
+		{
+			current--;
+			pos--;
+		}
+	} while (current > 0 && !Contains(WordCharacters, line[current - 1]));
+
+	if (current <= 0) return;
+
+	StartCalltipWord = current - 1;
+
+	while (StartCalltipWord > 0 && (Contains(WordCharacters, line[StartCalltipWord - 1]) || line[StartCalltipWord - 1] == '.'))
+	{
+		--StartCalltipWord;
+	}
+
+	line.at(current) = '\0';
+	CurrentCallTipWord = line.c_str() + StartCalltipWord;
+	FunctionDefinition = "";
+	FillFunctionDefinition(pos);
 }
 
 void CScriptEditorCtrl::TrackWidth()
