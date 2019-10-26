@@ -52,7 +52,7 @@ public:
 
 	void get_name(t_size p_index, pfc::string_base& p_out) override
 	{
-		p_out = PFC_string_formatter() << (p_index + 1);
+		p_out = std::to_string(p_index + 1).c_str();
 	}
 };
 

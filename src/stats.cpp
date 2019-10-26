@@ -12,7 +12,7 @@ namespace stats
 		{
 			titleformat_object::ptr obj;
 			titleformat_compiler::get()->compile_force(obj, "$lower(%artist% - %title%)");
-			pfc::string_formatter str;
+			pfc::string8_fast str;
 			obj->run_simple(location, &info, str);
 			return hasher_md5::get()->process_single_string(str).xorHalve();
 		}
@@ -123,11 +123,11 @@ namespace stats
 				if (hashHandle(p_tracks[0], hash))
 				{
 					fields tmp = get(hash);
-					p_out.set_property(JSP_NAME, 0, "Playcount", pfc::format_uint(tmp.playcount));
-					p_out.set_property(JSP_NAME, 1, "Loved", pfc::format_uint(tmp.loved));
+					p_out.set_property(JSP_NAME, 0, "Playcount", std::to_string(tmp.playcount).c_str());
+					p_out.set_property(JSP_NAME, 1, "Loved", std::to_string(tmp.loved).c_str());
 					p_out.set_property(JSP_NAME, 2, "First Played", tmp.first_played);
 					p_out.set_property(JSP_NAME, 3, "Last Played", tmp.last_played);
-					p_out.set_property(JSP_NAME, 4, "Rating", pfc::format_uint(tmp.rating));
+					p_out.set_property(JSP_NAME, 4, "Rating", std::to_string(tmp.rating).c_str());
 				}
 			}
 			else
@@ -149,7 +149,7 @@ namespace stats
 
 				if (total > 0)
 				{
-					p_out.set_property(JSP_NAME, 0, "Playcount", pfc::format_uint(total));
+					p_out.set_property(JSP_NAME, 0, "Playcount", std::to_string(total).c_str());
 				}
 			}
 		}

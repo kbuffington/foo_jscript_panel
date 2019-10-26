@@ -926,7 +926,7 @@ void CScriptEditorCtrl::OpenGotoDialog()
 	const int cur_line = LineFromPosition(cur_pos) + 1;
 
 	modal_dialog_scope scope(m_hWnd);
-	CDialogGoto dlg(m_hWnd, pfc::format_int(cur_line).get_ptr());
+	CDialogGoto dlg(m_hWnd, std::to_string(cur_line).c_str());
 	dlg.DoModal(m_hWnd);
 }
 

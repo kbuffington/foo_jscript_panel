@@ -118,7 +118,7 @@ void CDialogProperty::LoadProperties(bool reload)
 		case VT_I8:
 		case VT_UI8:
 			var.ChangeType(VT_I4, &v);
-			d.value = PFC_string_formatter() << var.lVal;
+			d.value = std::to_string(var.lVal).c_str();
 			break;
 
 		case VT_BSTR:
