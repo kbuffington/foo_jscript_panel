@@ -6,6 +6,10 @@ class CScintillaImpl : public CWindowImpl<T, CWindow, CControlWinTraits>
 public:
 	DECLARE_WND_SUPERCLASS2(_T("WTL_ScintillaCtrl"), CScintillaImpl, CWindow::GetWndClassName())
 
+	using Colour = int;
+	using Line = intptr_t;
+	using Position = intptr_t;
+
 	void SetFnPtr()
 	{
 		ATLASSERT(::IsWindow(this->m_hWnd));
@@ -15,22 +19,22 @@ public:
 
 	// Auto-generated from Scintilla.iface by scintilla_iface.js
 
-	void AddText(int length, const char* text)
+	void AddText(Position length, const char* text)
 	{
 		Call(SCI_ADDTEXT, length, reinterpret_cast<intptr_t>(text));
 	}
 
-	void AddStyledText(int length, const char* c)
+	void AddStyledText(Position length, const char* c)
 	{
 		Call(SCI_ADDSTYLEDTEXT, length, reinterpret_cast<intptr_t>(c));
 	}
 
-	void InsertText(int pos, const char* text)
+	void InsertText(Position pos, const char* text)
 	{
 		Call(SCI_INSERTTEXT, pos, reinterpret_cast<intptr_t>(text));
 	}
 
-	void ChangeInsertion(int length, const char* text)
+	void ChangeInsertion(Position length, const char* text)
 	{
 		Call(SCI_CHANGEINSERTION, length, reinterpret_cast<intptr_t>(text));
 	}
@@ -40,7 +44,7 @@ public:
 		Call(SCI_CLEARALL);
 	}
 
-	void DeleteRange(int start, int lengthDelete)
+	void DeleteRange(Position start, Position lengthDelete)
 	{
 		Call(SCI_DELETERANGE, start, lengthDelete);
 	}
@@ -50,27 +54,27 @@ public:
 		Call(SCI_CLEARDOCUMENTSTYLE);
 	}
 
-	int GetLength()
+	Position GetLength()
 	{
-		return static_cast<int>(Call(SCI_GETLENGTH));
+		return Call(SCI_GETLENGTH);
 	}
 
-	int GetCharAt(int pos)
+	int GetCharAt(Position pos)
 	{
 		return static_cast<int>(Call(SCI_GETCHARAT, pos));
 	}
 
-	int GetCurrentPos()
+	Position GetCurrentPos()
 	{
-		return static_cast<int>(Call(SCI_GETCURRENTPOS));
+		return Call(SCI_GETCURRENTPOS);
 	}
 
-	int GetAnchor()
+	Position GetAnchor()
 	{
-		return static_cast<int>(Call(SCI_GETANCHOR));
+		return Call(SCI_GETANCHOR);
 	}
 
-	int GetStyleAt(int pos)
+	int GetStyleAt(Position pos)
 	{
 		return static_cast<int>(Call(SCI_GETSTYLEAT, pos));
 	}
@@ -95,9 +99,9 @@ public:
 		Call(SCI_SETSAVEPOINT);
 	}
 
-	int GetStyledText(void* tr)
+	Position GetStyledText(void* tr)
 	{
-		return static_cast<int>(Call(SCI_GETSTYLEDTEXT, 0, reinterpret_cast<intptr_t>(tr)));
+		return Call(SCI_GETSTYLEDTEXT, 0, reinterpret_cast<intptr_t>(tr));
 	}
 
 	bool CanRedo()
@@ -140,39 +144,39 @@ public:
 		Call(SCI_SETTABDRAWMODE, tabDrawMode);
 	}
 
-	int PositionFromPoint(int x, int y)
+	Position PositionFromPoint(int x, int y)
 	{
-		return static_cast<int>(Call(SCI_POSITIONFROMPOINT, x, y));
+		return Call(SCI_POSITIONFROMPOINT, x, y);
 	}
 
-	int PositionFromPointClose(int x, int y)
+	Position PositionFromPointClose(int x, int y)
 	{
-		return static_cast<int>(Call(SCI_POSITIONFROMPOINTCLOSE, x, y));
+		return Call(SCI_POSITIONFROMPOINTCLOSE, x, y);
 	}
 
-	void GotoLine(int line)
+	void GotoLine(Line line)
 	{
 		Call(SCI_GOTOLINE, line);
 	}
 
-	void GotoPos(int caret)
+	void GotoPos(Position caret)
 	{
 		Call(SCI_GOTOPOS, caret);
 	}
 
-	void SetAnchor(int anchor)
+	void SetAnchor(Position anchor)
 	{
 		Call(SCI_SETANCHOR, anchor);
 	}
 
-	int GetCurLine(int length, char* text)
+	Position GetCurLine(Position length, char* text)
 	{
-		return static_cast<int>(Call(SCI_GETCURLINE, length, reinterpret_cast<intptr_t>(text)));
+		return Call(SCI_GETCURLINE, length, reinterpret_cast<intptr_t>(text));
 	}
 
-	int GetEndStyled()
+	Position GetEndStyled()
 	{
-		return static_cast<int>(Call(SCI_GETENDSTYLED));
+		return Call(SCI_GETENDSTYLED);
 	}
 
 	void ConvertEOLs(int eolMode)
@@ -190,12 +194,12 @@ public:
 		Call(SCI_SETEOLMODE, eolMode);
 	}
 
-	void StartStyling(int start, int unused)
+	void StartStyling(Position start, int unused)
 	{
 		Call(SCI_STARTSTYLING, start, unused);
 	}
 
-	void SetStyling(int length, int style)
+	void SetStyling(Position length, int style)
 	{
 		Call(SCI_SETSTYLING, length, style);
 	}
@@ -230,17 +234,17 @@ public:
 		return static_cast<int>(Call(SCI_GETTABMINIMUMWIDTH));
 	}
 
-	void ClearTabStops(int line)
+	void ClearTabStops(Line line)
 	{
 		Call(SCI_CLEARTABSTOPS, line);
 	}
 
-	void AddTabStop(int line, int x)
+	void AddTabStop(Line line, int x)
 	{
 		Call(SCI_ADDTABSTOP, line, x);
 	}
 
-	int GetNextTabStop(int line, int x)
+	int GetNextTabStop(Line line, int x)
 	{
 		return static_cast<int>(Call(SCI_GETNEXTTABSTOP, line, x));
 	}
@@ -265,17 +269,17 @@ public:
 		Call(SCI_MARKERDEFINE, markerNumber, markerSymbol);
 	}
 
-	void MarkerSetFore(int markerNumber, int fore)
+	void MarkerSetFore(int markerNumber, Colour fore)
 	{
 		Call(SCI_MARKERSETFORE, markerNumber, fore);
 	}
 
-	void MarkerSetBack(int markerNumber, int back)
+	void MarkerSetBack(int markerNumber, Colour back)
 	{
 		Call(SCI_MARKERSETBACK, markerNumber, back);
 	}
 
-	void MarkerSetBackSelected(int markerNumber, int back)
+	void MarkerSetBackSelected(int markerNumber, Colour back)
 	{
 		Call(SCI_MARKERSETBACKSELECTED, markerNumber, back);
 	}
@@ -285,12 +289,12 @@ public:
 		Call(SCI_MARKERENABLEHIGHLIGHT, enabled);
 	}
 
-	int MarkerAdd(int line, int markerNumber)
+	int MarkerAdd(Line line, int markerNumber)
 	{
 		return static_cast<int>(Call(SCI_MARKERADD, line, markerNumber));
 	}
 
-	void MarkerDelete(int line, int markerNumber)
+	void MarkerDelete(Line line, int markerNumber)
 	{
 		Call(SCI_MARKERDELETE, line, markerNumber);
 	}
@@ -300,19 +304,19 @@ public:
 		Call(SCI_MARKERDELETEALL, markerNumber);
 	}
 
-	int MarkerGet(int line)
+	int MarkerGet(Line line)
 	{
 		return static_cast<int>(Call(SCI_MARKERGET, line));
 	}
 
-	int MarkerNext(int lineStart, int markerMask)
+	Line MarkerNext(Line lineStart, int markerMask)
 	{
-		return static_cast<int>(Call(SCI_MARKERNEXT, lineStart, markerMask));
+		return Call(SCI_MARKERNEXT, lineStart, markerMask);
 	}
 
-	int MarkerPrevious(int lineStart, int markerMask)
+	Line MarkerPrevious(Line lineStart, int markerMask)
 	{
-		return static_cast<int>(Call(SCI_MARKERPREVIOUS, lineStart, markerMask));
+		return Call(SCI_MARKERPREVIOUS, lineStart, markerMask);
 	}
 
 	void MarkerDefinePixmap(int markerNumber, const char* pixmap)
@@ -320,7 +324,7 @@ public:
 		Call(SCI_MARKERDEFINEPIXMAP, markerNumber, reinterpret_cast<intptr_t>(pixmap));
 	}
 
-	void MarkerAddSet(int line, int markerSet)
+	void MarkerAddSet(Line line, int markerSet)
 	{
 		Call(SCI_MARKERADDSET, line, markerSet);
 	}
@@ -380,14 +384,14 @@ public:
 		return static_cast<int>(Call(SCI_GETMARGINCURSORN, margin));
 	}
 
-	void SetMarginBackN(int margin, int back)
+	void SetMarginBackN(int margin, Colour back)
 	{
 		Call(SCI_SETMARGINBACKN, margin, back);
 	}
 
-	int GetMarginBackN(int margin)
+	Colour GetMarginBackN(int margin)
 	{
-		return static_cast<int>(Call(SCI_GETMARGINBACKN, margin));
+		return Call(SCI_GETMARGINBACKN, margin);
 	}
 
 	void SetMargins(int margins)
@@ -405,12 +409,12 @@ public:
 		Call(SCI_STYLECLEARALL);
 	}
 
-	void StyleSetFore(int style, int fore)
+	void StyleSetFore(int style, Colour fore)
 	{
 		Call(SCI_STYLESETFORE, style, fore);
 	}
 
-	void StyleSetBack(int style, int back)
+	void StyleSetBack(int style, Colour back)
 	{
 		Call(SCI_STYLESETBACK, style, back);
 	}
@@ -450,14 +454,14 @@ public:
 		Call(SCI_STYLESETUNDERLINE, style, underline);
 	}
 
-	int StyleGetFore(int style)
+	Colour StyleGetFore(int style)
 	{
-		return static_cast<int>(Call(SCI_STYLEGETFORE, style));
+		return Call(SCI_STYLEGETFORE, style);
 	}
 
-	int StyleGetBack(int style)
+	Colour StyleGetBack(int style)
 	{
-		return static_cast<int>(Call(SCI_STYLEGETBACK, style));
+		return Call(SCI_STYLEGETBACK, style);
 	}
 
 	bool StyleGetBold(int style)
@@ -550,12 +554,12 @@ public:
 		Call(SCI_STYLESETHOTSPOT, style, hotspot);
 	}
 
-	void SetSelFore(bool useSetting, int fore)
+	void SetSelFore(bool useSetting, Colour fore)
 	{
 		Call(SCI_SETSELFORE, useSetting, fore);
 	}
 
-	void SetSelBack(bool useSetting, int back)
+	void SetSelBack(bool useSetting, Colour back)
 	{
 		Call(SCI_SETSELBACK, useSetting, back);
 	}
@@ -580,7 +584,7 @@ public:
 		Call(SCI_SETSELEOLFILLED, filled);
 	}
 
-	void SetCaretFore(int fore)
+	void SetCaretFore(Colour fore)
 	{
 		Call(SCI_SETCARETFORE, fore);
 	}
@@ -600,7 +604,7 @@ public:
 		Call(SCI_CLEARALLCMDKEYS);
 	}
 
-	void SetStylingEx(int length, const char* styles)
+	void SetStylingEx(Position length, const char* styles)
 	{
 		Call(SCI_SETSTYLINGEX, length, reinterpret_cast<intptr_t>(styles));
 	}
@@ -660,14 +664,14 @@ public:
 		return static_cast<int>(Call(SCI_INDICGETSTYLE, indicator));
 	}
 
-	void IndicSetFore(int indicator, int fore)
+	void IndicSetFore(int indicator, Colour fore)
 	{
 		Call(SCI_INDICSETFORE, indicator, fore);
 	}
 
-	int IndicGetFore(int indicator)
+	Colour IndicGetFore(int indicator)
 	{
-		return static_cast<int>(Call(SCI_INDICGETFORE, indicator));
+		return Call(SCI_INDICGETFORE, indicator);
 	}
 
 	void IndicSetUnder(int indicator, bool under)
@@ -690,14 +694,14 @@ public:
 		return static_cast<int>(Call(SCI_INDICGETHOVERSTYLE, indicator));
 	}
 
-	void IndicSetHoverFore(int indicator, int fore)
+	void IndicSetHoverFore(int indicator, Colour fore)
 	{
 		Call(SCI_INDICSETHOVERFORE, indicator, fore);
 	}
 
-	int IndicGetHoverFore(int indicator)
+	Colour IndicGetHoverFore(int indicator)
 	{
-		return static_cast<int>(Call(SCI_INDICGETHOVERFORE, indicator));
+		return Call(SCI_INDICGETHOVERFORE, indicator);
 	}
 
 	void IndicSetFlags(int indicator, int flags)
@@ -710,12 +714,12 @@ public:
 		return static_cast<int>(Call(SCI_INDICGETFLAGS, indicator));
 	}
 
-	void SetWhitespaceFore(bool useSetting, int fore)
+	void SetWhitespaceFore(bool useSetting, Colour fore)
 	{
 		Call(SCI_SETWHITESPACEFORE, useSetting, fore);
 	}
 
-	void SetWhitespaceBack(bool useSetting, int back)
+	void SetWhitespaceBack(bool useSetting, Colour back)
 	{
 		Call(SCI_SETWHITESPACEBACK, useSetting, back);
 	}
@@ -730,12 +734,12 @@ public:
 		return static_cast<int>(Call(SCI_GETWHITESPACESIZE));
 	}
 
-	void SetLineState(int line, int state)
+	void SetLineState(Line line, int state)
 	{
 		Call(SCI_SETLINESTATE, line, state);
 	}
 
-	int GetLineState(int line)
+	int GetLineState(Line line)
 	{
 		return static_cast<int>(Call(SCI_GETLINESTATE, line));
 	}
@@ -755,12 +759,12 @@ public:
 		Call(SCI_SETCARETLINEVISIBLE, show);
 	}
 
-	int GetCaretLineBack()
+	Colour GetCaretLineBack()
 	{
-		return static_cast<int>(Call(SCI_GETCARETLINEBACK));
+		return Call(SCI_GETCARETLINEBACK);
 	}
 
-	void SetCaretLineBack(int back)
+	void SetCaretLineBack(Colour back)
 	{
 		Call(SCI_SETCARETLINEBACK, back);
 	}
@@ -780,7 +784,7 @@ public:
 		Call(SCI_STYLESETCHANGEABLE, style, changeable);
 	}
 
-	void AutoCShow(int lengthEntered, const char* itemList)
+	void AutoCShow(Position lengthEntered, const char* itemList)
 	{
 		Call(SCI_AUTOCSHOW, lengthEntered, reinterpret_cast<intptr_t>(itemList));
 	}
@@ -795,9 +799,9 @@ public:
 		return Call(SCI_AUTOCACTIVE);
 	}
 
-	int AutoCPosStart()
+	Position AutoCPosStart()
 	{
-		return static_cast<int>(Call(SCI_AUTOCPOSSTART));
+		return Call(SCI_AUTOCPOSSTART);
 	}
 
 	void AutoCComplete()
@@ -945,34 +949,34 @@ public:
 		return Call(SCI_GETUSETABS);
 	}
 
-	void SetLineIndentation(int line, int indentation)
+	void SetLineIndentation(Line line, int indentation)
 	{
 		Call(SCI_SETLINEINDENTATION, line, indentation);
 	}
 
-	int GetLineIndentation(int line)
+	int GetLineIndentation(Line line)
 	{
 		return static_cast<int>(Call(SCI_GETLINEINDENTATION, line));
 	}
 
-	int GetLineIndentPosition(int line)
+	Position GetLineIndentPosition(Line line)
 	{
-		return static_cast<int>(Call(SCI_GETLINEINDENTPOSITION, line));
+		return Call(SCI_GETLINEINDENTPOSITION, line);
 	}
 
-	int GetColumn(int pos)
+	Position GetColumn(Position pos)
 	{
-		return static_cast<int>(Call(SCI_GETCOLUMN, pos));
+		return Call(SCI_GETCOLUMN, pos);
 	}
 
-	int CountCharacters(int start, int end)
+	Position CountCharacters(Position start, Position end)
 	{
-		return static_cast<int>(Call(SCI_COUNTCHARACTERS, start, end));
+		return Call(SCI_COUNTCHARACTERS, start, end);
 	}
 
-	int CountCodeUnits(int start, int end)
+	Position CountCodeUnits(Position start, Position end)
 	{
-		return static_cast<int>(Call(SCI_COUNTCODEUNITS, start, end));
+		return Call(SCI_COUNTCODEUNITS, start, end);
 	}
 
 	void SetHScrollBar(bool visible)
@@ -995,19 +999,19 @@ public:
 		return static_cast<int>(Call(SCI_GETINDENTATIONGUIDES));
 	}
 
-	void SetHighlightGuide(int column)
+	void SetHighlightGuide(Position column)
 	{
 		Call(SCI_SETHIGHLIGHTGUIDE, column);
 	}
 
-	int GetHighlightGuide()
+	Position GetHighlightGuide()
 	{
-		return static_cast<int>(Call(SCI_GETHIGHLIGHTGUIDE));
+		return Call(SCI_GETHIGHLIGHTGUIDE);
 	}
 
-	int GetLineEndPosition(int line)
+	Position GetLineEndPosition(Line line)
 	{
-		return static_cast<int>(Call(SCI_GETLINEENDPOSITION, line));
+		return Call(SCI_GETLINEENDPOSITION, line);
 	}
 
 	int GetCodePage()
@@ -1015,9 +1019,9 @@ public:
 		return static_cast<int>(Call(SCI_GETCODEPAGE));
 	}
 
-	int GetCaretFore()
+	Colour GetCaretFore()
 	{
-		return static_cast<int>(Call(SCI_GETCARETFORE));
+		return Call(SCI_GETCARETFORE);
 	}
 
 	bool GetReadOnly()
@@ -1025,32 +1029,32 @@ public:
 		return Call(SCI_GETREADONLY);
 	}
 
-	void SetCurrentPos(int caret)
+	void SetCurrentPos(Position caret)
 	{
 		Call(SCI_SETCURRENTPOS, caret);
 	}
 
-	void SetSelectionStart(int anchor)
+	void SetSelectionStart(Position anchor)
 	{
 		Call(SCI_SETSELECTIONSTART, anchor);
 	}
 
-	int GetSelectionStart()
+	Position GetSelectionStart()
 	{
-		return static_cast<int>(Call(SCI_GETSELECTIONSTART));
+		return Call(SCI_GETSELECTIONSTART);
 	}
 
-	void SetSelectionEnd(int caret)
+	void SetSelectionEnd(Position caret)
 	{
 		Call(SCI_SETSELECTIONEND, caret);
 	}
 
-	int GetSelectionEnd()
+	Position GetSelectionEnd()
 	{
-		return static_cast<int>(Call(SCI_GETSELECTIONEND));
+		return Call(SCI_GETSELECTIONEND);
 	}
 
-	void SetEmptySelection(int caret)
+	void SetEmptySelection(Position caret)
 	{
 		Call(SCI_SETEMPTYSELECTION, caret);
 	}
@@ -1075,29 +1079,29 @@ public:
 		return static_cast<int>(Call(SCI_GETPRINTCOLOURMODE));
 	}
 
-	int FindText(int searchFlags, void* ft)
+	Position FindText(int searchFlags, void* ft)
 	{
-		return static_cast<int>(Call(SCI_FINDTEXT, searchFlags, reinterpret_cast<intptr_t>(ft)));
+		return Call(SCI_FINDTEXT, searchFlags, reinterpret_cast<intptr_t>(ft));
 	}
 
-	int FormatRange(bool draw, void* fr)
+	Position FormatRange(bool draw, void* fr)
 	{
-		return static_cast<int>(Call(SCI_FORMATRANGE, draw, reinterpret_cast<intptr_t>(fr)));
+		return Call(SCI_FORMATRANGE, draw, reinterpret_cast<intptr_t>(fr));
 	}
 
-	int GetFirstVisibleLine()
+	Line GetFirstVisibleLine()
 	{
-		return static_cast<int>(Call(SCI_GETFIRSTVISIBLELINE));
+		return Call(SCI_GETFIRSTVISIBLELINE);
 	}
 
-	int GetLine(int line, char* text)
+	Position GetLine(Line line, char* text)
 	{
-		return static_cast<int>(Call(SCI_GETLINE, line, reinterpret_cast<intptr_t>(text)));
+		return Call(SCI_GETLINE, line, reinterpret_cast<intptr_t>(text));
 	}
 
-	int GetLineCount()
+	Line GetLineCount()
 	{
-		return static_cast<int>(Call(SCI_GETLINECOUNT));
+		return Call(SCI_GETLINECOUNT);
 	}
 
 	void SetMarginLeft(int pixelWidth)
@@ -1125,19 +1129,19 @@ public:
 		return Call(SCI_GETMODIFY);
 	}
 
-	void SetSel(int anchor, int caret)
+	void SetSel(Position anchor, Position caret)
 	{
 		Call(SCI_SETSEL, anchor, caret);
 	}
 
-	int GetSelText(char* text)
+	Position GetSelText(char* text)
 	{
-		return static_cast<int>(Call(SCI_GETSELTEXT, 0, reinterpret_cast<intptr_t>(text)));
+		return Call(SCI_GETSELTEXT, 0, reinterpret_cast<intptr_t>(text));
 	}
 
-	int GetTextRange(void* tr)
+	Position GetTextRange(void* tr)
 	{
-		return static_cast<int>(Call(SCI_GETTEXTRANGE, 0, reinterpret_cast<intptr_t>(tr)));
+		return Call(SCI_GETTEXTRANGE, 0, reinterpret_cast<intptr_t>(tr));
 	}
 
 	void HideSelection(bool hide)
@@ -1145,27 +1149,27 @@ public:
 		Call(SCI_HIDESELECTION, hide);
 	}
 
-	int PointXFromPosition(int pos)
+	int PointXFromPosition(Position pos)
 	{
 		return static_cast<int>(Call(SCI_POINTXFROMPOSITION, 0, pos));
 	}
 
-	int PointYFromPosition(int pos)
+	int PointYFromPosition(Position pos)
 	{
 		return static_cast<int>(Call(SCI_POINTYFROMPOSITION, 0, pos));
 	}
 
-	int LineFromPosition(int pos)
+	Line LineFromPosition(Position pos)
 	{
-		return static_cast<int>(Call(SCI_LINEFROMPOSITION, pos));
+		return Call(SCI_LINEFROMPOSITION, pos);
 	}
 
-	int PositionFromLine(int line)
+	Position PositionFromLine(Line line)
 	{
-		return static_cast<int>(Call(SCI_POSITIONFROMLINE, line));
+		return Call(SCI_POSITIONFROMLINE, line);
 	}
 
-	void LineScroll(int columns, int lines)
+	void LineScroll(Position columns, Line lines)
 	{
 		Call(SCI_LINESCROLL, columns, lines);
 	}
@@ -1175,7 +1179,7 @@ public:
 		Call(SCI_SCROLLCARET);
 	}
 
-	void ScrollRange(int secondary, int primary)
+	void ScrollRange(Position secondary, Position primary)
 	{
 		Call(SCI_SCROLLRANGE, secondary, primary);
 	}
@@ -1240,14 +1244,14 @@ public:
 		Call(SCI_SETTEXT, 0, reinterpret_cast<intptr_t>(text));
 	}
 
-	int GetText(int length, char* text)
+	Position GetText(Position length, char* text)
 	{
-		return static_cast<int>(Call(SCI_GETTEXT, length, reinterpret_cast<intptr_t>(text)));
+		return Call(SCI_GETTEXT, length, reinterpret_cast<intptr_t>(text));
 	}
 
-	int GetTextLength()
+	Position GetTextLength()
 	{
-		return static_cast<int>(Call(SCI_GETTEXTLENGTH));
+		return Call(SCI_GETTEXTLENGTH);
 	}
 
 	void* GetDirectFunction()
@@ -1280,34 +1284,34 @@ public:
 		return static_cast<int>(Call(SCI_GETCARETWIDTH));
 	}
 
-	void SetTargetStart(int start)
+	void SetTargetStart(Position start)
 	{
 		Call(SCI_SETTARGETSTART, start);
 	}
 
-	int GetTargetStart()
+	Position GetTargetStart()
 	{
-		return static_cast<int>(Call(SCI_GETTARGETSTART));
+		return Call(SCI_GETTARGETSTART);
 	}
 
-	void SetTargetEnd(int end)
+	void SetTargetEnd(Position end)
 	{
 		Call(SCI_SETTARGETEND, end);
 	}
 
-	int GetTargetEnd()
+	Position GetTargetEnd()
 	{
-		return static_cast<int>(Call(SCI_GETTARGETEND));
+		return Call(SCI_GETTARGETEND);
 	}
 
-	void SetTargetRange(int start, int end)
+	void SetTargetRange(Position start, Position end)
 	{
 		Call(SCI_SETTARGETRANGE, start, end);
 	}
 
-	int GetTargetText(char* text)
+	Position GetTargetText(char* text)
 	{
-		return static_cast<int>(Call(SCI_GETTARGETTEXT, 0, reinterpret_cast<intptr_t>(text)));
+		return Call(SCI_GETTARGETTEXT, 0, reinterpret_cast<intptr_t>(text));
 	}
 
 	void TargetFromSelection()
@@ -1320,19 +1324,19 @@ public:
 		Call(SCI_TARGETWHOLEDOCUMENT);
 	}
 
-	int ReplaceTarget(int length, const char* text)
+	Position ReplaceTarget(Position length, const char* text)
 	{
-		return static_cast<int>(Call(SCI_REPLACETARGET, length, reinterpret_cast<intptr_t>(text)));
+		return Call(SCI_REPLACETARGET, length, reinterpret_cast<intptr_t>(text));
 	}
 
-	int ReplaceTargetRE(int length, const char* text)
+	Position ReplaceTargetRE(Position length, const char* text)
 	{
-		return static_cast<int>(Call(SCI_REPLACETARGETRE, length, reinterpret_cast<intptr_t>(text)));
+		return Call(SCI_REPLACETARGETRE, length, reinterpret_cast<intptr_t>(text));
 	}
 
-	int SearchInTarget(int length, const char* text)
+	Position SearchInTarget(Position length, const char* text)
 	{
-		return static_cast<int>(Call(SCI_SEARCHINTARGET, length, reinterpret_cast<intptr_t>(text)));
+		return Call(SCI_SEARCHINTARGET, length, reinterpret_cast<intptr_t>(text));
 	}
 
 	void SetSearchFlags(int searchFlags)
@@ -1345,7 +1349,7 @@ public:
 		return static_cast<int>(Call(SCI_GETSEARCHFLAGS));
 	}
 
-	void CallTipShow(int pos, const char* definition)
+	void CallTipShow(Position pos, const char* definition)
 	{
 		Call(SCI_CALLTIPSHOW, pos, reinterpret_cast<intptr_t>(definition));
 	}
@@ -1360,12 +1364,12 @@ public:
 		return Call(SCI_CALLTIPACTIVE);
 	}
 
-	int CallTipPosStart()
+	Position CallTipPosStart()
 	{
-		return static_cast<int>(Call(SCI_CALLTIPPOSSTART));
+		return Call(SCI_CALLTIPPOSSTART);
 	}
 
-	void CallTipSetPosStart(int posStart)
+	void CallTipSetPosStart(Position posStart)
 	{
 		Call(SCI_CALLTIPSETPOSSTART, posStart);
 	}
@@ -1375,17 +1379,17 @@ public:
 		Call(SCI_CALLTIPSETHLT, highlightStart, highlightEnd);
 	}
 
-	void CallTipSetBack(int back)
+	void CallTipSetBack(Colour back)
 	{
 		Call(SCI_CALLTIPSETBACK, back);
 	}
 
-	void CallTipSetFore(int fore)
+	void CallTipSetFore(Colour fore)
 	{
 		Call(SCI_CALLTIPSETFORE, fore);
 	}
 
-	void CallTipSetForeHlt(int fore)
+	void CallTipSetForeHlt(Colour fore)
 	{
 		Call(SCI_CALLTIPSETFOREHLT, fore);
 	}
@@ -1400,52 +1404,52 @@ public:
 		Call(SCI_CALLTIPSETPOSITION, above);
 	}
 
-	int VisibleFromDocLine(int docLine)
+	Line VisibleFromDocLine(Line docLine)
 	{
-		return static_cast<int>(Call(SCI_VISIBLEFROMDOCLINE, docLine));
+		return Call(SCI_VISIBLEFROMDOCLINE, docLine);
 	}
 
-	int DocLineFromVisible(int displayLine)
+	Line DocLineFromVisible(Line displayLine)
 	{
-		return static_cast<int>(Call(SCI_DOCLINEFROMVISIBLE, displayLine));
+		return Call(SCI_DOCLINEFROMVISIBLE, displayLine);
 	}
 
-	int WrapCount(int docLine)
+	Line WrapCount(Line docLine)
 	{
-		return static_cast<int>(Call(SCI_WRAPCOUNT, docLine));
+		return Call(SCI_WRAPCOUNT, docLine);
 	}
 
-	void SetFoldLevel(int line, int level)
+	void SetFoldLevel(Line line, int level)
 	{
 		Call(SCI_SETFOLDLEVEL, line, level);
 	}
 
-	int GetFoldLevel(int line)
+	int GetFoldLevel(Line line)
 	{
 		return static_cast<int>(Call(SCI_GETFOLDLEVEL, line));
 	}
 
-	int GetLastChild(int line, int level)
+	Line GetLastChild(Line line, int level)
 	{
-		return static_cast<int>(Call(SCI_GETLASTCHILD, line, level));
+		return Call(SCI_GETLASTCHILD, line, level);
 	}
 
-	int GetFoldParent(int line)
+	Line GetFoldParent(Line line)
 	{
-		return static_cast<int>(Call(SCI_GETFOLDPARENT, line));
+		return Call(SCI_GETFOLDPARENT, line);
 	}
 
-	void ShowLines(int lineStart, int lineEnd)
+	void ShowLines(Line lineStart, Line lineEnd)
 	{
 		Call(SCI_SHOWLINES, lineStart, lineEnd);
 	}
 
-	void HideLines(int lineStart, int lineEnd)
+	void HideLines(Line lineStart, Line lineEnd)
 	{
 		Call(SCI_HIDELINES, lineStart, lineEnd);
 	}
 
-	bool GetLineVisible(int line)
+	bool GetLineVisible(Line line)
 	{
 		return Call(SCI_GETLINEVISIBLE, line);
 	}
@@ -1455,22 +1459,22 @@ public:
 		return Call(SCI_GETALLLINESVISIBLE);
 	}
 
-	void SetFoldExpanded(int line, bool expanded)
+	void SetFoldExpanded(Line line, bool expanded)
 	{
 		Call(SCI_SETFOLDEXPANDED, line, expanded);
 	}
 
-	bool GetFoldExpanded(int line)
+	bool GetFoldExpanded(Line line)
 	{
 		return Call(SCI_GETFOLDEXPANDED, line);
 	}
 
-	void ToggleFold(int line)
+	void ToggleFold(Line line)
 	{
 		Call(SCI_TOGGLEFOLD, line);
 	}
 
-	void ToggleFoldShowText(int line, const char* text)
+	void ToggleFoldShowText(Line line, const char* text)
 	{
 		Call(SCI_TOGGLEFOLDSHOWTEXT, line, reinterpret_cast<intptr_t>(text));
 	}
@@ -1495,17 +1499,17 @@ public:
 		return static_cast<int>(Call(SCI_GETDEFAULTFOLDDISPLAYTEXT, 0, reinterpret_cast<intptr_t>(text)));
 	}
 
-	void FoldLine(int line, int action)
+	void FoldLine(Line line, int action)
 	{
 		Call(SCI_FOLDLINE, line, action);
 	}
 
-	void FoldChildren(int line, int action)
+	void FoldChildren(Line line, int action)
 	{
 		Call(SCI_FOLDCHILDREN, line, action);
 	}
 
-	void ExpandChildren(int line, int level)
+	void ExpandChildren(Line line, int level)
 	{
 		Call(SCI_EXPANDCHILDREN, line, level);
 	}
@@ -1515,7 +1519,7 @@ public:
 		Call(SCI_FOLDALL, action);
 	}
 
-	void EnsureVisible(int line)
+	void EnsureVisible(Line line)
 	{
 		Call(SCI_ENSUREVISIBLE, line);
 	}
@@ -1535,7 +1539,7 @@ public:
 		Call(SCI_SETFOLDFLAGS, flags);
 	}
 
-	void EnsureVisibleEnforcePolicy(int line)
+	void EnsureVisibleEnforcePolicy(Line line)
 	{
 		Call(SCI_ENSUREVISIBLEENFORCEPOLICY, line);
 	}
@@ -1570,17 +1574,17 @@ public:
 		return static_cast<int>(Call(SCI_GETMOUSEDWELLTIME));
 	}
 
-	int WordStartPosition(int pos, bool onlyWordCharacters)
+	Position WordStartPosition(Position pos, bool onlyWordCharacters)
 	{
-		return static_cast<int>(Call(SCI_WORDSTARTPOSITION, pos, onlyWordCharacters));
+		return Call(SCI_WORDSTARTPOSITION, pos, onlyWordCharacters);
 	}
 
-	int WordEndPosition(int pos, bool onlyWordCharacters)
+	Position WordEndPosition(Position pos, bool onlyWordCharacters)
 	{
-		return static_cast<int>(Call(SCI_WORDENDPOSITION, pos, onlyWordCharacters));
+		return Call(SCI_WORDENDPOSITION, pos, onlyWordCharacters);
 	}
 
-	bool IsRangeWord(int start, int end)
+	bool IsRangeWord(Position start, Position end)
 	{
 		return Call(SCI_ISRANGEWORD, start, end);
 	}
@@ -1690,7 +1694,7 @@ public:
 		return Call(SCI_GETENDATLASTLINE);
 	}
 
-	int TextHeight(int line)
+	int TextHeight(Line line)
 	{
 		return static_cast<int>(Call(SCI_TEXTHEIGHT, line));
 	}
@@ -1705,7 +1709,7 @@ public:
 		return Call(SCI_GETVSCROLLBAR);
 	}
 
-	void AppendText(int length, const char* text)
+	void AppendText(Position length, const char* text)
 	{
 		Call(SCI_APPENDTEXT, length, reinterpret_cast<intptr_t>(text));
 	}
@@ -1730,7 +1734,7 @@ public:
 		return static_cast<int>(Call(SCI_GETFONTQUALITY));
 	}
 
-	void SetFirstVisibleLine(int displayLine)
+	void SetFirstVisibleLine(Line displayLine)
 	{
 		Call(SCI_SETFIRSTVISIBLELINE, displayLine);
 	}
@@ -1760,12 +1764,12 @@ public:
 		Call(SCI_LINESSPLIT, pixelWidth);
 	}
 
-	void SetFoldMarginColour(bool useSetting, int back)
+	void SetFoldMarginColour(bool useSetting, Colour back)
 	{
 		Call(SCI_SETFOLDMARGINCOLOUR, useSetting, back);
 	}
 
-	void SetFoldMarginHiColour(bool useSetting, int fore)
+	void SetFoldMarginHiColour(bool useSetting, Colour fore)
 	{
 		Call(SCI_SETFOLDMARGINHICOLOUR, useSetting, fore);
 	}
@@ -2080,12 +2084,12 @@ public:
 		Call(SCI_MOVECARETINSIDEVIEW);
 	}
 
-	int LineLength(int line)
+	Position LineLength(Line line)
 	{
-		return static_cast<int>(Call(SCI_LINELENGTH, line));
+		return Call(SCI_LINELENGTH, line);
 	}
 
-	void BraceHighlight(int posA, int posB)
+	void BraceHighlight(Position posA, Position posB)
 	{
 		Call(SCI_BRACEHIGHLIGHT, posA, posB);
 	}
@@ -2095,7 +2099,7 @@ public:
 		Call(SCI_BRACEHIGHLIGHTINDICATOR, useSetting, indicator);
 	}
 
-	void BraceBadLight(int pos)
+	void BraceBadLight(Position pos)
 	{
 		Call(SCI_BRACEBADLIGHT, pos);
 	}
@@ -2105,9 +2109,9 @@ public:
 		Call(SCI_BRACEBADLIGHTINDICATOR, useSetting, indicator);
 	}
 
-	int BraceMatch(int pos, int maxReStyle)
+	Position BraceMatch(Position pos, int maxReStyle)
 	{
-		return static_cast<int>(Call(SCI_BRACEMATCH, pos, maxReStyle));
+		return Call(SCI_BRACEMATCH, pos, maxReStyle);
 	}
 
 	bool GetViewEOL()
@@ -2135,12 +2139,12 @@ public:
 		Call(SCI_SETMODEVENTMASK, eventMask);
 	}
 
-	int GetEdgeColumn()
+	Position GetEdgeColumn()
 	{
-		return static_cast<int>(Call(SCI_GETEDGECOLUMN));
+		return Call(SCI_GETEDGECOLUMN);
 	}
 
-	void SetEdgeColumn(int column)
+	void SetEdgeColumn(Position column)
 	{
 		Call(SCI_SETEDGECOLUMN, column);
 	}
@@ -2155,17 +2159,17 @@ public:
 		Call(SCI_SETEDGEMODE, edgeMode);
 	}
 
-	int GetEdgeColour()
+	Colour GetEdgeColour()
 	{
-		return static_cast<int>(Call(SCI_GETEDGECOLOUR));
+		return Call(SCI_GETEDGECOLOUR);
 	}
 
-	void SetEdgeColour(int edgeColour)
+	void SetEdgeColour(Colour edgeColour)
 	{
 		Call(SCI_SETEDGECOLOUR, edgeColour);
 	}
 
-	void MultiEdgeAddLine(int column, int edgeColour)
+	void MultiEdgeAddLine(Position column, Colour edgeColour)
 	{
 		Call(SCI_MULTIEDGEADDLINE, column, edgeColour);
 	}
@@ -2180,19 +2184,19 @@ public:
 		Call(SCI_SEARCHANCHOR);
 	}
 
-	int SearchNext(int searchFlags, const char* text)
+	Position SearchNext(int searchFlags, const char* text)
 	{
-		return static_cast<int>(Call(SCI_SEARCHNEXT, searchFlags, reinterpret_cast<intptr_t>(text)));
+		return Call(SCI_SEARCHNEXT, searchFlags, reinterpret_cast<intptr_t>(text));
 	}
 
-	int SearchPrev(int searchFlags, const char* text)
+	Position SearchPrev(int searchFlags, const char* text)
 	{
-		return static_cast<int>(Call(SCI_SEARCHPREV, searchFlags, reinterpret_cast<intptr_t>(text)));
+		return Call(SCI_SEARCHPREV, searchFlags, reinterpret_cast<intptr_t>(text));
 	}
 
-	int LinesOnScreen()
+	Line LinesOnScreen()
 	{
-		return static_cast<int>(Call(SCI_LINESONSCREEN));
+		return Call(SCI_LINESONSCREEN);
 	}
 
 	void UsePopUp(int popUpMode)
@@ -2215,7 +2219,7 @@ public:
 		return static_cast<int>(Call(SCI_GETZOOM));
 	}
 
-	void* CreateDocument(int bytes, int documentOptions)
+	void* CreateDocument(Position bytes, int documentOptions)
 	{
 		return reinterpret_cast<void*>(Call(SCI_CREATEDOCUMENT, bytes, documentOptions));
 	}
@@ -2385,24 +2389,24 @@ public:
 		return static_cast<int>(Call(SCI_GETPRINTWRAPMODE));
 	}
 
-	void SetHotspotActiveFore(bool useSetting, int fore)
+	void SetHotspotActiveFore(bool useSetting, Colour fore)
 	{
 		Call(SCI_SETHOTSPOTACTIVEFORE, useSetting, fore);
 	}
 
-	int GetHotspotActiveFore()
+	Colour GetHotspotActiveFore()
 	{
-		return static_cast<int>(Call(SCI_GETHOTSPOTACTIVEFORE));
+		return Call(SCI_GETHOTSPOTACTIVEFORE);
 	}
 
-	void SetHotspotActiveBack(bool useSetting, int back)
+	void SetHotspotActiveBack(bool useSetting, Colour back)
 	{
 		Call(SCI_SETHOTSPOTACTIVEBACK, useSetting, back);
 	}
 
-	int GetHotspotActiveBack()
+	Colour GetHotspotActiveBack()
 	{
-		return static_cast<int>(Call(SCI_GETHOTSPOTACTIVEBACK));
+		return Call(SCI_GETHOTSPOTACTIVEBACK);
 	}
 
 	void SetHotspotActiveUnderline(bool underline)
@@ -2445,32 +2449,32 @@ public:
 		Call(SCI_PARAUPEXTEND);
 	}
 
-	int PositionBefore(int pos)
+	Position PositionBefore(Position pos)
 	{
-		return static_cast<int>(Call(SCI_POSITIONBEFORE, pos));
+		return Call(SCI_POSITIONBEFORE, pos);
 	}
 
-	int PositionAfter(int pos)
+	Position PositionAfter(Position pos)
 	{
-		return static_cast<int>(Call(SCI_POSITIONAFTER, pos));
+		return Call(SCI_POSITIONAFTER, pos);
 	}
 
-	int PositionRelative(int pos, int relative)
+	Position PositionRelative(Position pos, Position relative)
 	{
-		return static_cast<int>(Call(SCI_POSITIONRELATIVE, pos, relative));
+		return Call(SCI_POSITIONRELATIVE, pos, relative);
 	}
 
-	int PositionRelativeCodeUnits(int pos, int relative)
+	Position PositionRelativeCodeUnits(Position pos, Position relative)
 	{
-		return static_cast<int>(Call(SCI_POSITIONRELATIVECODEUNITS, pos, relative));
+		return Call(SCI_POSITIONRELATIVECODEUNITS, pos, relative);
 	}
 
-	void CopyRange(int start, int end)
+	void CopyRange(Position start, Position end)
 	{
 		Call(SCI_COPYRANGE, start, end);
 	}
 
-	void CopyText(int length, const char* text)
+	void CopyText(Position length, const char* text)
 	{
 		Call(SCI_COPYTEXT, length, reinterpret_cast<intptr_t>(text));
 	}
@@ -2490,14 +2494,14 @@ public:
 		return Call(SCI_GETMOVEEXTENDSSELECTION);
 	}
 
-	int GetLineSelStartPosition(int line)
+	Position GetLineSelStartPosition(Line line)
 	{
-		return static_cast<int>(Call(SCI_GETLINESELSTARTPOSITION, line));
+		return Call(SCI_GETLINESELSTARTPOSITION, line);
 	}
 
-	int GetLineSelEndPosition(int line)
+	Position GetLineSelEndPosition(Line line)
 	{
-		return static_cast<int>(Call(SCI_GETLINESELENDPOSITION, line));
+		return Call(SCI_GETLINESELENDPOSITION, line);
 	}
 
 	void LineDownRectExtend()
@@ -2650,29 +2654,29 @@ public:
 		return static_cast<int>(Call(SCI_AUTOCGETORDER));
 	}
 
-	void Allocate(int bytes)
+	void Allocate(Position bytes)
 	{
 		Call(SCI_ALLOCATE, bytes);
 	}
 
-	int TargetAsUTF8(char* s)
+	Position TargetAsUTF8(char* s)
 	{
-		return static_cast<int>(Call(SCI_TARGETASUTF8, 0, reinterpret_cast<intptr_t>(s)));
+		return Call(SCI_TARGETASUTF8, 0, reinterpret_cast<intptr_t>(s));
 	}
 
-	void SetLengthForEncode(int bytes)
+	void SetLengthForEncode(Position bytes)
 	{
 		Call(SCI_SETLENGTHFORENCODE, bytes);
 	}
 
-	int EncodedFromUTF8(const char* utf8, char* encoded)
+	Position EncodedFromUTF8(const char* utf8, char* encoded)
 	{
-		return static_cast<int>(Call(SCI_ENCODEDFROMUTF8, reinterpret_cast<uintptr_t>(utf8), reinterpret_cast<intptr_t>(encoded)));
+		return Call(SCI_ENCODEDFROMUTF8, reinterpret_cast<uintptr_t>(utf8), reinterpret_cast<intptr_t>(encoded));
 	}
 
-	int FindColumn(int line, int column)
+	Position FindColumn(Line line, Position column)
 	{
-		return static_cast<int>(Call(SCI_FINDCOLUMN, line, column));
+		return Call(SCI_FINDCOLUMN, line, column);
 	}
 
 	int GetCaretSticky()
@@ -2745,32 +2749,32 @@ public:
 		return static_cast<int>(Call(SCI_GETINDICATORVALUE));
 	}
 
-	void IndicatorFillRange(int start, int lengthFill)
+	void IndicatorFillRange(Position start, Position lengthFill)
 	{
 		Call(SCI_INDICATORFILLRANGE, start, lengthFill);
 	}
 
-	void IndicatorClearRange(int start, int lengthClear)
+	void IndicatorClearRange(Position start, Position lengthClear)
 	{
 		Call(SCI_INDICATORCLEARRANGE, start, lengthClear);
 	}
 
-	int IndicatorAllOnFor(int pos)
+	int IndicatorAllOnFor(Position pos)
 	{
 		return static_cast<int>(Call(SCI_INDICATORALLONFOR, pos));
 	}
 
-	int IndicatorValueAt(int indicator, int pos)
+	int IndicatorValueAt(int indicator, Position pos)
 	{
 		return static_cast<int>(Call(SCI_INDICATORVALUEAT, indicator, pos));
 	}
 
-	int IndicatorStart(int indicator, int pos)
+	int IndicatorStart(int indicator, Position pos)
 	{
 		return static_cast<int>(Call(SCI_INDICATORSTART, indicator, pos));
 	}
 
-	int IndicatorEnd(int indicator, int pos)
+	int IndicatorEnd(int indicator, Position pos)
 	{
 		return static_cast<int>(Call(SCI_INDICATOREND, indicator, pos));
 	}
@@ -2795,14 +2799,14 @@ public:
 		return reinterpret_cast<void*>(Call(SCI_GETCHARACTERPOINTER));
 	}
 
-	void* GetRangePointer(int start, int lengthRange)
+	void* GetRangePointer(Position start, Position lengthRange)
 	{
 		return reinterpret_cast<void*>(Call(SCI_GETRANGEPOINTER, start, lengthRange));
 	}
 
-	int GetGapPosition()
+	Position GetGapPosition()
 	{
-		return static_cast<int>(Call(SCI_GETGAPPOSITION));
+		return Call(SCI_GETGAPPOSITION);
 	}
 
 	void IndicSetAlpha(int indicator, int alpha)
@@ -2850,32 +2854,32 @@ public:
 		return static_cast<int>(Call(SCI_MARKERSYMBOLDEFINED, markerNumber));
 	}
 
-	void MarginSetText(int line, const char* text)
+	void MarginSetText(Line line, const char* text)
 	{
 		Call(SCI_MARGINSETTEXT, line, reinterpret_cast<intptr_t>(text));
 	}
 
-	int MarginGetText(int line, char* text)
+	int MarginGetText(Line line, char* text)
 	{
 		return static_cast<int>(Call(SCI_MARGINGETTEXT, line, reinterpret_cast<intptr_t>(text)));
 	}
 
-	void MarginSetStyle(int line, int style)
+	void MarginSetStyle(Line line, int style)
 	{
 		Call(SCI_MARGINSETSTYLE, line, style);
 	}
 
-	int MarginGetStyle(int line)
+	int MarginGetStyle(Line line)
 	{
 		return static_cast<int>(Call(SCI_MARGINGETSTYLE, line));
 	}
 
-	void MarginSetStyles(int line, const char* styles)
+	void MarginSetStyles(Line line, const char* styles)
 	{
 		Call(SCI_MARGINSETSTYLES, line, reinterpret_cast<intptr_t>(styles));
 	}
 
-	int MarginGetStyles(int line, char* styles)
+	int MarginGetStyles(Line line, char* styles)
 	{
 		return static_cast<int>(Call(SCI_MARGINGETSTYLES, line, reinterpret_cast<intptr_t>(styles)));
 	}
@@ -2905,37 +2909,37 @@ public:
 		return static_cast<int>(Call(SCI_GETMARGINOPTIONS));
 	}
 
-	void AnnotationSetText(int line, const char* text)
+	void AnnotationSetText(Line line, const char* text)
 	{
 		Call(SCI_ANNOTATIONSETTEXT, line, reinterpret_cast<intptr_t>(text));
 	}
 
-	int AnnotationGetText(int line, char* text)
+	int AnnotationGetText(Line line, char* text)
 	{
 		return static_cast<int>(Call(SCI_ANNOTATIONGETTEXT, line, reinterpret_cast<intptr_t>(text)));
 	}
 
-	void AnnotationSetStyle(int line, int style)
+	void AnnotationSetStyle(Line line, int style)
 	{
 		Call(SCI_ANNOTATIONSETSTYLE, line, style);
 	}
 
-	int AnnotationGetStyle(int line)
+	int AnnotationGetStyle(Line line)
 	{
 		return static_cast<int>(Call(SCI_ANNOTATIONGETSTYLE, line));
 	}
 
-	void AnnotationSetStyles(int line, const char* styles)
+	void AnnotationSetStyles(Line line, const char* styles)
 	{
 		Call(SCI_ANNOTATIONSETSTYLES, line, reinterpret_cast<intptr_t>(styles));
 	}
 
-	int AnnotationGetStyles(int line, char* styles)
+	int AnnotationGetStyles(Line line, char* styles)
 	{
 		return static_cast<int>(Call(SCI_ANNOTATIONGETSTYLES, line, reinterpret_cast<intptr_t>(styles)));
 	}
 
-	int AnnotationGetLines(int line)
+	int AnnotationGetLines(Line line)
 	{
 		return static_cast<int>(Call(SCI_ANNOTATIONGETLINES, line));
 	}
@@ -2980,14 +2984,14 @@ public:
 		Call(SCI_ADDUNDOACTION, token, flags);
 	}
 
-	int CharPositionFromPoint(int x, int y)
+	Position CharPositionFromPoint(int x, int y)
 	{
-		return static_cast<int>(Call(SCI_CHARPOSITIONFROMPOINT, x, y));
+		return Call(SCI_CHARPOSITIONFROMPOINT, x, y);
 	}
 
-	int CharPositionFromPointClose(int x, int y)
+	Position CharPositionFromPointClose(int x, int y)
 	{
-		return static_cast<int>(Call(SCI_CHARPOSITIONFROMPOINTCLOSE, x, y));
+		return Call(SCI_CHARPOSITIONFROMPOINTCLOSE, x, y);
 	}
 
 	void SetMouseSelectionRectangularSwitch(bool mouseSelectionRectangularSwitch)
@@ -3055,12 +3059,12 @@ public:
 		Call(SCI_CLEARSELECTIONS);
 	}
 
-	void SetSelection(int caret, int anchor)
+	void SetSelection(Position caret, Position anchor)
 	{
 		Call(SCI_SETSELECTION, caret, anchor);
 	}
 
-	void AddSelection(int caret, int anchor)
+	void AddSelection(Position caret, Position anchor)
 	{
 		Call(SCI_ADDSELECTION, caret, anchor);
 	}
@@ -3080,104 +3084,104 @@ public:
 		return static_cast<int>(Call(SCI_GETMAINSELECTION));
 	}
 
-	void SetSelectionNCaret(int selection, int caret)
+	void SetSelectionNCaret(int selection, Position caret)
 	{
 		Call(SCI_SETSELECTIONNCARET, selection, caret);
 	}
 
-	int GetSelectionNCaret(int selection)
+	Position GetSelectionNCaret(int selection)
 	{
-		return static_cast<int>(Call(SCI_GETSELECTIONNCARET, selection));
+		return Call(SCI_GETSELECTIONNCARET, selection);
 	}
 
-	void SetSelectionNAnchor(int selection, int anchor)
+	void SetSelectionNAnchor(int selection, Position anchor)
 	{
 		Call(SCI_SETSELECTIONNANCHOR, selection, anchor);
 	}
 
-	int GetSelectionNAnchor(int selection)
+	Position GetSelectionNAnchor(int selection)
 	{
-		return static_cast<int>(Call(SCI_GETSELECTIONNANCHOR, selection));
+		return Call(SCI_GETSELECTIONNANCHOR, selection);
 	}
 
-	void SetSelectionNCaretVirtualSpace(int selection, int space)
+	void SetSelectionNCaretVirtualSpace(int selection, Position space)
 	{
 		Call(SCI_SETSELECTIONNCARETVIRTUALSPACE, selection, space);
 	}
 
-	int GetSelectionNCaretVirtualSpace(int selection)
+	Position GetSelectionNCaretVirtualSpace(int selection)
 	{
-		return static_cast<int>(Call(SCI_GETSELECTIONNCARETVIRTUALSPACE, selection));
+		return Call(SCI_GETSELECTIONNCARETVIRTUALSPACE, selection);
 	}
 
-	void SetSelectionNAnchorVirtualSpace(int selection, int space)
+	void SetSelectionNAnchorVirtualSpace(int selection, Position space)
 	{
 		Call(SCI_SETSELECTIONNANCHORVIRTUALSPACE, selection, space);
 	}
 
-	int GetSelectionNAnchorVirtualSpace(int selection)
+	Position GetSelectionNAnchorVirtualSpace(int selection)
 	{
-		return static_cast<int>(Call(SCI_GETSELECTIONNANCHORVIRTUALSPACE, selection));
+		return Call(SCI_GETSELECTIONNANCHORVIRTUALSPACE, selection);
 	}
 
-	void SetSelectionNStart(int selection, int anchor)
+	void SetSelectionNStart(int selection, Position anchor)
 	{
 		Call(SCI_SETSELECTIONNSTART, selection, anchor);
 	}
 
-	int GetSelectionNStart(int selection)
+	Position GetSelectionNStart(int selection)
 	{
-		return static_cast<int>(Call(SCI_GETSELECTIONNSTART, selection));
+		return Call(SCI_GETSELECTIONNSTART, selection);
 	}
 
-	void SetSelectionNEnd(int selection, int caret)
+	void SetSelectionNEnd(int selection, Position caret)
 	{
 		Call(SCI_SETSELECTIONNEND, selection, caret);
 	}
 
-	int GetSelectionNEnd(int selection)
+	Position GetSelectionNEnd(int selection)
 	{
-		return static_cast<int>(Call(SCI_GETSELECTIONNEND, selection));
+		return Call(SCI_GETSELECTIONNEND, selection);
 	}
 
-	void SetRectangularSelectionCaret(int caret)
+	void SetRectangularSelectionCaret(Position caret)
 	{
 		Call(SCI_SETRECTANGULARSELECTIONCARET, caret);
 	}
 
-	int GetRectangularSelectionCaret()
+	Position GetRectangularSelectionCaret()
 	{
-		return static_cast<int>(Call(SCI_GETRECTANGULARSELECTIONCARET));
+		return Call(SCI_GETRECTANGULARSELECTIONCARET);
 	}
 
-	void SetRectangularSelectionAnchor(int anchor)
+	void SetRectangularSelectionAnchor(Position anchor)
 	{
 		Call(SCI_SETRECTANGULARSELECTIONANCHOR, anchor);
 	}
 
-	int GetRectangularSelectionAnchor()
+	Position GetRectangularSelectionAnchor()
 	{
-		return static_cast<int>(Call(SCI_GETRECTANGULARSELECTIONANCHOR));
+		return Call(SCI_GETRECTANGULARSELECTIONANCHOR);
 	}
 
-	void SetRectangularSelectionCaretVirtualSpace(int space)
+	void SetRectangularSelectionCaretVirtualSpace(Position space)
 	{
 		Call(SCI_SETRECTANGULARSELECTIONCARETVIRTUALSPACE, space);
 	}
 
-	int GetRectangularSelectionCaretVirtualSpace()
+	Position GetRectangularSelectionCaretVirtualSpace()
 	{
-		return static_cast<int>(Call(SCI_GETRECTANGULARSELECTIONCARETVIRTUALSPACE));
+		return Call(SCI_GETRECTANGULARSELECTIONCARETVIRTUALSPACE);
 	}
 
-	void SetRectangularSelectionAnchorVirtualSpace(int space)
+	void SetRectangularSelectionAnchorVirtualSpace(Position space)
 	{
 		Call(SCI_SETRECTANGULARSELECTIONANCHORVIRTUALSPACE, space);
 	}
 
-	int GetRectangularSelectionAnchorVirtualSpace()
+	Position GetRectangularSelectionAnchorVirtualSpace()
 	{
-		return static_cast<int>(Call(SCI_GETRECTANGULARSELECTIONANCHORVIRTUALSPACE));
+		return Call(SCI_GETRECTANGULARSELECTIONANCHORVIRTUALSPACE);
 	}
 
 	void SetVirtualSpaceOptions(int virtualSpaceOptions)
@@ -3200,12 +3204,12 @@ public:
 		return static_cast<int>(Call(SCI_GETRECTANGULARSELECTIONMODIFIER));
 	}
 
-	void SetAdditionalSelFore(int fore)
+	void SetAdditionalSelFore(Colour fore)
 	{
 		Call(SCI_SETADDITIONALSELFORE, fore);
 	}
 
-	void SetAdditionalSelBack(int back)
+	void SetAdditionalSelBack(Colour back)
 	{
 		Call(SCI_SETADDITIONALSELBACK, back);
 	}
@@ -3220,14 +3224,14 @@ public:
 		return static_cast<int>(Call(SCI_GETADDITIONALSELALPHA));
 	}
 
-	void SetAdditionalCaretFore(int fore)
+	void SetAdditionalCaretFore(Colour fore)
 	{
 		Call(SCI_SETADDITIONALCARETFORE, fore);
 	}
 
-	int GetAdditionalCaretFore()
+	Colour GetAdditionalCaretFore()
 	{
-		return static_cast<int>(Call(SCI_GETADDITIONALCARETFORE));
+		return Call(SCI_GETADDITIONALCARETFORE);
 	}
 
 	void RotateSelection()
@@ -3250,14 +3254,14 @@ public:
 		Call(SCI_MULTIPLESELECTADDEACH);
 	}
 
-	int ChangeLexerState(int start, int end)
+	int ChangeLexerState(Position start, Position end)
 	{
 		return static_cast<int>(Call(SCI_CHANGELEXERSTATE, start, end));
 	}
 
-	int ContractedFoldNext(int lineStart)
+	Line ContractedFoldNext(Line lineStart)
 	{
-		return static_cast<int>(Call(SCI_CONTRACTEDFOLDNEXT, lineStart));
+		return Call(SCI_CONTRACTEDFOLDNEXT, lineStart);
 	}
 
 	void VerticalCentreCaret()
@@ -3330,17 +3334,17 @@ public:
 		return static_cast<int>(Call(SCI_GETTECHNOLOGY));
 	}
 
-	void* CreateLoader(int bytes, int documentOptions)
+	void* CreateLoader(Position bytes, int documentOptions)
 	{
 		return reinterpret_cast<void*>(Call(SCI_CREATELOADER, bytes, documentOptions));
 	}
 
-	void FindIndicatorShow(int start, int end)
+	void FindIndicatorShow(Position start, Position end)
 	{
 		Call(SCI_FINDINDICATORSHOW, start, end);
 	}
 
-	void FindIndicatorFlash(int start, int end)
+	void FindIndicatorFlash(Position start, Position end)
 	{
 		Call(SCI_FINDINDICATORFLASH, start, end);
 	}
@@ -3420,7 +3424,7 @@ public:
 		return static_cast<int>(Call(SCI_GETLEXER));
 	}
 
-	void Colourise(int start, int end)
+	void Colourise(Position start, Position end)
 	{
 		Call(SCI_COLOURISE, start, end);
 	}
@@ -3585,14 +3589,14 @@ public:
 		Call(SCI_RELEASELINECHARACTERINDEX, lineCharacterIndex);
 	}
 
-	int LineFromIndexPosition(int pos, int lineCharacterIndex)
+	Line LineFromIndexPosition(Position pos, int lineCharacterIndex)
 	{
-		return static_cast<int>(Call(SCI_LINEFROMINDEXPOSITION, pos, lineCharacterIndex));
+		return Call(SCI_LINEFROMINDEXPOSITION, pos, lineCharacterIndex);
 	}
 
-	int IndexPositionFromLine(int line, int lineCharacterIndex)
+	Position IndexPositionFromLine(Line line, int lineCharacterIndex)
 	{
-		return static_cast<int>(Call(SCI_INDEXPOSITIONFROMLINE, line, lineCharacterIndex));
+		return Call(SCI_INDEXPOSITIONFROMLINE, line, lineCharacterIndex);
 	}
 
 private:

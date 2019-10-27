@@ -8,9 +8,12 @@ Usage: node scintilla_iface.js
 const types = {
 	'bool': 'bool',
 	'cells': 'const char*',
+	'colour': 'Colour',
 	'findtext': 'void*',
 	'formatrange': 'void*',
+	'line': 'Line',
 	'pointer': 'void*',
+	'position': 'Position',
 	'string': 'const char*',
 	'stringresult': 'char*',
 	'textrange': 'void*',
@@ -34,9 +37,20 @@ const format_one = (type, name) => {
 const format_two = (type, name) => {
 	if (!name.length) return '0'
 	if (type.endsWith('*')) return `reinterpret_cast<intptr_t>(${name})`
-	if (type == 'int' || type == 'bool') return name
+	if (type == 'int' || type == 'bool' || type == 'Colour' || type == 'Line' || type == 'Position') return name
 	console.log(`Parsing aborted because of unknown type: ${type} ${name}`)
 	process.exit(1)
+}
+
+const get_args = (line) => {
+	const start = line.indexOf('(')
+	const end = line.indexOf(')')
+	return line.substr(start + 1, end - start - 1).split(',').map(item => item.trim().split(' '))
+}
+
+const get_type = (type) => {
+	if (!type) return ''
+	return types[type] || 'int'
 }
 
 const create_header = () => {
@@ -48,6 +62,10 @@ const create_header = () => {
 	tmp.push('{')
 	tmp.push('public:')
 	tmp.push('\tDECLARE_WND_SUPERCLASS2(_T("WTL_ScintillaCtrl"), CScintillaImpl, CWindow::GetWndClassName())')
+	tmp.push('')
+	tmp.push('\tusing Colour = int;')
+	tmp.push('\tusing Line = intptr_t;')
+	tmp.push('\tusing Position = intptr_t;')
 	tmp.push('')
 	tmp.push('\tvoid SetFnPtr()')
 	tmp.push('\t{')
@@ -65,26 +83,20 @@ const create_body = (lines) =>
 	let deprecated = false
 	let tmp = []
 
-	lines.forEach(line => {
-		if (line.startsWith('cat Deprecated')) deprecated = true
+	for (const line of lines) {
+		if (line.startsWith('cat Deprecated')) break
 
 		const str = line.substr(0, line.indexOf('=')).split(' ')
 		const feature = str[0]
-		const ret = types[str[1]] || 'int'
-		const name = str[2]
 
-		if (!deprecated && (feature == 'fun' || feature == 'get' || feature == 'set')) {
-			const start = line.indexOf('(')
-			const end = line.indexOf(')')
+		if (feature == 'fun' || feature == 'get' || feature == 'set') {
+			const ret = get_type(str[1])
+			const name = str[2]
 
-			const args = line.substr(start + 1, end - start - 1).split(',').map(item => item.trim().split(' '))
-
-			const one = args[0]
-			const typeOne = one[0] ? (types[one[0]] || 'int') : ''
+			const [one, two] = get_args(line)
+			const typeOne = get_type(one[0])
 			const nameOne = one[1] || ''
-
-			const two = args[1]
-			const typeTwo = two[0] ? (types[two[0]] || 'int') : ''
+			const typeTwo = get_type(two[0])
 			const nameTwo = two[1] || ''
 
 			tmp.push('')
@@ -125,7 +137,7 @@ const create_body = (lines) =>
 			tmp.push(main)
 			tmp.push('\t}')
 		}
-	})
+	}
 	return tmp
 }
 

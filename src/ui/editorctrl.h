@@ -17,6 +17,12 @@ public:
 		REFLECTED_COMMAND_CODE_HANDLER_EX(SCEN_CHANGE, OnChange)
 	END_MSG_MAP()
 
+	struct Range
+	{
+		Position start;
+		Position end;
+	};
+
 	BOOL SubclassWindow(HWND hwnd);
 	bool FindNext();
 	bool FindPrevious();
@@ -40,7 +46,7 @@ private:
 	{
 		EditorStyle() : back(0), fore(0), case_force(0), flags(0), size(0), bold(false), italics(false), underlined(false) {}
 
-		DWORD back, fore;
+		Colour back, fore;
 		bool bold, italics, underlined;
 		int case_force;
 		std::string font;
@@ -55,51 +61,51 @@ private:
 		bool IsSingleChar() const { return words.length() == 1; }
 	};
 
-	DWORD ParseHex(const std::string& hex);
-	IndentationStatus GetIndentState(int line);
+	Colour ParseHex(const std::string& hex);
+	IndentationStatus GetIndentState(Line line);
 	LRESULT OnChange(UINT uNotifyCode, int nID, HWND wndCtl);
 	LRESULT OnCharAdded(LPNMHDR pnmh);
 	LRESULT OnKeyDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 	LRESULT OnUpdateUI(LPNMHDR pnmh);
 	LRESULT OnZoom(LPNMHDR pnmh);
-	Sci_CharacterRange GetSelection();
+	Position GetCaretInLine();
+	Range GetSelection();
 	bool Contains(const std::string& str, char ch);
 	bool Includes(const StyleAndWords& symbols, const std::string& value);
-	bool FindBraceMatchPos(int& braceAtCaret, int& braceOpposite);
-	bool FindResult(int pos);
+	bool FindBraceMatchPos(Position& braceAtCaret, Position& braceOpposite);
+	bool FindResult(Position pos);
 	bool GetPropertyEx(const std::string& key, std::string& out);
 	bool ParseStyle(const std::string& definition, EditorStyle& style);
-	bool RangeIsAllWhitespace(int start, int end);
-	int GetCaretInLine();
-	int IndentOfBlock(int line);
+	bool RangeIsAllWhitespace(Position start, Position end);
+	int IndentOfBlock(Line line);
 	std::string GetCurrentLine();
 	std::string GetNearestWord(const char* wordStart, t_size searchLen, int wordIndex);
 	std::string GetNearestWords(const char* wordStart, t_size searchLen);
-	str_list GetLinePartsInStyle(int line, const StyleAndWords& saw);
+	str_list GetLinePartsInStyle(Line line, const StyleAndWords& saw);
 	void AutoMarginWidth();
 	void AutomaticIndentation(int ch);
 	void ContinueCallTip();
-	void FillFunctionDefinition(int pos);
+	void FillFunctionDefinition(Position pos);
 	void Init();
 	void OpenFindDialog();
 	void OpenGotoDialog();
 	void OpenReplaceDialog();
 	void RestoreDefaultStyle();
 	void SetAllStylesFromTable();
-	void SetIndentation(int line, int indent);
+	void SetIndentation(Line line, int indent);
 	void StartAutoComplete();
 	void StartCallTip();
 	void TrackWidth();
 
 	CDialogFindReplace* DlgFindReplace;
+	Position LastPosCallTip;
+	Position StartCalltipWord;
 	StyleAndWords BlockEnd;
 	StyleAndWords BlockStart;
 	StyleAndWords StatementEnd;
 	StyleAndWords StatementIndent;
 	int BraceCount;
 	int CurrentCallTip;
-	int LastPosCallTip;
-	int StartCalltipWord;
 	std::string CurrentCallTipWord;
 	std::string FunctionDefinition;
 	std::string WordCharacters;
