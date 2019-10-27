@@ -10,7 +10,7 @@ BOOL CDialogGoto::OnInitDialog(HWND, LPARAM)
 	return TRUE;
 }
 
-void CDialogGoto::OnCloseCmd(UINT uNotifyCode, int nID, HWND wndCtl)
+void CDialogGoto::OnCloseCmd(UINT, int nID, HWND)
 {
 	if (nID == IDOK)
 	{

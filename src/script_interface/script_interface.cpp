@@ -213,9 +213,9 @@ STDMETHODIMP GdiBitmap::ApplyAlpha(BYTE alpha, IGdiBitmap** pp)
 {
 	if (!m_ptr || !pp) return E_POINTER;
 
-	const t_size width = m_ptr->GetWidth();
-	const t_size height = m_ptr->GetHeight();
-	Gdiplus::Bitmap* out = new Gdiplus::Bitmap(width, height, PixelFormat32bppPARGB);
+	const auto width = m_ptr->GetWidth();
+	const auto height = m_ptr->GetHeight();
+	auto out = new Gdiplus::Bitmap(width, height, PixelFormat32bppPARGB);
 	Gdiplus::Graphics g(out);
 	Gdiplus::ImageAttributes ia;
 	Gdiplus::ColorMatrix cm = { 0.0 };
@@ -313,7 +313,7 @@ STDMETHODIMP GdiBitmap::GetColourSchemeJSON(UINT count, BSTR* p)
 	Gdiplus::BitmapData bmpdata;
 	const int w = std::min(static_cast<int>(m_ptr->GetWidth()), 220);
 	const int h = std::min(static_cast<int>(m_ptr->GetHeight()), 220);
-	Gdiplus::Bitmap* bitmap = new Gdiplus::Bitmap(w, h, PixelFormat32bppPARGB);
+	auto bitmap = new Gdiplus::Bitmap(w, h, PixelFormat32bppPARGB);
 	Gdiplus::Graphics gb(bitmap);
 	const Gdiplus::Rect rect(0, 0, w, h);
 	gb.SetInterpolationMode((Gdiplus::InterpolationMode)6);
@@ -387,7 +387,7 @@ STDMETHODIMP GdiBitmap::GetGraphics(IGdiGraphics** pp)
 {
 	if (!m_ptr || !pp) return E_POINTER;
 
-	Gdiplus::Graphics* g = new Gdiplus::Graphics(m_ptr);
+	auto g = new Gdiplus::Graphics(m_ptr);
 	*pp = new com_object_impl_t<GdiGraphics>();
 	(*pp)->put__ptr(g);
 	return S_OK;
@@ -410,7 +410,7 @@ STDMETHODIMP GdiBitmap::Resize(UINT w, UINT h, int interpolationMode, IGdiBitmap
 {
 	if (!m_ptr || !pp) return E_POINTER;
 
-	Gdiplus::Bitmap* bitmap = new Gdiplus::Bitmap(w, h, PixelFormat32bppPARGB);
+	auto bitmap = new Gdiplus::Bitmap(w, h, PixelFormat32bppPARGB);
 	Gdiplus::Graphics g(bitmap);
 	g.SetInterpolationMode((Gdiplus::InterpolationMode)interpolationMode);
 	g.DrawImage(m_ptr, 0, 0, w, h);

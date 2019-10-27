@@ -17,7 +17,7 @@ namespace stats
 			return hasher_md5::get()->process_single_string(str).xorHalve();
 		}
 	};
-	static my_metadb_index_client* g_client = new service_impl_single_t<my_metadb_index_client>;
+	static auto g_client = new service_impl_single_t<my_metadb_index_client>;
 
 	class my_init_stage_callback : public init_stage_callback
 	{

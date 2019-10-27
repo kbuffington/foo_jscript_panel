@@ -10,7 +10,7 @@ STDMETHODIMP Gdi::CreateImage(int w, int h, IGdiBitmap** pp)
 	if (!pp) return E_POINTER;
 
 	*pp = nullptr;
-	Gdiplus::Bitmap* img = new Gdiplus::Bitmap(w, h, PixelFormat32bppPARGB);
+	auto img = new Gdiplus::Bitmap(w, h, PixelFormat32bppPARGB);
 	if (helpers::ensure_gdiplus_object(img))
 	{
 		*pp = new com_object_impl_t<GdiBitmap>(img);
@@ -29,7 +29,7 @@ STDMETHODIMP Gdi::Font(BSTR name, float pxSize, int style, IGdiFont** pp)
 	if (!pp) return E_POINTER;
 
 	*pp = nullptr;
-	Gdiplus::Font* font = new Gdiplus::Font(name, pxSize, style, Gdiplus::UnitPixel);
+	auto font = new Gdiplus::Font(name, pxSize, style, Gdiplus::UnitPixel);
 	if (helpers::ensure_gdiplus_object(font))
 	{
 		const HFONT hFont = CreateFont(

@@ -42,7 +42,7 @@ protected:
 			HFONT hFont = static_api_ptr_t<cui::fonts::manager>()->get_font((cui::fonts::font_type_t)type);
 			if (hFont)
 			{
-				Gdiplus::Font* font = new Gdiplus::Font(m_hdc, hFont);
+				auto font = new Gdiplus::Font(m_hdc, hFont);
 				if (helpers::ensure_gdiplus_object(font))
 				{
 					ret = new com_object_impl_t<GdiFont>(font, hFont);

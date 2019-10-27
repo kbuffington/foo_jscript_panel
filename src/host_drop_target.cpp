@@ -44,7 +44,7 @@ ULONG STDMETHODCALLTYPE IDropSourceImpl::Release()
 
 IDropTargetImpl::IDropTargetImpl(HWND hwnd) : m_hwnd(hwnd)
 {
-	CoCreateInstance(CLSID_DragDropHelper, nullptr, CLSCTX_INPROC_SERVER, IID_IDropTargetHelper, (LPVOID*)&m_drop_target_helper);
+	m_drop_target_helper.CreateInstance(CLSID_DragDropHelper, nullptr, CLSCTX_INPROC_SERVER);
 }
 
 IDropTargetImpl::~IDropTargetImpl()

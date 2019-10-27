@@ -9,7 +9,7 @@ public:
 		MSG_WM_CONTEXTMENU(OnContextMenu)
 	END_MSG_MAP()
 
-	int OnCreate(LPCREATESTRUCT lpCreateStruct)
+	int OnCreate(LPCREATESTRUCT)
 	{
 		AddColumn("Name", MulDiv(360, m_dpi.cx, 96));
 		AddColumnAutoWidth("Value");
@@ -17,7 +17,7 @@ public:
 		return 0;
 	}
 
-	void OnContextMenu(CWindow wnd, CPoint point)
+	void OnContextMenu(CWindow, CPoint point)
 	{
 		if (m_data.empty()) return;
 

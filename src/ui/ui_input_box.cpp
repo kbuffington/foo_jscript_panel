@@ -15,7 +15,7 @@ BOOL CInputBox::OnInitDialog(HWND, LPARAM)
 	return FALSE;
 }
 
-void CInputBox::OnCloseCmd(UINT uNotifyCode, int nID, HWND wndCtl)
+void CInputBox::OnCloseCmd(UINT, int nID, HWND)
 {
 	uGetWindowText(m_edit, m_value);
 	EndDialog(nID);

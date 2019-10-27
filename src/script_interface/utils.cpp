@@ -24,10 +24,8 @@ STDMETHODIMP Utils::CheckComponent(BSTR name, VARIANT_BOOL* p)
 
 	for (auto e = service_enum_t<componentversion>(); !e.finished(); ++e)
 	{
-		auto ptr = *e;
 		pfc::string8_fast str;
-		ptr->get_file_name(str);
-
+		e.get()->get_file_name(str);
 		if (_stricmp(str, uname) == 0)
 		{
 			*p = VARIANT_TRUE;
@@ -47,7 +45,7 @@ STDMETHODIMP Utils::CheckFont(BSTR name, VARIANT_BOOL* p)
 	wchar_t family_name[LF_FACESIZE] = { 0 };
 	Gdiplus::InstalledFontCollection fonts;
 	const int count = fonts.GetFamilyCount();
-	Gdiplus::FontFamily* families = new Gdiplus::FontFamily[count];
+	auto families = new Gdiplus::FontFamily[count];
 	int found;
 	if (fonts.GetFamilies(count, families, &found) == Gdiplus::Ok)
 	{
@@ -131,13 +129,13 @@ STDMETHODIMP Utils::GetAlbumArtV2(IMetadbHandle* handle, UINT art_id, VARIANT_BO
 	return S_OK;
 }
 
-STDMETHODIMP Utils::GetFileSize(BSTR filename, LONGLONG* p)
+STDMETHODIMP Utils::GetFileSize(BSTR path, LONGLONG* p)
 {
 	if (!p) return E_POINTER;
 
 	*p = 0;
 	WIN32_FILE_ATTRIBUTE_DATA data;
-	if (GetFileAttributesEx(filename, GetFileExInfoStandard, &data) && !(data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
+	if (GetFileAttributesEx(path, GetFileExInfoStandard, &data) && !(data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
 	{
 		*p = (t_filesize)data.nFileSizeHigh << 32 | data.nFileSizeLow;
 	}

@@ -27,14 +27,14 @@ public:
 	};
 
 	BOOL OnInitDialog(HWND, LPARAM);
-	void OnCancel(UINT uNotifyCode, int nID, HWND wndCtl);
-	void OnFindNext(UINT uNotifyCode, int nID, HWND wndCtl);
-	void OnFindPrevious(UINT uNotifyCode, int nID, HWND wndCtl);
-	void OnFindTextChange(UINT uNotifyCode, int nID, HWND wndCtl);
-	void OnFlagCommand(UINT uNotifyCode, int nID, HWND wndCtl);
-	void OnReplace(UINT uNotifyCode, int nID, HWND wndCtl);
-	void OnReplaceAll(UINT uNotifyCode, int nID, HWND wndCtl);
-	void OnReplaceTextChange(UINT uNotifyCode, int nID, HWND wndCtl);
+	void OnCancel(UINT, int, HWND);
+	void OnFindNext(UINT, int, HWND);
+	void OnFindPrevious(UINT, int, HWND);
+	void OnFindTextChange(UINT, int, HWND);
+	void OnFlagCommand(UINT, int, HWND);
+	void OnReplace(UINT, int, HWND);
+	void OnReplaceAll(UINT, int, HWND);
+	void OnReplaceTextChange(UINT, int, HWND);
 	void SetMode(mode m);
 
 	int m_flags;

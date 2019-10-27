@@ -73,7 +73,7 @@ bool simple_thread_pool::enqueue(simple_thread_task* task)
 
 	if (num_workers_ < max_count)
 	{
-		simple_thread_worker* worker = new simple_thread_worker;
+		auto worker = new simple_thread_worker;
 		add_worker_(worker);
 		worker->start();
 	}

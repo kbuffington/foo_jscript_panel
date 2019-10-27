@@ -27,16 +27,16 @@ public:
 	enum { IDD = IDD_DIALOG_CONF };
 
 	BOOL OnInitDialog(HWND, LPARAM);
-	LRESULT OnNotify(int idCtrl, LPNMHDR pnmh);
+	LRESULT OnNotify(int, LPNMHDR);
 	void Apply();
 	void BuildMenu();
-	void OnCloseCmd(UINT uNotifyCode, int nID, HWND wndCtl);
-	void OnDocs(UINT uNotifyCode, int nID, HWND wndCtl);
-	void OnFileImport(UINT uNotifyCode, int nID, HWND wndCtl);
-	void OnFileExport(UINT uNotifyCode, int nID, HWND wndCtl);
-	void OnLinks(UINT uNotifyCode, int nID, HWND wndCtl);
-	void OnReset(UINT uNotifyCode, int nID, HWND wndCtl);
-	void OnSamples(UINT uNotifyCode, int nID, HWND wndCtl);
+	void OnCloseCmd(UINT, int, HWND);
+	void OnDocs(UINT, int, HWND);
+	void OnFileImport(UINT, int, HWND);
+	void OnFileExport(UINT, int, HWND);
+	void OnLinks(UINT, int, HWND);
+	void OnReset(UINT, int, HWND);
+	void OnSamples(UINT, int, HWND);
 
 private:
 	CCheckBox m_pseudo_check;

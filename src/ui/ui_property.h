@@ -27,7 +27,7 @@ public:
 	void Apply();
 	void LoadProperties(bool reload = true);
 	void OnClearBnClicked(UINT, int, HWND);
-	void OnCloseCmd(UINT, int nID, HWND);
+	void OnCloseCmd(UINT, int, HWND);
 	void OnExportBnClicked(UINT, int, HWND);
 	void OnImportBnClicked(UINT, int, HWND);
 

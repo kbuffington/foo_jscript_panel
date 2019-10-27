@@ -17,12 +17,6 @@ public:
 		REFLECTED_COMMAND_CODE_HANDLER_EX(SCEN_CHANGE, OnChange)
 	END_MSG_MAP()
 
-	struct Range
-	{
-		Position start;
-		Position end;
-	};
-
 	BOOL SubclassWindow(HWND hwnd);
 	bool FindNext();
 	bool FindPrevious();
@@ -53,6 +47,12 @@ private:
 		t_size flags, size;
 	};
 
+	struct Range
+	{
+		Position start;
+		Position end;
+	};
+
 	struct StyleAndWords
 	{
 		int styleNumber;
@@ -63,11 +63,11 @@ private:
 
 	Colour ParseHex(const std::string& hex);
 	IndentationStatus GetIndentState(Line line);
-	LRESULT OnChange(UINT uNotifyCode, int nID, HWND wndCtl);
-	LRESULT OnCharAdded(LPNMHDR pnmh);
-	LRESULT OnKeyDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-	LRESULT OnUpdateUI(LPNMHDR pnmh);
-	LRESULT OnZoom(LPNMHDR pnmh);
+	LRESULT OnChange(UINT, int, HWND);
+	LRESULT OnCharAdded(LPNMHDR);
+	LRESULT OnKeyDown(UINT, WPARAM, LPARAM, BOOL&);
+	LRESULT OnUpdateUI(LPNMHDR);
+	LRESULT OnZoom(LPNMHDR);
 	Position GetCaretInLine();
 	Range GetSelection();
 	bool Contains(const std::string& str, char ch);

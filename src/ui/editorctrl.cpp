@@ -154,7 +154,7 @@ CScriptEditorCtrl::IndentationStatus CScriptEditorCtrl::GetIndentState(Line line
 	return indentState;
 }
 
-LRESULT CScriptEditorCtrl::OnChange(UINT uNotifyCode, int nID, HWND wndCtl)
+LRESULT CScriptEditorCtrl::OnChange(UINT, int, HWND)
 {
 	AutoMarginWidth();
 	return 0;
@@ -162,7 +162,7 @@ LRESULT CScriptEditorCtrl::OnChange(UINT uNotifyCode, int nID, HWND wndCtl)
 
 LRESULT CScriptEditorCtrl::OnCharAdded(LPNMHDR pnmh)
 {
-	const SCNotification* notification = (SCNotification*)pnmh;
+	const auto notification = reinterpret_cast<SCNotification*>(pnmh);
 	const int ch = notification->ch;
 	const auto range = GetSelection();
 
@@ -229,7 +229,7 @@ LRESULT CScriptEditorCtrl::OnCharAdded(LPNMHDR pnmh)
 	return 0;
 }
 
-LRESULT CScriptEditorCtrl::OnKeyDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+LRESULT CScriptEditorCtrl::OnKeyDown(UINT, WPARAM wParam, LPARAM, BOOL& bHandled)
 {
 	const auto modifiers = (IsKeyPressed(VK_SHIFT) ? SCMOD_SHIFT : 0) | (IsKeyPressed(VK_CONTROL) ? SCMOD_CTRL : 0) | (IsKeyPressed(VK_MENU) ? SCMOD_ALT : 0);
 
@@ -280,7 +280,7 @@ LRESULT CScriptEditorCtrl::OnKeyDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BO
 	return 1;
 }
 
-LRESULT CScriptEditorCtrl::OnUpdateUI(LPNMHDR pnmh)
+LRESULT CScriptEditorCtrl::OnUpdateUI(LPNMHDR)
 {
 	Position braceAtCaret = -1;
 	Position braceOpposite = -1;
@@ -305,7 +305,7 @@ LRESULT CScriptEditorCtrl::OnUpdateUI(LPNMHDR pnmh)
 	return 0;
 }
 
-LRESULT CScriptEditorCtrl::OnZoom(LPNMHDR pnmh)
+LRESULT CScriptEditorCtrl::OnZoom(LPNMHDR)
 {
 	AutoMarginWidth();
 	return 0;
@@ -703,7 +703,6 @@ void CScriptEditorCtrl::AutoMarginWidth()
 	auto linecount = GetLineCount();
 	int linenumwidth = 1;
 	int marginwidth = 0;
-	int oldmarginwidth = 0;
 
 	while (linecount >= 10)
 	{
@@ -711,11 +710,12 @@ void CScriptEditorCtrl::AutoMarginWidth()
 		++linenumwidth;
 	}
 
-	oldmarginwidth = GetMarginWidthN(0);
 	marginwidth = 4 + linenumwidth * (TextWidth(STYLE_LINENUMBER, "9"));
 
-	if (oldmarginwidth != marginwidth)
+	if (marginwidth != GetMarginWidthN(0))
+	{
 		SetMarginWidthN(0, marginwidth);
+	}
 }
 
 void CScriptEditorCtrl::AutomaticIndentation(int ch)

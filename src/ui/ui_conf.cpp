@@ -93,7 +93,7 @@ BOOL CDialogConf::OnInitDialog(HWND, LPARAM)
 	return FALSE;
 }
 
-LRESULT CDialogConf::OnNotify(int idCtrl, LPNMHDR pnmh)
+LRESULT CDialogConf::OnNotify(int, LPNMHDR pnmh)
 {
 	pfc::string8_fast caption = m_caption;
 
@@ -191,7 +191,7 @@ void CDialogConf::BuildMenu()
 	uAppendMenu(m_menu, MF_STRING | MF_POPUP, reinterpret_cast<UINT_PTR>(links), "Links");
 }
 
-void CDialogConf::OnCloseCmd(UINT uNotifyCode, int nID, HWND wndCtl)
+void CDialogConf::OnCloseCmd(UINT, int nID, HWND)
 {
 	switch (nID)
 	{
@@ -210,14 +210,14 @@ void CDialogConf::OnCloseCmd(UINT uNotifyCode, int nID, HWND wndCtl)
 	EndDialog(nID);
 }
 
-void CDialogConf::OnDocs(UINT uNotifyCode, int nID, HWND wndCtl)
+void CDialogConf::OnDocs(UINT, int nID, HWND)
 {
 	pfc::string8_fast tmp = file_path_display(m_docs[nID - ID_DOCS_BEGIN]).get_ptr();
 	string_wide_from_utf8_fast path(tmp);
 	ShellExecute(nullptr, L"open", path, nullptr, nullptr, SW_SHOW);
 }
 
-void CDialogConf::OnFileImport(UINT uNotifyCode, int nID, HWND wndCtl)
+void CDialogConf::OnFileImport(UINT, int, HWND)
 {
 	pfc::string8_fast filename;
 	if (uGetOpenFileName(m_hWnd, "Text files|*.txt|JScript files|*.js|All files|*.*", 0, "txt", "Import from", nullptr, filename, FALSE))
@@ -226,7 +226,7 @@ void CDialogConf::OnFileImport(UINT uNotifyCode, int nID, HWND wndCtl)
 	}
 }
 
-void CDialogConf::OnFileExport(UINT uNotifyCode, int nID, HWND wndCtl)
+void CDialogConf::OnFileExport(UINT, int, HWND)
 {
 	pfc::string8_fast filename;
 	if (uGetOpenFileName(m_hWnd, "Text files|*.txt|All files|*.*", 0, "txt", "Save as", nullptr, filename, TRUE))
@@ -238,7 +238,7 @@ void CDialogConf::OnFileExport(UINT uNotifyCode, int nID, HWND wndCtl)
 	}
 }
 
-void CDialogConf::OnLinks(UINT uNotifyCode, int nID, HWND wndCtl)
+void CDialogConf::OnLinks(UINT, int nID, HWND)
 {
 	static constexpr std::array<const wchar_t*, 4> links =
 	{
@@ -250,7 +250,7 @@ void CDialogConf::OnLinks(UINT uNotifyCode, int nID, HWND wndCtl)
 	ShellExecute(nullptr, L"open", links[nID - ID_LINKS_BEGIN], nullptr, nullptr, SW_SHOW);
 }
 
-void CDialogConf::OnReset(UINT uNotifyCode, int nID, HWND wndCtl)
+void CDialogConf::OnReset(UINT, int, HWND)
 {
 	uComboBox_SelectString(m_engine_combo, host_comm::get_default_script_engine_str());
 	m_edge_combo.SetCurSel(0);
@@ -258,7 +258,7 @@ void CDialogConf::OnReset(UINT uNotifyCode, int nID, HWND wndCtl)
 	m_editorctrl.SetContent(host_comm::get_default_script_code());
 }
 
-void CDialogConf::OnSamples(UINT uNotifyCode, int nID, HWND wndCtl)
+void CDialogConf::OnSamples(UINT, int nID, HWND)
 {
 	m_editorctrl.SetContent(helpers::read_file(file_path_display(m_samples[nID - ID_SAMPLES_BEGIN])));
 }

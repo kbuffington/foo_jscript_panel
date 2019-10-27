@@ -34,22 +34,22 @@ BOOL CDialogFindReplace::OnInitDialog(HWND, LPARAM)
 	return TRUE;
 }
 
-void CDialogFindReplace::OnCancel(UINT uNotifyCode, int nID, HWND wndCtl)
+void CDialogFindReplace::OnCancel(UINT, int, HWND)
 {
 	ShowWindow(SW_HIDE);
 }
 
-void CDialogFindReplace::OnFindNext(UINT uNotifyCode, int nID, HWND wndCtl)
+void CDialogFindReplace::OnFindNext(UINT, int, HWND)
 {
 	m_havefound = m_parent->FindNext();
 }
 
-void CDialogFindReplace::OnFindPrevious(UINT uNotifyCode, int nID, HWND wndCtl)
+void CDialogFindReplace::OnFindPrevious(UINT, int, HWND)
 {
 	m_parent->FindPrevious();
 }
 
-void CDialogFindReplace::OnFindTextChange(UINT uNotifyCode, int nID, HWND wndCtl)
+void CDialogFindReplace::OnFindTextChange(UINT , int, HWND)
 {
 	uGetWindowText(m_window.at(IDC_EDIT_FIND), m_find_text);
 	m_window.at(IDC_BTN_NEXT).EnableWindow(m_find_text.get_length());
@@ -58,7 +58,7 @@ void CDialogFindReplace::OnFindTextChange(UINT uNotifyCode, int nID, HWND wndCtl
 	m_window.at(IDC_BTN_REPLACE_ALL).EnableWindow(m_find_text.get_length());
 }
 
-void CDialogFindReplace::OnFlagCommand(UINT uNotifyCode, int nID, HWND wndCtl)
+void CDialogFindReplace::OnFlagCommand(UINT, int nID, HWND)
 {
 	if (uButton_GetCheck(m_hWnd, nID))
 		m_flags |= m_parent->FlagMap.at(nID);
@@ -66,7 +66,7 @@ void CDialogFindReplace::OnFlagCommand(UINT uNotifyCode, int nID, HWND wndCtl)
 		m_flags &= ~m_parent->FlagMap.at(nID);
 }
 
-void CDialogFindReplace::OnReplace(UINT uNotifyCode, int nID, HWND wndCtl)
+void CDialogFindReplace::OnReplace(UINT, int, HWND)
 {
 	if (m_havefound)
 	{
@@ -77,12 +77,12 @@ void CDialogFindReplace::OnReplace(UINT uNotifyCode, int nID, HWND wndCtl)
 	OnFindNext(0, 0, nullptr);
 }
 
-void CDialogFindReplace::OnReplaceAll(UINT uNotifyCode, int nID, HWND wndCtl)
+void CDialogFindReplace::OnReplaceAll(UINT, int, HWND)
 {
 	m_parent->ReplaceAll();
 }
 
-void CDialogFindReplace::OnReplaceTextChange(UINT uNotifyCode, int nID, HWND wndCtl)
+void CDialogFindReplace::OnReplaceTextChange(UINT, int, HWND)
 {
 	uGetWindowText(m_window.at(IDC_EDIT_REPLACE), m_replace_text);
 }
@@ -109,7 +109,7 @@ BOOL CDialogFindReplace::KeyHack::SubclassWindow(HWND hwnd, bool ret)
 	return __super::SubclassWindow(hwnd);
 }
 
-LRESULT CDialogFindReplace::KeyHack::OnChar(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+LRESULT CDialogFindReplace::KeyHack::OnChar(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL&)
 {
 	switch (wParam)
 	{
@@ -123,7 +123,7 @@ LRESULT CDialogFindReplace::KeyHack::OnChar(UINT uMsg, WPARAM wParam, LPARAM lPa
 	return DefWindowProc(uMsg, wParam, lParam);
 }
 
-LRESULT CDialogFindReplace::KeyHack::OnKeyDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+LRESULT CDialogFindReplace::KeyHack::OnKeyDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL&)
 {
 	switch (wParam)
 	{

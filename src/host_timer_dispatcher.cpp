@@ -23,7 +23,7 @@ HWND host_timer::get_hwnd() const
 
 VOID CALLBACK host_timer::timerProc(PVOID lpParameter, BOOLEAN TimerOrWaitFired)
 {
-	host_timer* timer = (host_timer*)lpParameter;
+	auto timer = static_cast<host_timer*>(lpParameter);
 
 	if (timer->m_is_stopped)
 	{
