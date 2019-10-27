@@ -51,12 +51,12 @@ private:
 			MESSAGE_HANDLER(WM_KEYDOWN, OnKeyDown)
 		END_MSG_MAP()
 
-		BOOL SubclassWindow(HWND hwnd, bool ret);
+		BOOL SubclassWindow(HWND hwnd, int cmd);
 		LRESULT OnChar(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		LRESULT OnKeyDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 
 	private:
-		bool m_ret;
+		int m_cmd;
 	};
 
 	bool m_havefound;

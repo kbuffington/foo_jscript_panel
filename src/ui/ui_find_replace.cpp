@@ -29,7 +29,7 @@ BOOL CDialogFindReplace::OnInitDialog(HWND, LPARAM)
 		const int id = ids[i];
 		HWND hwnd = GetDlgItem(id);
 		m_window[id] = hwnd;
-		m_hacks[i].SubclassWindow(hwnd, id != IDC_BTN_PREVIOUS && id != IDC_BTN_REPLACE && id != IDC_BTN_REPLACE_ALL && id != IDCANCEL);
+		m_hacks[i].SubclassWindow(hwnd, id >= IDC_EDIT_FIND && id <= IDC_BTN_NEXT ? IDC_BTN_NEXT : id);
 	}
 	return TRUE;
 }
@@ -101,11 +101,11 @@ void CDialogFindReplace::SetMode(mode m)
 	SetFocus();
 }
 
-CDialogFindReplace::KeyHack::KeyHack() : m_ret(false) {}
+CDialogFindReplace::KeyHack::KeyHack() : m_cmd(0) {}
 
-BOOL CDialogFindReplace::KeyHack::SubclassWindow(HWND hwnd, bool ret)
+BOOL CDialogFindReplace::KeyHack::SubclassWindow(HWND hwnd, int cmd)
 {
-	m_ret = ret;
+	m_cmd = cmd;
 	return __super::SubclassWindow(hwnd);
 }
 
@@ -128,12 +128,8 @@ LRESULT CDialogFindReplace::KeyHack::OnKeyDown(UINT uMsg, WPARAM wParam, LPARAM 
 	switch (wParam)
 	{
 	case VK_RETURN:
-		if (m_ret)
-		{
-			::PostMessage(GetParent(), WM_COMMAND, MAKEWPARAM(IDC_BTN_NEXT, BN_CLICKED), reinterpret_cast<LPARAM>(m_hWnd));
-			return 0;
-		}
-		break;
+		::PostMessage(GetParent(), WM_COMMAND, MAKEWPARAM(m_cmd, BN_CLICKED), reinterpret_cast<LPARAM>(m_hWnd));
+		return 0;
 	case VK_ESCAPE:
 		::PostMessage(GetParent(), WM_COMMAND, MAKEWPARAM(IDCANCEL, BN_CLICKED), reinterpret_cast<LPARAM>(m_hWnd));
 		return 0;
