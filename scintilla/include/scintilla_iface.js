@@ -64,8 +64,8 @@ const create_header = () => {
 	tmp.push('\tDECLARE_WND_SUPERCLASS2(_T("WTL_ScintillaCtrl"), CScintillaImpl, CWindow::GetWndClassName())')
 	tmp.push('')
 	tmp.push('\tusing Colour = int;')
-	tmp.push('\tusing Line = intptr_t;')
-	tmp.push('\tusing Position = intptr_t;')
+	tmp.push('\tusing Line = int;')
+	tmp.push('\tusing Position = int;')
 	tmp.push('')
 	tmp.push('\tvoid SetFnPtr()')
 	tmp.push('\t{')
@@ -115,9 +115,6 @@ const create_body = (lines) =>
 			if (ret == 'void*') {
 				cast = true
 				main += 'return reinterpret_cast<void*>('
-			} else if (ret == 'int') {
-				cast = true
-				main += 'return static_cast<int>('
 			} else if (ret != 'void') {
 				main += 'return '
 			}
