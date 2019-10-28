@@ -366,7 +366,15 @@ STDMETHODIMP Fb::RunContextCommand(BSTR command, VARIANT_BOOL* p)
 {
 	if (!p) return E_POINTER;
 
-	*p = TO_VARIANT_BOOL(helpers::execute_context_command_by_name(string_utf8_from_wide(command), metadb_handle_list()));
+	*p = VARIANT_FALSE;
+	if (playback_control::get()->is_playing())
+	{
+		contextmenu_manager::ptr cm;
+		contextmenu_manager::g_create(cm);
+		cm->init_context_now_playing(contextmenu_manager::flag_view_full);
+		pfc::string8_fast path;
+		*p = TO_VARIANT_BOOL(helpers::execute_context_command_recur(string_utf8_from_wide(command), path, cm->get_root()));
+	}
 	return S_OK;
 }
 
@@ -399,7 +407,7 @@ STDMETHODIMP Fb::RunContextCommandWithMetadb(BSTR command, VARIANT handle, VARIA
 		return E_INVALIDARG;
 	}
 
-	*p = TO_VARIANT_BOOL(helpers::execute_context_command_by_name(string_utf8_from_wide(command), handle_list));
+	*p = handle_list.get_count() ? TO_VARIANT_BOOL(helpers::execute_context_command_by_name(string_utf8_from_wide(command), handle_list)) : VARIANT_FALSE;
 	return S_OK;
 }
 

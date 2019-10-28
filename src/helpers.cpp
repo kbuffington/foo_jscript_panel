@@ -129,21 +129,8 @@ namespace helpers
 	{
 		contextmenu_manager::ptr cm;
 		contextmenu_manager::g_create(cm);
+		cm->init_context(p_handles, contextmenu_manager::flag_view_full);
 		pfc::string8_fast path;
-		constexpr t_size flags = contextmenu_manager::flag_view_full;
-
-		if (p_handles.get_count())
-		{
-			cm->init_context(p_handles, flags);
-		}
-		else
-		{
-			if (!cm->init_context_now_playing(flags))
-			{
-				return false;
-			}
-		}
-
 		return execute_context_command_recur(p_command, path, cm->get_root());
 	}
 
