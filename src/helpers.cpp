@@ -264,6 +264,34 @@ namespace helpers
 		return false;
 	}
 
+	bool get_encoder_clsid(const wchar_t* format, CLSID* pClsid)
+	{
+		using namespace Gdiplus;
+
+		bool ret = false;
+		t_size num = 0;
+		t_size size = 0;
+
+		GetImageEncodersSize(&num, &size);
+		if (size == 0) return ret;
+
+		pfc::ptrholder_t<ImageCodecInfo> pImageCodecInfo = new ImageCodecInfo[size];
+		if (pImageCodecInfo.is_empty()) return ret;
+
+		GetImageEncoders(num, size, pImageCodecInfo.get_ptr());
+
+		for (t_size i = 0; i < num; ++i)
+		{
+			if (wcscmp(pImageCodecInfo.get_ptr()[i].MimeType, format) == 0)
+			{
+				*pClsid = pImageCodecInfo.get_ptr()[i].Clsid;
+				ret = true;
+				break;
+			}
+		}
+		return ret;
+	}
+
 	bool is_wrap_char(wchar_t current, wchar_t next)
 	{
 		if (iswpunct(current))
@@ -392,34 +420,6 @@ namespace helpers
 			&album_art_ids::artist,
 		};
 		return art_id < guids.size() ? *guids[art_id] : *guids[0];
-	}
-
-	int get_encoder_clsid(const wchar_t* format, CLSID* pClsid)
-	{
-		int ret = -1;
-		t_size num = 0;
-		t_size size = 0;
-
-		Gdiplus::GetImageEncodersSize(&num, &size);
-		if (size == 0) return ret;
-
-		auto pImageCodecInfo = new Gdiplus::ImageCodecInfo[size];
-		if (pImageCodecInfo == nullptr) return ret;
-
-		Gdiplus::GetImageEncoders(num, size, pImageCodecInfo);
-
-		for (t_size i = 0; i < num; ++i)
-		{
-			if (wcscmp(pImageCodecInfo[i].MimeType, format) == 0)
-			{
-				*pClsid = pImageCodecInfo[i].Clsid;
-				ret = i;
-				break;
-			}
-		}
-
-		delete[] pImageCodecInfo;
-		return ret;
 	}
 
 	int get_text_height(HDC hdc, const wchar_t* text, int len)

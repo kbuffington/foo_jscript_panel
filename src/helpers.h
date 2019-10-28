@@ -36,12 +36,12 @@ namespace helpers
 	bool execute_context_command_recur(const char* p_command, const pfc::string_base& p_path, contextmenu_node* p_parent);
 	bool execute_mainmenu_command_by_name(const char* p_command);
 	bool execute_mainmenu_command_recur(const char* p_command, pfc::string8_fast path, mainmenu_node::ptr node);
+	bool get_encoder_clsid(const wchar_t* format, CLSID* pClsid);
 	bool is_wrap_char(wchar_t current, wchar_t next);
 	bool read_file_wide(t_size codepage, const wchar_t* path, pfc::array_t<wchar_t>& content);
 	bool supports_chakra();
 	bool write_file(const char* path, const pfc::string8_fast& content);
 	const GUID convert_artid_to_guid(t_size art_id);
-	int get_encoder_clsid(const wchar_t* format, CLSID* pClsid);
 	int get_text_height(HDC hdc, const wchar_t* text, int len);
 	int get_text_width(HDC hdc, const wchar_t* text, int len);
 	pfc::string8_fast get_fb2k_component_path();

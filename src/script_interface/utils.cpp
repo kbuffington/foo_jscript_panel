@@ -45,13 +45,13 @@ STDMETHODIMP Utils::CheckFont(BSTR name, VARIANT_BOOL* p)
 	wchar_t family_name[LF_FACESIZE] = { 0 };
 	Gdiplus::InstalledFontCollection fonts;
 	const int count = fonts.GetFamilyCount();
-	auto families = new Gdiplus::FontFamily[count];
+	pfc::ptrholder_t<Gdiplus::FontFamily> families = new Gdiplus::FontFamily[count];
 	int found;
-	if (fonts.GetFamilies(count, families, &found) == Gdiplus::Ok)
+	if (families.is_valid() && fonts.GetFamilies(count, families.get_ptr(), &found) == Gdiplus::Ok)
 	{
 		for (int i = 0; i < found; i++)
 		{
-			families[i].GetFamilyName(family_name);
+			families.get_ptr()[i].GetFamilyName(family_name);
 			if (_wcsicmp(name, family_name) == 0)
 			{
 				*p = VARIANT_TRUE;
@@ -59,7 +59,6 @@ STDMETHODIMP Utils::CheckFont(BSTR name, VARIANT_BOOL* p)
 			}
 		}
 	}
-	delete[] families;
 	return S_OK;
 }
 
@@ -398,11 +397,8 @@ STDMETHODIMP Utils::WriteTextFile(BSTR filename, BSTR content, VARIANT_BOOL* p)
 {
 	if (!p) return E_POINTER;
 
-	if (filename == nullptr || content == nullptr)
-	{
-		*p = VARIANT_FALSE;
-	}
-	else
+	*p = VARIANT_FALSE;
+	if (content != nullptr) // empty strings are perfectly valid but weird shit can happen when feeding this method directly with xmlhttp.responseText - string_utf8_from_wide can throw exceptions unless stopped here
 	{
 		*p = TO_VARIANT_BOOL(helpers::write_file(string_utf8_from_wide(filename).get_ptr(), string_utf8_from_wide(content).get_ptr()));
 	}

@@ -519,16 +519,13 @@ STDMETHODIMP Plman::ShowAutoPlaylistUI(UINT playlistIndex, VARIANT_BOOL* p)
 
 	if (playlistIndex < playlist_manager::get()->get_playlist_count())
 	{
+		*p = VARIANT_FALSE;
 		auto api = autoplaylist_manager::get();
 		if (api->is_client_present(playlistIndex))
 		{
 			autoplaylist_client_ptr client = api->query_client(playlistIndex);
 			client->show_ui(playlistIndex);
 			*p = VARIANT_TRUE;
-		}
-		else
-		{
-			*p = VARIANT_FALSE;
 		}
 		return S_OK;
 	}

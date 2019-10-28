@@ -412,7 +412,7 @@ STDMETHODIMP GdiBitmap::Resize(UINT w, UINT h, int interpolationMode, IGdiBitmap
 
 	auto bitmap = new Gdiplus::Bitmap(w, h, PixelFormat32bppPARGB);
 	Gdiplus::Graphics g(bitmap);
-	g.SetInterpolationMode((Gdiplus::InterpolationMode)interpolationMode);
+	g.SetInterpolationMode(static_cast<Gdiplus::InterpolationMode>(interpolationMode));
 	g.DrawImage(m_ptr, 0, 0, w, h);
 	*pp = new com_object_impl_t<GdiBitmap>(bitmap);
 	return S_OK;
@@ -422,7 +422,7 @@ STDMETHODIMP GdiBitmap::RotateFlip(UINT mode)
 {
 	if (!m_ptr) return E_POINTER;
 
-	m_ptr->RotateFlip((Gdiplus::RotateFlipType)mode);
+	m_ptr->RotateFlip(static_cast<Gdiplus::RotateFlipType>(mode));
 	return S_OK;
 }
 
@@ -430,15 +430,12 @@ STDMETHODIMP GdiBitmap::SaveAs(BSTR path, BSTR format, VARIANT_BOOL* p)
 {
 	if (!m_ptr || !p) return E_POINTER;
 
+	*p = VARIANT_FALSE;
 	CLSID clsid_encoder;
-	if (helpers::get_encoder_clsid(format, &clsid_encoder) > -1)
+	if (helpers::get_encoder_clsid(format, &clsid_encoder))
 	{
 		m_ptr->Save(path, &clsid_encoder);
 		*p = TO_VARIANT_BOOL(m_ptr->GetLastStatus() == Gdiplus::Ok);
-	}
-	else
-	{
-		*p = VARIANT_FALSE;
 	}
 	return S_OK;
 }
@@ -555,10 +552,10 @@ void GdiGraphics::SetFormat(int flags, Gdiplus::StringFormat& fmt)
 {
 	if (flags != 0)
 	{
-		fmt.SetAlignment((Gdiplus::StringAlignment)((flags >> 28) & 0x3));
-		fmt.SetLineAlignment((Gdiplus::StringAlignment)((flags >> 24) & 0x3));
-		fmt.SetTrimming((Gdiplus::StringTrimming)((flags >> 20) & 0x7));
-		fmt.SetFormatFlags((Gdiplus::StringFormatFlags)(flags & 0x7FFF));
+		fmt.SetAlignment(static_cast<Gdiplus::StringAlignment>((flags >> 28) & 0x3));
+		fmt.SetLineAlignment(static_cast<Gdiplus::StringAlignment>((flags >> 24) & 0x3));
+		fmt.SetTrimming(static_cast<Gdiplus::StringTrimming>((flags >> 20) & 0x7));
+		fmt.SetFormatFlags(static_cast<Gdiplus::StringFormatFlags>(flags & 0x7FFF));
 	}
 }
 
@@ -914,7 +911,7 @@ STDMETHODIMP GdiGraphics::SetInterpolationMode(int mode)
 {
 	if (!m_ptr) return E_POINTER;
 
-	m_ptr->SetInterpolationMode((Gdiplus::InterpolationMode)mode);
+	m_ptr->SetInterpolationMode(static_cast<Gdiplus::InterpolationMode>(mode));
 	return S_OK;
 }
 
@@ -922,7 +919,7 @@ STDMETHODIMP GdiGraphics::SetSmoothingMode(int mode)
 {
 	if (!m_ptr) return E_POINTER;
 
-	m_ptr->SetSmoothingMode((Gdiplus::SmoothingMode)mode);
+	m_ptr->SetSmoothingMode(static_cast<Gdiplus::SmoothingMode>(mode));
 	return S_OK;
 }
 
@@ -930,7 +927,7 @@ STDMETHODIMP GdiGraphics::SetTextRenderingHint(UINT mode)
 {
 	if (!m_ptr) return E_POINTER;
 
-	m_ptr->SetTextRenderingHint((Gdiplus::TextRenderingHint)mode);
+	m_ptr->SetTextRenderingHint(static_cast<Gdiplus::TextRenderingHint>(mode));
 	return S_OK;
 }
 
