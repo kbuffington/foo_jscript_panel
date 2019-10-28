@@ -80,7 +80,6 @@ const create_header = () => {
 
 const create_body = (lines) =>
 {
-	let deprecated = false
 	let tmp = []
 
 	for (const line of lines) {
