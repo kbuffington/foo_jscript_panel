@@ -93,6 +93,6 @@ void panel_manager::unload_all()
 {
 	for (const auto& hwnd : m_hwnds)
 	{
-		SendMessage(hwnd, static_cast<unsigned int>(user_message::UWM_UNLOAD), 0, 0);
+		SendMessage(hwnd, UWM_UNLOAD, 0, 0);
 	}
 }

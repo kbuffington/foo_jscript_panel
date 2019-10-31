@@ -118,7 +118,7 @@ public:
 		__super::OnItemsRemoved(mask, oldCount);
 		if (m_data.empty())
 		{
-			::PostMessage(GetParent(), static_cast<unsigned int>(user_message::UWM_PROPERTIES_CLEARED), 0, 0);
+			::PostMessage(GetParent(), UWM_PROPERTIES_CLEARED, 0, 0);
 		}
 	}
 

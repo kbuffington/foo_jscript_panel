@@ -194,18 +194,6 @@ LRESULT panel_window::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 		}
 		return 0;
 	}
-
-	user_message um = static_cast<user_message>(msg);
-
-	switch (um)
-	{
-	case user_message::UWM_TIMER:
-		host_timer_dispatcher::instance().invoke_message(wp);
-		return 0;
-	case user_message::UWM_UNLOAD:
-		unload_script();
-		return 0;
-	}
 	
 	switch (msg)
 	{
@@ -486,6 +474,12 @@ LRESULT panel_window::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 			script_invoke(callback_id::on_focus, args, _countof(args));
 		}
 		break;
+	case UWM_TIMER:
+		host_timer_dispatcher::instance().invoke_message(wp);
+		return 0;
+	case UWM_UNLOAD:
+		unload_script();
+		return 0;
 	}
 	return uDefWindowProc(hwnd, msg, wp, lp);
 }

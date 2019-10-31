@@ -62,7 +62,7 @@ public:
 	void add_window(HWND p_wnd);
 	void notify_others(HWND p_wnd_except, pfc::refcounted_object_root* p_param);
 	void post_msg_to_all(callback_id id, WPARAM p_wp = 0, LPARAM p_lp = 0);
-	void post_msg_to_all_pointer(callback_id, pfc::refcounted_object_root* p_param);
+	void post_msg_to_all_pointer(callback_id id, pfc::refcounted_object_root* p_param);
 	void remove_window(HWND p_wnd);
 	void unload_all();
 

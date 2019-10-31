@@ -41,13 +41,13 @@ VOID CALLBACK host_timer::timerProc(PVOID lpParameter, BOOLEAN TimerOrWaitFired)
 	if (!timer->m_is_repeated)
 	{
 		timer->m_is_stopped = true;
-		SendMessage(timer->m_hwnd, static_cast<unsigned int>(user_message::UWM_TIMER), timer->m_id, 0);
+		SendMessage(timer->m_hwnd, UWM_TIMER, timer->m_id, 0);
 		host_timer_dispatcher::instance().on_timer_stop_request(timer->m_hwnd, timer->m_hTimer, timer->m_id);
 
 		return;
 	}
 
-	SendMessage(timer->m_hwnd, static_cast<unsigned int>(user_message::UWM_TIMER), timer->m_id, 0);
+	SendMessage(timer->m_hwnd, UWM_TIMER, timer->m_id, 0);
 }
 
 bool host_timer::start(HANDLE hTimerQueue)

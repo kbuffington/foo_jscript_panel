@@ -23,6 +23,10 @@
 	X->get__ptr(reinterpret_cast<void**>(&Y)); \
 	if (!Y) return E_INVALIDARG;
 
+#define UWM_PROPERTIES_CLEARED 1030
+#define UWM_TIMER 1031
+#define UWM_UNLOAD 1032
+
 namespace jsp_guids
 {
 	static constexpr GUID scintilla_properties = { 0x7f6b71a1, 0x4f1a, 0x437d,{ 0x84, 0xcc, 0xd1, 0xad, 0xd6, 0x7a, 0xd9, 0x62 } };
@@ -43,16 +47,9 @@ namespace jsp_guids
 	static constexpr GUID menu_ten = { 0xab05eee8, 0xbadc, 0x49ba,{ 0x80, 0x27, 0x84, 0x72, 0xa8, 0xbd, 0x49, 0xdb } };
 }
 
-enum class user_message
-{
-	UWM_PROPERTIES_CLEARED = WM_USER + 1,
-	UWM_TIMER,
-	UWM_UNLOAD
-};
-
 enum class callback_id
 {
-	on_always_on_top_changed = 1030,
+	on_always_on_top_changed = 1040,
 	on_char,
 	on_colours_changed,
 	on_cursor_follow_playback_changed,
