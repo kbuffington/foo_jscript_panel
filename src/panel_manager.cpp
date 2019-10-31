@@ -39,7 +39,7 @@ void panel_manager::add_window(HWND p_wnd)
 	m_hwnds.insert(p_wnd);
 }
 
-void panel_manager::notify_others(HWND p_wnd_except, UINT p_msg, pfc::refcounted_object_root* p_param)
+void panel_manager::notify_others(HWND p_wnd_except, pfc::refcounted_object_root* p_param)
 {
 	const t_size count = m_hwnds.size();
 
@@ -54,20 +54,20 @@ void panel_manager::notify_others(HWND p_wnd_except, UINT p_msg, pfc::refcounted
 	{
 		if (hwnd != p_wnd_except)
 		{
-			SendMessage(hwnd, p_msg, reinterpret_cast<WPARAM>(p_param), 0);
+			SendMessage(hwnd, static_cast<unsigned int>(callback_id::on_notify_data), reinterpret_cast<WPARAM>(p_param), 0);
 		}
 	}
 }
 
-void panel_manager::post_msg_to_all(UINT p_msg, WPARAM p_wp, LPARAM p_lp)
+void panel_manager::post_msg_to_all(callback_id id, WPARAM p_wp, LPARAM p_lp)
 {
 	for (const auto& hwnd : m_hwnds)
 	{
-		PostMessage(hwnd, p_msg, p_wp, p_lp);
+		PostMessage(hwnd, static_cast<unsigned int>(id), p_wp, p_lp);
 	}
 }
 
-void panel_manager::post_msg_to_all_pointer(UINT p_msg, pfc::refcounted_object_root* p_param)
+void panel_manager::post_msg_to_all_pointer(callback_id id, pfc::refcounted_object_root* p_param)
 {
 	const t_size count = m_hwnds.size();
 
@@ -80,7 +80,7 @@ void panel_manager::post_msg_to_all_pointer(UINT p_msg, pfc::refcounted_object_r
 
 	for (const auto& hwnd : m_hwnds)
 	{
-		PostMessage(hwnd, p_msg, reinterpret_cast<WPARAM>(p_param), 0);
+		PostMessage(hwnd, static_cast<unsigned int>(id), reinterpret_cast<WPARAM>(p_param), 0);
 	}
 }
 
@@ -93,6 +93,6 @@ void panel_manager::unload_all()
 {
 	for (const auto& hwnd : m_hwnds)
 	{
-		SendMessage(hwnd, UWM_UNLOAD, 0, 0);
+		SendMessage(hwnd, static_cast<unsigned int>(user_message::UWM_UNLOAD), 0, 0);
 	}
 }

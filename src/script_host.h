@@ -38,7 +38,7 @@ public:
 	bool Ready();
 	std::string ExtractValue(const std::string& source);
 	void Finalise();
-	void InvokeCallback(t_size callbackId, VARIANTARG* argv = nullptr, t_size argc = 0, VARIANT* ret = nullptr);
+	void InvokeCallback(callback_id id, VARIANTARG* argv = nullptr, t_size argc = 0, VARIANT* ret = nullptr);
 	void ProcessScriptInfo(script_info& info);
 
 private:
@@ -55,6 +55,6 @@ private:
 	bool m_has_error;
 	host_comm* m_host;
 	std::unordered_map<DWORD, pfc::string8_fast> m_context_to_path_map;
-	std::unordered_map<t_size, DISPID> m_callback_map;
+	std::unordered_map<callback_id, DISPID> m_callback_map;
 	volatile DWORD m_ref_count;
 };

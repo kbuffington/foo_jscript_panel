@@ -16,7 +16,7 @@ void simple_thread_worker::threadProc()
 	{
 		if (WaitForSingleObject(simple_thread_pool::instance().have_task_, 1000) == WAIT_OBJECT_0)
 		{
-			simple_thread_task* task = simple_thread_pool::instance().acquire_task();
+			auto task = simple_thread_pool::instance().acquire_task();
 
 			if (task)
 			{

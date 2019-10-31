@@ -139,12 +139,12 @@ protected:
 
 	void on_colour_changed(t_size mask) const override
 	{
-		PostMessage(m_hwnd, callback_id::on_colours_changed, 0, 0);
+		PostMessage(m_hwnd, static_cast<unsigned int>(callback_id::on_colours_changed), 0, 0);
 	}
 
 	void on_font_changed(t_size mask) const override
 	{
-		PostMessage(m_hwnd, callback_id::on_font_changed, 0, 0);
+		PostMessage(m_hwnd, static_cast<unsigned int>(callback_id::on_font_changed), 0, 0);
 	}
 
 	void set_config(stream_reader* reader, t_size size, abort_callback& abort) override

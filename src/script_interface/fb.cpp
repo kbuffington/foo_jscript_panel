@@ -449,8 +449,8 @@ STDMETHODIMP Fb::SetOutputDevice(BSTR output, BSTR device)
 
 STDMETHODIMP Fb::ShowConsole()
 {
-	const GUID guid_main_show_console = { 0x5b652d25, 0xce44, 0x4737,{ 0x99, 0xbb, 0xa3, 0xcf, 0x2a, 0xeb, 0x35, 0xcc } };
-	standard_commands::run_main(guid_main_show_console);
+	static constexpr GUID g = { 0x5b652d25, 0xce44, 0x4737,{ 0x99, 0xbb, 0xa3, 0xcf, 0x2a, 0xeb, 0x35, 0xcc } };
+	standard_commands::run_main(g);
 	return S_OK;
 }
 

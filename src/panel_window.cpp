@@ -12,8 +12,7 @@ panel_window::panel_window()
 	, m_paint_pending(false)
 	, m_gr_bmp(nullptr)
 	, m_gr_bmp_bk(nullptr)
-	, m_hdc(nullptr)
-{}
+	, m_hdc(nullptr) {}
 
 panel_window::~panel_window()
 {
@@ -22,6 +21,192 @@ panel_window::~panel_window()
 
 LRESULT panel_window::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 {
+	callback_id id = static_cast<callback_id>(msg);
+
+	switch (id)
+	{
+	case callback_id::on_colours_changed:
+	case callback_id::on_dsp_preset_changed:
+	case callback_id::on_font_changed:
+	case callback_id::on_output_device_changed:
+	case callback_id::on_playback_dynamic_info:
+	case callback_id::on_playback_dynamic_info_track:
+	case callback_id::on_playlist_items_selection_change:
+	case callback_id::on_playlist_switch:
+	case callback_id::on_playlists_changed:
+	case callback_id::on_selection_changed:
+		script_invoke(id);
+		return 0;
+	case callback_id::on_always_on_top_changed:
+	case callback_id::on_cursor_follow_playback_changed:
+	case callback_id::on_playback_follow_cursor_changed:
+	case callback_id::on_playback_pause:
+	case callback_id::on_playlist_stop_after_current_changed:
+		{
+			VARIANTARG args[1];
+			args[0].vt = VT_BOOL;
+			args[0].boolVal = TO_VARIANT_BOOL(wp);
+			script_invoke(id, args, _countof(args));
+		}
+		return 0;
+	case callback_id::on_item_played:
+	case callback_id::on_playback_edited:
+	case callback_id::on_playback_new_track:
+		{
+			callback_data_scope_releaser<callback_data<metadb_handle_ptr>> data(wp);
+			auto handle = new com_object_impl_t<MetadbHandle>(data->m_item1);
+
+			VARIANTARG args[1];
+			args[0].vt = VT_DISPATCH;
+			args[0].pdispVal = handle;
+			script_invoke(id, args, _countof(args));
+
+			if (handle)
+				handle->Release();
+		}
+		return 0;
+	case callback_id::on_library_items_added:
+	case callback_id::on_library_items_changed:
+	case callback_id::on_library_items_removed:
+	case callback_id::on_metadb_changed:
+		{
+			callback_data_scope_releaser<metadb_callback_data> data(wp);
+			auto handles = new com_object_impl_t<MetadbHandleList>(data->m_items);
+
+			VARIANTARG args[1];
+			args[0].vt = VT_DISPATCH;
+			args[0].pdispVal = handles;
+			script_invoke(id, args, _countof(args));
+
+			if (handles)
+				handles->Release();
+		}
+		return 0;
+	case callback_id::on_main_menu:
+	case callback_id::on_playback_order_changed:
+	case callback_id::on_playback_queue_changed:
+	case callback_id::on_playback_stop:
+	case callback_id::on_playlist_items_added:
+	case callback_id::on_playlist_items_reordered:
+	case callback_id::on_replaygain_mode_changed:
+		{
+			VARIANTARG args[1];
+			args[0].vt = VT_UI4;
+			args[0].ulVal = wp;
+			script_invoke(id, args, _countof(args));
+		}
+		return 0;
+	case callback_id::on_volume_change:
+		{
+			callback_data_scope_releaser<callback_data<float>> data(wp);
+
+			VARIANTARG args[1];
+			args[0].vt = VT_R4;
+			args[0].fltVal = data->m_item1;
+			script_invoke(id, args, _countof(args));
+		}
+		return 0;
+	case callback_id::on_playback_seek:
+	case callback_id::on_playback_time:
+		{
+			callback_data_scope_releaser<callback_data<double>> data(wp);
+
+			VARIANTARG args[1];
+			args[0].vt = VT_R8;
+			args[0].dblVal = data->m_item1;
+			script_invoke(id, args, _countof(args));
+		}
+		return 0;
+	case callback_id::on_get_album_art_done:
+		{
+			auto param = reinterpret_cast<helpers::album_art_async::t_param*>(wp);
+
+			VARIANTARG args[4];
+			args[0].vt = VT_BSTR;
+			args[0].bstrVal = param->path;
+			args[1].vt = VT_DISPATCH;
+			args[1].pdispVal = param->bitmap;
+			args[2].vt = VT_UI4;
+			args[2].ulVal = param->art_id;
+			args[3].vt = VT_DISPATCH;
+			args[3].pdispVal = param->handle;
+			script_invoke(id, args, _countof(args));
+		}
+		return 0;
+	case callback_id::on_item_focus_change:
+		{
+			callback_data_scope_releaser<callback_data<t_size, t_size, t_size>> data(wp);
+
+			VARIANTARG args[3];
+			args[0].vt = VT_UI4;
+			args[0].ulVal = data->m_item3;
+			args[1].vt = VT_UI4;
+			args[1].ulVal = data->m_item2;
+			args[2].vt = VT_UI4;
+			args[2].ulVal = data->m_item1;
+			script_invoke(id, args, _countof(args));
+		}
+		return 0;
+	case callback_id::on_load_image_done:
+		{
+			auto param = reinterpret_cast<helpers::load_image_async::t_param*>(wp);
+
+			VARIANTARG args[3];
+			args[0].vt = VT_BSTR;
+			args[0].bstrVal = param->path;
+			args[1].vt = VT_DISPATCH;
+			args[1].pdispVal = param->bitmap;
+			args[2].vt = VT_UI4;
+			args[2].ulVal = param->cookie;
+			script_invoke(id, args, _countof(args));
+		}
+		return 0;
+	case callback_id::on_notify_data:
+		{
+			callback_data_scope_releaser<callback_data<_bstr_t, _variant_t>> data(wp);
+
+			VARIANTARG args[2];
+			args[0] = data->m_item2;
+			args[1].vt = VT_BSTR;
+			args[1].bstrVal = data->m_item1;
+			script_invoke(id, args, _countof(args));
+		}
+		return 0;
+	case callback_id::on_playback_starting:
+		{
+			VARIANTARG args[2];
+			args[0].vt = VT_BOOL;
+			args[0].boolVal = TO_VARIANT_BOOL(lp);
+			args[1].vt = VT_UI4;
+			args[1].ulVal = wp;
+			script_invoke(id, args, _countof(args));
+		}
+		return 0;
+	case callback_id::on_playlist_item_ensure_visible:
+	case callback_id::on_playlist_items_removed:
+		{
+			VARIANTARG args[2];
+			args[0].vt = VT_UI4;
+			args[0].ulVal = lp;
+			args[1].vt = VT_UI4;
+			args[1].ulVal = wp;
+			script_invoke(id, args, _countof(args));
+		}
+		return 0;
+	}
+
+	user_message um = static_cast<user_message>(msg);
+
+	switch (um)
+	{
+	case user_message::UWM_TIMER:
+		host_timer_dispatcher::instance().invoke_message(wp);
+		return 0;
+	case user_message::UWM_UNLOAD:
+		unload_script();
+		return 0;
+	}
+	
 	switch (msg)
 	{
 	case WM_CREATE:
@@ -261,7 +446,7 @@ LRESULT panel_window::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 		{
 			VARIANTARG args[1];
 			args[0].vt = VT_UI4;
-			args[0].ulVal = (ULONG)wp;
+			args[0].ulVal = wp;
 			script_invoke(callback_id::on_key_down, args, _countof(args));
 		}
 		return 0;
@@ -269,7 +454,7 @@ LRESULT panel_window::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 		{
 			VARIANTARG args[1];
 			args[0].vt = VT_UI4;
-			args[0].ulVal = (ULONG)wp;
+			args[0].ulVal = wp;
 			script_invoke(callback_id::on_key_up, args, _countof(args));
 		}
 		return 0;
@@ -277,7 +462,7 @@ LRESULT panel_window::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 		{
 			VARIANTARG args[1];
 			args[0].vt = VT_UI4;
-			args[0].ulVal = (ULONG)wp;
+			args[0].ulVal = wp;
 			script_invoke(callback_id::on_char, args, _countof(args));
 		}
 		return 0;
@@ -301,180 +486,6 @@ LRESULT panel_window::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 			script_invoke(callback_id::on_focus, args, _countof(args));
 		}
 		break;
-	case callback_id::on_colours_changed:
-	case callback_id::on_dsp_preset_changed:
-	case callback_id::on_font_changed:
-	case callback_id::on_output_device_changed:
-	case callback_id::on_playback_dynamic_info:
-	case callback_id::on_playback_dynamic_info_track:
-	case callback_id::on_playlist_items_selection_change:
-	case callback_id::on_playlist_switch:
-	case callback_id::on_playlists_changed:
-	case callback_id::on_selection_changed:
-		script_invoke(msg);
-		return 0;
-	case callback_id::on_always_on_top_changed:
-	case callback_id::on_cursor_follow_playback_changed:
-	case callback_id::on_playback_follow_cursor_changed:
-	case callback_id::on_playback_pause:
-	case callback_id::on_playlist_stop_after_current_changed:
-		{
-			VARIANTARG args[1];
-			args[0].vt = VT_BOOL;
-			args[0].boolVal = TO_VARIANT_BOOL(wp);
-			script_invoke(msg, args, _countof(args));
-		}
-		return 0;
-	case callback_id::on_item_played:
-	case callback_id::on_playback_edited:
-	case callback_id::on_playback_new_track:
-		{
-			callback_data_scope_releaser<callback_data<metadb_handle_ptr>> data(wp);
-			auto handle = new com_object_impl_t<MetadbHandle>(data->m_item1);
-
-			VARIANTARG args[1];
-			args[0].vt = VT_DISPATCH;
-			args[0].pdispVal = handle;
-			script_invoke(msg, args, _countof(args));
-
-			if (handle)
-				handle->Release();
-		}
-		return 0;
-	case callback_id::on_library_items_added:
-	case callback_id::on_library_items_changed:
-	case callback_id::on_library_items_removed:
-	case callback_id::on_metadb_changed:
-		{
-			callback_data_scope_releaser<metadb_callback_data> data(wp);
-			auto handles = new com_object_impl_t<MetadbHandleList>(data->m_items);
-
-			VARIANTARG args[1];
-			args[0].vt = VT_DISPATCH;
-			args[0].pdispVal = handles;
-			script_invoke(msg, args, _countof(args));
-
-			if (handles)
-				handles->Release();
-		}
-		return 0;
-	case callback_id::on_main_menu:
-	case callback_id::on_playback_order_changed:
-	case callback_id::on_playback_queue_changed:
-	case callback_id::on_playback_stop:
-	case callback_id::on_playlist_items_added:
-	case callback_id::on_playlist_items_reordered:
-	case callback_id::on_replaygain_mode_changed:
-		{
-			VARIANTARG args[1];
-			args[0].vt = VT_UI4;
-			args[0].ulVal = wp;
-			script_invoke(msg, args, _countof(args));
-		}
-		return 0;
-	case callback_id::on_volume_change:
-		{
-			callback_data_scope_releaser<callback_data<float>> data(wp);
-
-			VARIANTARG args[1];
-			args[0].vt = VT_R4;
-			args[0].fltVal = data->m_item1;
-			script_invoke(msg, args, _countof(args));
-		}
-		return 0;
-	case callback_id::on_playback_seek:
-	case callback_id::on_playback_time:
-		{
-			callback_data_scope_releaser<callback_data<double>> data(wp);
-
-			VARIANTARG args[1];
-			args[0].vt = VT_R8;
-			args[0].dblVal = data->m_item1;
-			script_invoke(msg, args, _countof(args));
-		}
-		return 0;
-	case callback_id::on_get_album_art_done:
-		{
-			auto param = reinterpret_cast<helpers::album_art_async::t_param*>(wp);
-
-			VARIANTARG args[4];
-			args[0].vt = VT_BSTR;
-			args[0].bstrVal = param->path;
-			args[1].vt = VT_DISPATCH;
-			args[1].pdispVal = param->bitmap;
-			args[2].vt = VT_UI4;
-			args[2].ulVal = param->art_id;
-			args[3].vt = VT_DISPATCH;
-			args[3].pdispVal = param->handle;
-			script_invoke(msg, args, _countof(args));
-		}
-		return 0;
-	case callback_id::on_item_focus_change:
-		{
-			callback_data_scope_releaser<callback_data<t_size, t_size, t_size>> data(wp);
-
-			VARIANTARG args[3];
-			args[0].vt = VT_UI4;
-			args[0].ulVal = data->m_item3;
-			args[1].vt = VT_UI4;
-			args[1].ulVal = data->m_item2;
-			args[2].vt = VT_UI4;
-			args[2].ulVal = data->m_item1;
-			script_invoke(msg, args, _countof(args));
-		}
-		return 0;
-	case callback_id::on_load_image_done:
-		{
-			auto param = reinterpret_cast<helpers::load_image_async::t_param*>(wp);
-
-			VARIANTARG args[3];
-			args[0].vt = VT_BSTR;
-			args[0].bstrVal = param->path;
-			args[1].vt = VT_DISPATCH;
-			args[1].pdispVal = param->bitmap;
-			args[2].vt = VT_UI4;
-			args[2].ulVal = param->cookie;
-			script_invoke(msg, args, _countof(args));
-		}
-		return 0;
-	case callback_id::on_notify_data:
-		{
-			callback_data_scope_releaser<callback_data<_bstr_t, _variant_t>> data(wp);
-
-			VARIANTARG args[2];
-			args[0] = data->m_item2;
-			args[1].vt = VT_BSTR;
-			args[1].bstrVal = data->m_item1;
-			script_invoke(msg, args, _countof(args));
-		}
-		return 0;
-	case callback_id::on_playback_starting:
-		{
-			VARIANTARG args[2];
-			args[0].vt = VT_BOOL;
-			args[0].boolVal = TO_VARIANT_BOOL(lp);
-			args[1].vt = VT_UI4;
-			args[1].ulVal = wp;
-			script_invoke(msg, args, _countof(args));
-		}
-		return 0;
-	case callback_id::on_playlist_item_ensure_visible:
-	case callback_id::on_playlist_items_removed:
-		{
-			VARIANTARG args[2];
-			args[0].vt = VT_UI4;
-			args[0].ulVal = lp;
-			args[1].vt = VT_UI4;
-			args[1].ulVal = wp;
-			script_invoke(msg, args, _countof(args));
-		}
-		return 0;
-	case UWM_TIMER:
-		host_timer_dispatcher::instance().invoke_message(wp);
-		return 0;
-	case UWM_UNLOAD:
-		unload_script();
-		return 0;
 	}
 	return uDefWindowProc(hwnd, msg, wp, lp);
 }
@@ -785,9 +796,9 @@ void panel_window::repaint_rect(int x, int y, int w, int h)
 	InvalidateRect(m_hwnd, &rc, FALSE);
 }
 
-void panel_window::script_invoke(t_size callbackId, VARIANTARG* argv, t_size argc, VARIANT* ret)
+void panel_window::script_invoke(callback_id id, VARIANTARG* argv, t_size argc, VARIANT* ret)
 {
-	m_script_host->InvokeCallback(callbackId, argv, argc, ret);
+	m_script_host->InvokeCallback(id, argv, argc, ret);
 }
 
 void panel_window::show_property_popup(HWND parent)

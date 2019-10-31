@@ -43,7 +43,7 @@ public:
 	}
 
 private:
-	std::vector<std::pair<const GUID*, t_size>> m_data;
+	std::vector<std::pair<const GUID*, callback_id>> m_data;
 	t_size m_count;
 };
 

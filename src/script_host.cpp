@@ -11,7 +11,7 @@
 
 #define DEFINE_ID_NAME_ENTRY(x) { callback_id::x, PFC_WIDESTRING(#x) }
 
-using id_name_entry = std::pair<t_size, const wchar_t*>;
+using id_name_entry = std::pair<callback_id, const wchar_t*>;
 
 std::vector<id_name_entry> id_names =
 {
@@ -135,7 +135,7 @@ HRESULT script_host::Initialise()
 
 HRESULT script_host::InitCallbackMap()
 {
-	const auto check_features = [&](t_size id)
+	const auto check_features = [&](callback_id id)
 	{
 		switch (id)
 		{
@@ -350,7 +350,7 @@ STDMETHODIMP script_host::OnScriptError(IActiveScriptError* err)
 			}
 			else
 			{
-				formatter << "Unknown error code: 0x" << pfc::format_hex_lowercase(static_cast<t_size>(excep.scode));
+				formatter << "Unknown error code: 0x" << pfc::format_hex_lowercase(static_cast<unsigned int>(excep.scode));
 			}
 		}
 	}
@@ -471,12 +471,12 @@ void script_host::Finalise()
 	}
 }
 
-void script_host::InvokeCallback(t_size callbackId, VARIANTARG* argv, t_size argc, VARIANT* ret)
+void script_host::InvokeCallback(callback_id id, VARIANTARG* argv, t_size argc, VARIANT* ret)
 {
-	if (Ready() && m_callback_map.count(callbackId))
+	if (Ready() && m_callback_map.count(id))
 	{
 		DISPPARAMS param = { argv, nullptr, argc, 0 };
-		m_script_root->Invoke(m_callback_map.at(callbackId), IID_NULL, LOCALE_USER_DEFAULT, DISPATCH_METHOD, &param, ret, nullptr, nullptr);
+		m_script_root->Invoke(m_callback_map.at(id), IID_NULL, LOCALE_USER_DEFAULT, DISPATCH_METHOD, &param, ret, nullptr, nullptr);
 	}
 }
 

@@ -60,9 +60,9 @@ public:
 
 	std::vector<api_item> get_apis();
 	void add_window(HWND p_wnd);
-	void notify_others(HWND p_wnd_except, UINT p_msg, pfc::refcounted_object_root* p_param);
-	void post_msg_to_all(UINT p_msg, WPARAM p_wp = 0, LPARAM p_lp = 0);
-	void post_msg_to_all_pointer(UINT p_msg, pfc::refcounted_object_root* p_param);
+	void notify_others(HWND p_wnd_except, pfc::refcounted_object_root* p_param);
+	void post_msg_to_all(callback_id id, WPARAM p_wp = 0, LPARAM p_lp = 0);
+	void post_msg_to_all_pointer(callback_id, pfc::refcounted_object_root* p_param);
 	void remove_window(HWND p_wnd);
 	void unload_all();
 
