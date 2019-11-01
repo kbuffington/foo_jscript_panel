@@ -11,7 +11,7 @@
 
 ## v2.3.0
 - Drop support for `foobar2000` `v1.3.x`. Now requires `v1.4` or later.
-- Add `utils.DateStringFromTimestamp` and `utils.TimestampFromDateString`. See `docs\interfaces.txt` for full details.
+- Add `utils.DateStringFromTimestamp` and `utils.TimestampFromDateString`.
 - The `Properties` dialog has been rewritten and there is no longer any `Clear` or `Delete` buttons. Now you can multi-select using your mouse and combinations of `Ctrl`/`Shift` keys. There is a right click menu to `Select All`/`Select None`/`Invert selection` and `Remove`. `Ctrl+A` and the `Delete` keyboard shortcuts are also supported.
 - The list view under `File>Preferences>Tools>JScript Panel` now supports inline editing from a single click on the value. You no longer double click items to open a new dialog.
 - The following methods no longer support the previously optional `force` parameter.
@@ -39,7 +39,7 @@ utils.WriteTextFile "write_bom" (writing a BOM is no longer supported)
 ```
 
 - `plman.PlayingPlaylist` is now a read-only property.
-- The `IPlaylistRecyclerManager` interface has been removed and replaced with fixed `plman` methods. All previous functionality remains. Look at the description for `plman.RecyclerCount` in `docs\interfaces.txt` or check the [breaking changes](https://github.com/marc2k3/foo_jscript_panel/wiki/Breaking-Changes) wiki page.
+- The `IPlaylistRecyclerManager` interface has been removed and replaced with fixed `plman` methods. All previous functionality remains. Look at the docs for `plman.RecyclerCount`.
 - `fb.GetLibraryRelativePath` has been removed. Use `IMetadbHandleList` `GetLibraryRelativePaths` instead.
 - `utils.FileTest` has been removed and replaced with the following 4 new methods. There is no replacement for `split` mode.
 
@@ -50,7 +50,7 @@ utils.IsFile(filename)
 utils.IsFolder(folder)
 ```
 
-- The `Grab focus` checkbox in the [Configuration Window](https://github.com/marc2k3/foo_jscript_panel/wiki/Configuration-Window) and the `dragdrop` `PREPROCESSOR` have both been removed. Both features are disabled by default but are automatically enabled if relevant callbacks like `on_drag_drop` or `on_key_up` are present in the script.
+- The `Grab focus` checkbox in the [Configuration Window](https://marc2k3.github.io/foo_jscript_panel/Configuration-Window.html) and the `dragdrop` `PREPROCESSOR` have both been removed. Both features are disabled by default but are automatically enabled if relevant callbacks like `on_drag_drop` or `on_key_up` are present in the script.
 
 ## v2.2.2.4
 - Fix bug introduced in `v2.2.2.1` which prevented images loaded with `gdi.Image` / `gdi.LoadImageAsync` being deleted/overwritten after `Dispose()` had been called.
@@ -62,7 +62,7 @@ utils.IsFolder(folder)
 - Fix broken descriptions for main menu items in the keyboard shortcut preferences. Thanks to TheQwertiest for spotting and providing the fix.
 
 ## v2.2.2.1
-- Remove optional `force` argument from `fb.GetFocusItem` as it had no effect. No errors will be thrown if present but it will be ignored. See `docs\interfaces.txt`.
+- Remove optional `force` argument from `fb.GetFocusItem` as it had no effect. No errors will be thrown if present but it will be ignored.
 - Various sample fixes. Volume now scales at the same rate as the `Default UI` volume slider. Thumbs has been fixed to work with [Last.fm](https://last.fm) site update.
 - Compiled with latest `foobar2000` `SDK`.
 
@@ -70,7 +70,7 @@ utils.IsFolder(folder)
 - Fix broken colour handling in `IGdiBitmap` `GetColourSchemeJSON`. The original code by MordredKLB was good but I broke it so apologies for that.
 - `IGdiBitmap` `GetColourScheme` has been removed. See this page for how to use the better `JSON` method mentioned above.
 
-https://github.com/marc2k3/foo_jscript_panel/wiki/Breaking-Changes
+https://marc2k3.github.io/foo_jscript_panel/Breaking-Changes.html
 
 ## v2.2.1.1
 - Restore access to the Configuration Window via the `Columns UI` Preferences layout tab. Although buggy, access needs to remain to recover from installing bad scripts.
@@ -81,7 +81,7 @@ https://github.com/marc2k3/foo_jscript_panel/wiki/Breaking-Changes
 
 ## v2.2.0.3
 - Fix potential freeze on shutdown caused by timer threads. Thanks to TheQwertiest.
-- Access to the [Configuration Window](https://github.com/marc2k3/foo_jscript_panel/wiki/Configuration-Window) via the `Layout` tab in the `Columns UI` Preferences has been blocked. The `Configure Panel...` button will now be grayed out. Always use the context menu on the panel itself.
+- Access to the [Configuration Window](https://marc2k3.github.io/foo_jscript_panel/Configuration-Window.html) via the `Layout` tab in the `Columns UI` Preferences has been blocked. The `Configure Panel...` button will now be grayed out. Always use the context menu on the panel itself.
 - Some minor sample bugs have been fixed.
 
 ## v2.2.0.2
@@ -91,23 +91,23 @@ https://github.com/marc2k3/foo_jscript_panel/wiki/Breaking-Changes
 - Fix issue introduced in `v2.2.0` where some colours with certain levels of alpha transparency were not handled properly.
 
 ## v2.2.0
-- Remove `window.DlgCode`. The docs were wrong, behaviour was inconsistent between `Default UI` and `Columns UI` and it's just not needed. Support for all keys will be enabled if you check `Grab focus` in the [Configuration Window](https://github.com/marc2k3/foo_jscript_panel/wiki/Configuration-Window). All instances will need removing from scripts. If you want to support this and older components with the same script, do something like:
+- Remove `window.DlgCode`. The docs were wrong, behaviour was inconsistent between `Default UI` and `Columns UI` and it's just not needed. Support for all keys will be enabled if you check `Grab focus` in the [Configuration Window](https://marc2k3.github.io/foo_jscript_panel/Configuration-Window.html). All instances will need removing from scripts. If you want to support this and older components with the same script, do something like:
 
 ```js
 if ('DlgCode' in window) { window.DlgCode = 4; }
 ```
 
 - `fb.RunMainMenuCommand`, `fb.RunContextCommand`, `fb.RunContextCommandWithMetadb` have all been rewritten and must be supplied with the full path to their commands. Case is not important. You should use forward slashes with no spaces. eg: `fb.RunMainMenuCommand("Library/Search")`.
-- All files imported to the [Configuration Window](https://github.com/marc2k3/foo_jscript_panel/wiki/Configuration-Window), Preferences>Tools or included in a script via the `import` `PREPROCESSOR` directive must be `UTF8` encoded (with or without `BOM`). `utils.ReadTextFile` is unaffected although it should have better `UTF8` detection than before.
+- All files imported to the [Configuration Window](https://marc2k3.github.io/foo_jscript_panel/Configuration-Window.html), Preferences>Tools or included in a script via the `import` `PREPROCESSOR` directive must be `UTF8` encoded (with or without `BOM`). `utils.ReadTextFile` is unaffected although it should have better `UTF8` detection than before.
 - The default `write_bom` argument for `utils.WriteTextFile` when omitted is now `false`.
 - The code that parses the `PREPROCESSOR` section has been rewritten from scratch. The only difference is that double quotes in the name/author no longer need to be escaped so they will be duplicated if you did this previously.
 - `window.GetColourCUI` and `window.GetFontCUI` no longer accept the previously optional `client_guid` argument.
-- Add menu toolbar to [Configuration Window](https://github.com/marc2k3/foo_jscript_panel/wiki/Configuration-Window) which provides quick access to all included samples and docs. You can now Import/Export scripts via the `File` menu. The `Reset` option now properly resets all settings.
+- Add menu toolbar to [Configuration Window](https://marc2k3.github.io/foo_jscript_panel/Configuration-Window.html) which provides quick access to all included samples and docs. You can now Import/Export scripts via the `File` menu. The `Reset` option now properly resets all settings.
 - The preset colour schemes previously bundled inside the `Colour Schemes` folder can now be loaded directly from the main preferences under `Tools>JScript Panel`.
-- Add `utils.ListFiles` and `utils.ListFolders`. See `docs\interfaces.txt`.
-- Update `fb.CreateHandleList` to take an optional handle argument to create a list containing a single item. See `docs\interfaces.txt`.
-- Add `IMetadbHandle` `GetAlbumArt` method which returns the image and path without the need for using `utils.GetAlbumArtAsync` and `on_get_album_art_done`. See `docs\interfaces.txt`.
-- `utils.FileTest` can now query files over 4GB in size when in `s` mode. See `docs\interfaces.txt`.
+- Add `utils.ListFiles` and `utils.ListFolders`.
+- Update `fb.CreateHandleList` to take an optional handle argument to create a list containing a single item.
+- Add `IMetadbHandle` `GetAlbumArt` method which returns the image and path without the need for using `utils.GetAlbumArtAsync` and `on_get_album_art_done`.
+- `utils.FileTest` can now query files over 4GB in size when in `s` mode.
 - Various sample fixes.
 - Lots of internal code refactoring and external dependency updates.
 - If you browse the component folder and notice the `jscript.api` and `interface.api` files are missing, it's intentional. The contents are now included inside the component.
@@ -125,14 +125,14 @@ if ('DlgCode' in window) { window.DlgCode = 4; }
 - Correctly bump `utils.Version` - it wasn't updated in `v2.1.7`.
 
 ## v2.1.7
-- Add `IMetadbHandleList` `AttachImage` / `RemoveAttachedImage` methods. See `docs\interfaces.txt`. There are some limitations!!
+- Add `IMetadbHandleList` `AttachImage` / `RemoveAttachedImage` methods. There are some limitations!!
 
 ## v2.1.6
 - Add `IContextMenuManager` `InitContextPlaylist` method which shows playlist specific options not available when passing a handle list to `InitContext`.
 - Update `JSPlaylist` and `JS Smooth Playlist` samples with the above method.
 
 ## v2.1.5.2
-- `utils.InputBox` is now centred when you open it plus you can now detect when the user presses `Cancel`. See `docs\interfaces.txt`.
+- `utils.InputBox` is now centred when you open it plus you can now detect when the user presses `Cancel`.
 - Fix bug with `Autoplaylists` sample which prevent existing queries from being edited.
 - `gr.GdiDrawText` no longer has any return value.
 
@@ -140,67 +140,67 @@ if ('DlgCode' in window) { window.DlgCode = 4; }
 - Fix incorrect spelling on the `Cancel` button in `utils.InputBox`.
 
 ## v2.1.5
-- Add `utils.InputBox` method. See `docs\interfaces.txt`.
+- Add `utils.InputBox` method.
 - Update samples in `complete` folder with above method - input is no longer truncated at 254 characters.
 - Remove `fromhook` argument from `on_metadb_changed` callback. From now on, it will always be `undefined`.
 - Ensure `JSPlaylist` doesn't load the same font more than once. Previously it was using `gdi.Font` inside `on_paint` which is bad practice.
 
 ## v2.1.4
-- Add `on_dsp_preset_changed` callback. See `docs\callbacks.txt`.
-- Add `fb.GetDSPPresets` and `fb.SetDSPPreset` methods. See `docs\interfaces.txt`.
-- Add `IMetadbHandleList` `GetLibraryRelativePaths` method. See `docs\interfaces.txt`.
-- Add `IMetadbHandleList` `Convert` method which converts a handle list to an array of handles. See `docs\interfaces.txt`.
+- Add `on_dsp_preset_changed` callback.
+- Add `fb.GetDSPPresets` and `fb.SetDSPPreset` methods.
+- Add `IMetadbHandleList` `GetLibraryRelativePaths` method.
+- Add `IMetadbHandleList` `Convert` method which converts a handle list to an array of handles.
 
 ## v2.1.3
-- Add `fb.GetOutputDevices` and `fb.SetOutputDevice` methods. See `docs\interfaces.txt`.
-- Add `on_output_device_changed` callback. See `docs\callbacks.txt`.
+- Add `fb.GetOutputDevices` and `fb.SetOutputDevice` methods.
+- Add `on_output_device_changed` callback.
 - `JSPlaylist` / `JS Smooth Browser/Playlist`, make right click behaviour consistent with other playlist/library viewers. Holding `Shift` should now show hidden context menu items.
 - Playback now restarts when changing replaygain mode with `fb.ReplaygainMode`.
 
 ## v2.1.2
-- `foobar2000` `v1.3.x` is now supported. `v1.3.x` users must make sure they have the `Visual C++ 2017` redist installed: https://aka.ms/vs/15/release/vc_redist.x86.exe Full details here: https://github.com/marc2k3/foo_jscript_panel/wiki/Installation
+- `foobar2000` `v1.3.x` is now supported. `v1.3.x` users must make sure they have the `Visual C++ 2017` redist installed: https://aka.ms/vs/15/release/vc_redist.x86.exe
 
 ## v2.1.1
-- A new `IGdiBitmap` `GetColourSchemeJSON` method has been added. See `docs\interfaces.txt`. Thanks to MordredKLB for the contribution.
+- A new `IGdiBitmap` `GetColourSchemeJSON` method has been added. Thanks to [MordredKLB](https://github.com/kbuffington) for the contribution.
 - Fix script error when dragging items on to `JSPlaylist` / `JS Smooth Playlist` with no active playlist.
 
 ## v2.1.0.2
 - Fix crash when supplying `plman.IsAutoPlaylist`/`plman.IsPlaylistLocked` with an invalid `playlistIndex`.
 
 ## v2.1.0.1
-- Add `plman.RemovePlaylistSwitch` method. Unlike `plman.RemovePlaylist`, this automatically sets another playlist as active if removing the active playlist. See `docs\interfaces.txt`.
+- Add `plman.RemovePlaylistSwitch` method. Unlike `plman.RemovePlaylist`, this automatically sets another playlist as active if removing the active playlist.
 - Update `JS Smooth Playlist Manager` and `JSPlaylist` to make use of the above method which should fix some previous buggy behaviour whem removing playlists.
 
 ## v2.1.0
 - Requires `foobar2000` `v1.4` `Beta 8` or later.
 - The drag/drop functionality has been completely rewritten by TheQwertiest. This will break all existing scripts which allow dragging in files from external sources. The ability to drag handle lists from `JScript Panel` to other panels has been added. The included playlist samples have been updated so they're compatible but they do not make use of the new functionality.
-- Add `on_replaygain_mode_changed` callback. See `docs\callbacks.txt`.
-- The behaviour of `plman.AddLocations` with the `select` argument set to `true` has been slightly modified. See `docs\interfaces.txt`.
+- Add `on_replaygain_mode_changed` callback.
+- The behaviour of `plman.AddLocations` with the `select` argument set to `true` has been slightly modified.
 
-https://github.com/marc2k3/foo_jscript_panel/wiki/Drag-and-Drop
+https://marc2k3.github.io/foo_jscript_panel/Drag-and-Drop.html
 
-https://github.com/marc2k3/foo_jscript_panel/wiki/Breaking-Changes
+https://marc2k3.github.io/foo_jscript_panel/Breaking-Changes.html
 
 ## v2.0.6
-- Add `fb.CopyHandleListToClipboard` method. Contents can then be pasted in other components or as files in `Windows Explorer`. See `docs\interfaces.txt`.
-- Add `fb.CheckClipboardContents` / `fb.GetClipboardContents`. Contents can be handles copied to the clipboard in other components or a file selection from `Windows Explorer`. See `docs\interfaces.txt`.
+- Add `fb.CopyHandleListToClipboard` method. Contents can then be pasted in other components or as files in `Windows Explorer`.
+- Add `fb.CheckClipboardContents` / `fb.GetClipboardContents`. Contents can be handles copied to the clipboard in other components or a file selection from `Windows Explorer`.
 - `JSPlaylist` has been updated for full clipboard functionality with updated context menu items and keyboard shortcut support (`CTRL+C`, `CTRL+X` and `CTRL+V`).
 
 ## v2.0.5
-- Add `ITitleFormat` `EvalWithMetadbs` method that takes a handle list as an argument. Returns a VBArray. See `docs\interfaces.txt`.
-- Add `plman.SortPlaylistsByName`. See `docs\interfaces.txt`.
+- Add `ITitleFormat` `EvalWithMetadbs` method that takes a handle list as an argument. Returns a VBArray.
+- Add `plman.SortPlaylistsByName`.
 - The `IMetadbHandleList` `OrderByRelativePath` method now takes subsong index in to account. Thanks to WilB for reporting.
-- `plman.GetPlaybackQueueContents` has been restored after being removed in the `v2` cleanse. It's the only way to determine if a single playlist item has been queued more than once. Note that each `IPlaybackQueueItem` is read-only. See `docs\interfaces.txt`.
+- `plman.GetPlaybackQueueContents` has been restored after being removed in the `v2` cleanse. It's the only way to determine if a single playlist item has been queued more than once. Note that each `IPlaybackQueueItem` is read-only.
 - The `Properties` dialog size and layout have been tweaked.
 
 ## v2.0.4
 - New `plman.FindPlaylist` and `plman.FindOrCreatePlaylist` methods have been addded.
-- `on_library_items_added`, `on_library_items_changed`, `on_library_items_removed` now return a handle list of affected items. See `docs\callbacks.txt`.
-- Various doc tidy up/fixes. Some `plman` methods have been updated to return `-1` on failure. See `docs\interfaces.txt`, `docs\callbacks.txt`.
+- `on_library_items_added`, `on_library_items_changed`, `on_library_items_removed` now return a handle list of affected items.
+- Various doc tidy up/fixes. Some `plman` methods have been updated to return `-1` on failure.
 
 ## v2.0.3
-- `utils.WriteTextFile` now takes an optional `write_bom` argument. It defaults to `true` if omitted. If `false`, then the resulting file should be `UTF8` without `BOM`. See `docs\interfaces.txt`.
-- Tidy up docs and `IMenuObj` interface. See the [Breaking Changes](https://github.com/marc2k3/foo_jscript_panel/wiki/Breaking-Changes) wiki for details.
+- `utils.WriteTextFile` now takes an optional `write_bom` argument. It defaults to `true` if omitted. If `false`, then the resulting file should be `UTF8` without `BOM`.
+- Tidy up docs and `IMenuObj` interface. See the [Breaking Changes](https://marc2k3.github.io/foo_jscript_panel/Breaking-Changes.html) page for details.
 
 ## v2.0.2
 - Fix random component crash caused by `utils.WriteTextFile`.
@@ -239,20 +239,20 @@ IGdiBitmap GetColorScheme -> GetColourScheme
 - The `IGdiBitmap` `BoxBlur` method has been removed. Use `StackBlur` instead.
 - `IContextMenuManager` `InitContext` only accepts a handle list as an argument.
 - Anyone who has a `js_settings` folder in their `foobar2000` profile folder from using my previous samples should move the contents in to the `js_data` folder. Typically, this would be `autoplaylists.json`, `thumbs.ini`, `listenbrainz.ini`.
-- Enable `Windows XP` support. Also, support for `Windows Vista`, `Windows 7` and `WINE` with `IE7`/`IE8` has been restored. `ES5` features are still supported for those with `IE9` or later. If your scripts crash after upgrading and making the changes outlined above, make sure to check the `Script Engine` setting in the [Configuration Window](https://github.com/marc2k3/foo_jscript_panel/wiki/Configuration-Window).
+- Enable `Windows XP` support. Also, support for `Windows Vista`, `Windows 7` and `WINE` with `IE7`/`IE8` has been restored. `ES5` features are still supported for those with `IE9` or later. If your scripts crash after upgrading and making the changes outlined above, make sure to check the `Script Engine` setting in the [Configuration Window](https://marc2k3.github.io/foo_jscript_panel/Configuration-Window.html).
 - Add `utils.WriteTextFile`. Always creates a `UTF8-BOM` file.
-- Add `window.Name` property. See `docs\interfaces.txt`.
+- Add `window.Name` property.
 - Add a custom `Playback Stats` backend and `handle` methods for writing values.
 
-https://github.com/marc2k3/foo_jscript_panel/wiki/Breaking-Changes
+https://marc2k3.github.io/foo_jscript_panel/Breaking-Changes.html
 
-https://github.com/marc2k3/foo_jscript_panel/wiki/Configuration-Window
+https://marc2k3.github.io/foo_jscript_panel/Configuration-Window.html
 
-https://github.com/marc2k3/foo_jscript_panel/wiki/WINE
+https://marc2k3.github.io/foo_jscript_panel/WINE.html
+
+https://marc2k3.github.io/foo_jscript_panel/Playback-Stats.html
 
 https://github.com/marc2k3/foo_jscript_panel/tree/master/foo_jscript_panel/samples
-
-https://github.com/marc2k3/foo_jscript_panel/wiki/Playback-Stats
 
 ## v1.3.2.2
 - Component now reports version on script error.
@@ -294,10 +294,10 @@ RestoreById
 - Support for `IE7`, `IE8` and `WINE` users has been dropped. Your computer must have `IE9` or later installed.
 - The `UpdateFileInfoSimple` handle and handle list methods are now gone.
 - A new `UpdateFileInfoFromJSON` method has been added. If anyone needs help with this, just ask.
-- Add `fb.CreateHandleList` method for creating empty handle lists. See `docs\interfaces.txt`.
+- Add `fb.CreateHandleList` method for creating empty handle lists.
 
 ## v1.2.4
-- Add `utils.ColorPicker` which is a popup dialog for selecting colours. See `docs\interfaces.txt`, `samples\basic\Color Picker.txt`.
+- Add `utils.ColorPicker` which is a popup dialog for selecting colours.
 - Fix various bugs in `samples\complete` folder.
 - `ListenBrainz` sample now has an on/off toggle on the menu.
 
@@ -314,12 +314,12 @@ RestoreById
 - Most samples are now DPI aware so text/tooltips should increase inline with other desktop elements. For existing users, each panel script should be re-imported from the `samples\complete` folder.
 
 ## v1.2.3
-- Add `fb.ReplaygainMode`. Can be used to retrieve or set the value. See `docs\interfaces.txt`.
+- Add `fb.ReplaygainMode`. Can be used to retrieve or set the value.
 - Hide `JScript Panel` main menu items. Given they're meant for binding to to keyboard shortcuts/standard buttons, there is no need for them to be visible. Hold `Shift` if you really want to access them from the menu.
 - Fix `IMetadbHandleList` `MakeUnion` method and update docs with examples for `MakeUnion`, `MakeDifference` and `MakeIntersection` methods.
 
 ## v1.2.2
-- Add new `on_main_menu` callback. 10 main menu items have been created meaning you can now bind them to global keyboard shortcuts, standard toolbar buttons, etc and have them run your own custom code. See `docs\callbacks.txt`.
+- Add new `on_main_menu` callback. 10 main menu items have been created meaning you can now bind them to global keyboard shortcuts, standard toolbar buttons, etc and have them run your own custom code.
 
 ## v1.2.1
 - Fix bug where the playing item handle was never sent to the `on_playback_edited` callback even though the docs said it would.
@@ -331,9 +331,9 @@ RestoreById
 
 ## v1.2.0
 - If your computer has `IE9` or later installed, newer `ECMAScript5` features are now available. Many thanks to TheQwertiest for discovering how to do this.
-- The `Script engine` option has been removed from the [Configuration Window](https://github.com/marc2k3/foo_jscript_panel/wiki/Configuration-Window). The newer `Chakra` engine is always used if available but will fall back to `JScript` if not.
-- Add `utils.Version` which reports the component version. See `docs\interfaces.txt`.
-- Minor tweaks to [Configuration Window](https://github.com/marc2k3/foo_jscript_panel/wiki/Configuration-Window).
+- The `Script engine` option has been removed from the [Configuration Window](https://marc2k3.github.io/foo_jscript_panel/Configuration-Window.html). The newer `Chakra` engine is always used if available but will fall back to `JScript` if not.
+- Add `utils.Version` which reports the component version.
+- Minor tweaks to [Configuration Window](https://marc2k3.github.io/foo_jscript_panel/Configuration-Window.html).
 - Update `JSPlaylist` so it works with `Chakra` engine. Thanks to zeremy for reporting
 - A previous `window.RepaintRect` bug reported by Wilb has now been fixed.
 - Zap a few more compiler warnings.
@@ -342,7 +342,7 @@ RestoreById
 - Remove trailing space in `Console` when using `fb.Trace`.
 - `Text Reader` sample fix. Ensure `Open containing folder` works when specifiying a folder rather than a full path to a file.
 - `Thumbs` sample fix. Addresses an issue where using `%profile%` in the `Custom folder` setting would fail if the profile path contained special title formatting characters like `%()[]'`.
-- Remove `Delay load` from [Configuration Window](https://github.com/marc2k3/foo_jscript_panel/wiki/Configuration-Window).
+- Remove `Delay load` from [Configuration Window](https://marc2k3.github.io/foo_jscript_panel/Configuration-Window.html).
 
 ## v1.1.6.2
 - Fix bug with `plman.AddLocations` where the original order of the supplied `array` wasn't maintained. Also, the progress dialog should be hidden for short operations.
@@ -352,15 +352,15 @@ RestoreById
 - The `complete` samples folder has 2 new scripts: `Thumbs` and `Text reader`. `Thumbs` allows the display/cycling of multiple images in a given folder. `Text reader` displays the contents of any plain text file. Title formatting can be used to specify the folder/file paths.
 
 ## v1.1.6
-- Add `IGdiBitmap` `StackBlur` method. See `docs\interfaces.txt` and `samples\basic\StackBlur.txt`.
+- Add `IGdiBitmap` `StackBlur` method.
 - Update `ApplyMask` sample.
 
 ## v1.1.5.1
 - Add `Open component folder` to default right click menu. This provides quick access to the docs and samples.
 
 ## v1.1.5
-- `plman.IsPlaylistLocked(playlistIndex)`. See `docs\interfaces.txt`.
-- `on_playlists_changed` is now called when a playlist's lock status changes through the use of components such as `foo_utils` or `foo_playlist_attributes`. See `docs\callbacks.txt`.
+- `plman.IsPlaylistLocked(playlistIndex)`.
+- `on_playlists_changed` is now called when a playlist's lock status changes through the use of components such as `foo_utils` or `foo_playlist_attributes`.
 - Existing samples moved in to new `basic` subfolder.
 - Add new `complete` samples folder containing some more feature complete samples.
 - Add updated `JSPlaylist` for `JScript Panel`.
@@ -378,7 +378,7 @@ RestoreById
 - Fix `on_mouse_wheel` not being called with certain trackpads.
 
 ## v1.1.1
-- New `on_mouse_wheel_h` callback for left/right scrolling. See `docs\callbacks.txt`.
+- New `on_mouse_wheel_h` callback for left/right scrolling.
 
 ## v1.1.0
 - `GetQueryItems` should be a `fb` method, not `plman`.
@@ -451,7 +451,7 @@ fb.ShowAutoPlaylistUI
 - `plman.GetPlaylistFocusItemHandle` has been removed because it's identical to `fb.GetFocusItem` which is more commonly used.
 - `utils.GetAlbumArt` removed as the corresponding function has been removed from the `foobar2000` `SDK`. `utils.GetAlbumArtAsync`, `utils.GetAlbumArtEmbedded` and `utils.GetAlbumArtV2` are still present.
 - `AppendMenuItem` no longer accepts `MF_POPUP` as a flag. Use `AppendTo` instead.
-- Remove `on_tooltip_custom_paint` callback. `window.CreateTooltip` has been updated to accept custom font paramters. See `docs\interfaces.txt`.
+- Remove `on_tooltip_custom_paint` callback. `window.CreateTooltip` has been updated to accept custom font paramters.
 - `Properties` dialog has a larger default size.
 - `Safe mode` is no longer an option.
 - Tidy up samples.
@@ -477,7 +477,7 @@ fb.ShowAutoPlaylistUI
 - Add `CalcTotalSize()` handle list method. returns the total in bytes.
 - Add `utils.FormatDuration(seconds)`. Returns a `string` like `3wk 2d 1:30:21`.
 - Add `utils.FormatFileSize(bytes)`. Returns a `string` like `7.9 GB`.
-- `window.CreateToolTip` now takes optional font `name`, `font size (px)` and `style` arguments. eg `window.CreateToolTip("Segoe UI", 32, 1)`. Defaults of `Segoe UI`, `12` and `0` are used if omitted. See `docs\flags.txt` for valid `style` values.
+- `window.CreateToolTip` now takes optional font `name`, `font size (px)` and `style` arguments. eg `window.CreateToolTip("Segoe UI", 32, 1)`. Defaults of `Segoe UI`, `12` and `0` are used if omitted.
 - Default right click menu now has a `Reload` script option. This saves opening/closing the dialog when working on external files. In addition, a new `window.Reload` method has been added so you can force a panel reload with your own menus, buttons, etc.
 - Script errors are now displayed in a popup window in addition to the `Console` like it was previously.
 - `EstimateLineWrap` no longer leaves stray punctuation when wrapping text at end of line.
