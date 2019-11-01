@@ -51,7 +51,7 @@ public:
 
 	bool get_help_url(pfc::string_base& p_out) override
 	{
-		p_out = "https://github.com/marc2k3/foo_jscript_panel/wiki";
+		p_out = "https://marc2k3.github.io/foo_jscript_panel.html";
 		return true;
 	}
 

@@ -14,8 +14,7 @@ All these scripts should work on any system with IE8 or later installed.
 
 There are three exceptions:
 
-"Listenbrainz" requires any version of Windows with IE9 or later installed. It also works under WINE
-following the guide on the github wiki.
+"Listenbrainz" requires any version of Windows with IE9 or later installed.
 
 "Thumbs" can display existing images on any system but requires Windows with at least
 IE9 to download new ones. Downloading does not work on XP/WINE.
