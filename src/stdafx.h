@@ -26,7 +26,7 @@ namespace Gdiplus
 	using std::max;
 };
 
-#include <resource.h>
+#include "resource.h"
 #include <foobar2000/helpers/foobar2000+atl.h>
 #include <foobar2000/helpers/atl-misc.h>
 #include <foobar2000/helpers/filetimetools.h>
@@ -44,7 +44,8 @@ namespace Gdiplus
 #undef SubclassWindow
 #endif
 
-#include <component_defines.h>
+#include "component_defines.h"
+#include "guids.h"
 
 using namespace pfc::stringcvt;
 using str_list = std::vector<std::string>;
