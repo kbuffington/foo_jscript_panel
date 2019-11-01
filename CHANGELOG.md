@@ -59,7 +59,7 @@ utils.IsFolder(folder)
 - Fix `IMetadbHandleList` `MakeDifference` method.
 
 ## v2.2.2.2
-- Fix broken descriptions for main menu items in the keyboard shortcut preferences. Thanks to TheQwertiest for spotting and providing the fix.
+- Fix broken descriptions for main menu items in the keyboard shortcut preferences. Thanks to [TheQwertiest](https://github.com/TheQwertiest) for spotting and providing the fix.
 
 ## v2.2.2.1
 - Remove optional `force` argument from `fb.GetFocusItem` as it had no effect. No errors will be thrown if present but it will be ignored.
@@ -80,7 +80,7 @@ https://marc2k3.github.io/foo_jscript_panel/Breaking-Changes.html
 - Revert all timer related changes made in `v2.2.0.2`-`v2.2.0.3`. Although tested and working fine on my main machine, it caused crashes on `Windows XP` and `foobar2000` not to exit properly when running inside a `Windows 7` virtual machine. Apologies for any inconvenience!
 
 ## v2.2.0.3
-- Fix potential freeze on shutdown caused by timer threads. Thanks to TheQwertiest.
+- Fix potential freeze on shutdown caused by timer threads. Thanks to [TheQwertiest](https://github.com/TheQwertiest).
 - Access to the [Configuration Window](https://marc2k3.github.io/foo_jscript_panel/Configuration-Window.html) via the `Layout` tab in the `Columns UI` Preferences has been blocked. The `Configure Panel...` button will now be grayed out. Always use the context menu on the panel itself.
 - Some minor sample bugs have been fixed.
 
@@ -173,7 +173,7 @@ if ('DlgCode' in window) { window.DlgCode = 4; }
 
 ## v2.1.0
 - Requires `foobar2000` `v1.4` `Beta 8` or later.
-- The drag/drop functionality has been completely rewritten by TheQwertiest. This will break all existing scripts which allow dragging in files from external sources. The ability to drag handle lists from `JScript Panel` to other panels has been added. The included playlist samples have been updated so they're compatible but they do not make use of the new functionality.
+- The drag/drop functionality has been completely rewritten by [TheQwertiest](https://github.com/TheQwertiest). This will break all existing scripts which allow dragging in files from external sources. The ability to drag handle lists from `JScript Panel` to other panels has been added. The included playlist samples have been updated so they're compatible but they do not make use of the new functionality.
 - Add `on_replaygain_mode_changed` callback.
 - The behaviour of `plman.AddLocations` with the `select` argument set to `true` has been slightly modified.
 
@@ -215,7 +215,7 @@ https://marc2k3.github.io/foo_jscript_panel/Breaking-Changes.html
 
 ## v2.0.1
 - Add `Last.fm Lover` sample. Imports all loved tracks from [Last.fm](https://last.fm) in to the new `JScript Panel` `Playback Stats` database. All loved tracks will have the value of `%JSP_LOVED%` set to `1` which is available in all components/search. You can then love/unlove tracks by clicking the heart icon. Obviously this requires a [Last.fm](https://last.fm) account. Use the right click menu to set your username and authorise the script.
-- The timer mechanism behind `window.SetInterval` and `window.SetTimeout` has been completely rewritten by TheQwertiest. Previously, it was limited to 16 instances and then it would fail causing random buggy behaviour in some advanced scripts.
+- The timer mechanism behind `window.SetInterval` and `window.SetTimeout` has been completely rewritten by [TheQwertiest](https://github.com/TheQwertiest). Previously, it was limited to 16 instances and then it would fail causing random buggy behaviour in some advanced scripts.
 - Fix `ListenBrainz` not clearing its cache after a successful submission. Thanks to zeremy for reporting.
 - Fix `Thumbs` sample not deleting images.
 
@@ -265,7 +265,7 @@ https://github.com/marc2k3/foo_jscript_panel/tree/master/foo_jscript_panel/sampl
 - Improved handling of `UTF8` files without `BOM`. This affects files loaded via the `PREPROCESSOR` section and the `Configuration Window>Tools>Import` button. They should now be treated the same as files with `BOM`.
 
 ## v1.3.1
-- Fixed a bug where `plman.IsPlaylistItemSelected` didn't return a proper `boolean` value. Thanks to TheQwertiest for reporting.
+- Fixed a bug where `plman.IsPlaylistItemSelected` didn't return a proper `boolean` value. Thanks to [TheQwertiest](https://github.com/TheQwertiest) for reporting.
 - Fixed a bug where `plman.ShowAutoPlaylistUI` didn't always return the correct `boolean` value.
 - `plman.MovePlaylistSelection` now returns a `boolean` value to indicate success or failure.
 - Update docs for consistency with actual component behaviour. Some methods which returned useless values have been updated to return nothing.
@@ -330,7 +330,7 @@ RestoreById
 - Add `Last.fm Similar Artists / Charts` and `MusicBrainz` samples.
 
 ## v1.2.0
-- If your computer has `IE9` or later installed, newer `ECMAScript5` features are now available. Many thanks to TheQwertiest for discovering how to do this.
+- If your computer has `IE9` or later installed, newer `ECMAScript5` features are now available. Many thanks to [TheQwertiest](https://github.com/TheQwertiest) for discovering how to do this.
 - The `Script engine` option has been removed from the [Configuration Window](https://marc2k3.github.io/foo_jscript_panel/Configuration-Window.html). The newer `Chakra` engine is always used if available but will fall back to `JScript` if not.
 - Add `utils.Version` which reports the component version.
 - Minor tweaks to [Configuration Window](https://marc2k3.github.io/foo_jscript_panel/Configuration-Window.html).
