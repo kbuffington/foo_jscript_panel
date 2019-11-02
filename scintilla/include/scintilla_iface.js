@@ -98,17 +98,11 @@ const create_body = (lines) =>
 			const typeTwo = get_type(two[0])
 			const nameTwo = two[1] || ''
 
-			tmp.push('')
-			let sig = `\t${ret} ${name}(`
-			if (typeOne.length) sig += `${typeOne} ${nameOne}`
-			if (typeOne.length && typeTwo.length) sig += ', '
-			if (typeTwo.length) sig += `${typeTwo} ${nameTwo}`
-			sig += ')'
-
-			tmp.push(sig)
-			tmp.push('\t\{')
-
-			let main = '\t\t'
+			let main = `\t${ret} ${name}(`
+			if (typeOne.length) main += `${typeOne} ${nameOne}`
+			if (typeOne.length && typeTwo.length) main += ', '
+			if (typeTwo.length) main += `${typeTwo} ${nameTwo}`
+			main += ') { '
 
 			let cast = false
 			if (ret == 'void*') {
@@ -128,12 +122,12 @@ const create_body = (lines) =>
 			}
 
 			if (cast) main+= ')'
-			main += ');'
+			main += '); }'
 
 			tmp.push(main)
-			tmp.push('\t}')
 		}
 	}
+	tmp.sort()
 	return tmp
 }
 
