@@ -132,15 +132,8 @@ namespace stats
 			}
 			else
 			{
-				std::set<metadb_index_hash> hashes;
-				for (t_size i = 0; i < count; ++i)
-				{
-					metadb_index_hash hash;
-					if (hashHandle(p_tracks[i], hash))
-					{
-						hashes.emplace(hash);
-					}
-				}
+				hash_set hashes;
+				get_hashes(p_tracks, hashes);
 
 				t_size total = std::accumulate(hashes.begin(), hashes.end(), 0, [](t_size t, const metadb_index_hash& hash)
 				{
@@ -200,6 +193,19 @@ namespace stats
 		auto ret = g_cachedAPI;
 		if (ret.is_empty()) ret = metadb_index_manager::get();
 		return ret;
+	}
+
+	void get_hashes(metadb_handle_list_cref handles, hash_set& hashes)
+	{
+		const auto count = handles.get_count();
+		for (t_size i = 0; i < count; ++i)
+		{
+			metadb_index_hash hash;
+			if (hashHandle(handles[i], hash))
+			{
+				hashes.emplace(hash);
+			}
+		}
 	}
 
 	void set(metadb_index_hash hash, fields f)

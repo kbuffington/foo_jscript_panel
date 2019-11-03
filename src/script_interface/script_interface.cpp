@@ -1688,21 +1688,15 @@ STDMETHODIMP MetadbHandleList::OrderByRelativePath()
 
 STDMETHODIMP MetadbHandleList::RefreshStats()
 {
-	std::set<metadb_index_hash> tmp;
-	for (t_size i = 0; i < m_handles.get_count(); ++i)
+	stats::hash_set hashes;
+	stats::get_hashes(m_handles, hashes);
+
+	pfc::list_t<metadb_index_hash> to_refresh;
+	for (const auto& hash : hashes)
 	{
-		metadb_index_hash hash;
-		if (stats::hashHandle(m_handles[i], hash))
-		{
-			tmp.emplace(hash);
-		}
+		to_refresh += hash;
 	}
-	pfc::list_t<metadb_index_hash> hashes;
-	for (const auto& hash : tmp)
-	{
-		hashes += hash;
-	}
-	stats::theAPI()->dispatch_refresh(jsp_guids::metadb_index, hashes);
+	stats::theAPI()->dispatch_refresh(jsp_guids::metadb_index, to_refresh);
 	return S_OK;
 }
 
