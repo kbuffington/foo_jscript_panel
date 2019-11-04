@@ -106,7 +106,7 @@ namespace stats
 		}
 	};
 
-	class my_track_property_provider_v2 : public track_property_provider_v2
+	class my_track_property_provider_v3 : public track_property_provider_v3
 	{
 	public:
 		bool is_our_tech_info(const char* p_name) override
@@ -114,44 +114,39 @@ namespace stats
 			return false;
 		}
 
-		void enumerate_properties(metadb_handle_list_cref p_tracks, track_property_callback& p_out) override
+		void enumerate_properties_v3(metadb_handle_list_cref items, track_property_provider_v3_info_source& info, track_property_callback_v2& callback) override
 		{
-			const t_size count = p_tracks.get_count();
-			if (count == 1)
+			if (callback.is_group_wanted(JSP_NAME))
 			{
-				metadb_index_hash hash;
-				if (hashHandle(p_tracks[0], hash))
+				const t_size count = items.get_count();
+				if (count == 1)
 				{
-					fields tmp = get(hash);
-					p_out.set_property(JSP_NAME, 0, "Playcount", std::to_string(tmp.playcount).c_str());
-					p_out.set_property(JSP_NAME, 1, "Loved", std::to_string(tmp.loved).c_str());
-					p_out.set_property(JSP_NAME, 2, "First Played", tmp.first_played);
-					p_out.set_property(JSP_NAME, 3, "Last Played", tmp.last_played);
-					p_out.set_property(JSP_NAME, 4, "Rating", std::to_string(tmp.rating).c_str());
+					metadb_index_hash hash;
+					if (hashHandle(items[0], hash))
+					{
+						fields tmp = get(hash);
+						callback.set_property(JSP_NAME, 0, "Playcount", std::to_string(tmp.playcount).c_str());
+						callback.set_property(JSP_NAME, 1, "Loved", std::to_string(tmp.loved).c_str());
+						callback.set_property(JSP_NAME, 2, "First Played", tmp.first_played);
+						callback.set_property(JSP_NAME, 3, "Last Played", tmp.last_played);
+						callback.set_property(JSP_NAME, 4, "Rating", std::to_string(tmp.rating).c_str());
+					}
 				}
-			}
-			else
-			{
-				hash_set hashes;
-				get_hashes(p_tracks, hashes);
-
-				t_size total = std::accumulate(hashes.begin(), hashes.end(), 0, [](t_size t, const metadb_index_hash& hash)
+				else
 				{
-					return t + get(hash).playcount;
-				});
+					hash_set hashes;
+					get_hashes(items, hashes);
 
-				if (total > 0)
-				{
-					p_out.set_property(JSP_NAME, 0, "Playcount", std::to_string(total).c_str());
+					t_size total = std::accumulate(hashes.begin(), hashes.end(), 0, [](t_size t, const metadb_index_hash hash)
+					{
+						return t + get(hash).playcount;
+					});
+
+					if (total > 0)
+					{
+						callback.set_property(JSP_NAME, 0, "Playcount", std::to_string(total).c_str());
+					}
 				}
-			}
-		}
-
-		void enumerate_properties_v2(metadb_handle_list_cref p_tracks, track_property_callback_v2& p_out) override
-		{
-			if (p_out.is_group_wanted(JSP_NAME))
-			{
-				enumerate_properties(p_tracks, p_out);
 			}
 		}
 	};
@@ -159,7 +154,7 @@ namespace stats
 	static service_factory_single_t<my_init_stage_callback> g_my_init_stage_callback;
 	static service_factory_single_t<my_initquit> g_my_initquit;
 	static service_factory_single_t<my_metadb_display_field_provider> g_my_metadb_display_field_provider;
-	static service_factory_single_t<my_track_property_provider_v2> g_my_track_property_provider_v2;
+	static service_factory_single_t<my_track_property_provider_v3> g_my_track_property_provider_v3;
 
 	bool hashHandle(const metadb_handle_ptr& handle, metadb_index_hash& hash)
 	{
