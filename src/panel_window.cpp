@@ -194,7 +194,7 @@ LRESULT panel_window::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 		}
 		return 0;
 	}
-	
+
 	switch (msg)
 	{
 	case WM_CREATE:

@@ -13,7 +13,7 @@
 #include <mutex>
 #include <vector>
 
-#include <json.hpp>
+#include <nlohmann/json.hpp>
 using json = nlohmann::json;
 
 #include <Scintilla.h>
