@@ -32,7 +32,7 @@ namespace stats
 				{
 					api->add(g_client, jsp_guids::metadb_index, system_time_periods::week * 4);
 				}
-				catch (std::exception const& e)
+				catch (const std::exception& e)
 				{
 					api->remove(jsp_guids::metadb_index);
 					FB2K_console_formatter() << JSP_NAME " stats: Critical initialisation failure: " << e;
@@ -106,7 +106,7 @@ namespace stats
 		}
 	};
 
-	class my_track_property_provider_v3 : public track_property_provider_v3
+	class my_track_property_provider_v4 : public track_property_provider_v4
 	{
 	public:
 		bool is_our_tech_info(const char* p_name) override
@@ -114,7 +114,7 @@ namespace stats
 			return false;
 		}
 
-		void enumerate_properties_v3(metadb_handle_list_cref items, track_property_provider_v3_info_source& info, track_property_callback_v2& callback) override
+		void enumerate_properties_helper(metadb_handle_list_cref items, track_property_provider_v3_info_source& info, track_property_callback_v2& callback, abort_callback& abort)
 		{
 			if (callback.is_group_wanted(JSP_NAME))
 			{
@@ -124,7 +124,7 @@ namespace stats
 					metadb_index_hash hash;
 					if (hashHandle(items[0], hash))
 					{
-						fields tmp = get(hash);
+						const fields tmp = get(hash);
 						callback.set_property(JSP_NAME, 0, "Playcount", std::to_string(tmp.playcount).c_str());
 						callback.set_property(JSP_NAME, 1, "Loved", std::to_string(tmp.loved).c_str());
 						callback.set_property(JSP_NAME, 2, "First Played", tmp.first_played);
@@ -149,12 +149,17 @@ namespace stats
 				}
 			}
 		}
+
+		void enumerate_properties_v4(metadb_handle_list_cref items, track_property_provider_v3_info_source& info, track_property_callback_v2& callback, abort_callback& abort) override
+		{
+			enumerate_properties_helper(items, info, callback, abort);
+		}
 	};
 
 	static service_factory_single_t<my_init_stage_callback> g_my_init_stage_callback;
 	static service_factory_single_t<my_initquit> g_my_initquit;
 	static service_factory_single_t<my_metadb_display_field_provider> g_my_metadb_display_field_provider;
-	static service_factory_single_t<my_track_property_provider_v3> g_my_track_property_provider_v3;
+	static service_factory_single_t<my_track_property_provider_v4> g_my_track_property_provider_v4;
 
 	bool hashHandle(const metadb_handle_ptr& handle, metadb_index_hash& hash)
 	{
