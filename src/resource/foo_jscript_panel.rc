@@ -11,7 +11,7 @@
 #include <windows.h>
 #undef APSTUDIO_HIDDEN_SYMBOLS
 
-#include <atlres.h>
+#include <wtl/atlres.h>
 
 /////////////////////////////////////////////////////////////////////////////
 #undef APSTUDIO_READONLY_SYMBOLS
@@ -39,7 +39,7 @@ BEGIN
     "#define APSTUDIO_HIDDEN_SYMBOLS\r\n"
     "#include <windows.h>\r\n"
     "#undef APSTUDIO_HIDDEN_SYMBOLS\r\n"
-    "#include <atlres.h>\r\n"
+    "#include <wtl/atlres.h>\r\n"
     "\0"
 END
 
@@ -163,7 +163,7 @@ END
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
-IDI_SCROLL              ICON                    "..\\libPPUI\\IDI_SCROLL.ico"
+IDI_SCROLL              ICON                    "libPPUI\\IDI_SCROLL.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //
