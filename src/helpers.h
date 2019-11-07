@@ -147,7 +147,11 @@ namespace helpers
 
 				for (auto e = service_enum_t<file_format_sanitizer>(); !e.finished(); ++e)
 				{
-					if (e.get()->sanitize_file(path, m_minimise, p_abort)) break;
+					try
+					{
+						if (e.get()->sanitize_file(path, m_minimise, p_abort)) break;
+					}
+					catch (...) {}
 				}
 			}
 		}
