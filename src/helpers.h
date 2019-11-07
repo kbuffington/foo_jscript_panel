@@ -143,14 +143,16 @@ namespace helpers
 				auto path = m_handles[i]->get_path();
 				p_status.set_progress(i, count);
 				p_status.set_item_path(path);
-				if (!fs::exists(fs::u8path(file_path_display(path).get_ptr()))) continue;
 
-				auto lock = api->acquire_write(path, p_abort);
-
-				for (auto e = service_enum_t<file_format_sanitizer>(); !e.finished(); ++e)
+				try
 				{
-					if (e.get()->sanitize_file(path, m_minimise, p_abort)) break;
+					auto lock = api->acquire_write(path, p_abort);
+					for (auto e = service_enum_t<file_format_sanitizer>(); !e.finished(); ++e)
+					{
+						if (e.get()->sanitize_file(path, m_minimise, p_abort)) break;
+					}
 				}
+				catch (...) {}
 			}
 		}
 
