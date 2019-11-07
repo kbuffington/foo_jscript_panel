@@ -26,6 +26,7 @@ namespace helpers
 
 	using wrapped_item_list = std::vector<wrapped_item>;
 	static constexpr t_size threaded_process_flags = threaded_process::flag_show_progress | threaded_process::flag_show_delayed | threaded_process::flag_show_item;
+	namespace fs = std::filesystem;
 
 	COLORREF convert_argb_to_colorref(DWORD argb);
 	DWORD convert_colorref_to_argb(COLORREF color);
@@ -88,6 +89,7 @@ namespace helpers
 			const GUID what = convert_artid_to_guid(m_art_id);
 			auto api = file_lock_manager::get();
 			const t_size count = m_handles.get_count();
+
 			for (t_size i = 0; i < count; ++i)
 			{
 				pfc::string8_fast path = m_handles[i]->get_path();
@@ -119,8 +121,6 @@ namespace helpers
 			}
 		}
 
-		static const t_size flags = threaded_process::flag_show_progress | threaded_process::flag_show_delayed | threaded_process::flag_show_item;
-
 	private:
 		actions m_action;
 		album_art_data_ptr m_data;
@@ -140,18 +140,16 @@ namespace helpers
 
 			for (t_size i = 0; i < count; ++i)
 			{
-				pfc::string8_fast path = m_handles[i]->get_path();
+				auto path = m_handles[i]->get_path();
 				p_status.set_progress(i, count);
 				p_status.set_item_path(path);
+				if (!fs::exists(fs::u8path(file_path_display(path).get_ptr()))) continue;
+
 				auto lock = api->acquire_write(path, p_abort);
 
 				for (auto e = service_enum_t<file_format_sanitizer>(); !e.finished(); ++e)
 				{
-					try
-					{
-						if (e.get()->sanitize_file(path, m_minimise, p_abort)) break;
-					}
-					catch (...) {}
+					if (e.get()->sanitize_file(path, m_minimise, p_abort)) break;
 				}
 			}
 		}
@@ -164,7 +162,7 @@ namespace helpers
 	class album_art_async : public simple_thread_task
 	{
 	public:
-		album_art_async(HWND p_wnd, metadb_handle* handle, t_size art_id, bool need_stub, bool only_embed, bool no_load) : m_hwnd(p_wnd), m_handle(handle), m_art_id(art_id), m_need_stub(need_stub), m_only_embed(only_embed), m_no_load(no_load) {}
+		album_art_async(HWND p_wnd, const metadb_handle_ptr& handle, t_size art_id, bool need_stub, bool only_embed, bool no_load) : m_hwnd(p_wnd), m_handle(handle), m_art_id(art_id), m_need_stub(need_stub), m_only_embed(only_embed), m_no_load(no_load) {}
 
 		struct t_param
 		{

@@ -399,7 +399,7 @@ namespace helpers
 
 	bool write_file(const char* path, const pfc::string8_fast& content)
 	{
-		std::ofstream f(std::filesystem::u8path(path), std::ios::binary);
+		std::ofstream f(fs::u8path(path), std::ios::binary);
 		if (f.is_open())
 		{
 			f << content.get_ptr();
@@ -464,7 +464,7 @@ namespace helpers
 	pfc::string8_fast read_file(const char* path)
 	{
 		pfc::string8_fast content;
-		std::ifstream f(std::filesystem::u8path(path));
+		std::ifstream f(fs::u8path(path));
 		if (f.is_open())
 		{
 			std::string line;
