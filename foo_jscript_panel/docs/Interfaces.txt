@@ -2142,8 +2142,9 @@ interface IMetadbHandleList {
 		/*
 		minimise: boolean, default false.
 
-		Provides the same functionality as the context menu item "Utilities>Optimize file layout" or
-		if "minimise" is true then "Utilities>Optimize file layout + minimize file size".
+		With "minimise" set to false, provides the functionality of "Utilities>Optimize file layout" or
+		if "minimise" is true then "Utilities>Optimize file layout + minimize file size". Unlike the
+		context menu versions, there is no prompt.
 		*/
 
 		OrderByFormat(tfo, direction); (void)
