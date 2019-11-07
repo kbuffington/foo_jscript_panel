@@ -1,3 +1,7 @@
+## v2.3.2
+- Add `IMetadbHandleList` `OptimiseFileLayout`. It provides the functionality of the context menu item `Utilities>Optimise file layout`. Also takes an optional `minimise` argument which removes all padding.
+- Properly fix `Return`/`Tab` key usage in the `Find`/`Replace` dialog.
+
 ## v2.3.1
 - Fix a nasty editor bug that caused the component to crash while typing. Versions `2.3.0`-`2.3.0.2` were all affected so upgrading immediately is highly recommended!
 

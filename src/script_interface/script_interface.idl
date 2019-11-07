@@ -183,6 +183,7 @@ library foo_jscript_panel
 		HRESULT MakeDifference(IMetadbHandleList* handles);
 		HRESULT MakeIntersection(IMetadbHandleList* handles);
 		HRESULT MakeUnion(IMetadbHandleList* handles);
+		HRESULT OptimiseFileLayout([defaultvalue(0)] VARIANT_BOOL minimise);
 		HRESULT OrderByFormat(ITitleFormat* script, int direction);
 		HRESULT OrderByPath();
 		HRESULT OrderByRelativePath();

@@ -1468,8 +1468,8 @@ STDMETHODIMP MetadbHandleList::AttachImage(BSTR path, UINT art_id)
 
 	if (data.is_valid())
 	{
-		auto cb = fb2k::service_new<helpers::embed_thread>(helpers::embed_thread::actions::attach, data, m_handles, art_id);
-		threaded_process::get()->run_modeless(cb, helpers::embed_thread::flags, core_api::get_main_window(), "Embedding image...");
+		auto cb = fb2k::service_new<helpers::embed>(helpers::embed::actions::attach, data, m_handles, art_id);
+		threaded_process::get()->run_modeless(cb, helpers::threaded_process_flags, core_api::get_main_window(), "Embedding image...");
 	}
 	return S_OK;
 }
@@ -1636,6 +1636,16 @@ STDMETHODIMP MetadbHandleList::MakeUnion(IMetadbHandleList* handles)
 	return S_OK;
 }
 
+STDMETHODIMP MetadbHandleList::OptimiseFileLayout(VARIANT_BOOL minimise)
+{
+	if (m_handles.get_count() == 0) return E_POINTER;
+
+	auto flags = helpers::threaded_process_flags | threaded_process::flag_show_abort;
+	auto cb = fb2k::service_new<helpers::optimise_layout>(m_handles, minimise != VARIANT_FALSE);
+	threaded_process::get()->run_modeless(cb, flags, core_api::get_main_window(), "Optimising...");
+	return S_OK;
+}
+
 STDMETHODIMP MetadbHandleList::OrderByFormat(__interface ITitleFormat* script, int direction)
 {
 	titleformat_object* obj = nullptr;
@@ -1719,8 +1729,8 @@ STDMETHODIMP MetadbHandleList::RemoveAttachedImage(UINT art_id)
 {
 	if (m_handles.get_count() == 0) return E_POINTER;
 
-	auto cb = fb2k::service_new<helpers::embed_thread>(helpers::embed_thread::actions::remove, album_art_data_ptr(), m_handles, art_id);
-	threaded_process::get()->run_modeless(cb, helpers::embed_thread::flags, core_api::get_main_window(), "Removing images...");
+	auto cb = fb2k::service_new<helpers::embed>(helpers::embed::actions::remove, album_art_data_ptr(), m_handles, art_id);
+	threaded_process::get()->run_modeless(cb, helpers::threaded_process_flags, core_api::get_main_window(), "Removing images...");
 	return S_OK;
 }
 
@@ -1728,8 +1738,8 @@ STDMETHODIMP MetadbHandleList::RemoveAttachedImages()
 {
 	if (m_handles.get_count() == 0) return E_POINTER;
 
-	auto cb = fb2k::service_new<helpers::embed_thread>(helpers::embed_thread::actions::remove_all, album_art_data_ptr(), m_handles, 0);
-	threaded_process::get()->run_modeless(cb, helpers::embed_thread::flags, core_api::get_main_window(), "Removing images...");
+	auto cb = fb2k::service_new<helpers::embed>(helpers::embed::actions::remove_all, album_art_data_ptr(), m_handles, 0);
+	threaded_process::get()->run_modeless(cb, helpers::threaded_process_flags, core_api::get_main_window(), "Removing images...");
 	return S_OK;
 }
 

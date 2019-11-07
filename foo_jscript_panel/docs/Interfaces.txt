@@ -2138,6 +2138,14 @@ interface IMetadbHandleList {
 		// "one" now contains all handles from "one" AND "two" with any duplicates removed
 		*/
 
+		OptimiseFileLayout([minimise]);
+		/*
+		minimise: boolean, default false.
+
+		Provides the same functionality as the context menu item "Utilities>Optimize file layout" or
+		if "minimise" is true then "Utilities>Optimize file layout + minimize file size".
+		*/
+
 		OrderByFormat(tfo, direction); (void)
 		/*
 		tfo: an instance of ITitleFormat.

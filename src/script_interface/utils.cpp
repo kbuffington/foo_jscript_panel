@@ -278,7 +278,7 @@ STDMETHODIMP Utils::ListFiles(BSTR folder, VARIANT_BOOL recur, VARIANT* p)
 	{
 		_variant_t var;
 		var.vt = VT_BSTR;
-		var.bstrVal = TO_BSTR(file_path_display(list.get_item(i)));
+		var.bstrVal = TO_BSTR(file_path_display(list[i]));
 		if (!helper.put_item(i, var)) return E_OUTOFMEMORY;
 	}
 	p->vt = VT_ARRAY | VT_VARIANT;
@@ -298,7 +298,7 @@ STDMETHODIMP Utils::ListFolders(BSTR folder, VARIANT* p)
 	if (!helper.create(count)) return E_OUTOFMEMORY;
 	for (LONG i = 0; i < count; ++i)
 	{
-		pfc::string8_fast path = file_path_display(list.get_item(i)).get_ptr();
+		pfc::string8_fast path = file_path_display(list[i]).get_ptr();
 		path.add_char('\\');
 
 		_variant_t var;

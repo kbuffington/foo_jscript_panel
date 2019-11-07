@@ -294,6 +294,7 @@ public:
 	STDMETHODIMP MakeDifference(IMetadbHandleList* handles) override;
 	STDMETHODIMP MakeIntersection(IMetadbHandleList* handles) override;
 	STDMETHODIMP MakeUnion(IMetadbHandleList* handles) override;
+	STDMETHODIMP OptimiseFileLayout(VARIANT_BOOL minimise) override;
 	STDMETHODIMP OrderByFormat(__interface ITitleFormat* script, int direction) override;
 	STDMETHODIMP OrderByPath() override;
 	STDMETHODIMP OrderByRelativePath() override;

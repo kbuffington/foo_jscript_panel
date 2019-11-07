@@ -25,6 +25,7 @@ namespace helpers
 	};
 
 	using wrapped_item_list = std::vector<wrapped_item>;
+	static constexpr t_size threaded_process_flags = threaded_process::flag_show_progress | threaded_process::flag_show_delayed | threaded_process::flag_show_item;
 
 	COLORREF convert_argb_to_colorref(DWORD argb);
 	DWORD convert_colorref_to_argb(COLORREF color);
@@ -70,7 +71,7 @@ namespace helpers
 		return ret;
 	}
 
-	class embed_thread : public threaded_process_callback
+	class embed : public threaded_process_callback
 	{
 	public:
 		enum class actions
@@ -80,7 +81,7 @@ namespace helpers
 			remove_all
 		};
 
-		embed_thread(actions action, album_art_data_ptr data, metadb_handle_list_cref handles, t_size art_id) : m_action(action), m_data(data), m_handles(handles), m_art_id(art_id) {}
+		embed(actions action, album_art_data_ptr data, metadb_handle_list_cref handles, t_size art_id) : m_action(action), m_data(data), m_handles(handles), m_art_id(art_id) {}
 
 		void run(threaded_process_status& p_status, abort_callback& p_abort) override
 		{
@@ -89,7 +90,7 @@ namespace helpers
 			const t_size count = m_handles.get_count();
 			for (t_size i = 0; i < count; ++i)
 			{
-				pfc::string8_fast path = m_handles.get_item(i)->get_path();
+				pfc::string8_fast path = m_handles[i]->get_path();
 				p_status.set_progress(i, count);
 				p_status.set_item_path(path);
 				album_art_editor::ptr ptr;
@@ -125,6 +126,35 @@ namespace helpers
 		album_art_data_ptr m_data;
 		metadb_handle_list m_handles;
 		t_size m_art_id;
+	};
+
+	class optimise_layout : public threaded_process_callback
+	{
+	public:
+		optimise_layout(metadb_handle_list_cref handles, bool minimise) : m_handles(handles), m_minimise(minimise) {}
+
+		void run(threaded_process_status& p_status, abort_callback& p_abort) override
+		{
+			auto api = file_lock_manager::get();
+			const t_size count = m_handles.get_count();
+
+			for (t_size i = 0; i < count; ++i)
+			{
+				pfc::string8_fast path = m_handles[i]->get_path();
+				p_status.set_progress(i, count);
+				p_status.set_item_path(path);
+				auto lock = api->acquire_write(path, p_abort);
+
+				for (auto e = service_enum_t<file_format_sanitizer>(); !e.finished(); ++e)
+				{
+					if (e.get()->sanitize_file(path, m_minimise, p_abort)) break;
+				}
+			}
+		}
+
+	private:
+		bool m_minimise;
+		metadb_handle_list m_handles;
 	};
 
 	class album_art_async : public simple_thread_task
