@@ -41,10 +41,11 @@ class Cluster
 public:
 	Cluster(KPoint point)
 	{
-		for (auto& value : point.values)
+		std::transform(point.values.begin(), point.values.end(), std::back_inserter(central_values), [](const unsigned int value)
 		{
-			central_values.emplace_back(value);
-		}
+			return static_cast<double>(value);
+		});
+
 		points.emplace_back(point);
 	}
 

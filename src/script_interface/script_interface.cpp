@@ -321,7 +321,6 @@ STDMETHODIMP GdiBitmap::GetColourSchemeJSON(UINT count, BSTR* p)
 	Gdiplus::BitmapData bmpdata;
 	if (bitmap->LockBits(&rect, Gdiplus::ImageLockModeRead, PixelFormat32bppARGB, &bmpdata) != Gdiplus::Ok) return E_POINTER;
 
-
 	const t_size colours_length = bmpdata.Width * bmpdata.Height;
 	const t_size* colours = (const t_size*)bmpdata.Scan0;
 	std::map<t_size, int> colour_counters;
