@@ -1,7 +1,5 @@
 #pragma once
 
-#define NUM_COLOUR_COMPONENTS	3;
-
 /*
 k-means is a clustering algorithm designed to group data points into clusters of similar points,
 and return the averaged "center" value of each cluster. The algorithm runs over the data set
@@ -22,74 +20,32 @@ not acceptable for generating colour values, so the starting center colour value
 across the data set.
 */
 
-class Point
+static constexpr int num_colour_components = 3;
+
+class KPoint
 {
-private:
-	int id_point, id_cluster;
-	std::vector<unsigned int> values;
-	int total_values;
-	int pixel_count;
-
 public:
-	Point(int id_point, std::vector<unsigned int>& values, int pixel_count)
+	KPoint(int id_point, const std::vector<unsigned int>& values, int pixel_count) : id_point(id_point), values(values), pixel_count(pixel_count)
 	{
-		this->id_point = id_point;
-		this->pixel_count = pixel_count;
-		total_values = values.size();
-
-		for (int i = 0; i < total_values; i++)
-			this->values.push_back(values[i]);
-
 		id_cluster = -1;
 	}
 
-	int getID() {
-		return id_point;
-	}
-
-	void setCluster(int cluster) {
-		this->id_cluster = cluster;
-	}
-
-	int getCluster() {
-		return id_cluster;
-	}
-
-	unsigned int getValue(int index) {
-		return values[index];
-	}
-
-	int getTotalValues() {
-		return total_values;
-	}
-
-	int getPixelCount() {
-		return pixel_count;
-	}
+	int id_cluster;
+	int id_point;
+	int pixel_count;
+	std::vector<unsigned int> values;
 };
 
 class Cluster
 {
-private:
-	int id_cluster;
-	std::vector<double> central_values;
-	std::vector<Point> points;
-
 public:
-	Cluster(int id_cluster, Point point)
+	Cluster(KPoint point)
 	{
-		this->id_cluster = id_cluster;
-
-		int total_values = point.getTotalValues();
-
-		for (int i = 0; i < total_values; i++)
-			central_values.push_back(point.getValue(i));
-
-		points.push_back(point);
-	}
-
-	void addPoint(Point point) {
-		points.push_back(point);
+		for (auto& value : point.values)
+		{
+			central_values.emplace_back(value);
+		}
+		points.emplace_back(point);
 	}
 
 	bool removePoint(int id_point) {
@@ -97,7 +53,7 @@ public:
 
 		for (int i = 0; i < total_points; i++)
 		{
-			if (points[i].getID() == id_point)
+			if (points[i].id_point == id_point)
 			{
 				points.erase(points.begin() + i);
 				return true;
@@ -106,87 +62,34 @@ public:
 		return false;
 	}
 
-	double getCentralValue(int index) {
-		return central_values[index];
-	}
-
-	void setCentralValue(int index, double value) {
-		central_values[index] = value;
-	}
-
-	Point getPoint(int index) {
-		return points[index];
+	int getColour()
+	{
+		return 0xff000000 | static_cast<int>(central_values[0]) << 16 | static_cast<int>(central_values[1]) << 8 | static_cast<int>(central_values[2]);
 	}
 
 	int getTotalPoints() {
-		int total = 0;
-		for (unsigned int i = 0; i < points.size(); i++)
-			total += points[i].getPixelCount();
-
-		return total;
+		return std::accumulate(points.begin(), points.end(), 0, [](int t, const KPoint& point)
+		{
+			return t + point.pixel_count;
+		});
 	}
 
-	int getSize() {
-		return points.size();
-	}
+	std::vector<double> central_values;
+	std::vector<KPoint> points;
 };
 
 class KMeans
 {
-private:
-	int K; // number of clusters
-	int colour_components, total_points, max_iterations;
-	std::vector<Cluster> clusters;
-
-	// return ID of nearest center
-	// uses distance calculations from: https://en.wikipedia.org/wiki/Color_difference
-	int getIDNearestCenter(Point point) {
-		double sum = 0.0, min_dist;
-		int id_cluster_center = 0;
-
-		sum += 2 * pow(clusters[0].getCentralValue(0) - point.getValue(0), 2.0); // r
-		sum += 4 * pow(clusters[0].getCentralValue(1) - point.getValue(1), 2.0); // g
-		sum += 3 * pow(clusters[0].getCentralValue(2) - point.getValue(2), 2.0); // b
-
-		min_dist = sum;
-
-		for (int i = 1; i < K; i++) {
-			double dist;
-			sum = 0.0;
-
-			sum += 2 * pow(clusters[i].getCentralValue(0) - point.getValue(0), 2.0);
-			sum += 4 * pow(clusters[i].getCentralValue(1) - point.getValue(1), 2.0);
-			sum += 3 * pow(clusters[i].getCentralValue(2) - point.getValue(2), 2.0);
-
-			dist = sum;
-
-			if (dist < min_dist) {
-				min_dist = dist;
-				id_cluster_center = i;
-			}
-		}
-
-		return id_cluster_center;
-	}
-
 public:
-	KMeans(int K, int total_points, int max_iterations) {
-		this->K = std::min(std::max(K, 14), total_points);
-		this->total_points = total_points;
-		this->colour_components = NUM_COLOUR_COMPONENTS;
-		this->max_iterations = max_iterations;
-	}
+	KMeans(int K, int total_points, int max_iterations) : K(std::min(std::max(K, 14), total_points)), total_points(total_points), max_iterations(max_iterations) {}
 
-	std::vector<Cluster> run(std::vector<Point> & points) {
-		std::vector<int> prohibited_indexes;
-
-		// choose K distinct values for the centers of the clusters
+	std::vector<Cluster> run(std::vector<KPoint>& points) {
 		int index_point = 0;
 		for (int i = 0; i < K; i++) {
-			index_point = (int)(i * total_points / K); // colours are already distinct so we can't have duplicate centers
-			points[index_point].setCluster(i);
-			Cluster cluster(i, points[index_point]);
-			clusters.push_back(cluster);
+			index_point = (int)(i * total_points / K);
+			points[index_point].id_cluster = i;
+			Cluster cluster(points[index_point]);
+			clusters.emplace_back(cluster);
 		}
 
 		int iter = 1;
@@ -194,37 +97,37 @@ public:
 		while (true) {
 			bool done = true;
 
-			// associate each point to its nearest center
 			for (int i = 0; i < total_points; i++) {
-				int id_old_cluster = points[i].getCluster();
+				int id_old_cluster = points[i].id_cluster;
 				int id_nearest_center = getIDNearestCenter(points[i]);
 
 				if (id_old_cluster != id_nearest_center) {
 					if (id_old_cluster != -1) {
-						clusters[id_old_cluster].removePoint(points[i].getID());
+						clusters[id_old_cluster].removePoint(points[i].id_point);
 					}
 
-					points[i].setCluster(id_nearest_center);
-					clusters[id_nearest_center].addPoint(points[i]);
+					points[i].id_cluster = id_nearest_center;
+					clusters[id_nearest_center].points.emplace_back(points[i]);
 					done = false;
 				}
 			}
 
-			// recalculating the center of each cluster
 			for (int i = 0; i < K; i++) {
-				for (int j = 0; j < colour_components; j++) {
+				for (int j = 0; j < num_colour_components; j++) {
 					int total_points_cluster = clusters[i].getTotalPoints();
 					double sum = 0.0;
 
 					if (total_points_cluster > 0) {
-						for (int p = 0; p < clusters[i].getSize(); p++)
-							sum += clusters[i].getPoint(p).getValue(j) * clusters[i].getPoint(p).getPixelCount();
-						clusters[i].setCentralValue(j, sum / total_points_cluster);
+						for (const KPoint& point : clusters[i].points)
+						{
+							sum += point.values[j] * point.pixel_count;
+						}
+						clusters[i].central_values[j] = sum / total_points_cluster;
 					}
 				}
 			}
 
-			if (done == true || iter >= max_iterations) {
+			if (done || iter >= max_iterations) {
 				break;
 			}
 
@@ -233,4 +136,27 @@ public:
 
 		return clusters;
 	}
+
+private:
+	int getIDNearestCenter(KPoint point) {
+		double sum, min_dist;
+		int id_cluster_center;
+
+		for (int i = 0; i < K; i++) {
+			sum = 0.0;
+			sum += 2 * pow(clusters[i].central_values[0] - point.values[0], 2.0);
+			sum += 4 * pow(clusters[i].central_values[1] - point.values[1], 2.0);
+			sum += 3 * pow(clusters[i].central_values[2] - point.values[2], 2.0);
+
+			if (i == 0 || sum < min_dist) {
+				min_dist = sum;
+				id_cluster_center = i;
+			}
+		}
+
+		return id_cluster_center;
+	}
+
+	int K, max_iterations, total_points;
+	std::vector<Cluster> clusters;
 };

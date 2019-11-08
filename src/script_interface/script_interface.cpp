@@ -310,21 +310,21 @@ STDMETHODIMP GdiBitmap::GetColourSchemeJSON(UINT count, BSTR* p)
 {
 	if (!m_ptr || !p) return E_POINTER;
 
-	Gdiplus::BitmapData bmpdata;
 	const int w = std::min(static_cast<int>(m_ptr->GetWidth()), 220);
 	const int h = std::min(static_cast<int>(m_ptr->GetHeight()), 220);
-	auto bitmap = new Gdiplus::Bitmap(w, h, PixelFormat32bppPARGB);
-	Gdiplus::Graphics gb(bitmap);
-	const Gdiplus::Rect rect(0, 0, w, h);
-	gb.SetInterpolationMode((Gdiplus::InterpolationMode)6);
+	pfc::ptrholder_t<Gdiplus::Bitmap> bitmap = new Gdiplus::Bitmap(w, h, PixelFormat32bppPARGB);
+	Gdiplus::Graphics gb(bitmap.get_ptr());
+	gb.SetInterpolationMode(Gdiplus::InterpolationMode::InterpolationModeHighQualityBilinear);
 	gb.DrawImage(m_ptr, 0, 0, w, h);
 
-	if (bitmap->LockBits(&rect, Gdiplus::ImageLockModeRead, PixelFormat32bppARGB, &bmpdata) != Gdiplus::Ok)
-		return E_POINTER;
+	const Gdiplus::Rect rect(0, 0, w, h);
+	Gdiplus::BitmapData bmpdata;
+	if (bitmap->LockBits(&rect, Gdiplus::ImageLockModeRead, PixelFormat32bppARGB, &bmpdata) != Gdiplus::Ok) return E_POINTER;
 
-	std::map<t_size, int> colour_counters;
+
 	const t_size colours_length = bmpdata.Width * bmpdata.Height;
 	const t_size* colours = (const t_size*)bmpdata.Scan0;
+	std::map<t_size, int> colour_counters;
 
 	for (t_size i = 0; i < colours_length; ++i)
 	{
@@ -340,42 +340,41 @@ STDMETHODIMP GdiBitmap::GetColourSchemeJSON(UINT count, BSTR* p)
 
 		++colour_counters[r << 16 | g << 8 | b];
 	}
+
 	bitmap->UnlockBits(&bmpdata);
-
-	std::map<t_size, int>::iterator it;
-	std::vector<Point> points;
-	int idx = 0;
-
-	for (it = colour_counters.begin(); it != colour_counters.end(); it++, idx++)
+	
+	int id = 0;
+	std::vector<KPoint> points;
+	for (const auto& elem : colour_counters)
 	{
-		const BYTE r = (it->first >> 16) & 0xff;
-		const BYTE g = (it->first >> 8) & 0xff;
-		const BYTE b = (it->first & 0xff);
+		const BYTE r = (elem.first >> 16) & 0xff;
+		const BYTE g = (elem.first >> 8) & 0xff;
+		const BYTE b = elem.first & 0xff;
 
 		std::vector<t_size> values = { r, g, b };
-		Point pt(idx, values, it->second);
-		points.push_back(pt);
+		KPoint pt(id, values, elem.second);
+		points.emplace_back(pt);
+		id++;
 	}
 
-	KMeans kmeans(count, colour_counters.size(), 12);
+	KMeans kmeans(count, points.size(), 12);
 	std::vector<Cluster> clusters = kmeans.run(points);
 
-	std::sort(
-		clusters.begin(),
-		clusters.end(),
-		[](Cluster & a, Cluster & b) {
-			return a.getTotalPoints() > b.getTotalPoints();
-		});
+	std::sort(clusters.begin(), clusters.end(), [](Cluster& a, Cluster& b)
+	{
+		return a.getTotalPoints() > b.getTotalPoints();
+	});
 
 	json j = json::array();
-	const t_size outCount = std::min(count, colour_counters.size());
+
+	const t_size outCount = std::min(count, clusters.size());
 	for (t_size i = 0; i < outCount; ++i)
 	{
-		int colour = 0xff000000 | static_cast<int>(clusters[i].getCentralValue(0)) << 16 | static_cast<int>(clusters[i].getCentralValue(1)) << 8 | static_cast<int>(clusters[i].getCentralValue(2));
-		double frequency = clusters[i].getTotalPoints() / (double)colours_length;
+		double frequency = clusters[i].getTotalPoints() / static_cast<double>(colours_length);
 
-		j.push_back({
-			{ "col", colour },
+		j.push_back(
+		{
+			{ "col", clusters[i].getColour() },
 			{ "freq", frequency }
 		});
 	}

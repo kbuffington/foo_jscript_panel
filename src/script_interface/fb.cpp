@@ -172,7 +172,8 @@ STDMETHODIMP Fb::GetDSPPresets(BSTR* p)
 	{
 		api->get_preset_name(i, name);
 
-		j.push_back({
+		j.push_back(
+		{
 			{ "active", api->get_selected_preset() == i },
 			{ "name", name.get_ptr() }
 		});
@@ -223,7 +224,8 @@ STDMETHODIMP Fb::GetOutputDevices(BSTR* p)
 		output_string << "{" << pfc::print_guid(output_id) << "}";
 		device_string << "{" << pfc::print_guid(device_id) << "}";
 
-		j.push_back({
+		j.push_back(
+		{
 			{ "name", name.get_ptr() },
 			{ "output_id", output_string.get_ptr() },
 			{ "device_id", device_string.get_ptr() },
