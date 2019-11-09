@@ -87,7 +87,7 @@ public:
 	std::vector<Cluster> run(std::vector<KPoint>& points) {
 		int index_point = 0;
 		for (int i = 0; i < K; i++) {
-			index_point = (int)(i * total_points / K);
+			index_point = static_cast<int>(i * total_points / K);
 			points[index_point].id_cluster = i;
 			Cluster cluster(points[index_point]);
 			clusters.emplace_back(cluster);

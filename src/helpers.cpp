@@ -332,7 +332,7 @@ namespace helpers
 		}
 
 		const DWORD dwFileSize = GetFileSize(hFile, nullptr);
-		LPCBYTE pAddr = (LPCBYTE)MapViewOfFile(hFileMapping, FILE_MAP_READ, 0, 0, 0);
+		LPCBYTE pAddr = static_cast<LPCBYTE>(MapViewOfFile(hFileMapping, FILE_MAP_READ, 0, 0, 0));
 
 		if (pAddr == nullptr)
 		{
@@ -351,7 +351,7 @@ namespace helpers
 
 		if (dwFileSize >=2 && pAddr[0] == 0xFF && pAddr[1] == 0xFE) // UTF16 LE?
 		{
-			const wchar_t* pSource = (const wchar_t*)(pAddr + 2);
+			const wchar_t* pSource = reinterpret_cast<const wchar_t*>(pAddr + 2);
 			const t_size len = (dwFileSize - 2) >> 1;
 
 			content.set_size(len + 1);
@@ -360,7 +360,7 @@ namespace helpers
 		}
 		else if (dwFileSize >= 3 && pAddr[0] == 0xEF && pAddr[1] == 0xBB && pAddr[2] == 0xBF) // UTF8-BOM?
 		{
-			const char* pSource = (const char*)(pAddr + 3);
+			const char* pSource = reinterpret_cast<const char*>(pAddr + 3);
 			const t_size pSourceSize = dwFileSize - 3;
 
 			const t_size size = estimate_utf8_to_wide_quick(pSource, pSourceSize);
@@ -369,7 +369,7 @@ namespace helpers
 		}
 		else
 		{
-			const char* pSource = (const char*)(pAddr);
+			const char* pSource = reinterpret_cast<const char*>(pAddr);
 
 			if (pfc::is_valid_utf8(pSource))
 			{

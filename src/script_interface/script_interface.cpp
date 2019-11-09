@@ -322,7 +322,7 @@ STDMETHODIMP GdiBitmap::GetColourSchemeJSON(UINT count, BSTR* p)
 	if (bitmap->LockBits(&rect, Gdiplus::ImageLockModeRead, PixelFormat32bppARGB, &bmpdata) != Gdiplus::Ok) return E_POINTER;
 
 	const t_size colours_length = bmpdata.Width * bmpdata.Height;
-	const t_size* colours = (const t_size*)bmpdata.Scan0;
+	const t_size* colours = static_cast<const t_size*>(bmpdata.Scan0);
 	std::map<t_size, int> colour_counters;
 
 	for (t_size i = 0; i < colours_length; ++i)
@@ -559,7 +559,7 @@ void GdiGraphics::SetFormat(int flags, Gdiplus::StringFormat& fmt)
 
 STDMETHODIMP GdiGraphics::put__ptr(void* p)
 {
-	m_ptr = (Gdiplus::Graphics*)p;
+	m_ptr = reinterpret_cast<Gdiplus::Graphics*>(p);
 	return S_OK;
 }
 
@@ -624,7 +624,7 @@ STDMETHODIMP GdiGraphics::DrawImage(IGdiBitmap* image, float dstX, float dstY, f
 		m_ptr->SetTransform(&m);
 	}
 
-	if (alpha != (BYTE)~0)
+	if (alpha != static_cast<BYTE>(~0))
 	{
 		Gdiplus::ImageAttributes ia;
 		Gdiplus::ColorMatrix cm = { 0.0f };

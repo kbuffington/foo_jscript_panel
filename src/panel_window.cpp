@@ -751,10 +751,10 @@ void panel_window::refresh_background(LPRECT lprcUpdate)
 	ScreenToClient(wnd_parent, &pt);
 
 	CopyRect(&rect_parent, &rect_child);
-	ClientToScreen(m_hwnd, (LPPOINT)&rect_parent);
-	ClientToScreen(m_hwnd, (LPPOINT)&rect_parent + 1);
-	ScreenToClient(wnd_parent, (LPPOINT)&rect_parent);
-	ScreenToClient(wnd_parent, (LPPOINT)&rect_parent + 1);
+	ClientToScreen(m_hwnd, reinterpret_cast<LPPOINT>(&rect_parent));
+	ClientToScreen(m_hwnd, reinterpret_cast<LPPOINT>(&rect_parent) + 1);
+	ScreenToClient(wnd_parent, reinterpret_cast<LPPOINT>(&rect_parent));
+	ScreenToClient(wnd_parent, reinterpret_cast<LPPOINT>(&rect_parent) + 1);
 
 	// Force Repaint
 	m_suppress_drawing = true;

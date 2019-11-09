@@ -403,7 +403,7 @@ void stack_blur_filter(Gdiplus::Bitmap& img, BYTE radius) throw()
 
 	if (img.LockBits(&rect, Gdiplus::ImageLockModeRead | Gdiplus::ImageLockModeWrite, PixelFormat32bppPARGB, &bmpdata) == Gdiplus::Ok)
 	{
-		stackblur((BYTE*)bmpdata.Scan0, width, height, radius);
+		stackblur(static_cast<BYTE*>(bmpdata.Scan0), width, height, radius);
 		img.UnlockBits(&bmpdata);
 	}
 }

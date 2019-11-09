@@ -39,7 +39,7 @@ protected:
 
 		if (type <= cui::fonts::font_type_labels)
 		{
-			HFONT hFont = static_api_ptr_t<cui::fonts::manager>()->get_font((cui::fonts::font_type_t)type);
+			HFONT hFont = static_api_ptr_t<cui::fonts::manager>()->get_font(static_cast<cui::fonts::font_type_t>(type));
 			if (hFont)
 			{
 				auto font = new Gdiplus::Font(m_hdc, hFont);

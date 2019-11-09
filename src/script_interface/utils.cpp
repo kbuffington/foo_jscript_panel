@@ -136,7 +136,7 @@ STDMETHODIMP Utils::GetFileSize(BSTR path, LONGLONG* p)
 	WIN32_FILE_ATTRIBUTE_DATA data;
 	if (GetFileAttributesEx(path, GetFileExInfoStandard, &data) && !(data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
 	{
-		*p = (t_filesize)data.nFileSizeHigh << 32 | data.nFileSizeLow;
+		*p = static_cast<t_filesize>(data.nFileSizeHigh) << 32 | data.nFileSizeLow;
 	}
 	return S_OK;
 }
