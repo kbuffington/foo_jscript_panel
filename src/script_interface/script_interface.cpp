@@ -266,7 +266,7 @@ STDMETHODIMP GdiBitmap::ApplyMask(IGdiBitmap* mask, VARIANT_BOOL* p)
 
 	while (p_mask < p_mask_end)
 	{
-		alpha = (((~*p_mask & 0xff) * (*p_dst >> 24)) << 16) & 0xff000000;
+		alpha = (((~*p_mask & UCHAR_MAX) * (*p_dst >> 24)) << 16) & 0xff000000;
 		*p_dst = alpha | (*p_dst & 0xffffff);
 		++p_mask;
 		++p_dst;
@@ -327,15 +327,15 @@ STDMETHODIMP GdiBitmap::GetColourSchemeJSON(UINT count, BSTR* p)
 
 	for (t_size i = 0; i < colours_length; ++i)
 	{
-		BYTE r = (colours[i] >> 16) & 0xff;
-		BYTE g = (colours[i] >> 8) & 0xff;
-		BYTE b = (colours[i] & 0xff);
+		BYTE r = (colours[i] >> 16) & UCHAR_MAX;
+		BYTE g = (colours[i] >> 8) & UCHAR_MAX;
+		BYTE b = (colours[i] & UCHAR_MAX);
 
 		// We're reducing total colors from 2^24 to 2^15 by rounding each color component value to multiples of 8.
 		// First we need to check if the byte will overflow, and if so pin to 0xff, otherwise add 4 and round down.
-		r = (r > 251) ? 0xff : (r + 4) & 0xf8;
-		g = (g > 251) ? 0xff : (g + 4) & 0xf8;
-		b = (b > 251) ? 0xff : (b + 4) & 0xf8;
+		r = (r > 251) ? UCHAR_MAX : (r + 4) & 0xf8;
+		g = (g > 251) ? UCHAR_MAX : (g + 4) & 0xf8;
+		b = (b > 251) ? UCHAR_MAX : (b + 4) & 0xf8;
 
 		++colour_counters[r << 16 | g << 8 | b];
 	}
@@ -346,9 +346,9 @@ STDMETHODIMP GdiBitmap::GetColourSchemeJSON(UINT count, BSTR* p)
 	std::vector<KPoint> points;
 	for (const auto& elem : colour_counters)
 	{
-		const BYTE r = (elem.first >> 16) & 0xff;
-		const BYTE g = (elem.first >> 8) & 0xff;
-		const BYTE b = elem.first & 0xff;
+		const BYTE r = (elem.first >> 16) & UCHAR_MAX;
+		const BYTE g = (elem.first >> 8) & UCHAR_MAX;
+		const BYTE b = elem.first & UCHAR_MAX;
 
 		std::vector<t_size> values = { r, g, b };
 		KPoint pt(id, values, elem.second);
@@ -366,8 +366,8 @@ STDMETHODIMP GdiBitmap::GetColourSchemeJSON(UINT count, BSTR* p)
 
 	json j = json::array();
 
-	const t_size outCount = std::min(count, clusters.size());
-	for (t_size i = 0; i < outCount; ++i)
+	if (count > clusters.size()) count = clusters.size();
+	for (t_size i = 0; i < count; ++i)
 	{
 		double frequency = clusters[i].getTotalPoints() / static_cast<double>(colours_length);
 
@@ -624,7 +624,7 @@ STDMETHODIMP GdiGraphics::DrawImage(IGdiBitmap* image, float dstX, float dstY, f
 		m_ptr->SetTransform(&m);
 	}
 
-	if (alpha != static_cast<BYTE>(~0))
+	if (alpha < UCHAR_MAX)
 	{
 		Gdiplus::ImageAttributes ia;
 		Gdiplus::ColorMatrix cm = { 0.0f };

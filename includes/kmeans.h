@@ -121,7 +121,7 @@ public:
 					if (total_points_cluster > 0) {
 						for (const KPoint& point : clusters[i].points)
 						{
-							sum += point.values[j] * point.pixel_count;
+							sum += static_cast<double>(point.values[j] * point.pixel_count);
 						}
 						clusters[i].central_values[j] = sum / total_points_cluster;
 					}
@@ -141,7 +141,7 @@ public:
 private:
 	int getIDNearestCenter(KPoint point) {
 		double sum, min_dist;
-		int id_cluster_center;
+		int id_cluster_center = 0;
 
 		for (int i = 0; i < K; i++) {
 			sum = 0.0;
