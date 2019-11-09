@@ -361,7 +361,7 @@ STDMETHODIMP GdiBitmap::GetColourSchemeJSON(UINT count, BSTR* p)
 
 	std::sort(clusters.begin(), clusters.end(), [](Cluster& a, Cluster& b)
 	{
-		return a.getTotalPoints() > b.getTotalPoints();
+		return a.get_total_points() > b.get_total_points();
 	});
 
 	json j = json::array();
@@ -369,11 +369,11 @@ STDMETHODIMP GdiBitmap::GetColourSchemeJSON(UINT count, BSTR* p)
 	if (count > clusters.size()) count = clusters.size();
 	for (t_size i = 0; i < count; ++i)
 	{
-		double frequency = clusters[i].getTotalPoints() / static_cast<double>(colours_length);
+		double frequency = clusters[i].get_total_points() / static_cast<double>(colours_length);
 
 		j.push_back(
 		{
-			{ "col", clusters[i].getColour() },
+			{ "col", clusters[i].get_colour() },
 			{ "freq", frequency }
 		});
 	}

@@ -23,18 +23,12 @@ across the data set.
 static constexpr int kNumColourComponents = 3;
 static constexpr int kMaxIterations = 12;
 
-class KPoint
+struct KPoint
 {
-public:
-	KPoint(int id_point, const std::vector<unsigned int>& values, int pixel_count) : id_point(id_point), values(values), pixel_count(pixel_count)
-	{
-		id_cluster = -1;
-	}
+	KPoint(int p_point_id, const std::vector<unsigned int>& p_values, int p_pixel_count) : m_point_id(p_point_id), m_values(p_values), m_pixel_count(p_pixel_count), m_cluster_id(-1) {}
 
-	int id_cluster;
-	int id_point;
-	int pixel_count;
-	std::vector<unsigned int> values;
+	int m_cluster_id, m_point_id, m_pixel_count;
+	std::vector<unsigned int> m_values;
 };
 
 class Cluster
@@ -42,7 +36,7 @@ class Cluster
 public:
 	Cluster(KPoint point)
 	{
-		std::transform(point.values.begin(), point.values.end(), std::back_inserter(central_values), [](const unsigned int value)
+		std::transform(point.m_values.begin(), point.m_values.end(), std::back_inserter(central_values), [](const unsigned int value)
 		{
 			return static_cast<double>(value);
 		});
@@ -50,12 +44,12 @@ public:
 		points.emplace_back(point);
 	}
 
-	bool removePoint(int id_point) {
+	bool remove_point(int id_point) {
 		int total_points = points.size();
 
 		for (int i = 0; i < total_points; i++)
 		{
-			if (points[i].id_point == id_point)
+			if (points[i].m_point_id == id_point)
 			{
 				points.erase(points.begin() + i);
 				return true;
@@ -64,15 +58,15 @@ public:
 		return false;
 	}
 
-	int getColour()
+	int get_colour()
 	{
 		return 0xff000000 | static_cast<int>(central_values[0]) << 16 | static_cast<int>(central_values[1]) << 8 | static_cast<int>(central_values[2]);
 	}
 
-	int getTotalPoints() {
+	int get_total_points() {
 		return std::accumulate(points.begin(), points.end(), 0, [](int t, const KPoint& point)
 		{
-			return t + point.pixel_count;
+			return t + point.m_pixel_count;
 		});
 	}
 
@@ -89,7 +83,7 @@ public:
 		int index_point = 0;
 		for (int i = 0; i < K; i++) {
 			index_point = static_cast<int>(i * total_points / K);
-			points[index_point].id_cluster = i;
+			points[index_point].m_cluster_id = i;
 			Cluster cluster(points[index_point]);
 			clusters.emplace_back(cluster);
 		}
@@ -100,31 +94,31 @@ public:
 			bool done = true;
 
 			for (int i = 0; i < total_points; i++) {
-				int id_old_cluster = points[i].id_cluster;
-				int id_nearest_center = getIDNearestCenter(points[i]);
+				int old_cluster_id = points[i].m_cluster_id;
+				int nearest_centre_id = get_nearest_centre_id(points[i]);
 
-				if (id_old_cluster != id_nearest_center) {
-					if (id_old_cluster != -1) {
-						clusters[id_old_cluster].removePoint(points[i].id_point);
+				if (old_cluster_id != nearest_centre_id) {
+					if (old_cluster_id != -1) {
+						clusters[old_cluster_id].remove_point(points[i].m_point_id);
 					}
 
-					points[i].id_cluster = id_nearest_center;
-					clusters[id_nearest_center].points.emplace_back(points[i]);
+					points[i].m_cluster_id = nearest_centre_id;
+					clusters[nearest_centre_id].points.emplace_back(points[i]);
 					done = false;
 				}
 			}
 
 			for (int i = 0; i < K; i++) {
 				for (int j = 0; j < kNumColourComponents; j++) {
-					int total_points_cluster = clusters[i].getTotalPoints();
+					int cluster_total_points = clusters[i].get_total_points();
 					double sum = 0.0;
 
-					if (total_points_cluster > 0) {
+					if (cluster_total_points > 0) {
 						for (const KPoint& point : clusters[i].points)
 						{
-							sum += static_cast<double>(point.values[j]) * static_cast<double>(point.pixel_count);
+							sum += static_cast<double>(point.m_values[j]) * static_cast<double>(point.m_pixel_count);
 						}
-						clusters[i].central_values[j] = sum / total_points_cluster;
+						clusters[i].central_values[j] = sum / cluster_total_points;
 					}
 				}
 			}
@@ -140,23 +134,23 @@ public:
 	}
 
 private:
-	int getIDNearestCenter(KPoint point) {
+	int get_nearest_centre_id(KPoint point) {
 		double sum, min_dist;
-		int id_cluster_center = 0;
+		int cluster_centre_id = 0;
 
 		for (int i = 0; i < K; i++) {
 			sum = 0.0;
-			sum += 2 * pow(clusters[i].central_values[0] - point.values[0], 2.0);
-			sum += 4 * pow(clusters[i].central_values[1] - point.values[1], 2.0);
-			sum += 3 * pow(clusters[i].central_values[2] - point.values[2], 2.0);
+			sum += 2 * pow(clusters[i].central_values[0] - point.m_values[0], 2.0);
+			sum += 4 * pow(clusters[i].central_values[1] - point.m_values[1], 2.0);
+			sum += 3 * pow(clusters[i].central_values[2] - point.m_values[2], 2.0);
 
 			if (i == 0 || sum < min_dist) {
 				min_dist = sum;
-				id_cluster_center = i;
+				cluster_centre_id = i;
 			}
 		}
 
-		return id_cluster_center;
+		return cluster_centre_id;
 	}
 
 	int K, total_points;
