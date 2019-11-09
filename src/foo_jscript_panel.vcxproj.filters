@@ -126,6 +126,12 @@
     <ClInclude Include="guids.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="kmeans.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="stackblur.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="script_interface\console.cpp">

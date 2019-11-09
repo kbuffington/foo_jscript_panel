@@ -20,7 +20,8 @@ not acceptable for generating colour values, so the starting center colour value
 across the data set.
 */
 
-static constexpr int num_colour_components = 3;
+static constexpr int kNumColourComponents = 3;
+static constexpr int kMaxIterations = 12;
 
 class KPoint
 {
@@ -82,7 +83,7 @@ public:
 class KMeans
 {
 public:
-	KMeans(int K, int total_points, int max_iterations) : K(std::min(std::max(K, 14), total_points)), total_points(total_points), max_iterations(max_iterations) {}
+	KMeans(int K, int total_points) : K(std::min(std::max(K, 14), total_points)), total_points(total_points) {}
 
 	std::vector<Cluster> run(std::vector<KPoint>& points) {
 		int index_point = 0;
@@ -114,21 +115,21 @@ public:
 			}
 
 			for (int i = 0; i < K; i++) {
-				for (int j = 0; j < num_colour_components; j++) {
+				for (int j = 0; j < kNumColourComponents; j++) {
 					int total_points_cluster = clusters[i].getTotalPoints();
 					double sum = 0.0;
 
 					if (total_points_cluster > 0) {
 						for (const KPoint& point : clusters[i].points)
 						{
-							sum += static_cast<double>(point.values[j] * point.pixel_count);
+							sum += static_cast<double>(point.values[j]) * static_cast<double>(point.pixel_count);
 						}
 						clusters[i].central_values[j] = sum / total_points_cluster;
 					}
 				}
 			}
 
-			if (done || iter >= max_iterations) {
+			if (done || iter >= kMaxIterations) {
 				break;
 			}
 
@@ -158,6 +159,6 @@ private:
 		return id_cluster_center;
 	}
 
-	int K, max_iterations, total_points;
+	int K, total_points;
 	std::vector<Cluster> clusters;
 };
