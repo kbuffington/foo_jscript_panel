@@ -461,6 +461,13 @@ namespace helpers
 		return path;
 	}
 
+	pfc::string8_fast get_resource_text(int id)
+	{
+		puResource pures = uLoadResource(core_api::get_my_instance(), uMAKEINTRESOURCE(id), "TEXT");
+		pfc::string8_fast content(static_cast<const char*>(pures->GetPointer()), pures->GetSize());
+		return content;
+	}
+
 	pfc::string8_fast read_file(const char* path)
 	{
 		pfc::string8_fast content;

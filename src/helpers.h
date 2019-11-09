@@ -49,6 +49,7 @@ namespace helpers
 	pfc::string8_fast get_fb2k_component_path();
 	pfc::string8_fast get_fb2k_path();
 	pfc::string8_fast get_profile_path();
+	pfc::string8_fast get_resource_text(int id);
 	pfc::string8_fast read_file(const char* path);
 	str_list split_string(const std::string& str, const std::string& delims);
 	t_size detect_charset(const char* fileName);

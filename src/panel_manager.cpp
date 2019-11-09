@@ -15,8 +15,7 @@ std::vector<panel_manager::api_item> panel_manager::get_apis()
 {
 	if (m_apis.empty())
 	{
-		puResource pures = uLoadResource(core_api::get_my_instance(), uMAKEINTRESOURCE(IDR_API), "TEXT");
-		std::string content(static_cast<const char*>(pures->GetPointer()), pures->GetSize());
+		std::string content = helpers::get_resource_text(IDR_API).get_ptr();
 
 		str_list lines = helpers::split_string(content, "\r\n");
 		for (const auto& line : lines)

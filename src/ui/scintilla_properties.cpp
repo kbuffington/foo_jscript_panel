@@ -67,9 +67,7 @@ void scintilla_properties::init_data()
 
 void scintilla_properties::load_preset(t_size idx)
 {
-	puResource pures = uLoadResource(core_api::get_my_instance(), uMAKEINTRESOURCE(idx), "TEXT");
-	pfc::string8_fast content(static_cast<const char*>(pures->GetPointer()), pures->GetSize());
-	import(content);
+	import(helpers::get_resource_text(idx));
 }
 
 void scintilla_properties::merge_data(const simple_map& data_map)

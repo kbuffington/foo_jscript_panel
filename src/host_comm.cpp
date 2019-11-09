@@ -63,9 +63,7 @@ panel_tooltip_param_ptr& host_comm::panel_tooltip()
 
 pfc::string8_fast host_comm::get_default_script_code()
 {
-	puResource pures = uLoadResource(core_api::get_my_instance(), uMAKEINTRESOURCE(IDR_SCRIPT), "TEXT");
-	pfc::string8_fast content(static_cast<const char*>(pures->GetPointer()), pures->GetSize());
-	return content;
+	return helpers::get_resource_text(IDR_SCRIPT);
 }
 
 pfc::string8_fast host_comm::get_default_script_engine_str()
