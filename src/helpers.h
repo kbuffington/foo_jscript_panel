@@ -31,7 +31,7 @@ namespace helpers
 	COLORREF convert_argb_to_colorref(DWORD argb);
 	DWORD convert_colorref_to_argb(COLORREF color);
 	IGdiBitmap* get_album_art(const metadb_handle_ptr& handle, t_size art_id, bool need_stub, bool no_load, pfc::string_base& image_path);
-	IGdiBitmap* get_album_art_embedded(const pfc::string8_fast& rawpath, t_size art_id);
+	IGdiBitmap* get_album_art_embedded(const pfc::string8_fast& path, t_size art_id);
 	IGdiBitmap* load_image(BSTR path);
 	IGdiBitmap* read_album_art_into_bitmap(const album_art_data_ptr& data);
 	bool execute_context_command_by_name(const char* p_command, metadb_handle_list_cref p_handles);
@@ -291,7 +291,8 @@ namespace helpers
 		t_size m_playlist;
 	};
 
-	class js_file_info_filter : public file_info_filter {
+	class js_file_info_filter : public file_info_filter
+	{
 	public:
 		using tag = std::pair<std::string, str_list>;
 

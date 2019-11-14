@@ -4,7 +4,7 @@
 
 struct panel_tooltip_param
 {
-	panel_tooltip_param() : tooltip_hwnd(nullptr) {}
+	panel_tooltip_param() : font_name(nullptr), tooltip_hwnd(nullptr), font_size(0.f), font_style(0) {}
 
 	BSTR font_name;
 	HWND tooltip_hwnd;

@@ -1,10 +1,9 @@
 #include "stdafx.h"
 #include "helpers.h"
+#include "kmeans.h"
 #include "script_interface.h"
+#include "stackblur.h"
 #include "stats.h"
-
-#include <kmeans.h>
-#include <stackblur.h>
 
 ContextMenuManager::ContextMenuManager() {}
 ContextMenuManager::~ContextMenuManager() {}
@@ -217,12 +216,12 @@ STDMETHODIMP GdiBitmap::ApplyAlpha(BYTE alpha, IGdiBitmap** pp)
 	const auto height = m_ptr->GetHeight();
 	auto out = new Gdiplus::Bitmap(width, height, PixelFormat32bppPARGB);
 	Gdiplus::Graphics g(out);
-	Gdiplus::ImageAttributes ia;
-	Gdiplus::ColorMatrix cm = { 0.0 };
 	const Gdiplus::Rect rect(0, 0, width, height);
 
-	cm.m[0][0] = cm.m[1][1] = cm.m[2][2] = cm.m[4][4] = 1.0;
-	cm.m[3][3] = static_cast<float>(alpha) / 255;
+	Gdiplus::ImageAttributes ia;
+	Gdiplus::ColorMatrix cm = { 0.f };
+	cm.m[0][0] = cm.m[1][1] = cm.m[2][2] = cm.m[4][4] = 1.f;
+	cm.m[3][3] = static_cast<float>(alpha) / UCHAR_MAX;
 	ia.SetColorMatrix(&cm);
 
 	g.DrawImage(m_ptr, rect, 0, 0, width, height, Gdiplus::UnitPixel, &ia);
@@ -341,7 +340,7 @@ STDMETHODIMP GdiBitmap::GetColourSchemeJSON(UINT count, BSTR* p)
 	}
 
 	bitmap->UnlockBits(&bmpdata);
-	
+
 	int id = 0;
 	std::vector<KPoint> points;
 	for (const auto& elem : colour_counters)
@@ -360,9 +359,9 @@ STDMETHODIMP GdiBitmap::GetColourSchemeJSON(UINT count, BSTR* p)
 	std::vector<Cluster> clusters = kmeans.run(points);
 
 	std::sort(clusters.begin(), clusters.end(), [](Cluster& a, Cluster& b)
-	{
-		return a.get_total_points() > b.get_total_points();
-	});
+		{
+			return a.get_total_points() > b.get_total_points();
+		});
 
 	json j = json::array();
 
@@ -613,9 +612,10 @@ STDMETHODIMP GdiGraphics::DrawImage(IGdiBitmap* image, float dstX, float dstY, f
 	Gdiplus::Bitmap* img = nullptr;
 	GET_PTR(image, img)
 
+	const Gdiplus::RectF rect(dstX, dstY, dstW, dstH);
 	Gdiplus::Matrix old_m;
 
-	if (angle != 0.0)
+	if (angle != 0.f)
 	{
 		const Gdiplus::PointF pt(dstX + dstW / 2, dstY + dstH / 2);
 		Gdiplus::Matrix m;
@@ -627,21 +627,19 @@ STDMETHODIMP GdiGraphics::DrawImage(IGdiBitmap* image, float dstX, float dstY, f
 	if (alpha < UCHAR_MAX)
 	{
 		Gdiplus::ImageAttributes ia;
-		Gdiplus::ColorMatrix cm = { 0.0f };
-
-		cm.m[0][0] = cm.m[1][1] = cm.m[2][2] = cm.m[4][4] = 1.0f;
-		cm.m[3][3] = static_cast<float>(alpha) / 255;
-
+		Gdiplus::ColorMatrix cm = { 0.f };
+		cm.m[0][0] = cm.m[1][1] = cm.m[2][2] = cm.m[4][4] = 1.f;
+		cm.m[3][3] = static_cast<float>(alpha) / UCHAR_MAX;
 		ia.SetColorMatrix(&cm);
 
-		m_ptr->DrawImage(img, Gdiplus::RectF(dstX, dstY, dstW, dstH), srcX, srcY, srcW, srcH, Gdiplus::UnitPixel, &ia);
+		m_ptr->DrawImage(img, rect, srcX, srcY, srcW, srcH, Gdiplus::UnitPixel, &ia);
 	}
 	else
 	{
-		m_ptr->DrawImage(img, Gdiplus::RectF(dstX, dstY, dstW, dstH), srcX, srcY, srcW, srcH, Gdiplus::UnitPixel);
+		m_ptr->DrawImage(img, rect, srcX, srcY, srcW, srcH, Gdiplus::UnitPixel);
 	}
 
-	if (angle != 0.0)
+	if (angle != 0.f)
 	{
 		m_ptr->SetTransform(&old_m);
 	}

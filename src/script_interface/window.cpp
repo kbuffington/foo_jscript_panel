@@ -187,17 +187,19 @@ STDMETHODIMP Window::SetTimeout(IDispatch* func, int delay, UINT* p)
 
 STDMETHODIMP Window::ShowConfigure()
 {
-	fb2k::inMainThread([&] {
-		m_host->show_configure_popup(m_host->get_hwnd());
-	});
+	fb2k::inMainThread([&]()
+		{
+			m_host->show_configure_popup(m_host->get_hwnd());
+		});
 	return S_OK;
 }
 
 STDMETHODIMP Window::ShowProperties()
 {
-	fb2k::inMainThread([&] {
-		m_host->show_property_popup(m_host->get_hwnd());
-	});
+	fb2k::inMainThread([&]()
+		{
+			m_host->show_property_popup(m_host->get_hwnd());
+		});
 	return S_OK;
 }
 

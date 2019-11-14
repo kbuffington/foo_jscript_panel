@@ -147,9 +147,10 @@ void simple_thread_pool::remove_worker_(simple_thread_worker* worker)
 	if (num_workers_ == 0)
 		SetEvent(empty_worker_);
 
-	fb2k::inMainThread([=] {
-		delete worker;
-	});
+	fb2k::inMainThread([=]()
+		{
+			delete worker;
+		});
 }
 
 void simple_thread_pool::track(simple_thread_task* task)

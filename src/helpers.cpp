@@ -17,11 +17,12 @@ namespace helpers
 
 	IGdiBitmap* get_album_art(const metadb_handle_ptr& handle, t_size art_id, bool need_stub, bool no_load, pfc::string_base& image_path)
 	{
-		const GUID what = convert_artid_to_guid(art_id);
-		auto api = album_art_manager_v2::get();
-		album_art_extractor_instance_v2::ptr ptr;
-		album_art_data_ptr data;
 		IGdiBitmap* ret = nullptr;
+		const GUID what = convert_artid_to_guid(art_id);
+
+		auto api = album_art_manager_v2::get();
+		album_art_data_ptr data;
+		album_art_extractor_instance_v2::ptr ptr;
 
 		try
 		{
@@ -56,19 +57,19 @@ namespace helpers
 		return ret;
 	}
 
-	IGdiBitmap* get_album_art_embedded(const pfc::string8_fast& rawpath, t_size art_id)
+	IGdiBitmap* get_album_art_embedded(const pfc::string8_fast& path, t_size art_id)
 	{
-		album_art_extractor_instance_ptr aaep;
-		const GUID what = convert_artid_to_guid(art_id);
-		album_art_extractor::ptr ptr;
-		album_art_data_ptr data;
 		IGdiBitmap* ret = nullptr;
+		const GUID what = convert_artid_to_guid(art_id);
 
-		if (album_art_extractor::g_get_interface(ptr, rawpath))
+		album_art_data_ptr data;
+		album_art_extractor::ptr ptr;
+
+		if (album_art_extractor::g_get_interface(ptr, path))
 		{
 			try
 			{
-				aaep = ptr->open(nullptr, rawpath, fb2k::noAbort);
+				album_art_extractor_instance_ptr aaep = ptr->open(nullptr, path, fb2k::noAbort);
 				data = aaep->query(what, fb2k::noAbort);
 				ret = read_album_art_into_bitmap(data);
 			}

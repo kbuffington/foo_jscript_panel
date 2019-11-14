@@ -173,10 +173,10 @@ STDMETHODIMP Fb::GetDSPPresets(BSTR* p)
 		api->get_preset_name(i, name);
 
 		j.push_back(
-		{
-			{ "active", api->get_selected_preset() == i },
-			{ "name", name.get_ptr() }
-		});
+			{
+				{ "active", api->get_selected_preset() == i },
+				{ "name", name.get_ptr() }
+			});
 	}
 	*p = TO_BSTR((j.dump()).c_str());
 	return S_OK;
@@ -219,19 +219,20 @@ STDMETHODIMP Fb::GetOutputDevices(BSTR* p)
 	outputCoreConfig_t config;
 	api->getCoreConfig(config);
 
-	api->listDevices([&](pfc::string8_fast&& name, auto&& output_id, auto&& device_id) {
-		pfc::string8_fast output_string, device_string;
-		output_string << "{" << pfc::print_guid(output_id) << "}";
-		device_string << "{" << pfc::print_guid(device_id) << "}";
-
-		j.push_back(
+	api->listDevices([&](pfc::string8_fast&& name, auto&& output_id, auto&& device_id)
 		{
-			{ "name", name.get_ptr() },
-			{ "output_id", output_string.get_ptr() },
-			{ "device_id", device_string.get_ptr() },
-			{ "active", config.m_output == output_id && config.m_device == device_id }
+			pfc::string8_fast output_string, device_string;
+			output_string << "{" << pfc::print_guid(output_id) << "}";
+			device_string << "{" << pfc::print_guid(device_id) << "}";
+
+			j.push_back(
+				{
+					{ "name", name.get_ptr() },
+					{ "output_id", output_string.get_ptr() },
+					{ "device_id", device_string.get_ptr() },
+					{ "active", config.m_output == output_id && config.m_device == device_id }
+				});
 		});
-	});
 	*p = TO_BSTR((j.dump()).c_str());
 	return S_OK;
 }
@@ -468,9 +469,10 @@ STDMETHODIMP Fb::ShowPopupMessage(BSTR msg, BSTR title)
 {
 	auto umsg = string_utf8_from_wide(msg);
 	auto utitle = string_utf8_from_wide(title);
-	fb2k::inMainThread([=] {
-		popup_message::g_show(umsg, utitle);
-	});
+	fb2k::inMainThread([=]()
+		{
+			popup_message::g_show(umsg, utitle);
+		});
 	return S_OK;
 }
 

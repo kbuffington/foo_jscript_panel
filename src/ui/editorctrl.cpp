@@ -247,9 +247,9 @@ LRESULT CScriptEditorCtrl::OnKeyDown(UINT, WPARAM wParam, LPARAM, BOOL& bHandled
 
 		case 'G':
 			fb2k::inMainThread([&]()
-			{
-				OpenGotoDialog();
-			});
+				{
+					OpenGotoDialog();
+				});
 			break;
 
 		case 'S':
@@ -622,9 +622,9 @@ std::string CScriptEditorCtrl::GetCurrentLine()
 std::string CScriptEditorCtrl::GetNearestWord(const char* wordStart, t_size searchLen, int wordIndex)
 {
 	auto it = std::find_if(apis.begin(), apis.end(), [=](const panel_manager::api_item& item)
-	{
-		return StringComparePartialNC(searchLen)(wordStart, item.first) == 0;
-	});
+		{
+			return StringComparePartialNC(searchLen)(wordStart, item.first) == 0;
+		});
 
 	for (; it < apis.end(); ++it)
 	{
@@ -644,9 +644,9 @@ std::string CScriptEditorCtrl::GetNearestWords(const char* wordStart, t_size sea
 {
 	std::string words;
 	auto it = std::find_if(apis.begin(), apis.end(), [=](const panel_manager::api_item& item)
-	{
-		return StringComparePartialNC(searchLen)(wordStart, item.first) == 0;
-	});
+		{
+			return StringComparePartialNC(searchLen)(wordStart, item.first) == 0;
+		});
 
 	for (; it < apis.end(); ++it)
 	{

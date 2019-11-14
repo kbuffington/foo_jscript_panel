@@ -7,12 +7,14 @@ library foo_jscript_panel
 	importlib("olepro32.dll");
 
 	[dual,object,pointer_default(unique),custom(8AFCDA7F-33B7-3120-86A8-754D2C0C0578,"library_block"),uuid(2e0bae19-3afe-473a-a703-0feb2d714655)]
-	interface IDisposable : IDispatch {
+	interface IDisposable : IDispatch
+	{
 		HRESULT Dispose();
 	};
 
 	[object,dual,pointer_default(unique),custom(8AFCDA7F-33B7-3120-86A8-754D2C0C0578,"library_block"),uuid(77e72064-1fb6-4754-a076-1dc517a6787b)]
-	interface IGdiObj : IDisposable {
+	interface IGdiObj : IDisposable
+	{
 		HRESULT get__ptr([out, retval] void** pp);
 	};
 
@@ -26,7 +28,8 @@ library foo_jscript_panel
 	interface ITitleFormat;
 
 	[object,dual,pointer_default(unique),custom(8AFCDA7F-33B7-3120-86A8-754D2C0C0578,"library_block"),uuid(0e1bc833-b9f8-44b1-8240-57fff04602ad)]
-	interface IContextMenuManager : IDisposable {
+	interface IContextMenuManager : IDisposable
+	{
 		HRESULT BuildMenu(IMenuObj* p, int base_id);
 		HRESULT ExecuteByID(UINT id, [out, retval] VARIANT_BOOL* p);
 		HRESULT InitContext(IMetadbHandleList* handles);
@@ -35,7 +38,8 @@ library foo_jscript_panel
 	};
 
 	[object,dual,pointer_default(unique),custom(8AFCDA7F-33B7-3120-86A8-754D2C0C0578,"library_block"),uuid(91830eda-b5f2-4061-9923-7880192a2734)]
-	interface IDropSourceAction : IDisposable {
+	interface IDropSourceAction : IDisposable
+	{
 		[propget] HRESULT Effect([out, retval] UINT* p);
 		[propput] HRESULT Base(UINT base);
 		[propput] HRESULT Effect(UINT effect);
@@ -44,7 +48,8 @@ library foo_jscript_panel
 	};
 
 	[object,dual,pointer_default(unique),custom(8AFCDA7F-33B7-3120-86A8-754D2C0C0578,"library_block"),uuid(7c39dcf1-4e41-4a61-b06b-fb52107e4409)]
-	interface IFileInfo : IDisposable {
+	interface IFileInfo : IDisposable
+	{
 		HRESULT get__ptr([out, retval] void** pp);
 		HRESULT InfoFind(BSTR name, [out, retval] int* p);
 		HRESULT InfoName(UINT idx, [out, retval] BSTR* p);
@@ -58,7 +63,8 @@ library foo_jscript_panel
 	};
 
 	[object,dual,pointer_default(unique),custom(8AFCDA7F-33B7-3120-86A8-754D2C0C0578,"library_block"),uuid(7efbd443-4f6f-4cb2-9eee-882b9b19cbf6)]
-	interface IGdiBitmap : IGdiObj {
+	interface IGdiBitmap : IGdiObj
+	{
 		HRESULT ApplyAlpha(BYTE alpha, [out, retval] IGdiBitmap** pp);
 		HRESULT ApplyMask(IGdiBitmap* mask, [out, retval] VARIANT_BOOL* p);
 		HRESULT Clone(float x, float y, float w, float h, [out, retval] IGdiBitmap** pp);
@@ -75,7 +81,8 @@ library foo_jscript_panel
 	};
 
 	[object,dual,pointer_default(unique),custom(8AFCDA7F-33B7-3120-86A8-754D2C0C0578,"library_block"),uuid(6fa87441-9f53-4a3f-999a-19509e3c92d7)]
-	interface IGdiFont : IGdiObj {
+	interface IGdiFont : IGdiObj
+	{
 		HRESULT get__HFont([out, retval] UINT* p);
 		[propget] HRESULT Height([out, retval] UINT* p);
 		[propget] HRESULT Name([out, retval] BSTR* p);
@@ -84,7 +91,8 @@ library foo_jscript_panel
 	};
 
 	[object,dual,pointer_default(unique),custom(8AFCDA7F-33B7-3120-86A8-754D2C0C0578,"library_block"),uuid(9d6e404f-5ba7-4470-88d5-eb5980dffc07)]
-	interface IGdiGraphics : IGdiObj {
+	interface IGdiGraphics : IGdiObj
+	{
 		HRESULT put__ptr(void* p);
 		HRESULT CalcTextHeight(BSTR str, IGdiFont* font, [out, retval] UINT* p);
 		HRESULT CalcTextWidth(BSTR str, IGdiFont* font, [out, retval] UINT* p);
@@ -111,21 +119,24 @@ library foo_jscript_panel
 	};
 
 	[object,dual,pointer_default(unique),custom(8AFCDA7F-33B7-3120-86A8-754D2C0C0578,"library_block"),uuid(22d1f519-5d6e-4d5c-80e3-8fde0d1b946b)]
-	interface IGdiRawBitmap : IDisposable {
+	interface IGdiRawBitmap : IDisposable
+	{
 		HRESULT get__Handle([out, retval] HDC* p);
 		[propget] HRESULT Height([out, retval] UINT* p);
 		[propget] HRESULT Width([out, retval] UINT* p);
 	};
 
 	[object,dual,pointer_default(unique),custom(8AFCDA7F-33B7-3120-86A8-754D2C0C0578,"library_block"),uuid(4a357221-1b75-4379-8de7-6a865bbfad10)]
-	interface IMainMenuManager : IDisposable {
+	interface IMainMenuManager : IDisposable
+	{
 		HRESULT BuildMenu(IMenuObj* p, UINT base_id);
 		HRESULT ExecuteByID(UINT id, [out, retval] VARIANT_BOOL* p);
 		HRESULT Init(BSTR root_name);
 	};
 
 	[object,dual,pointer_default(unique),custom(8AFCDA7F-33B7-3120-86A8-754D2C0C0578,"library_block"),uuid(452682d2-feef-4351-b642-e8949435086b)]
-	interface IMeasureStringInfo : IDispatch {
+	interface IMeasureStringInfo : IDispatch
+	{
 		[propget] HRESULT chars([out, retval] int* p);
 		[propget] HRESULT height([out, retval] float* p);
 		[propget] HRESULT lines([out, retval] int* p);
@@ -135,7 +146,8 @@ library foo_jscript_panel
 	};
 
 	[object,dual,pointer_default(unique),custom(8AFCDA7F-33B7-3120-86A8-754D2C0C0578,"library_block"),uuid(1e9f95ae-63be-49dc-a395-ee386e8eb202)]
-	interface IMenuObj : IDisposable {
+	interface IMenuObj : IDisposable
+	{
 		HRESULT get__ID([out, retval] HMENU* p);
 		HRESULT AppendMenuItem(UINT flags, UINT item_id, BSTR text);
 		HRESULT AppendMenuSeparator();
@@ -146,7 +158,8 @@ library foo_jscript_panel
 	};
 
 	[object,dual,pointer_default(unique),custom(8AFCDA7F-33B7-3120-86A8-754D2C0C0578,"library_block"),uuid(0e1980d3-916a-482e-af87-578bcb1a4a25)]
-	interface IMetadbHandle : IDisposable {
+	interface IMetadbHandle : IDisposable
+	{
 		HRESULT get__ptr([out, retval] void** pp);
 		HRESULT ClearStats();
 		HRESULT Compare(IMetadbHandle* handle, [out, retval] VARIANT_BOOL* p);
@@ -166,7 +179,8 @@ library foo_jscript_panel
 	};
 
 	[object,dual,pointer_default(unique),custom(8AFCDA7F-33B7-3120-86A8-754D2C0C0578,"library_block"),uuid(64528708-ae09-49dd-8e8d-1417fe9a9f09)]
-	interface IMetadbHandleList : IDisposable {
+	interface IMetadbHandleList : IDisposable
+	{
 		HRESULT get__ptr([out, retval] void** pp);
 		HRESULT Add(IMetadbHandle* handle);
 		HRESULT AddRange(IMetadbHandleList* handles);
@@ -202,7 +216,8 @@ library foo_jscript_panel
 	};
 
 	[object,dual,pointer_default(unique),custom(8AFCDA7F-33B7-3120-86A8-754D2C0C0578,"library_block"),uuid(e6d4354c-9a79-4062-b4d7-714b13539500)]
-	interface IPlaybackQueueItem : IDisposable {
+	interface IPlaybackQueueItem : IDisposable
+	{
 		HRESULT get__ptr([out, retval] void** pp);
 		[propget] HRESULT Handle([out, retval] IMetadbHandle** pp);
 		[propget] HRESULT PlaylistIndex([out, retval] int* p);
@@ -210,28 +225,32 @@ library foo_jscript_panel
 	};
 
 	[object,dual,pointer_default(unique),custom(8AFCDA7F-33B7-3120-86A8-754D2C0C0578,"library_block"),uuid(0f54464f-0b86-4419-83c0-b6f612d85fb0)]
-	interface IPlayingItemLocation : IDispatch {
+	interface IPlayingItemLocation : IDispatch
+	{
 		[propget] HRESULT IsValid([out, retval] VARIANT_BOOL* p);
 		[propget] HRESULT PlaylistIndex([out, retval] int* p);
 		[propget] HRESULT PlaylistItemIndex([out, retval] int* p);
 	};
 
 	[object,dual,pointer_default(unique),custom(8AFCDA7F-33B7-3120-86A8-754D2C0C0578,"library_block"),uuid(2d7436ad-6527-4154-a3c7-361ab8b88f5c)]
-	interface IProfiler : IDispatch {
+	interface IProfiler : IDispatch
+	{
 		HRESULT Reset();
 		HRESULT Print();
 		[propget] HRESULT Time([out, retval] int* p);
 	};
 
 	[object,dual,pointer_default(unique),custom(8AFCDA7F-33B7-3120-86A8-754D2C0C0578,"library_block"),uuid(8a14d6a2-4582-4398-a6af-2206f2dabbbe)]
-	interface IThemeManager : IDisposable {
+	interface IThemeManager : IDisposable
+	{
 		HRESULT DrawThemeBackground(IGdiGraphics* gr, int x, int y, int w, int h, [defaultvalue(0)] int clip_x, [defaultvalue(0)] int clip_y, [defaultvalue(0)] int clip_w, [defaultvalue(0)] int clip_h);
 		HRESULT IsThemePartDefined(int partid, [defaultvalue(0)] int stateid, [out, retval] VARIANT_BOOL* p);
 		HRESULT SetPartAndStateID(int partid, int stateid);
 	};
 
 	[object,dual,pointer_default(unique),custom(8AFCDA7F-33B7-3120-86A8-754D2C0C0578,"library_block"),uuid(998d8666-b446-4e92-8e8f-797d3cce4b7e)]
-	interface ITitleFormat : IDisposable {
+	interface ITitleFormat : IDisposable
+	{
 		HRESULT get__ptr([out, retval] void** pp);
 		HRESULT Eval([out, retval] BSTR* p);
 		HRESULT EvalWithMetadb(IMetadbHandle* handle, [out, retval] BSTR* p);
@@ -239,7 +258,8 @@ library foo_jscript_panel
 	};
 
 	[object,dual,pointer_default(unique),custom(8AFCDA7F-33B7-3120-86A8-754D2C0C0578,"library_block"),uuid(4ff021ab-17bc-43de-9dbe-2d0edec1e095)]
-	interface ITooltip : IDisposable {
+	interface ITooltip : IDisposable
+	{
 		HRESULT Activate();
 		HRESULT Deactivate();
 		HRESULT GetDelayTime(int type, [out, retval] int* p);
@@ -252,19 +272,22 @@ library foo_jscript_panel
 	};
 
 	[object,dual,pointer_default(unique),custom(8AFCDA7F-33B7-3120-86A8-754D2C0C0578,"library_block"),uuid(1f40f9e1-c0fb-4021-80de-37c4d0a26f45)]
-	interface IUiSelectionHolder : IDisposable {
+	interface IUiSelectionHolder : IDisposable
+	{
 		HRESULT SetPlaylistSelectionTracking();
 		HRESULT SetPlaylistTracking();
 		HRESULT SetSelection(IMetadbHandleList* handles);
 	};
 
 	[object,dual,pointer_default(unique),custom(8AFCDA7F-33B7-3120-86A8-754D2C0C0578,"library_block"),uuid(690a35f6-ba53-46f9-91f8-4327204c6c62)]
-	interface IConsole : IDispatch {
+	interface IConsole : IDispatch
+	{
 		[vararg] HRESULT Log(SAFEARRAY(VARIANT) p);
 	};
 
 	[object,dual,pointer_default(unique),custom(8AFCDA7F-33B7-3120-86A8-754D2C0C0578,"library_block"),uuid(bae2e084-6545-4a17-9795-1496a4ee2741)]
-	interface IFb : IDispatch {
+	interface IFb : IDispatch
+	{
 		HRESULT AcquireUiSelectionHolder([out, retval] IUiSelectionHolder** pp);
 		HRESULT AddDirectory();
 		HRESULT AddFiles();
@@ -334,7 +357,8 @@ library foo_jscript_panel
 	};
 
 	[object,dual,pointer_default(unique),custom(8AFCDA7F-33B7-3120-86A8-754D2C0C0578,"library_block"),uuid(351e3e75-8f27-4afd-b7e0-5409cf8f4947)]
-	interface IGdi : IDispatch {
+	interface IGdi : IDispatch
+	{
 		HRESULT CreateImage(int w, int h, [out, retval] IGdiBitmap** pp);
 		HRESULT Font(BSTR name, float pxSize, [defaultvalue(0)] int style, [out, retval] IGdiFont** pp);
 		HRESULT Image(BSTR path, [out, retval] IGdiBitmap** pp);
@@ -342,7 +366,8 @@ library foo_jscript_panel
 	};
 
 	[object,dual,pointer_default(unique),custom(8AFCDA7F-33B7-3120-86A8-754D2C0C0578,"library_block"),uuid(84212840-c0c5-4625-8fc4-2cc20e4bbcc8)]
-	interface IPlman : IDispatch {
+	interface IPlman : IDispatch
+	{
 		HRESULT AddItemToPlaybackQueue(IMetadbHandle* handle);
 		HRESULT AddLocations(UINT playlistIndex, VARIANT locations, [defaultvalue(0)] VARIANT_BOOL select);
 		HRESULT AddPlaylistItemToPlaybackQueue(UINT playlistIndex, UINT playlistItemIndex);
@@ -402,7 +427,8 @@ library foo_jscript_panel
 	};
 
 	[object,dual,pointer_default(unique),custom(8AFCDA7F-33B7-3120-86A8-754D2C0C0578,"library_block"),uuid(d53e81cd-0157-4cfe-a618-1F88d48dc0b7)]
-	interface IUtils : IDispatch {
+	interface IUtils : IDispatch
+	{
 		HRESULT Chardet(BSTR filename, [out, retval] UINT* p);
 		HRESULT CheckComponent(BSTR name, [out, retval] VARIANT_BOOL* p);
 		HRESULT CheckFont(BSTR name, [out, retval] VARIANT_BOOL* p);
@@ -434,7 +460,8 @@ library foo_jscript_panel
 	};
 
 	[object,dual,pointer_default(unique),custom(8AFCDA7F-33B7-3120-86A8-754D2C0C0578,"library_block"),uuid(81e1f0c0-1dfe-4996-abd9-ba98dff69e4c)]
-	interface IWindow : IDispatch {
+	interface IWindow : IDispatch
+	{
 		HRESULT ClearInterval(UINT intervalID);
 		HRESULT ClearTimeout(UINT timeoutID);
 		HRESULT CreatePopupMenu([out, retval] IMenuObj** pp);

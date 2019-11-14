@@ -26,9 +26,9 @@ std::vector<panel_manager::api_item> panel_manager::get_apis()
 		}
 
 		std::sort(m_apis.begin(), m_apis.end(), [](const auto& one, const auto& two) -> bool
-		{
-			return _stricmp(one.first.c_str(), two.first.c_str()) < 0;
-		});
+			{
+				return _stricmp(one.first.c_str(), two.first.c_str()) < 0;
+			});
 	}
 	return m_apis;
 }
