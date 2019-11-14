@@ -37,25 +37,10 @@ public:
 	Cluster(KPoint point)
 	{
 		std::transform(point.m_values.begin(), point.m_values.end(), std::back_inserter(central_values), [](const unsigned int value)
-		{
-			return static_cast<double>(value);
-		});
-
-		points.emplace_back(point);
-	}
-
-	bool remove_point(int id_point) {
-		int total_points = points.size();
-
-		for (int i = 0; i < total_points; i++)
-		{
-			if (points[i].m_point_id == id_point)
 			{
-				points.erase(points.begin() + i);
-				return true;
-			}
-		}
-		return false;
+				return static_cast<double>(value);
+			});
+		points.emplace_back(point);
 	}
 
 	int get_colour()
@@ -63,11 +48,21 @@ public:
 		return 0xff000000 | static_cast<int>(central_values[0]) << 16 | static_cast<int>(central_values[1]) << 8 | static_cast<int>(central_values[2]);
 	}
 
-	int get_total_points() {
+	int get_total_points()
+	{
 		return std::accumulate(points.begin(), points.end(), 0, [](int t, const KPoint& point)
-		{
-			return t + point.m_pixel_count;
-		});
+			{
+				return t + point.m_pixel_count;
+			});
+	}
+
+	void remove_point(int point_id)
+	{
+		auto it = std::remove_if(points.begin(), points.end(), [point_id](const KPoint& point)
+			{
+				return point.m_point_id == point_id;
+			});
+		points.erase(it, points.end());
 	}
 
 	std::vector<double> central_values;
@@ -79,9 +74,11 @@ class KMeans
 public:
 	KMeans(int K, int total_points) : K(std::min(std::max(K, 14), total_points)), total_points(total_points) {}
 
-	std::vector<Cluster> run(std::vector<KPoint>& points) {
+	std::vector<Cluster> run(std::vector<KPoint>& points)
+	{
 		int index_point = 0;
-		for (int i = 0; i < K; i++) {
+		for (int i = 0; i < K; i++)
+		{
 			index_point = static_cast<int>(i * total_points / K);
 			points[index_point].m_cluster_id = i;
 			Cluster cluster(points[index_point]);
@@ -90,15 +87,19 @@ public:
 
 		int iter = 1;
 
-		while (true) {
+		while (true)
+		{
 			bool done = true;
 
-			for (int i = 0; i < total_points; i++) {
+			for (int i = 0; i < total_points; ++i)
+			{
 				int old_cluster_id = points[i].m_cluster_id;
 				int nearest_centre_id = get_nearest_centre_id(points[i]);
 
-				if (old_cluster_id != nearest_centre_id) {
-					if (old_cluster_id != -1) {
+				if (old_cluster_id != nearest_centre_id)
+				{
+					if (old_cluster_id != -1)
+					{
 						clusters[old_cluster_id].remove_point(points[i].m_point_id);
 					}
 
@@ -108,22 +109,24 @@ public:
 				}
 			}
 
-			for (int i = 0; i < K; i++) {
-				for (int j = 0; j < kNumColourComponents; j++) {
-					int cluster_total_points = clusters[i].get_total_points();
-					double sum = 0.0;
+			for (Cluster& cluster : clusters)
+			{
+				for (int j = 0; j < kNumColourComponents; ++j)
+				{
+					int cluster_total_points = cluster.get_total_points();
+					if (cluster_total_points == 0) continue;
 
-					if (cluster_total_points > 0) {
-						for (const KPoint& point : clusters[i].points)
+					double sum = std::accumulate(cluster.points.begin(), cluster.points.end(), 0.0, [j](double t, const KPoint& point)
 						{
-							sum += static_cast<double>(point.m_values[j]) * static_cast<double>(point.m_pixel_count);
-						}
-						clusters[i].central_values[j] = sum / cluster_total_points;
-					}
+							return t + (static_cast<double>(point.m_values[j]) * static_cast<double>(point.m_pixel_count));
+						});
+
+					cluster.central_values[j] = sum / cluster_total_points;
 				}
 			}
 
-			if (done || iter >= kMaxIterations) {
+			if (done || iter >= kMaxIterations)
+			{
 				break;
 			}
 
@@ -134,20 +137,23 @@ public:
 	}
 
 private:
-	int get_nearest_centre_id(KPoint point) {
-		double sum, min_dist;
-		int cluster_centre_id = 0;
+	int get_nearest_centre_id(KPoint point)
+	{
+		double min_dist;
+		int cluster_centre_id = 0, it = 0;
 
-		for (int i = 0; i < K; i++) {
-			sum = 0.0;
-			sum += 2 * pow(clusters[i].central_values[0] - point.m_values[0], 2.0);
-			sum += 4 * pow(clusters[i].central_values[1] - point.m_values[1], 2.0);
-			sum += 3 * pow(clusters[i].central_values[2] - point.m_values[2], 2.0);
+		for (const Cluster& cluster : clusters)
+		{
+			double sum = 2 * pow(cluster.central_values[0] - point.m_values[0], 2.0);
+			sum += 4 * pow(cluster.central_values[1] - point.m_values[1], 2.0);
+			sum += 3 * pow(cluster.central_values[2] - point.m_values[2], 2.0);
 
-			if (i == 0 || sum < min_dist) {
+			if (it == 0 || sum < min_dist)
+			{
 				min_dist = sum;
-				cluster_centre_id = i;
+				cluster_centre_id = it;
 			}
+			it++;
 		}
 
 		return cluster_centre_id;
