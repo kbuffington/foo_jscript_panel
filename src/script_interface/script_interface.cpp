@@ -358,7 +358,7 @@ STDMETHODIMP GdiBitmap::GetColourSchemeJSON(UINT count, BSTR* p)
 	KMeans kmeans(count, points.size());
 	std::vector<Cluster> clusters = kmeans.run(points);
 
-	std::sort(clusters.begin(), clusters.end(), [](Cluster& a, Cluster& b)
+	std::sort(clusters.begin(), clusters.end(), [](const Cluster& a, const Cluster& b)
 		{
 			return a.get_total_points() > b.get_total_points();
 		});

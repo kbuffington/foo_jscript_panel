@@ -1,25 +1,5 @@
 #pragma once
 
-/*
-k-means is a clustering algorithm designed to group data points into clusters of similar points,
-and return the averaged "center" value of each cluster. The algorithm runs over the data set
-multiple times, assigning points to the nearest center, and then re-calculating the center values
-after each iteration, until the centers stabilize of max_iterations have been run.
-
-Detailed information here: https://en.wikipedia.org/wiki/K-means_clustering
-
-Here it is being used to group RGB colour values into clusters of similar colours for the purposes
-of generating a colour scheme from an image. Each data point is a distinct RGB value that
-represents a number of pixels with the same RGB value from the original image. Therefore while
-every data-point is distinct, they do not all carry the same "weight" for the purposes of
-determining the center points of each cluster.
-
-In standard k-means, the starting center values are chosen at random. This provides better results
-at the expense of potentially different values on subsequent runs with the same inputs. That was
-not acceptable for generating colour values, so the starting center colour values are evenly spaced
-across the data set.
-*/
-
 static constexpr int kNumColourComponents = 3;
 static constexpr int kMaxIterations = 12;
 
@@ -43,12 +23,20 @@ public:
 		points.emplace_back(point);
 	}
 
+	double calc_dist(const KPoint& point) const
+	{
+		double sum = 2 * pow(central_values[0] - point.m_values[0], 2.0);
+		sum += 4 * pow(central_values[1] - point.m_values[1], 2.0);
+		sum += 3 * pow(central_values[2] - point.m_values[2], 2.0);
+		return sum;
+	}
+
 	int get_colour()
 	{
 		return 0xff000000 | static_cast<int>(central_values[0]) << 16 | static_cast<int>(central_values[1]) << 8 | static_cast<int>(central_values[2]);
 	}
 
-	int get_total_points()
+	int get_total_points() const
 	{
 		return std::accumulate(points.begin(), points.end(), 0, [](int t, const KPoint& point)
 			{
@@ -72,14 +60,13 @@ public:
 class KMeans
 {
 public:
-	KMeans(int K, int total_points) : K(std::min(std::max(K, 14), total_points)), total_points(total_points) {}
+	KMeans(int p_count, int p_total_points) : count(std::min(std::max(p_count, 14), p_total_points)), total_points(p_total_points) {}
 
 	std::vector<Cluster> run(std::vector<KPoint>& points)
 	{
-		int index_point = 0;
-		for (int i = 0; i < K; i++)
+		for (int i = 0; i < count; i++)
 		{
-			index_point = static_cast<int>(i * total_points / K);
+			const int index_point = static_cast<int>(i * total_points / count);
 			points[index_point].m_cluster_id = i;
 			Cluster cluster(points[index_point]);
 			clusters.emplace_back(cluster);
@@ -113,7 +100,7 @@ public:
 			{
 				for (int j = 0; j < kNumColourComponents; ++j)
 				{
-					int cluster_total_points = cluster.get_total_points();
+					const int cluster_total_points = cluster.get_total_points();
 					if (cluster_total_points == 0) continue;
 
 					double sum = std::accumulate(cluster.points.begin(), cluster.points.end(), 0.0, [j](double t, const KPoint& point)
@@ -137,20 +124,18 @@ public:
 	}
 
 private:
-	int get_nearest_centre_id(KPoint point)
+	int get_nearest_centre_id(const KPoint& point)
 	{
 		double min_dist;
 		int cluster_centre_id = 0, it = 0;
 
 		for (const Cluster& cluster : clusters)
 		{
-			double sum = 2 * pow(cluster.central_values[0] - point.m_values[0], 2.0);
-			sum += 4 * pow(cluster.central_values[1] - point.m_values[1], 2.0);
-			sum += 3 * pow(cluster.central_values[2] - point.m_values[2], 2.0);
+			const double dist = cluster.calc_dist(point);
 
-			if (it == 0 || sum < min_dist)
+			if (it == 0 || dist < min_dist)
 			{
-				min_dist = sum;
+				min_dist = dist;
 				cluster_centre_id = it;
 			}
 			it++;
@@ -159,6 +144,6 @@ private:
 		return cluster_centre_id;
 	}
 
-	int K, total_points;
+	int count, total_points;
 	std::vector<Cluster> clusters;
 };
