@@ -94,7 +94,7 @@ void stackblurJob(BYTE* src, ///< input image data
 		t_size minY = core * h / cores;
 		t_size maxY = (core + 1) * h / cores;
 
-		for (y = minY; y < maxY; y++)
+		for (y = minY; y < maxY; ++y)
 		{
 			sum_r = sum_g = sum_b = sum_a =
 				sum_in_r = sum_in_g = sum_in_b = sum_in_a =
@@ -142,7 +142,7 @@ void stackblurJob(BYTE* src, ///< input image data
 			if (xp > wm) xp = wm;
 			src_ptr = src + 4 * (xp + y * w); // img.pix_ptr(xp, y);
 			dst_ptr = src + y * w4; // img.pix_ptr(0, y);
-			for (x = 0; x < w; x++)
+			for (x = 0; x < w; ++x)
 			{
 				dst_ptr[0] = static_cast<BYTE>((sum_r * mul_sum) >> shr_sum);
 				dst_ptr[1] = static_cast<BYTE>((sum_g * mul_sum) >> shr_sum);
@@ -206,7 +206,7 @@ void stackblurJob(BYTE* src, ///< input image data
 		t_size minX = core * w / cores;
 		t_size maxX = (core + 1) * w / cores;
 
-		for (x = minX; x < maxX; x++)
+		for (x = minX; x < maxX; ++x)
 		{
 			sum_r = sum_g = sum_b = sum_a =
 				sum_in_r = sum_in_g = sum_in_b = sum_in_a =
@@ -253,7 +253,7 @@ void stackblurJob(BYTE* src, ///< input image data
 			if (yp > hm) yp = hm;
 			src_ptr = src + 4 * (x + yp * w); // img.pix_ptr(x, yp);
 			dst_ptr = src + 4 * x; // img.pix_ptr(x, 0);
-			for (y = 0; y < h; y++)
+			for (y = 0; y < h; ++y)
 			{
 				dst_ptr[0] = static_cast<BYTE>((sum_r * mul_sum) >> shr_sum);
 				dst_ptr[1] = static_cast<BYTE>((sum_g * mul_sum) >> shr_sum);

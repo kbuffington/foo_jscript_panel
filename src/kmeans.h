@@ -64,7 +64,7 @@ public:
 
 	std::vector<Cluster> run(std::vector<KPoint>& points)
 	{
-		for (int i = 0; i < count; i++)
+		for (int i = 0; i < count; ++i)
 		{
 			const int index_point = static_cast<int>(i * total_points / count);
 			points[index_point].m_cluster_id = i;
@@ -98,17 +98,17 @@ public:
 
 			for (Cluster& cluster : clusters)
 			{
-				for (int j = 0; j < kNumColourComponents; ++j)
+				for (int i = 0; i < kNumColourComponents; ++i)
 				{
 					const int cluster_total_points = cluster.get_total_points();
 					if (cluster_total_points == 0) continue;
 
-					double sum = std::accumulate(cluster.points.begin(), cluster.points.end(), 0.0, [j](double t, const KPoint& point)
+					double sum = std::accumulate(cluster.points.begin(), cluster.points.end(), 0.0, [i](double t, const KPoint& point)
 						{
-							return t + (static_cast<double>(point.m_values[j]) * static_cast<double>(point.m_pixel_count));
+							return t + (static_cast<double>(point.m_values[i]) * static_cast<double>(point.m_pixel_count));
 						});
 
-					cluster.central_values[j] = sum / cluster_total_points;
+					cluster.central_values[i] = sum / cluster_total_points;
 				}
 			}
 

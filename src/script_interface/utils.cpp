@@ -49,7 +49,7 @@ STDMETHODIMP Utils::CheckFont(BSTR name, VARIANT_BOOL* p)
 	int found;
 	if (families.is_valid() && fonts.GetFamilies(count, families.get_ptr(), &found) == Gdiplus::Ok)
 	{
-		for (int i = 0; i < found; i++)
+		for (int i = 0; i < found; ++i)
 		{
 			families.get_ptr()[i].GetFamilyName(family_name);
 			if (_wcsicmp(name, family_name) == 0)
