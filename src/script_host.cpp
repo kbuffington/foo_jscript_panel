@@ -2,12 +2,6 @@
 #include "helpers.h"
 #include "host_comm.h"
 #include "script_host.h"
-#include "console.h"
-#include "fb.h"
-#include "gdi.h"
-#include "plman.h"
-#include "utils.h"
-#include "window.h"
 
 #define DEFINE_ID_NAME_ENTRY(x) { callback_id::x, PFC_WIDESTRING(#x) }
 

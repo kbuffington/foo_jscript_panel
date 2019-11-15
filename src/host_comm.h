@@ -1,7 +1,6 @@
 #pragma once
 #include "panel_properties.h"
 #include "script_info.h"
-#include "script_interface.h"
 
 class host_comm
 {

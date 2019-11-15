@@ -27,30 +27,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="script_interface\com_tools.h">
-      <Filter>Header Files\script_interface</Filter>
-    </ClInclude>
-    <ClInclude Include="script_interface\console.h">
-      <Filter>Header Files\script_interface</Filter>
-    </ClInclude>
-    <ClInclude Include="script_interface\fb.h">
-      <Filter>Header Files\script_interface</Filter>
-    </ClInclude>
-    <ClInclude Include="script_interface\gdi.h">
-      <Filter>Header Files\script_interface</Filter>
-    </ClInclude>
-    <ClInclude Include="script_interface\plman.h">
-      <Filter>Header Files\script_interface</Filter>
-    </ClInclude>
-    <ClInclude Include="script_interface\script_interface.h">
-      <Filter>Header Files\script_interface</Filter>
-    </ClInclude>
-    <ClInclude Include="script_interface\utils.h">
-      <Filter>Header Files\script_interface</Filter>
-    </ClInclude>
-    <ClInclude Include="script_interface\window.h">
-      <Filter>Header Files\script_interface</Filter>
-    </ClInclude>
     <ClInclude Include="component_defines.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -132,29 +108,92 @@
     <ClInclude Include="stackblur.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="script_interface\com_tools.h">
+      <Filter>Header Files\script_interface</Filter>
+    </ClInclude>
+    <ClInclude Include="script_interface\Console.h">
+      <Filter>Header Files\script_interface</Filter>
+    </ClInclude>
+    <ClInclude Include="script_interface\ContextMenuManager.h">
+      <Filter>Header Files\script_interface</Filter>
+    </ClInclude>
+    <ClInclude Include="script_interface\DropSourceAction.h">
+      <Filter>Header Files\script_interface</Filter>
+    </ClInclude>
+    <ClInclude Include="script_interface\Fb.h">
+      <Filter>Header Files\script_interface</Filter>
+    </ClInclude>
+    <ClInclude Include="script_interface\FileInfo.h">
+      <Filter>Header Files\script_interface</Filter>
+    </ClInclude>
+    <ClInclude Include="script_interface\Gdi.h">
+      <Filter>Header Files\script_interface</Filter>
+    </ClInclude>
+    <ClInclude Include="script_interface\GdiBitmap.h">
+      <Filter>Header Files\script_interface</Filter>
+    </ClInclude>
+    <ClInclude Include="script_interface\GdiFont.h">
+      <Filter>Header Files\script_interface</Filter>
+    </ClInclude>
+    <ClInclude Include="script_interface\GdiGraphics.h">
+      <Filter>Header Files\script_interface</Filter>
+    </ClInclude>
+    <ClInclude Include="script_interface\GdiRawBitmap.h">
+      <Filter>Header Files\script_interface</Filter>
+    </ClInclude>
+    <ClInclude Include="script_interface\MainMenuManager.h">
+      <Filter>Header Files\script_interface</Filter>
+    </ClInclude>
+    <ClInclude Include="script_interface\MeasureStringInfo.h">
+      <Filter>Header Files\script_interface</Filter>
+    </ClInclude>
+    <ClInclude Include="script_interface\MenuObj.h">
+      <Filter>Header Files\script_interface</Filter>
+    </ClInclude>
+    <ClInclude Include="script_interface\MetadbHandle.h">
+      <Filter>Header Files\script_interface</Filter>
+    </ClInclude>
+    <ClInclude Include="script_interface\MetadbHandleList.h">
+      <Filter>Header Files\script_interface</Filter>
+    </ClInclude>
+    <ClInclude Include="script_interface\PlaybackQueueItem.h">
+      <Filter>Header Files\script_interface</Filter>
+    </ClInclude>
+    <ClInclude Include="script_interface\PlayingItemLocation.h">
+      <Filter>Header Files\script_interface</Filter>
+    </ClInclude>
+    <ClInclude Include="script_interface\Plman.h">
+      <Filter>Header Files\script_interface</Filter>
+    </ClInclude>
+    <ClInclude Include="script_interface\Profiler.h">
+      <Filter>Header Files\script_interface</Filter>
+    </ClInclude>
+    <ClInclude Include="script_interface\script_interface.h">
+      <Filter>Header Files\script_interface</Filter>
+    </ClInclude>
+    <ClInclude Include="script_interface\script_interface_h.h">
+      <Filter>Header Files\script_interface</Filter>
+    </ClInclude>
+    <ClInclude Include="script_interface\ThemeManager.h">
+      <Filter>Header Files\script_interface</Filter>
+    </ClInclude>
+    <ClInclude Include="script_interface\TitleFormat.h">
+      <Filter>Header Files\script_interface</Filter>
+    </ClInclude>
+    <ClInclude Include="script_interface\Tooltip.h">
+      <Filter>Header Files\script_interface</Filter>
+    </ClInclude>
+    <ClInclude Include="script_interface\UiSelectionHolder.h">
+      <Filter>Header Files\script_interface</Filter>
+    </ClInclude>
+    <ClInclude Include="script_interface\Utils.h">
+      <Filter>Header Files\script_interface</Filter>
+    </ClInclude>
+    <ClInclude Include="script_interface\Window.h">
+      <Filter>Header Files\script_interface</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="script_interface\console.cpp">
-      <Filter>Source Files\script_interface</Filter>
-    </ClCompile>
-    <ClCompile Include="script_interface\fb.cpp">
-      <Filter>Source Files\script_interface</Filter>
-    </ClCompile>
-    <ClCompile Include="script_interface\gdi.cpp">
-      <Filter>Source Files\script_interface</Filter>
-    </ClCompile>
-    <ClCompile Include="script_interface\plman.cpp">
-      <Filter>Source Files\script_interface</Filter>
-    </ClCompile>
-    <ClCompile Include="script_interface\script_interface.cpp">
-      <Filter>Source Files\script_interface</Filter>
-    </ClCompile>
-    <ClCompile Include="script_interface\utils.cpp">
-      <Filter>Source Files\script_interface</Filter>
-    </ClCompile>
-    <ClCompile Include="script_interface\window.cpp">
-      <Filter>Source Files\script_interface</Filter>
-    </ClCompile>
     <ClCompile Include="helpers.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -226,6 +265,81 @@
     </ClCompile>
     <ClCompile Include="ui\ui_find_replace.cpp">
       <Filter>Source Files\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="script_interface\Console.cpp">
+      <Filter>Source Files\script_interface</Filter>
+    </ClCompile>
+    <ClCompile Include="script_interface\ContextMenuManager.cpp">
+      <Filter>Source Files\script_interface</Filter>
+    </ClCompile>
+    <ClCompile Include="script_interface\DropSourceAction.cpp">
+      <Filter>Source Files\script_interface</Filter>
+    </ClCompile>
+    <ClCompile Include="script_interface\Fb.cpp">
+      <Filter>Source Files\script_interface</Filter>
+    </ClCompile>
+    <ClCompile Include="script_interface\FileInfo.cpp">
+      <Filter>Source Files\script_interface</Filter>
+    </ClCompile>
+    <ClCompile Include="script_interface\Gdi.cpp">
+      <Filter>Source Files\script_interface</Filter>
+    </ClCompile>
+    <ClCompile Include="script_interface\GdiBitmap.cpp">
+      <Filter>Source Files\script_interface</Filter>
+    </ClCompile>
+    <ClCompile Include="script_interface\GdiFont.cpp">
+      <Filter>Source Files\script_interface</Filter>
+    </ClCompile>
+    <ClCompile Include="script_interface\GdiGraphics.cpp">
+      <Filter>Source Files\script_interface</Filter>
+    </ClCompile>
+    <ClCompile Include="script_interface\GdiRawBitmap.cpp">
+      <Filter>Source Files\script_interface</Filter>
+    </ClCompile>
+    <ClCompile Include="script_interface\MainMenuManager.cpp">
+      <Filter>Source Files\script_interface</Filter>
+    </ClCompile>
+    <ClCompile Include="script_interface\MeasureStringInfo.cpp">
+      <Filter>Source Files\script_interface</Filter>
+    </ClCompile>
+    <ClCompile Include="script_interface\MenuObj.cpp">
+      <Filter>Source Files\script_interface</Filter>
+    </ClCompile>
+    <ClCompile Include="script_interface\MetadbHandle.cpp">
+      <Filter>Source Files\script_interface</Filter>
+    </ClCompile>
+    <ClCompile Include="script_interface\MetadbHandleList.cpp">
+      <Filter>Source Files\script_interface</Filter>
+    </ClCompile>
+    <ClCompile Include="script_interface\PlaybackQueueItem.cpp">
+      <Filter>Source Files\script_interface</Filter>
+    </ClCompile>
+    <ClCompile Include="script_interface\PlayingItemLocation.cpp">
+      <Filter>Source Files\script_interface</Filter>
+    </ClCompile>
+    <ClCompile Include="script_interface\Plman.cpp">
+      <Filter>Source Files\script_interface</Filter>
+    </ClCompile>
+    <ClCompile Include="script_interface\Profiler.cpp">
+      <Filter>Source Files\script_interface</Filter>
+    </ClCompile>
+    <ClCompile Include="script_interface\ThemeManager.cpp">
+      <Filter>Source Files\script_interface</Filter>
+    </ClCompile>
+    <ClCompile Include="script_interface\TitleFormat.cpp">
+      <Filter>Source Files\script_interface</Filter>
+    </ClCompile>
+    <ClCompile Include="script_interface\Tooltip.cpp">
+      <Filter>Source Files\script_interface</Filter>
+    </ClCompile>
+    <ClCompile Include="script_interface\UiSelectionHolder.cpp">
+      <Filter>Source Files\script_interface</Filter>
+    </ClCompile>
+    <ClCompile Include="script_interface\Utils.cpp">
+      <Filter>Source Files\script_interface</Filter>
+    </ClCompile>
+    <ClCompile Include="script_interface\Window.cpp">
+      <Filter>Source Files\script_interface</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
