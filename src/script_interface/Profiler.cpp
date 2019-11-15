@@ -1,6 +1,11 @@
 #include "stdafx.h"
 #include "Profiler.h"
 
+Profiler::Profiler(const char* p_name) : m_name(p_name)
+{
+	m_timer.start();
+}
+
 Profiler::~Profiler() {}
 
 STDMETHODIMP Profiler::Print()

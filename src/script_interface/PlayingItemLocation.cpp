@@ -26,8 +26,3 @@ STDMETHODIMP PlayingItemLocation::get_PlaylistItemIndex(int* p)
 	*p = m_isValid ? m_playlistItemIndex : -1;
 	return S_OK;
 }
-
-Profiler::Profiler(const char* p_name) : m_name(p_name)
-{
-	m_timer.start();
-}
