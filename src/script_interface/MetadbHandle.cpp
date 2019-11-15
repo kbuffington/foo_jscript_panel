@@ -69,7 +69,7 @@ STDMETHODIMP MetadbHandle::GetFileInfo(IFileInfo** pp)
 {
 	if (m_handle.is_empty() || !pp) return E_POINTER;
 
-	file_info_impl* info_ptr = new file_info_impl;
+	auto info_ptr = new file_info_impl;
 	m_handle->get_info(*info_ptr);
 	*pp = new com_object_impl_t<FileInfo>(info_ptr);
 	return S_OK;
@@ -174,7 +174,7 @@ STDMETHODIMP MetadbHandle::SetRating(UINT rating)
 	return S_OK;
 }
 
-STDMETHODIMP MetadbHandle::get_FileSize(LONGLONG* p)
+STDMETHODIMP MetadbHandle::get_FileSize(__int64* p)
 {
 	if (m_handle.is_empty() || !p) return E_POINTER;
 

@@ -87,7 +87,7 @@ STDMETHODIMP MetadbHandleList::CalcTotalDuration(double* p)
 	return S_OK;
 }
 
-STDMETHODIMP MetadbHandleList::CalcTotalSize(LONGLONG* p)
+STDMETHODIMP MetadbHandleList::CalcTotalSize(__int64* p)
 {
 	if (!p) return E_POINTER;
 
@@ -142,18 +142,18 @@ STDMETHODIMP MetadbHandleList::GetLibraryRelativePaths(VARIANT* p)
 	helpers::com_array helper;
 	if (!helper.create(count)) return E_OUTOFMEMORY;
 
-	pfc::string8_fastalloc temp;
-	temp.prealloc(512);
+	pfc::string8_fastalloc str;
+	str.prealloc(512);
 
 	auto api = library_manager::get();
 
 	for (LONG i = 0; i < count; ++i)
 	{
 		metadb_handle_ptr item = m_handles[i];
-		if (!api->get_relative_path(item, temp)) temp = "";
+		if (!api->get_relative_path(item, str)) str = "";
 		_variant_t var;
 		var.vt = VT_BSTR;
-		var.bstrVal = TO_BSTR(temp);
+		var.bstrVal = TO_BSTR(str);
 		if (!helper.put_item(i, var)) return E_OUTOFMEMORY;
 	}
 	p->vt = VT_ARRAY | VT_VARIANT;
@@ -264,17 +264,16 @@ STDMETHODIMP MetadbHandleList::OrderByRelativePath()
 
 	std::vector<helpers::custom_sort_data> data(count);
 
-	pfc::string8_fastalloc temp;
-	temp.prealloc(512);
+	pfc::string8_fastalloc str;
+	str.prealloc(512);
 
 	for (i = 0; i < count; ++i)
 	{
-		metadb_handle_ptr item;
-		m_handles.get_item_ex(item, i);
-		if (!api->get_relative_path(item, temp)) temp = "";
-		temp << item->get_subsong_index();
+		metadb_handle_ptr item = m_handles[i];
+		if (!api->get_relative_path(item, str)) str = "";
+		str << item->get_subsong_index();
 		data[i].index = i;
-		data[i].text = helpers::make_sort_string(temp);
+		data[i].text = helpers::make_sort_string(str);
 	}
 
 	pfc::sort_t(data, helpers::custom_sort_compare<1>, count);

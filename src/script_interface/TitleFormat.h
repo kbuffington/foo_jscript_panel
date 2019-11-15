@@ -4,7 +4,7 @@
 class TitleFormat : public IDisposableImpl4<ITitleFormat>
 {
 protected:
-	TitleFormat(BSTR expr);
+	TitleFormat(BSTR pattern);
 	~TitleFormat();
 
 	void FinalRelease() override;

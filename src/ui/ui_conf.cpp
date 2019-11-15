@@ -23,8 +23,6 @@ CDialogConf::CDialogConf(panel_window* p_parent) : m_parent(p_parent), m_resizer
 	m_caption << JSP_NAME " Configuration (id:" << m_parent->m_script_info.id << ")";
 }
 
-CDialogConf::~CDialogConf() {}
-
 BOOL CDialogConf::OnInitDialog(HWND, LPARAM)
 {
 	// Init

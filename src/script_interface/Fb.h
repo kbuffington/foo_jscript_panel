@@ -50,7 +50,7 @@ public:
 	STDMETHODIMP ShowPopupMessage(BSTR msg, BSTR title) override;
 	STDMETHODIMP ShowPreferences() override;
 	STDMETHODIMP Stop() override;
-	STDMETHODIMP TitleFormat(BSTR expression, ITitleFormat** pp) override;
+	STDMETHODIMP TitleFormat(BSTR pattern, ITitleFormat** pp) override;
 	STDMETHODIMP VolumeDown() override;
 	STDMETHODIMP VolumeMute() override;
 	STDMETHODIMP VolumeUp() override;

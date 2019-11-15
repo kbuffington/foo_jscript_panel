@@ -1,5 +1,4 @@
 #pragma once
-#include "helpers.h"
 #include "host_comm.h"
 #include "host_drop_target.h"
 #include "panel_manager.h"

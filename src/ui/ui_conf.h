@@ -7,7 +7,6 @@ class CDialogConf : public CDialogImpl<CDialogConf>
 {
 public:
 	CDialogConf(panel_window* p_parent);
-	~CDialogConf();
 
 	BEGIN_MSG_MAP(CDialogConf)
 		CHAIN_MSG_MAP_MEMBER(m_resizer)

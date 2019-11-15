@@ -79,6 +79,6 @@ STDMETHODIMP MenuObj::TrackPopupMenu(int x, int y, UINT flags, UINT* p)
 
 	POINT pt = { x, y };
 	ClientToScreen(m_wnd_parent, &pt);
-	*p = ::TrackPopupMenu(m_hMenu, flags, pt.x, pt.y, 0, m_wnd_parent, 0);
+	*p = ::TrackPopupMenu(m_hMenu, flags, pt.x, pt.y, 0, m_wnd_parent, nullptr);
 	return S_OK;
 }

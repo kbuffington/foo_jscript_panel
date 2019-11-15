@@ -1,5 +1,4 @@
 #include "stdafx.h"
-#include "helpers.h"
 #include "host_comm.h"
 #include "script_host.h"
 

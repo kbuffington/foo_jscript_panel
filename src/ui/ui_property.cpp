@@ -19,8 +19,6 @@ CDialogProperty::CDialogProperty(panel_window* p_parent) : m_parent(p_parent), m
 	m_caption << JSP_NAME " Properties (id:" << m_parent->m_script_info.id << ")";
 }
 
-CDialogProperty::~CDialogProperty() {}
-
 BOOL CDialogProperty::OnInitDialog(HWND, LPARAM)
 {
 	// Set caption text

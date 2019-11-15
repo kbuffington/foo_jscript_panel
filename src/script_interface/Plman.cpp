@@ -570,14 +570,14 @@ STDMETHODIMP Plman::SortPlaylistsByName(int direction)
 
 	std::vector<helpers::custom_sort_data> data(count);
 
-	pfc::string8_fastalloc temp;
-	temp.prealloc(512);
+	pfc::string8_fastalloc str;
+	str.prealloc(512);
 
 	for (i = 0; i < count; ++i)
 	{
-		api->playlist_get_name(i, temp);
+		api->playlist_get_name(i, str);
 		data[i].index = i;
-		data[i].text = helpers::make_sort_string(temp);
+		data[i].text = helpers::make_sort_string(str);
 	}
 
 	pfc::sort_t(data, direction > 0 ? helpers::custom_sort_compare<1> : helpers::custom_sort_compare<-1>, count);

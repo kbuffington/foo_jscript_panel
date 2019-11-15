@@ -488,11 +488,11 @@ STDMETHODIMP Fb::Stop()
 	return S_OK;
 }
 
-STDMETHODIMP Fb::TitleFormat(BSTR expression, ITitleFormat** pp)
+STDMETHODIMP Fb::TitleFormat(BSTR pattern, ITitleFormat** pp)
 {
 	if (!pp) return E_POINTER;
 
-	*pp = new com_object_impl_t<::TitleFormat>(expression);
+	*pp = new com_object_impl_t<::TitleFormat>(pattern);
 	return S_OK;
 }
 

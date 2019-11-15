@@ -14,11 +14,11 @@ public:
 	STDMETHODIMP ColourPicker(UINT window_id, int default_colour, int* p) override;
 	STDMETHODIMP DateStringToTimestamp(BSTR str, UINT* p) override;
 	STDMETHODIMP FormatDuration(double seconds, BSTR* p) override;
-	STDMETHODIMP FormatFileSize(LONGLONG bytes, BSTR* p) override;
+	STDMETHODIMP FormatFileSize(__int64 bytes, BSTR* p) override;
 	STDMETHODIMP GetAlbumArtAsync(UINT window_id, IMetadbHandle* handle, UINT art_id, VARIANT_BOOL need_stub, VARIANT_BOOL only_embed, VARIANT_BOOL no_load) override;
 	STDMETHODIMP GetAlbumArtEmbedded(BSTR rawpath, UINT art_id, IGdiBitmap** pp) override;
 	STDMETHODIMP GetAlbumArtV2(IMetadbHandle* handle, UINT art_id, VARIANT_BOOL need_stub, IGdiBitmap** pp) override;
-	STDMETHODIMP GetFileSize(BSTR filename, LONGLONG* p) override;
+	STDMETHODIMP GetFileSize(BSTR filename, __int64* p) override;
 	STDMETHODIMP GetSysColour(UINT index, int* p) override;
 	STDMETHODIMP GetSystemMetrics(UINT index, int* p) override;
 	STDMETHODIMP Glob(BSTR pattern, UINT exc_mask, UINT inc_mask, VARIANT* p) override;

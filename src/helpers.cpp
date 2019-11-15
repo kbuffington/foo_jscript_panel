@@ -194,13 +194,13 @@ namespace helpers
 
 					if (group_ptr->cast(group_popup_ptr))
 					{
-						pfc::string8_fast temp;
-						group_popup_ptr->get_display_string(temp);
-						if (temp.get_length())
+						pfc::string8_fast str;
+						group_popup_ptr->get_display_string(str);
+						if (str.get_length())
 						{
-							temp.add_char('/');
-							temp.add_string(path);
-							path = temp;
+							str.add_char('/');
+							str.add_string(path);
+							path = str;
 						}
 					}
 					parent = group_ptr->get_parent();

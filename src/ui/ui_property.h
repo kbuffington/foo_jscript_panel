@@ -7,7 +7,6 @@ class CDialogProperty : public CDialogImpl<CDialogProperty>
 {
 public:
 	CDialogProperty(panel_window* p_parent);
-	~CDialogProperty();
 
 	BEGIN_MSG_MAP(CDialogProperty)
 		CHAIN_MSG_MAP_MEMBER(m_resizer)

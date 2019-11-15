@@ -77,7 +77,7 @@ STDMETHODIMP GdiGraphics::CalcTextWidth(BSTR str, IGdiFont* font, UINT* p)
 	return S_OK;
 }
 
-STDMETHODIMP GdiGraphics::DrawEllipse(float x, float y, float w, float h, float line_width, LONGLONG colour)
+STDMETHODIMP GdiGraphics::DrawEllipse(float x, float y, float w, float h, float line_width, __int64 colour)
 {
 	if (!m_ptr) return E_POINTER;
 
@@ -128,7 +128,7 @@ STDMETHODIMP GdiGraphics::DrawImage(IGdiBitmap* image, float dstX, float dstY, f
 	return S_OK;
 }
 
-STDMETHODIMP GdiGraphics::DrawLine(float x1, float y1, float x2, float y2, float line_width, LONGLONG colour)
+STDMETHODIMP GdiGraphics::DrawLine(float x1, float y1, float x2, float y2, float line_width, __int64 colour)
 {
 	if (!m_ptr) return E_POINTER;
 
@@ -137,7 +137,7 @@ STDMETHODIMP GdiGraphics::DrawLine(float x1, float y1, float x2, float y2, float
 	return S_OK;
 }
 
-STDMETHODIMP GdiGraphics::DrawPolygon(LONGLONG colour, float line_width, VARIANT points)
+STDMETHODIMP GdiGraphics::DrawPolygon(__int64 colour, float line_width, VARIANT points)
 {
 	if (!m_ptr) return E_POINTER;
 
@@ -150,7 +150,7 @@ STDMETHODIMP GdiGraphics::DrawPolygon(LONGLONG colour, float line_width, VARIANT
 	return S_OK;
 }
 
-STDMETHODIMP GdiGraphics::DrawRect(float x, float y, float w, float h, float line_width, LONGLONG colour)
+STDMETHODIMP GdiGraphics::DrawRect(float x, float y, float w, float h, float line_width, __int64 colour)
 {
 	if (!m_ptr) return E_POINTER;
 
@@ -159,7 +159,7 @@ STDMETHODIMP GdiGraphics::DrawRect(float x, float y, float w, float h, float lin
 	return S_OK;
 }
 
-STDMETHODIMP GdiGraphics::DrawRoundRect(float x, float y, float w, float h, float arc_width, float arc_height, float line_width, LONGLONG colour)
+STDMETHODIMP GdiGraphics::DrawRoundRect(float x, float y, float w, float h, float arc_width, float arc_height, float line_width, __int64 colour)
 {
 	if (!m_ptr) return E_POINTER;
 
@@ -175,7 +175,7 @@ STDMETHODIMP GdiGraphics::DrawRoundRect(float x, float y, float w, float h, floa
 	return S_OK;
 }
 
-STDMETHODIMP GdiGraphics::DrawString(BSTR str, IGdiFont* font, LONGLONG colour, float x, float y, float w, float h, int flags)
+STDMETHODIMP GdiGraphics::DrawString(BSTR str, IGdiFont* font, __int64 colour, float x, float y, float w, float h, int flags)
 {
 	if (!m_ptr) return E_POINTER;
 
@@ -225,7 +225,7 @@ STDMETHODIMP GdiGraphics::EstimateLineWrap(BSTR str, IGdiFont* font, int max_wid
 	return S_OK;
 }
 
-STDMETHODIMP GdiGraphics::FillEllipse(float x, float y, float w, float h, LONGLONG colour)
+STDMETHODIMP GdiGraphics::FillEllipse(float x, float y, float w, float h, __int64 colour)
 {
 	if (!m_ptr) return E_POINTER;
 
@@ -234,7 +234,7 @@ STDMETHODIMP GdiGraphics::FillEllipse(float x, float y, float w, float h, LONGLO
 	return S_OK;
 }
 
-STDMETHODIMP GdiGraphics::FillGradRect(float x, float y, float w, float h, float angle, LONGLONG colour1, LONGLONG colour2, float focus)
+STDMETHODIMP GdiGraphics::FillGradRect(float x, float y, float w, float h, float angle, __int64 colour1, __int64 colour2, float focus)
 {
 	if (!m_ptr) return E_POINTER;
 
@@ -245,7 +245,7 @@ STDMETHODIMP GdiGraphics::FillGradRect(float x, float y, float w, float h, float
 	return S_OK;
 }
 
-STDMETHODIMP GdiGraphics::FillPolygon(LONGLONG colour, int fillmode, VARIANT points)
+STDMETHODIMP GdiGraphics::FillPolygon(__int64 colour, int fillmode, VARIANT points)
 {
 	if (!m_ptr) return E_POINTER;
 
@@ -258,7 +258,7 @@ STDMETHODIMP GdiGraphics::FillPolygon(LONGLONG colour, int fillmode, VARIANT poi
 	return S_OK;
 }
 
-STDMETHODIMP GdiGraphics::FillRoundRect(float x, float y, float w, float h, float arc_width, float arc_height, LONGLONG colour)
+STDMETHODIMP GdiGraphics::FillRoundRect(float x, float y, float w, float h, float arc_width, float arc_height, __int64 colour)
 {
 	if (!m_ptr) return E_POINTER;
 
@@ -272,7 +272,7 @@ STDMETHODIMP GdiGraphics::FillRoundRect(float x, float y, float w, float h, floa
 	return S_OK;
 }
 
-STDMETHODIMP GdiGraphics::FillSolidRect(float x, float y, float w, float h, LONGLONG colour)
+STDMETHODIMP GdiGraphics::FillSolidRect(float x, float y, float w, float h, __int64 colour)
 {
 	if (!m_ptr) return E_POINTER;
 
@@ -318,7 +318,7 @@ STDMETHODIMP GdiGraphics::GdiDrawBitmap(IGdiRawBitmap* bitmap, int dstX, int dst
 	return S_OK;
 }
 
-STDMETHODIMP GdiGraphics::GdiDrawText(BSTR str, IGdiFont* font, LONGLONG colour, int x, int y, int w, int h, int format)
+STDMETHODIMP GdiGraphics::GdiDrawText(BSTR str, IGdiFont* font, __int64 colour, int x, int y, int w, int h, int format)
 {
 	if (!m_ptr) return E_POINTER;
 	if (format & DT_MODIFYSTRING) return E_INVALIDARG;

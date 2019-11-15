@@ -89,7 +89,7 @@ STDMETHODIMP Utils::FormatDuration(double seconds, BSTR* p)
 	return S_OK;
 }
 
-STDMETHODIMP Utils::FormatFileSize(LONGLONG bytes, BSTR* p)
+STDMETHODIMP Utils::FormatFileSize(__int64 bytes, BSTR* p)
 {
 	if (!p) return E_POINTER;
 
@@ -128,7 +128,7 @@ STDMETHODIMP Utils::GetAlbumArtV2(IMetadbHandle* handle, UINT art_id, VARIANT_BO
 	return S_OK;
 }
 
-STDMETHODIMP Utils::GetFileSize(BSTR path, LONGLONG* p)
+STDMETHODIMP Utils::GetFileSize(BSTR path, __int64* p)
 {
 	if (!p) return E_POINTER;
 

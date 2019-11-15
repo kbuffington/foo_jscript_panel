@@ -23,7 +23,7 @@ public:
 	STDMETHODIMP SetLoved(UINT loved) override;
 	STDMETHODIMP SetPlaycount(UINT playcount) override;
 	STDMETHODIMP SetRating(UINT rating) override;
-	STDMETHODIMP get_FileSize(LONGLONG* p) override;
+	STDMETHODIMP get_FileSize(__int64* p) override;
 	STDMETHODIMP get_Length(double* p) override;
 	STDMETHODIMP get_Path(BSTR* p) override;
 	STDMETHODIMP get_RawPath(BSTR* p) override;
