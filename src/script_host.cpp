@@ -6,7 +6,7 @@
 
 using id_name_entry = std::pair<callback_id, const wchar_t*>;
 
-std::vector<id_name_entry> id_names =
+static const std::vector<id_name_entry> id_names =
 {
 	DEFINE_ID_NAME_ENTRY(on_always_on_top_changed),
 	DEFINE_ID_NAME_ENTRY(on_char),

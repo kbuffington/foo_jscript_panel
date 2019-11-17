@@ -44,7 +44,8 @@ namespace Gdiplus
 #undef SubclassWindow
 #endif
 
-#include "component_defines.h"
+#include "foo_jscript_panel.h"
+#include "callback_id.h"
 #include "guids.h"
 
 using namespace pfc::stringcvt;
