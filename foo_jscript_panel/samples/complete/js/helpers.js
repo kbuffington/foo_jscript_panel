@@ -418,7 +418,7 @@ _.mixin({
 		}
 	},
 	open : function (file) {
-		return utils.ReadTextFile(file);
+		return utils.ReadUTF8(file);
 	},
 	p : function (property, default_) {
 		this.set = function (value) {

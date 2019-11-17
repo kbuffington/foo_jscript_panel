@@ -27,8 +27,7 @@ function SimpleButton(x, y, w, h, text, fonClick, state) {
 	this.draw = function (gr) {
 		if (this.state == ButtonStates.hide) return;
 		
-		switch (this.state)
-		{
+		switch (this.state) {
 		case ButtonStates.normal:
 			g_theme.SetPartAndStateId(1, 1);
 			break;
