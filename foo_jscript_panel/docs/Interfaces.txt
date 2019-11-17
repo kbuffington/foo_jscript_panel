@@ -1213,6 +1213,13 @@ interface IUtils {
 		var text = utils.ReadTextFile("E:\\some text file.txt");
 		*/
 
+		utils.ReadUTF8(filename); (string)
+		/*
+		It's preferable to use this when you know the file is UTF8 encoded... such as
+		ones written by "utils.WriteTextFile". Continue to use "utils.ReadTextFile"
+		when you're unsure of the source.
+		*/
+
 		utils.TimestampToDateString(ts); (string)
 		/*
 		The timestamp should be the number of seconds since 00:00:00 Thursday, 1 January 1970 UTC.

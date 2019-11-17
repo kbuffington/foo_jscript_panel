@@ -375,6 +375,14 @@ STDMETHODIMP Utils::ReadTextFile(BSTR filename, UINT codepage, BSTR* p)
 	return S_OK;
 }
 
+STDMETHODIMP Utils::ReadUTF8(BSTR filename, BSTR* p)
+{
+	if (!p) return E_POINTER;
+
+	*p = TO_BSTR(helpers::read_file(string_utf8_from_wide(filename)));
+	return S_OK;
+}
+
 STDMETHODIMP Utils::TimestampToDateString(UINT ts, BSTR* p)
 {
 	if (!p) return E_POINTER;

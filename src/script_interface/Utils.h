@@ -32,6 +32,7 @@ public:
 	STDMETHODIMP PathWildcardMatch(BSTR pattern, BSTR str, VARIANT_BOOL* p) override;
 	STDMETHODIMP ReadINI(BSTR filename, BSTR section, BSTR key, VARIANT defaultval, BSTR* p) override;
 	STDMETHODIMP ReadTextFile(BSTR filename, UINT codepage, BSTR* p) override;
+	STDMETHODIMP ReadUTF8(BSTR filename, BSTR* p) override;
 	STDMETHODIMP TimestampToDateString(UINT ts, BSTR* p) override;
 	STDMETHODIMP WriteINI(BSTR filename, BSTR section, BSTR key, VARIANT val, VARIANT_BOOL* p) override;
 	STDMETHODIMP WriteTextFile(BSTR filename, BSTR content, VARIANT_BOOL* p) override;

@@ -1,3 +1,6 @@
+## v2.3.4
+- Add `utils.ReadUTF8`. Use when you're sure the file is `UTF8`... such as ones written by `utils.WriteTextFile`. Continue to use `utils.ReadTextFile` when the source is unknown.
+
 ## v2.3.3
 - Fix rare crash with `utils.ReadTextFile`.
 
