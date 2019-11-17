@@ -372,7 +372,7 @@ namespace helpers
 		{
 			const char* pSource = reinterpret_cast<const char*>(pAddr);
 
-			if (pfc::is_valid_utf8(pSource))
+			if (detect_charset(string_utf8_from_wide(path)) == CP_UTF8)
 			{
 				const t_size size = estimate_utf8_to_wide_quick(pSource, dwFileSize);
 				content.set_size(size);
@@ -512,7 +512,6 @@ namespace helpers
 			filesystem::g_open_read(io, fileName, fb2k::noAbort);
 			io->read_string_raw(text, fb2k::noAbort);
 			textSize = text.get_length();
-			if (pfc::is_valid_utf8(text)) return 65001;
 		}
 		catch (...)
 		{
@@ -534,6 +533,10 @@ namespace helpers
 		{
 			switch (encodings[1].nCodePage)
 			{
+			case 850:
+			case 65001:
+				codepage = 65001;
+				break;
 			case 932: // shift-jis
 			case 936: // gbk
 			case 949: // korean
