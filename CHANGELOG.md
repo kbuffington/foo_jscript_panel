@@ -1,3 +1,6 @@
+## v2.3.3
+- Fix rare crash with `utils.ReadTextFile`.
+
 ## v2.3.2
 - Add `IMetadbHandleList` `OptimiseFileLayout`. Also takes an optional `minimise` argument. With `minimise` set to `false`, provides the functionality of `Utilities>Optimize file layout` or if `minimise` is `true` then `Utilities>Optimize file layout + minimize file size`. Unlike the context menu versions, there is no prompt.
 - Properly fix `Return`/`Tab` key usage in the `Find`/`Replace` dialog.
