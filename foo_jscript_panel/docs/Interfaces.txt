@@ -1215,9 +1215,9 @@ interface IUtils {
 
 		utils.ReadUTF8(filename); (string)
 		/*
-		It's preferable to use this when you know the file is UTF8 encoded... such as
+		It's preferable to use this when you know the file is "UTF8" encoded... such as
 		ones written by "utils.WriteTextFile". Continue to use "utils.ReadTextFile"
-		when you're unsure of the source.
+		if the files are "UCS2-LE", "ANSI" or unknown.
 		*/
 
 		utils.TimestampToDateString(ts); (string)

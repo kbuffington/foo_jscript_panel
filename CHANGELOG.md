@@ -1,3 +1,6 @@
+## v2.3.3.1
+- Add `utils.ReadUTF8`. It's preferable to use this when you know the file is `UTF8` encoded... such as ones written by `utils.WriteTextFile`. Continue to use `utils.ReadTextFile` if the files are `UCS2-LE`, `ANSI` or unknown.
+
 ## v2.3.3
 - Fix rare crash with `utils.ReadTextFile`.
 
