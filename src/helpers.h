@@ -40,7 +40,6 @@ namespace helpers
 	bool execute_mainmenu_command_recur(const char* p_command, pfc::string8_fast path, mainmenu_node::ptr node);
 	bool get_encoder_clsid(const wchar_t* format, CLSID* pClsid);
 	bool is_wrap_char(wchar_t current, wchar_t next);
-	bool read_file_wide(t_size codepage, const wchar_t* path, pfc::array_t<wchar_t>& content);
 	bool supports_chakra();
 	bool write_file(const char* path, const pfc::string8_fast& content);
 	const GUID convert_artid_to_guid(t_size art_id);
@@ -57,6 +56,7 @@ namespace helpers
 	void estimate_line_wrap_recur(HDC hdc, const wchar_t* text, int len, int max_width, wrapped_item_list& out);
 	void list_files(const char* path, bool recur, pfc::string_list_impl& out);
 	void list_folders(const char* path, pfc::string_list_impl& out);
+	void read_file_wide(t_size codepage, const wchar_t* path, std::vector<wchar_t>& content);
 	wchar_t* make_sort_string(const char* in);
 
 	template <class T>

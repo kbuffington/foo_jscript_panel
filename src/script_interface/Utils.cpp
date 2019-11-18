@@ -363,15 +363,10 @@ STDMETHODIMP Utils::ReadTextFile(BSTR filename, UINT codepage, BSTR* p)
 {
 	if (!p) return E_POINTER;
 
-	pfc::array_t<wchar_t> content;
-	if (helpers::read_file_wide(codepage, filename, content))
-	{
-		*p = SysAllocString(content.get_ptr());
-	}
-	else
-	{
-		*p = SysAllocString(L"");
-	}
+	std::vector<wchar_t> content;
+	helpers::read_file_wide(codepage, filename, content);
+	if (content.empty()) content.emplace_back(0);
+	*p = SysAllocString(content.data());
 	return S_OK;
 }
 
