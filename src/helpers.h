@@ -51,7 +51,7 @@ namespace helpers
 	pfc::string8_fast get_resource_text(int id);
 	pfc::string8_fast read_file(const char* path);
 	str_list split_string(const std::string& str, const std::string& delims);
-	t_size detect_charset(const char* fileName);
+	t_size guess_codepage(const pfc::string8_fast& content);
 	void estimate_line_wrap(HDC hdc, const wchar_t* text, int max_width, wrapped_item_list& out);
 	void estimate_line_wrap_recur(HDC hdc, const wchar_t* text, int len, int max_width, wrapped_item_list& out);
 	void list_files(const char* path, bool recur, pfc::string_list_impl& out);

@@ -10,7 +10,7 @@ STDMETHODIMP Utils::Chardet(BSTR filename, UINT* p)
 {
 	if (!p) return E_POINTER;
 
-	*p = helpers::detect_charset(string_utf8_from_wide(filename));
+	*p = helpers::guess_codepage(helpers::read_file(string_utf8_from_wide(filename)));
 	return S_OK;
 }
 

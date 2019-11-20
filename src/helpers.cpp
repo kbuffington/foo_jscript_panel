@@ -424,22 +424,10 @@ namespace helpers
 		return output;
 	}
 
-	t_size detect_charset(const char* fileName)
+	t_size guess_codepage(const pfc::string8_fast& content)
 	{
-		pfc::string8_fast text;
-		int textSize = 0;
-
-		try
-		{
-			file_ptr io;
-			filesystem::g_open_read(io, fileName, fb2k::noAbort);
-			io->read_string_raw(text, fb2k::noAbort);
-			textSize = text.get_length();
-		}
-		catch (...)
-		{
-			return 0;
-		}
+		int size = static_cast<int>(content.get_length());
+		if (size == 0) return 0;
 
 		constexpr int maxEncodings = 2;
 		int encodingCount = maxEncodings;
@@ -448,18 +436,17 @@ namespace helpers
 		_COM_SMARTPTR_TYPEDEF(IMultiLanguage2, IID_IMultiLanguage2);
 		IMultiLanguage2Ptr lang;
 		if (FAILED(lang.CreateInstance(CLSID_CMultiLanguage, nullptr, CLSCTX_INPROC_SERVER))) return 0;
-		if (FAILED(lang->DetectInputCodepage(MLDETECTCP_NONE, 0, const_cast<char*>(text.get_ptr()), &textSize, encodings, &encodingCount))) return 0;
+		if (FAILED(lang->DetectInputCodepage(MLDETECTCP_NONE, 0, const_cast<char*>(content.get_ptr()), &size, encodings, &encodingCount))) return 0;
 
 		t_size codepage = encodings[0].nCodePage;
 
-		if (encodingCount == 2 && encodings[0].nCodePage == 1252)
+		if (encodingCount == 2 && codepage == 1252)
 		{
 			switch (encodings[1].nCodePage)
 			{
 			case 850:
-			case 65001:
-				codepage = 65001;
-				break;
+			case CP_UTF8:
+				return CP_UTF8;
 			case 932: // shift-jis
 			case 936: // gbk
 			case 949: // korean
@@ -469,12 +456,7 @@ namespace helpers
 			}
 		}
 
-		// ASCII?
-		if (codepage == 20127)
-		{
-			codepage = 0;
-		}
-
+		if (codepage == 20127) return 0; // ASCII
 		return codepage;
 	}
 
@@ -641,9 +623,9 @@ namespace helpers
 		}
 		else
 		{
-			const char* pSource = reinterpret_cast<const char*>(pAddr);
+			pfc::string8_fast pSource(reinterpret_cast<const char*>(pAddr), dwFileSize);
 
-			if (detect_charset(string_utf8_from_wide(path)) == CP_UTF8)
+			if (guess_codepage(pSource) == CP_UTF8)
 			{
 				const t_size size = estimate_utf8_to_wide_quick(pSource, dwFileSize);
 				content.resize(size);
