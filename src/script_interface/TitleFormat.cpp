@@ -52,11 +52,11 @@ STDMETHODIMP TitleFormat::EvalWithMetadbs(IMetadbHandleList* handles, VARIANT* p
 	metadb_handle_list* handles_ptr = nullptr;
 	GET_PTR(handles, handles_ptr)
 
-	const LONG count = handles_ptr->get_count();
-	helpers::com_array helper;
+	const t_size count = handles_ptr->get_count();
+	com_array helper;
 	if (!helper.create(count)) return E_OUTOFMEMORY;
 
-	for (LONG i = 0; i < count; ++i)
+	for (t_size i = 0; i < count; ++i)
 	{
 		pfc::string8_fast str;
 		handles_ptr->get_item(i)->format_title(nullptr, str, m_obj, nullptr);

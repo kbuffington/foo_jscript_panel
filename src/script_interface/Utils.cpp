@@ -190,11 +190,10 @@ STDMETHODIMP Utils::Glob(BSTR pattern, UINT exc_mask, UINT inc_mask, VARIANT* p)
 	delete ff;
 	ff = nullptr;
 
-	helpers::com_array helper;
-
+	com_array helper;
 	if (!helper.create(files.get_count())) return E_OUTOFMEMORY;
 
-	for (LONG i = 0; i < helper.get_count(); ++i)
+	for (t_size i = 0; i < files.get_count(); ++i)
 	{
 		_variant_t var;
 		var.vt = VT_BSTR;
@@ -271,10 +270,11 @@ STDMETHODIMP Utils::ListFiles(BSTR folder, VARIANT_BOOL recur, VARIANT* p)
 	pfc::string_list_impl list;
 	helpers::list_files(string_utf8_from_wide(folder).get_ptr(), recur != VARIANT_FALSE, list);
 
-	const LONG count = list.get_count();
-	helpers::com_array helper;
+	const t_size count = list.get_count();
+	com_array helper;
 	if (!helper.create(count)) return E_OUTOFMEMORY;
-	for (LONG i = 0; i < count; ++i)
+
+	for (t_size i = 0; i < count; ++i)
 	{
 		_variant_t var;
 		var.vt = VT_BSTR;
@@ -293,10 +293,11 @@ STDMETHODIMP Utils::ListFolders(BSTR folder, VARIANT* p)
 	pfc::string_list_impl list;
 	helpers::list_folders(string_utf8_from_wide(folder).get_ptr(), list);
 
-	const LONG count = list.get_count();
-	helpers::com_array helper;
+	const t_size count = list.get_count();
+	com_array helper;
 	if (!helper.create(count)) return E_OUTOFMEMORY;
-	for (LONG i = 0; i < count; ++i)
+
+	for (t_size i = 0; i < count; ++i)
 	{
 		pfc::string8_fast path = file_path_display(list[i]).get_ptr();
 		path.add_char('\\');

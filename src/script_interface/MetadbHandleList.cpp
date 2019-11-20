@@ -107,11 +107,11 @@ STDMETHODIMP MetadbHandleList::Convert(VARIANT* p)
 {
 	if (!p) return E_POINTER;
 
-	const LONG count = m_handles.get_count();
-	helpers::com_array helper;
+	const t_size count = m_handles.get_count();
+	com_array helper;
 	if (!helper.create(count)) return E_OUTOFMEMORY;
 
-	for (LONG i = 0; i < count; ++i)
+	for (t_size i = 0; i < count; ++i)
 	{
 		_variant_t var;
 		var.vt = VT_DISPATCH;
@@ -138,8 +138,8 @@ STDMETHODIMP MetadbHandleList::GetLibraryRelativePaths(VARIANT* p)
 {
 	if (!p) return E_POINTER;
 
-	const LONG count = m_handles.get_count();
-	helpers::com_array helper;
+	const t_size count = m_handles.get_count();
+	com_array helper;
 	if (!helper.create(count)) return E_OUTOFMEMORY;
 
 	pfc::string8_fastalloc str;
@@ -147,7 +147,7 @@ STDMETHODIMP MetadbHandleList::GetLibraryRelativePaths(VARIANT* p)
 
 	auto api = library_manager::get();
 
-	for (LONG i = 0; i < count; ++i)
+	for (t_size i = 0; i < count; ++i)
 	{
 		metadb_handle_ptr item = m_handles[i];
 		if (!api->get_relative_path(item, str)) str = "";

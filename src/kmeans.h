@@ -126,7 +126,7 @@ public:
 private:
 	int get_nearest_centre_id(const KPoint& point)
 	{
-		double min_dist;
+		double min_dist = 0.0;
 		int cluster_centre_id = 0, it = 0;
 
 		for (const Cluster& cluster : clusters)

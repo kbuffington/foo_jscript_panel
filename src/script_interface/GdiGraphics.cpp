@@ -141,7 +141,7 @@ STDMETHODIMP GdiGraphics::DrawPolygon(__int64 colour, float line_width, VARIANT 
 {
 	if (!m_ptr) return E_POINTER;
 
-	helpers::com_array helper;
+	com_array helper;
 	std::vector<Gdiplus::PointF> point_array;
 	if (!helper.convert(points, point_array)) return E_INVALIDARG;
 
@@ -207,10 +207,11 @@ STDMETHODIMP GdiGraphics::EstimateLineWrap(BSTR str, IGdiFont* font, int max_wid
 
 	m_ptr->ReleaseHDC(dc);
 
-	const LONG count = result.size();
-	helpers::com_array helper;
+	const t_size count = result.size();
+	com_array helper;
 	if (!helper.create(count * 2)) return E_OUTOFMEMORY;
-	for (LONG i = 0; i < count; ++i)
+
+	for (t_size i = 0; i < count; ++i)
 	{
 		_variant_t var1, var2;
 		var1.vt = VT_BSTR;
@@ -249,7 +250,7 @@ STDMETHODIMP GdiGraphics::FillPolygon(__int64 colour, int fillmode, VARIANT poin
 {
 	if (!m_ptr) return E_POINTER;
 
-	helpers::com_array helper;
+	com_array helper;
 	std::vector<Gdiplus::PointF> point_array;
 	if (!helper.convert(points, point_array)) return E_INVALIDARG;
 

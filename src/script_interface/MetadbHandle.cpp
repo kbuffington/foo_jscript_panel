@@ -55,7 +55,7 @@ STDMETHODIMP MetadbHandle::GetAlbumArt(UINT art_id, VARIANT_BOOL need_stub, VARI
 	var2.vt = VT_BSTR;
 	var2.bstrVal = TO_BSTR(image_path);
 
-	helpers::com_array helper;
+	com_array helper;
 	if (!helper.create(2)) return E_OUTOFMEMORY;
 	if (!helper.put_item(0, var1)) return E_OUTOFMEMORY;
 	if (!helper.put_item(1, var2)) return E_OUTOFMEMORY;
