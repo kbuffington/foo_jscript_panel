@@ -39,7 +39,7 @@ STDMETHODIMP PlaybackQueueItem::get_PlaylistIndex(int* p)
 {
 	if (!p) return E_POINTER;
 
-	*p = m_playback_queue_item.m_playlist;
+	*p = TO_INT(m_playback_queue_item.m_playlist);
 	return S_OK;
 }
 
@@ -47,6 +47,6 @@ STDMETHODIMP PlaybackQueueItem::get_PlaylistItemIndex(int* p)
 {
 	if (!p) return E_POINTER;
 
-	*p = m_playback_queue_item.m_item;
+	*p = TO_INT(m_playback_queue_item.m_item);
 	return S_OK;
 }

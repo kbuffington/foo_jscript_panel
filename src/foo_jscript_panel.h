@@ -18,6 +18,7 @@
 
 #define TO_VARIANT_BOOL(v) ((v) ? (VARIANT_TRUE) : (VARIANT_FALSE))
 #define TO_BSTR(str) SysAllocString(string_wide_from_utf8_fast(str))
+#define TO_INT(num) num == SIZE_MAX ? -1 : static_cast<int>(num)
 
 #define GET_PTR(X, Y) \
 	X->get__ptr(reinterpret_cast<void**>(&Y)); \

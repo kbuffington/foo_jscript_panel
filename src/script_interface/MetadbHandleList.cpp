@@ -75,7 +75,7 @@ STDMETHODIMP MetadbHandleList::BSearch(IMetadbHandle* handle, int* p)
 	metadb_handle* ptr = nullptr;
 	GET_PTR(handle, ptr)
 
-	*p = m_handles.bsearch_by_pointer(ptr);
+	*p = TO_INT(m_handles.bsearch_by_pointer(ptr));
 	return S_OK;
 }
 
@@ -130,7 +130,7 @@ STDMETHODIMP MetadbHandleList::Find(IMetadbHandle* handle, int* p)
 	metadb_handle* ptr = nullptr;
 	GET_PTR(handle, ptr)
 
-	*p = m_handles.find_item(ptr);
+	*p = TO_INT(m_handles.find_item(ptr));
 	return S_OK;
 }
 

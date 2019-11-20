@@ -74,7 +74,7 @@ STDMETHODIMP Plman::CreateAutoPlaylist(UINT playlistIndex, BSTR name, BSTR query
 	t_size pos;
 	CreatePlaylist(playlistIndex, name, &pos);
 	autoplaylist_manager::get()->add_client_simple(uquery, string_utf8_from_wide(sort), pos, flags);
-	*p = pos;
+	*p = TO_INT(pos);
 	return S_OK;
 }
 
@@ -168,7 +168,7 @@ STDMETHODIMP Plman::FindPlaybackQueueItemIndex(IMetadbHandle* handle, UINT playl
 	item.m_handle = ptr;
 	item.m_playlist = playlistIndex;
 	item.m_item = playlistItemIndex;
-	*p = playlist_manager::get()->queue_find_index(item);
+	*p = TO_INT(playlist_manager::get()->queue_find_index(item));
 	return S_OK;
 }
 
@@ -176,7 +176,7 @@ STDMETHODIMP Plman::FindPlaylist(BSTR name, int* p)
 {
 	if (!p) return E_POINTER;
 
-	*p = playlist_manager::get()->find_playlist(string_utf8_from_wide(name));
+	*p = TO_INT(playlist_manager::get()->find_playlist(string_utf8_from_wide(name)));
 	return S_OK;
 }
 
@@ -241,7 +241,7 @@ STDMETHODIMP Plman::GetPlaylistFocusItemIndex(UINT playlistIndex, int* p)
 {
 	if (!p) return E_POINTER;
 
-	*p = playlist_manager::get()->playlist_get_focus_item(playlistIndex);
+	*p = TO_INT(playlist_manager::get()->playlist_get_focus_item(playlistIndex));
 	return S_OK;
 }
 
@@ -606,7 +606,7 @@ STDMETHODIMP Plman::get_ActivePlaylist(int* p)
 {
 	if (!p) return E_POINTER;
 
-	*p = playlist_manager::get()->get_active_playlist();
+	*p = TO_INT(playlist_manager::get()->get_active_playlist());
 	return S_OK;
 }
 
@@ -622,7 +622,7 @@ STDMETHODIMP Plman::get_PlayingPlaylist(int* p)
 {
 	if (!p) return E_POINTER;
 
-	*p = playlist_manager::get()->get_playing_playlist();
+	*p = TO_INT(playlist_manager::get()->get_playing_playlist());
 	return S_OK;
 }
 
