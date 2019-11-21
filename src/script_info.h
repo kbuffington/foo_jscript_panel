@@ -61,6 +61,6 @@ struct script_info
 	std::string name;
 	std::string version;
 	std::string author;
-	str_list imports;
+	str_vec imports;
 	t_size id;
 };

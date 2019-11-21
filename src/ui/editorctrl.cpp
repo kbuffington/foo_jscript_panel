@@ -661,12 +661,12 @@ std::string CScriptEditorCtrl::GetNearestWords(const char* wordStart, t_size sea
 	return words;
 }
 
-str_list CScriptEditorCtrl::GetLinePartsInStyle(Line line, const StyleAndWords& saw)
+str_vec CScriptEditorCtrl::GetLinePartsInStyle(Line line, const StyleAndWords& saw)
 {
 	const auto thisLineStart = PositionFromLine(line);
 	const auto nextLineStart = PositionFromLine(line + 1);
 	const bool separateCharacters = saw.IsSingleChar();
-	str_list sv;
+	str_vec sv;
 	std::string s;
 
 	for (auto pos = thisLineStart; pos < nextLineStart; ++pos)

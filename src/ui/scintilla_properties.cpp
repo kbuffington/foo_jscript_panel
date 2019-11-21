@@ -45,7 +45,7 @@ void scintilla_properties::get_data_raw(stream_writer* p_stream, abort_callback&
 
 void scintilla_properties::import(const char* content)
 {
-	str_list lines = helpers::split_string(content, "\r\n");
+	str_vec lines = helpers::split_string(content, "\r\n");
 	simple_map data_map;
 	for (const auto& line : lines)
 	{

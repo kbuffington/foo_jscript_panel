@@ -50,7 +50,7 @@ namespace helpers
 	pfc::string8_fast get_profile_path();
 	pfc::string8_fast get_resource_text(int id);
 	pfc::string8_fast read_file(const char* path);
-	str_list split_string(const std::string& str, const std::string& delims);
+	str_vec split_string(const std::string& str, const std::string& delims);
 	t_size guess_codepage(const pfc::string8_fast& content);
 	void estimate_line_wrap(HDC hdc, const wchar_t* text, int max_width, wrapped_item_list& out);
 	void estimate_line_wrap_recur(HDC hdc, const wchar_t* text, int len, int max_width, wrapped_item_list& out);
@@ -294,7 +294,7 @@ namespace helpers
 	class js_file_info_filter : public file_info_filter
 	{
 	public:
-		using tag = std::pair<std::string, str_list>;
+		using tag = std::pair<std::string, str_vec>;
 
 		js_file_info_filter(const std::vector<tag>& tags) : m_tags(tags) {}
 
@@ -311,9 +311,9 @@ namespace helpers
 			return true;
 		}
 
-		static str_list get_values(json j)
+		static str_vec get_values(json j)
 		{
-			str_list values;
+			str_vec values;
 			if (j.is_array())
 			{
 				for (auto& v : j)

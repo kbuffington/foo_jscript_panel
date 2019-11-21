@@ -161,7 +161,7 @@ void CDialogConf::BuildMenu()
 			uAppendMenu(sub, MF_STRING, ID_SAMPLES_BEGIN + m_samples.get_count() - 1, display);
 		}
 
-		str_list path_split = helpers::split_string(folder.get_ptr(), "\\");
+		str_vec path_split = helpers::split_string(folder.get_ptr(), "\\");
 		uAppendMenu(samples, MF_STRING | MF_POPUP, reinterpret_cast<UINT_PTR>(sub), path_split[path_split.size() - 1].c_str());
 	}
 

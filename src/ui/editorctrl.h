@@ -81,7 +81,7 @@ private:
 	std::string GetCurrentLine();
 	std::string GetNearestWord(const char* wordStart, t_size searchLen, int wordIndex);
 	std::string GetNearestWords(const char* wordStart, t_size searchLen);
-	str_list GetLinePartsInStyle(Line line, const StyleAndWords& saw);
+	str_vec GetLinePartsInStyle(Line line, const StyleAndWords& saw);
 	void AutoMarginWidth();
 	void AutomaticIndentation(int ch);
 	void ContinueCallTip();

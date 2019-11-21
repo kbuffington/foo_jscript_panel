@@ -49,4 +49,4 @@ namespace Gdiplus
 #include "guids.h"
 
 using namespace pfc::stringcvt;
-using str_list = std::vector<std::string>;
+using str_vec = std::vector<std::string>;

@@ -17,7 +17,7 @@ std::vector<panel_manager::api_item> panel_manager::get_apis()
 	{
 		std::string content = helpers::get_resource_text(IDR_API).get_ptr();
 
-		str_list lines = helpers::split_string(content, "\r\n");
+		str_vec lines = helpers::split_string(content, "\r\n");
 		for (const auto& line : lines)
 		{
 			if (line.empty()) continue;

@@ -490,7 +490,7 @@ void script_host::ProcessScriptInfo(script_info& info)
 	}
 
 	std::string pre = source.substr(start + 21, end - start - 21);
-	str_list lines = helpers::split_string(pre, "\r\n");
+	str_vec lines = helpers::split_string(pre, "\r\n");
 
 	for (const std::string& line : lines)
 	{

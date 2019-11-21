@@ -408,9 +408,9 @@ namespace helpers
 		return content;
 	}
 
-	str_list split_string(const std::string& str, const std::string& delims)
+	str_vec split_string(const std::string& str, const std::string& delims)
 	{
-		str_list output;
+		str_vec output;
 		t_size first = 0;
 		while (first < str.size())
 		{
