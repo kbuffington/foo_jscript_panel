@@ -53,18 +53,18 @@ STDMETHODIMP TitleFormat::EvalWithMetadbs(IMetadbHandleList* handles, VARIANT* p
 	GET_PTR(handles, handles_ptr)
 
 	const t_size count = handles_ptr->get_count();
-	com_array helper;
-	if (!helper.create(count)) return E_OUTOFMEMORY;
-
+	
+	str_vec strings;
 	for (t_size i = 0; i < count; ++i)
 	{
 		pfc::string8_fast str;
 		handles_ptr->get_item(i)->format_title(nullptr, str, m_obj, nullptr);
-		_variant_t var;
-		var.vt = VT_BSTR;
-		var.bstrVal = TO_BSTR(str);
-		if (!helper.put_item(i, var)) return E_OUTOFMEMORY;
+		strings.emplace_back(str.get_ptr());
 	}
+
+	com_array helper;
+	if (!helper.create(strings)) return E_OUTOFMEMORY;
+
 	p->vt = VT_ARRAY | VT_VARIANT;
 	p->parray = helper.get_ptr();
 	return S_OK;

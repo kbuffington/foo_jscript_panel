@@ -170,7 +170,7 @@ STDMETHODIMP Utils::Glob(BSTR pattern, UINT exc_mask, UINT inc_mask, VARIANT* p)
 	pfc::string8_fast dir(path.get_ptr(), fn - path.get_ptr());
 	puFindFile ff = uFindFirstFile(path.get_ptr());
 
-	pfc::string_list_impl files;
+	str_vec strings;
 
 	if (ff)
 	{
@@ -178,11 +178,11 @@ STDMETHODIMP Utils::Glob(BSTR pattern, UINT exc_mask, UINT inc_mask, VARIANT* p)
 		{
 			const DWORD attr = ff->GetAttributes();
 
-			if ((attr& inc_mask) && !(attr& exc_mask))
+			if ((attr & inc_mask) && !(attr & exc_mask))
 			{
 				pfc::string8_fast fullpath = dir;
 				fullpath.add_string(ff->GetFileName());
-				files.add_item(fullpath.get_ptr());
+				strings.emplace_back(fullpath.get_ptr());
 			}
 		} while (ff->FindNext());
 	}
@@ -191,16 +191,7 @@ STDMETHODIMP Utils::Glob(BSTR pattern, UINT exc_mask, UINT inc_mask, VARIANT* p)
 	ff = nullptr;
 
 	com_array helper;
-	if (!helper.create(files.get_count())) return E_OUTOFMEMORY;
-
-	for (t_size i = 0; i < files.get_count(); ++i)
-	{
-		_variant_t var;
-		var.vt = VT_BSTR;
-		var.bstrVal = TO_BSTR(files[i]);
-
-		if (!helper.put_item(i, var)) return E_OUTOFMEMORY;
-	}
+	if (!helper.create(strings)) return E_OUTOFMEMORY;
 
 	p->vt = VT_ARRAY | VT_VARIANT;
 	p->parray = helper.get_ptr();
@@ -271,16 +262,16 @@ STDMETHODIMP Utils::ListFiles(BSTR folder, VARIANT_BOOL recur, VARIANT* p)
 	helpers::list_files(string_utf8_from_wide(folder).get_ptr(), recur != VARIANT_FALSE, list);
 
 	const t_size count = list.get_count();
-	com_array helper;
-	if (!helper.create(count)) return E_OUTOFMEMORY;
 
+	str_vec strings;
 	for (t_size i = 0; i < count; ++i)
 	{
-		_variant_t var;
-		var.vt = VT_BSTR;
-		var.bstrVal = TO_BSTR(file_path_display(list[i]));
-		if (!helper.put_item(i, var)) return E_OUTOFMEMORY;
+		strings.emplace_back(file_path_display(list[i]).get_ptr());
 	}
+
+	com_array helper;
+	if (!helper.create(strings)) return E_OUTOFMEMORY;
+
 	p->vt = VT_ARRAY | VT_VARIANT;
 	p->parray = helper.get_ptr();
 	return S_OK;
@@ -294,19 +285,19 @@ STDMETHODIMP Utils::ListFolders(BSTR folder, VARIANT* p)
 	helpers::list_folders(string_utf8_from_wide(folder).get_ptr(), list);
 
 	const t_size count = list.get_count();
-	com_array helper;
-	if (!helper.create(count)) return E_OUTOFMEMORY;
 
+	str_vec strings;
 	for (t_size i = 0; i < count; ++i)
 	{
 		pfc::string8_fast path = file_path_display(list[i]).get_ptr();
 		path.add_char('\\');
 
-		_variant_t var;
-		var.vt = VT_BSTR;
-		var.bstrVal = TO_BSTR(path);
-		if (!helper.put_item(i, var)) return E_OUTOFMEMORY;
+		strings.emplace_back(path.get_ptr());
 	}
+
+	com_array helper;
+	if (!helper.create(strings)) return E_OUTOFMEMORY;
+
 	p->vt = VT_ARRAY | VT_VARIANT;
 	p->parray = helper.get_ptr();
 	return S_OK;

@@ -363,6 +363,22 @@ public:
 		return m_psa != nullptr;
 	}
 
+	bool create(str_vec strings)
+	{
+		if (!create(strings.size())) return false;
+
+		LONG idx = 0;
+		for (const auto& str : strings)
+		{
+			_variant_t var;
+			var.vt = VT_BSTR;
+			var.bstrVal = TO_BSTR(str.c_str());
+			if (!put_item(idx, var)) return false;
+			idx++;
+		}
+		return true;
+	}
+
 	bool get_item(LONG idx, VARIANT& var, VARTYPE vt)
 	{
 		if (SUCCEEDED(SafeArrayGetElement(m_psa, &idx, &var)))

@@ -138,24 +138,23 @@ STDMETHODIMP MetadbHandleList::GetLibraryRelativePaths(VARIANT* p)
 {
 	if (!p) return E_POINTER;
 
+	auto api = library_manager::get();
 	const t_size count = m_handles.get_count();
-	com_array helper;
-	if (!helper.create(count)) return E_OUTOFMEMORY;
-
+	
 	pfc::string8_fastalloc str;
 	str.prealloc(512);
 
-	auto api = library_manager::get();
-
+	str_vec strings;
 	for (t_size i = 0; i < count; ++i)
 	{
 		metadb_handle_ptr item = m_handles[i];
 		if (!api->get_relative_path(item, str)) str = "";
-		_variant_t var;
-		var.vt = VT_BSTR;
-		var.bstrVal = TO_BSTR(str);
-		if (!helper.put_item(i, var)) return E_OUTOFMEMORY;
+		strings.emplace_back(str.get_ptr());
 	}
+
+	com_array helper;
+	if (!helper.create(strings)) return E_OUTOFMEMORY;
+
 	p->vt = VT_ARRAY | VT_VARIANT;
 	p->parray = helper.get_ptr();
 	return S_OK;
@@ -381,7 +380,7 @@ STDMETHODIMP MetadbHandleList::UpdateFileInfoFromJSON(BSTR str)
 
 				info[i].meta_remove_field(name.c_str());
 
-				for (auto& v : helpers::js_file_info_filter::get_values(value))
+				for (const auto& v : helpers::js_file_info_filter::get_values(value))
 				{
 					info[i].meta_add(name.c_str(), v.c_str());
 				}
