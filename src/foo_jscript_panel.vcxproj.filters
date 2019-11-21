@@ -81,9 +81,6 @@
     <ClInclude Include="ui\ui_input_box.h">
       <Filter>Header Files\ui</Filter>
     </ClInclude>
-    <ClInclude Include="ui\ui_pref.h">
-      <Filter>Header Files\ui</Filter>
-    </ClInclude>
     <ClInclude Include="ui\ui_property.h">
       <Filter>Header Files\ui</Filter>
     </ClInclude>

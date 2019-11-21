@@ -156,10 +156,10 @@ namespace stats
 		}
 	};
 
-	static service_factory_single_t<my_init_stage_callback> g_my_init_stage_callback;
-	static service_factory_single_t<my_initquit> g_my_initquit;
-	static service_factory_single_t<my_metadb_display_field_provider> g_my_metadb_display_field_provider;
-	static service_factory_single_t<my_track_property_provider_v4> g_my_track_property_provider_v4;
+	FB2K_SERVICE_FACTORY(my_init_stage_callback);
+	FB2K_SERVICE_FACTORY(my_initquit);
+	FB2K_SERVICE_FACTORY(my_metadb_display_field_provider);
+	FB2K_SERVICE_FACTORY(my_track_property_provider_v4);
 
 	bool hashHandle(const metadb_handle_ptr& handle, metadb_index_hash& hash)
 	{
