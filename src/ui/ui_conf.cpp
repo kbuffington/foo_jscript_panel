@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "config.h"
 #include "panel_window.h"
 #include "ui_conf.h"
 
@@ -36,14 +37,14 @@ BOOL CDialogConf::OnInitDialog(HWND, LPARAM)
 	uSetWindowText(m_hWnd, m_caption);
 
 	// Apply window placement
-	if (m_parent->m_wndpl.length == 0)
+	if (g_config.m_conf_wndpl.length == 0)
 	{
-		m_parent->m_wndpl.length = sizeof(WINDOWPLACEMENT);
-		memset(&m_parent->m_wndpl, 0, sizeof(WINDOWPLACEMENT));
+		g_config.m_conf_wndpl.length = sizeof(WINDOWPLACEMENT);
+		memset(&g_config.m_conf_wndpl, 0, sizeof(WINDOWPLACEMENT));
 	}
 	else
 	{
-		SetWindowPlacement(&m_parent->m_wndpl);
+		SetWindowPlacement(&g_config.m_conf_wndpl);
 	}
 
 	// Script Engine
@@ -124,9 +125,6 @@ void CDialogConf::Apply()
 	m_parent->m_script_code = buff.data();
 	m_parent->update_script();
 
-	// Window position
-	GetWindowPlacement(&m_parent->m_wndpl);
-
 	// Save point
 	m_editorctrl.SetSavePoint();
 }
@@ -191,6 +189,8 @@ void CDialogConf::BuildMenu()
 
 void CDialogConf::OnCloseCmd(UINT, int nID, HWND)
 {
+	GetWindowPlacement(&g_config.m_conf_wndpl);
+
 	switch (nID)
 	{
 	case IDOK:

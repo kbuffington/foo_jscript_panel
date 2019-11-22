@@ -53,7 +53,7 @@ STDMETHODIMP TitleFormat::EvalWithMetadbs(IMetadbHandleList* handles, VARIANT* p
 	GET_PTR(handles, handles_ptr)
 
 	const t_size count = handles_ptr->get_count();
-	
+
 	str_vec strings;
 	for (t_size i = 0; i < count; ++i)
 	{

@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "config.h"
 #include "ui_property.h"
 
 static const CDialogResizeHelper::Param resize_data[] =
@@ -23,6 +24,17 @@ BOOL CDialogProperty::OnInitDialog(HWND, LPARAM)
 {
 	// Set caption text
 	uSetWindowText(m_hWnd, m_caption);
+
+	// Apply window placement
+	if (g_config.m_property_wndpl.length == 0)
+	{
+		g_config.m_property_wndpl.length = sizeof(WINDOWPLACEMENT);
+		memset(&g_config.m_property_wndpl, 0, sizeof(WINDOWPLACEMENT));
+	}
+	else
+	{
+		SetWindowPlacement(&g_config.m_property_wndpl);
+	}
 
 	m_clear_btn = GetDlgItem(IDC_BTN_CLEAR);
 	m_export_btn = GetDlgItem(IDC_BTN_EXPORT);
@@ -148,6 +160,8 @@ void CDialogProperty::OnClearBnClicked(UINT, int, HWND)
 
 void CDialogProperty::OnCloseCmd(UINT, int nID, HWND)
 {
+	GetWindowPlacement(&g_config.m_property_wndpl);
+
 	switch (nID)
 	{
 	case IDOK:

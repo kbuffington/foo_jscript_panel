@@ -1,7 +1,7 @@
 #include "stdafx.h"
-#include "scintilla_properties.h"
+#include "config.h"
 
-static const std::vector<scintilla_properties::simple_key_val> init_table =
+static const std::vector<config::simple_key_val> init_table =
 {
 	{"style.default", "font:Courier New,size:10"},
 	{"style.comment", "fore:#008000"},
@@ -22,14 +22,14 @@ static const std::vector<scintilla_properties::simple_key_val> init_table =
 	{"style.caret.line.back.alpha", "256"}
 };
 
-scintilla_properties g_scintilla_properties(jsp_guids::scintilla_properties);
+config g_config(jsp_guids::config);
 
-scintilla_properties::scintilla_properties(const GUID& p_guid) : cfg_var(p_guid)
+config::config(const GUID& p_guid) : cfg_var(p_guid), m_conf_wndpl{}, m_property_wndpl{}
 {
 	init_data();
 }
 
-void scintilla_properties::get_data_raw(stream_writer* p_stream, abort_callback& p_abort)
+void config::get_data_raw(stream_writer* p_stream, abort_callback& p_abort)
 {
 	try
 	{
@@ -39,11 +39,13 @@ void scintilla_properties::get_data_raw(stream_writer* p_stream, abort_callback&
 			p_stream->write_string(key, p_abort);
 			p_stream->write_string(value, p_abort);
 		}
+		p_stream->write_object(&m_conf_wndpl, sizeof(WINDOWPLACEMENT), p_abort);
+		p_stream->write_object(&m_property_wndpl, sizeof(WINDOWPLACEMENT), p_abort);
 	}
 	catch (...) {}
 }
 
-void scintilla_properties::import(const char* content)
+void config::import(const char* content)
 {
 	str_vec lines = helpers::split_string(content, "\r\n");
 	simple_map data_map;
@@ -60,17 +62,17 @@ void scintilla_properties::import(const char* content)
 	merge_data(data_map);
 }
 
-void scintilla_properties::init_data()
+void config::init_data()
 {
 	m_data = init_table;
 }
 
-void scintilla_properties::load_preset(t_size idx)
+void config::load_preset(t_size idx)
 {
 	import(helpers::get_resource_text(idx));
 }
 
-void scintilla_properties::merge_data(const simple_map& data_map)
+void config::merge_data(const simple_map& data_map)
 {
 	for (auto& [key, value] : m_data)
 	{
@@ -81,7 +83,7 @@ void scintilla_properties::merge_data(const simple_map& data_map)
 	}
 }
 
-void scintilla_properties::set_data_raw(stream_reader* p_stream, t_size p_sizehint, abort_callback& p_abort)
+void config::set_data_raw(stream_reader* p_stream, t_size p_sizehint, abort_callback& p_abort)
 {
 	simple_map data_map;
 	pfc::string8_fast key, value;
@@ -96,6 +98,14 @@ void scintilla_properties::set_data_raw(stream_reader* p_stream, t_size p_sizehi
 			p_stream->read_string(value, p_abort);
 			data_map.emplace(key, value);
 		}
+
+		try
+		{
+			// this can fail silently on first run upgrading from old version which doesn't have it set yet
+			p_stream->read_object(&m_conf_wndpl, sizeof(WINDOWPLACEMENT), p_abort);
+			p_stream->read_object(&m_property_wndpl, sizeof(WINDOWPLACEMENT), p_abort);
+		}
+		catch (...) {}
 	}
 	catch (...)
 	{

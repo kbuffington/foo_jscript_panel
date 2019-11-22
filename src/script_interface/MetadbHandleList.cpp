@@ -140,7 +140,7 @@ STDMETHODIMP MetadbHandleList::GetLibraryRelativePaths(VARIANT* p)
 
 	auto api = library_manager::get();
 	const t_size count = m_handles.get_count();
-	
+
 	pfc::string8_fastalloc str;
 	str.prealloc(512);
 

@@ -1,3 +1,6 @@
+## v2.3.4 (unreleased)
+- The size and position of the `Properties Window` is now remembered. In addition, the size and position of the `Configuration Window` is now shared as a global setting rather than per panel instance like it was previously.
+
 ## v2.3.3.1
 - Add `utils.ReadUTF8`. It's preferable to use this when you know the file is `UTF8` encoded... such as ones written by `utils.WriteTextFile`. Continue to use `utils.ReadTextFile` if the files are `UCS2-LE`, `ANSI` or unknown.
 

@@ -1,6 +1,6 @@
 #include "stdafx.h"
+#include "config.h"
 #include "editorctrl.h"
-#include "scintilla_properties.h"
 #include "ui_find_replace.h"
 #include "ui_goto.h"
 
@@ -905,7 +905,7 @@ void CScriptEditorCtrl::Init()
 	AutoCSetIgnoreCase(true);
 
 	// Load properties
-	for (const auto& [key, value] : g_scintilla_properties.m_data)
+	for (const auto& [key, value] : g_config.m_data)
 	{
 		SetProperty(key, value);
 	}

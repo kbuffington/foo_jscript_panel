@@ -57,7 +57,6 @@ public:
 
 	POINT m_max_size;
 	POINT m_min_size;
-	WINDOWPLACEMENT m_wndpl;
 	bool m_dragdrop;
 	bool m_grabfocus;
 	bool m_pseudo_transparent;

@@ -69,9 +69,6 @@
     <ClInclude Include="ui\panel_properties.h">
       <Filter>Header Files\ui</Filter>
     </ClInclude>
-    <ClInclude Include="ui\scintilla_properties.h">
-      <Filter>Header Files\ui</Filter>
-    </ClInclude>
     <ClInclude Include="ui\ui_conf.h">
       <Filter>Header Files\ui</Filter>
     </ClInclude>
@@ -192,6 +189,9 @@
     <ClInclude Include="callback_id.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ui\config.h">
+      <Filter>Header Files\ui</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="helpers.cpp">
@@ -243,9 +243,6 @@
       <Filter>Source Files\ui</Filter>
     </ClCompile>
     <ClCompile Include="ui\panel_properties.cpp">
-      <Filter>Source Files\ui</Filter>
-    </ClCompile>
-    <ClCompile Include="ui\scintilla_properties.cpp">
       <Filter>Source Files\ui</Filter>
     </ClCompile>
     <ClCompile Include="ui\ui_conf.cpp">
@@ -340,6 +337,9 @@
     </ClCompile>
     <ClCompile Include="script_interface\Window.cpp">
       <Filter>Source Files\script_interface</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\config.cpp">
+      <Filter>Source Files\ui</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

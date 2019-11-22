@@ -1,10 +1,10 @@
 #pragma once
 #include "helpers.h"
 
-class scintilla_properties : public cfg_var
+class config : public cfg_var
 {
 public:
-	scintilla_properties(const GUID& p_guid);
+	config(const GUID& p_guid);
 
 	struct simple_key_val
 	{
@@ -20,7 +20,8 @@ public:
 	void merge_data(const simple_map& data_map);
 	void set_data_raw(stream_reader* p_stream, t_size p_sizehint, abort_callback& p_abort) override;
 
+	WINDOWPLACEMENT m_conf_wndpl, m_property_wndpl;
 	std::vector<simple_key_val> m_data;
 };
 
-extern scintilla_properties g_scintilla_properties;
+extern config g_config;
