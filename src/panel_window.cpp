@@ -135,7 +135,7 @@ LRESULT panel_window::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 		return 0;
 	case callback_id::on_item_focus_change:
 		{
-			callback_data_scope_releaser<callback_data<t_size, t_size, t_size>> data(wp);
+			callback_data_scope_releaser<callback_data<size_t, size_t, size_t>> data(wp);
 
 			VARIANTARG args[3];
 			args[0].vt = VT_UI4;
@@ -790,7 +790,7 @@ void panel_window::repaint_rect(int x, int y, int w, int h)
 	InvalidateRect(m_hwnd, &rc, FALSE);
 }
 
-void panel_window::script_invoke(callback_id id, VARIANTARG* argv, t_size argc, VARIANT* ret)
+void panel_window::script_invoke(callback_id id, VARIANTARG* argv, size_t argc, VARIANT* ret)
 {
 	m_script_host->InvokeCallback(id, argv, argc, ret);
 }

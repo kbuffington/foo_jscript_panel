@@ -22,7 +22,7 @@ namespace stats
 	class my_init_stage_callback : public init_stage_callback
 	{
 	public:
-		void on_init_stage(t_size stage) override
+		void on_init_stage(size_t stage) override
 		{
 			if (stage == init_stages::before_config_read)
 			{
@@ -55,7 +55,7 @@ namespace stats
 	class my_metadb_display_field_provider : public metadb_display_field_provider
 	{
 	public:
-		bool process_field(t_size index, metadb_handle* handle, titleformat_text_out* out) override
+		bool process_field(size_t index, metadb_handle* handle, titleformat_text_out* out) override
 		{
 			metadb_index_hash hash;
 			if (!hashHandle(handle, hash)) return false;
@@ -87,12 +87,12 @@ namespace stats
 			return false;
 		}
 
-		t_size get_field_count() override
+		size_t get_field_count() override
 		{
 			return 5;
 		}
 
-		void get_field_name(t_size index, pfc::string_base& out) override
+		void get_field_name(size_t index, pfc::string_base& out) override
 		{
 			static constexpr std::array<const char*, 5> field_names =
 			{
@@ -118,7 +118,7 @@ namespace stats
 		{
 			if (callback.is_group_wanted(JSP_NAME))
 			{
-				const t_size count = items.get_count();
+				const size_t count = items.get_count();
 				if (count == 1)
 				{
 					metadb_index_hash hash;
@@ -137,7 +137,7 @@ namespace stats
 					hash_set hashes;
 					get_hashes(items, hashes);
 
-					t_size total = std::accumulate(hashes.begin(), hashes.end(), 0, [](t_size t, const metadb_index_hash hash)
+					size_t total = std::accumulate(hashes.begin(), hashes.end(), std::size_t(0), [](size_t t, const metadb_index_hash hash)
 						{
 							return t + get(hash).playcount;
 						});
@@ -198,7 +198,7 @@ namespace stats
 	void get_hashes(metadb_handle_list_cref handles, hash_set& hashes)
 	{
 		const auto count = handles.get_count();
-		for (t_size i = 0; i < count; ++i)
+		for (size_t i = 0; i < count; ++i)
 		{
 			metadb_index_hash hash;
 			if (hashHandle(handles[i], hash))

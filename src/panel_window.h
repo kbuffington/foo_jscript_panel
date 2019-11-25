@@ -15,7 +15,7 @@ public:
 	bool show_configure_popup(HWND parent) override;
 	void repaint() override;
 	void repaint_rect(int x, int y, int w, int h) override;
-	void script_invoke(callback_id id, VARIANTARG* argv = nullptr, t_size argc = 0, VARIANT* ret = nullptr);
+	void script_invoke(callback_id id, VARIANTARG* argv = nullptr, size_t argc = 0, VARIANT* ret = nullptr);
 	void show_property_popup(HWND parent) override;
 	void unload_script() override;
 	void update_script() override;

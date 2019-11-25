@@ -140,7 +140,7 @@ void CDialogConf::BuildMenu()
 	pfc::string_list_impl folders;
 	helpers::list_folders(base + "samples\\", folders);
 
-	t_size i, j, count;
+	size_t i, j, count;
 
 	count = folders.get_count();
 

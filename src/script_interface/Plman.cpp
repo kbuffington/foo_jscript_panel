@@ -71,7 +71,7 @@ STDMETHODIMP Plman::CreateAutoPlaylist(UINT playlistIndex, BSTR name, BSTR query
 		return S_OK;
 	}
 
-	t_size pos;
+	size_t pos;
 	CreatePlaylist(playlistIndex, name, &pos);
 	autoplaylist_manager::get()->add_client_simple(uquery, string_utf8_from_wide(sort), pos, flags);
 	*p = TO_INT(pos);
@@ -192,11 +192,11 @@ STDMETHODIMP Plman::GetPlaybackQueueContents(VARIANT* p)
 
 	pfc::list_t<t_playback_queue_item> contents;
 	playlist_manager::get()->queue_get_contents(contents);
-	const t_size count = contents.get_count();
+	const size_t count = contents.get_count();
 	com_array helper;
 	if (!helper.create(count)) return E_OUTOFMEMORY;
 
-	for (t_size i = 0; i < count; ++i)
+	for (size_t i = 0; i < count; ++i)
 	{
 		_variant_t var;
 		var.vt = VT_DISPATCH;
@@ -216,9 +216,9 @@ STDMETHODIMP Plman::GetPlaybackQueueHandles(IMetadbHandleList** pp)
 
 	pfc::list_t<t_playback_queue_item> contents;
 	playlist_manager::get()->queue_get_contents(contents);
-	const t_size count = contents.get_count();
+	const size_t count = contents.get_count();
 	metadb_handle_list items;
-	for (t_size i = 0; i < count; ++i)
+	for (size_t i = 0; i < count; ++i)
 	{
 		items.add_item(contents[i].m_handle);
 	}
@@ -230,8 +230,8 @@ STDMETHODIMP Plman::GetPlayingItemLocation(IPlayingItemLocation** pp)
 {
 	if (!pp) return E_POINTER;
 
-	t_size playlistIndex;
-	t_size playlistItemIndex;
+	size_t playlistIndex;
+	size_t playlistItemIndex;
 	bool isValid = playlist_manager::get()->get_playing_item_location(&playlistIndex, &playlistItemIndex);
 	*pp = new com_object_impl_t<PlayingItemLocation>(isValid, playlistIndex, playlistItemIndex);
 	return S_OK;
@@ -362,14 +362,14 @@ STDMETHODIMP Plman::MovePlaylist(UINT from, UINT to, VARIANT_BOOL* p)
 	if (!p) return E_POINTER;
 
 	auto api = playlist_manager::get();
-	const t_size count = api->get_playlist_count();
+	const size_t count = api->get_playlist_count();
 
 	if (from < count && to < count)
 	{
 		order_helper order(count);
 		const int inc = (from < to) ? 1 : -1;
 
-		for (t_size i = from; i != to; i += inc)
+		for (size_t i = from; i != to; i += inc)
 		{
 			order[i] = order[i + inc];
 		}
@@ -552,9 +552,9 @@ STDMETHODIMP Plman::SortByFormatV2(UINT playlistIndex, BSTR pattern, int directi
 
 	metadb_handle_list handles;
 	api->playlist_get_all_items(playlistIndex, handles);
-	const t_size count = handles.get_count();
+	const size_t count = handles.get_count();
 
-	std::vector<t_size> order(count);
+	std::vector<size_t> order(count);
 
 	titleformat_object::ptr obj;
 	titleformat_compiler::get()->compile_safe(obj, string_utf8_from_wide(pattern));
@@ -568,8 +568,8 @@ STDMETHODIMP Plman::SortByFormatV2(UINT playlistIndex, BSTR pattern, int directi
 STDMETHODIMP Plman::SortPlaylistsByName(int direction)
 {
 	auto api = playlist_manager::get();
-	const t_size count = api->get_playlist_count();
-	t_size i;
+	const size_t count = api->get_playlist_count();
+	size_t i;
 
 	std::vector<helpers::custom_sort_data> data(count);
 

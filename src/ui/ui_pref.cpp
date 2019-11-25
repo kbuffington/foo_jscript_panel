@@ -34,7 +34,7 @@ namespace
 			return m_hWnd;
 		}
 
-		t_size get_state() override
+		size_t get_state() override
 		{
 			return preferences_state::resettable;
 		}
@@ -102,17 +102,17 @@ namespace
 		}
 
 	private:
-		bool listCanSelectItem(ctx_t, t_size) override
+		bool listCanSelectItem(ctx_t, size_t) override
 		{
 			return false;
 		}
 
-		bool listIsColumnEditable(ctx_t, t_size sub_item) override
+		bool listIsColumnEditable(ctx_t, size_t sub_item) override
 		{
 			return sub_item == 1;
 		}
 
-		pfc::string8 listGetSubItemText(ctx_t, t_size item, t_size sub_item) override
+		pfc::string8 listGetSubItemText(ctx_t, size_t item, size_t sub_item) override
 		{
 			switch (sub_item)
 			{
@@ -124,12 +124,12 @@ namespace
 			return "";
 		}
 
-		t_size listGetItemCount(ctx_t) override
+		size_t listGetItemCount(ctx_t) override
 		{
 			return g_config.m_data.size();
 		}
 
-		void listSetEditField(ctx_t, t_size item, t_size sub_item, const char* value) override
+		void listSetEditField(ctx_t, size_t item, size_t sub_item, const char* value) override
 		{
 			if (sub_item == 1)
 			{
@@ -137,7 +137,7 @@ namespace
 			}
 		}
 
-		void listSubItemClicked(ctx_t, t_size item, t_size sub_item) override
+		void listSubItemClicked(ctx_t, size_t item, size_t sub_item) override
 		{
 			if (sub_item == 1)
 			{

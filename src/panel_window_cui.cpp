@@ -4,7 +4,7 @@
 class panel_window_cui : public panel_window, public uie::window, public cui::fonts::common_callback, public cui::colours::common_callback
 {
 protected:
-	DWORD get_colour_ui(t_size type) override
+	DWORD get_colour_ui(size_t type) override
 	{
 		return type <= cui::colours::colour_active_item_frame ? helpers::convert_colorref_to_argb(cui::colours::helper(pfc::guid_null).get_colour(static_cast<cui::colours::colour_identifier_t>(type))) : 0;
 	}
@@ -33,7 +33,7 @@ protected:
 		return m_hwnd;
 	}
 
-	IGdiFont* get_font_ui(t_size type) override
+	IGdiFont* get_font_ui(size_t type) override
 	{
 		IGdiFont* ret = nullptr;
 
@@ -106,7 +106,7 @@ protected:
 		return jsp_guids::window_cui;
 	}
 
-	t_size get_type() const override
+	size_t get_type() const override
 	{
 		return uie::type_toolbar | uie::type_panel;
 	}
@@ -132,22 +132,19 @@ protected:
 		out = JSP_NAME;
 	}
 
-	void on_bool_changed(t_size mask) const override
-	{
-		// TODO: may be implemented one day
-	}
+	void on_bool_changed(size_t mask) const override {}
 
-	void on_colour_changed(t_size mask) const override
+	void on_colour_changed(size_t mask) const override
 	{
 		PostMessage(m_hwnd, static_cast<unsigned int>(callback_id::on_colours_changed), 0, 0);
 	}
 
-	void on_font_changed(t_size mask) const override
+	void on_font_changed(size_t mask) const override
 	{
 		PostMessage(m_hwnd, static_cast<unsigned int>(callback_id::on_font_changed), 0, 0);
 	}
 
-	void set_config(stream_reader* reader, t_size size, abort_callback& abort) override
+	void set_config(stream_reader* reader, size_t size, abort_callback& abort) override
 	{
 		load_config(reader, size, abort);
 	}

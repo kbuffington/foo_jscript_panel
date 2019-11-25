@@ -52,7 +52,7 @@ void config::import(const char* content)
 	for (const auto& line : lines)
 	{
 		if (line.empty() || line.at(0) == '#' || line.length() <= 3) continue;
-		const t_size pos = line.find('=');
+		const size_t pos = line.find('=');
 		if (pos == std::string::npos) continue;
 		std::string key = line.substr(0, pos);
 		std::string value = line.substr(pos + 1);
@@ -67,7 +67,7 @@ void config::init_data()
 	m_data = init_table;
 }
 
-void config::load_preset(t_size idx)
+void config::load_preset(size_t idx)
 {
 	import(helpers::get_resource_text(idx));
 }
@@ -83,16 +83,16 @@ void config::merge_data(const simple_map& data_map)
 	}
 }
 
-void config::set_data_raw(stream_reader* p_stream, t_size p_sizehint, abort_callback& p_abort)
+void config::set_data_raw(stream_reader* p_stream, size_t p_sizehint, abort_callback& p_abort)
 {
 	simple_map data_map;
 	pfc::string8_fast key, value;
-	t_size count;
+	size_t count;
 
 	try
 	{
 		p_stream->read_lendian_t(count, p_abort);
-		for (t_size i = 0; i < count; ++i)
+		for (size_t i = 0; i < count; ++i)
 		{
 			p_stream->read_string(key, p_abort);
 			p_stream->read_string(value, p_abort);

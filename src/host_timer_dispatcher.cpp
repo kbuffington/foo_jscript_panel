@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "host_timer_dispatcher.h"
 
-host_timer::host_timer(HWND hwnd, t_size id, t_size delay, bool isRepeated)
+host_timer::host_timer(HWND hwnd, size_t id, size_t delay, bool isRepeated)
 {
 	m_hTimer = 0;
 
@@ -67,7 +67,7 @@ void host_timer::stop()
 	m_is_stop_requested = true;
 }
 
-host_timer_task::host_timer_task(IDispatch* pDisp, t_size timerId)
+host_timer_task::host_timer_task(IDispatch* pDisp, size_t timerId)
 {
 	m_pDisp = pDisp;
 	m_timerId = timerId;
@@ -132,7 +132,7 @@ host_timer_dispatcher& host_timer_dispatcher::instance()
 	return timerDispatcher;
 }
 
-t_size host_timer_dispatcher::create_timer(HWND hwnd, t_size delay, bool isRepeated, IDispatch* pDisp)
+size_t host_timer_dispatcher::create_timer(HWND hwnd, size_t delay, bool isRepeated, IDispatch* pDisp)
 {
 	if (!pDisp)
 	{
@@ -141,7 +141,7 @@ t_size host_timer_dispatcher::create_timer(HWND hwnd, t_size delay, bool isRepea
 
 	std::lock_guard<std::mutex> lock(m_timer_mutex);
 
-	t_size id = m_cur_timer_id++;
+	size_t id = m_cur_timer_id++;
 	while (m_task_map.count(id) && m_timer_map.count(id))
 	{
 		id = m_cur_timer_id++;
@@ -162,12 +162,12 @@ t_size host_timer_dispatcher::create_timer(HWND hwnd, t_size delay, bool isRepea
 	return id;
 }
 
-t_size host_timer_dispatcher::set_interval(HWND hwnd, t_size delay, IDispatch* pDisp)
+size_t host_timer_dispatcher::set_interval(HWND hwnd, size_t delay, IDispatch* pDisp)
 {
 	return create_timer(hwnd, delay, true, pDisp);
 }
 
-t_size host_timer_dispatcher::set_timeout(HWND hwnd, t_size delay, IDispatch* pDisp)
+size_t host_timer_dispatcher::set_timeout(HWND hwnd, size_t delay, IDispatch* pDisp)
 {
 	return create_timer(hwnd, delay, false, pDisp);
 }
@@ -177,7 +177,7 @@ void host_timer_dispatcher::create_thread()
 	m_thread = new std::thread(&host_timer_dispatcher::thread_main, this);
 }
 
-void host_timer_dispatcher::invoke_message(t_size timerId)
+void host_timer_dispatcher::invoke_message(size_t timerId)
 {
 	if (m_task_map.count(timerId))
 	{
@@ -185,7 +185,7 @@ void host_timer_dispatcher::invoke_message(t_size timerId)
 	}
 }
 
-void host_timer_dispatcher::kill_timer(t_size timerId)
+void host_timer_dispatcher::kill_timer(size_t timerId)
 {
 	{
 		std::lock_guard<std::mutex> lock(m_timer_mutex);
@@ -204,7 +204,7 @@ void host_timer_dispatcher::kill_timer(t_size timerId)
 
 void host_timer_dispatcher::kill_timers(HWND hwnd)
 {
-	std::list<t_size> timersToDelete;
+	std::list<size_t> timersToDelete;
 
 	{
 		std::lock_guard<std::mutex> lock(m_timer_mutex);
@@ -223,12 +223,12 @@ void host_timer_dispatcher::kill_timers(HWND hwnd)
 	}
 }
 
-void host_timer_dispatcher::on_task_complete(t_size timerId)
+void host_timer_dispatcher::on_task_complete(size_t timerId)
 {
 	m_task_map.erase(timerId);
 }
 
-void host_timer_dispatcher::on_timer_stop_request(HWND hwnd, HANDLE hTimer, t_size timerId)
+void host_timer_dispatcher::on_timer_stop_request(HWND hwnd, HANDLE hTimer, size_t timerId)
 {
 	std::unique_lock<std::mutex> lock(m_thread_task_mutex);
 

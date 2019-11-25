@@ -54,7 +54,7 @@ class panel_manager
 public:
 	panel_manager();
 
-	using api_item = std::pair<std::string, t_size>;
+	using api_item = std::pair<std::string, size_t>;
 
 	static panel_manager& instance();
 

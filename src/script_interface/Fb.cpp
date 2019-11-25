@@ -165,10 +165,10 @@ STDMETHODIMP Fb::GetDSPPresets(BSTR* p)
 
 	json j = json::array();
 	auto api = dsp_config_manager_v2::get();
-	const t_size count = api->get_preset_count();
+	const size_t count = api->get_preset_count();
 	pfc::string8_fast name;
 
-	for (t_size i = 0; i < count; ++i)
+	for (size_t i = 0; i < count; ++i)
 	{
 		api->get_preset_name(i, name);
 
@@ -431,7 +431,7 @@ STDMETHODIMP Fb::SavePlaylist()
 STDMETHODIMP Fb::SetDSPPreset(UINT idx)
 {
 	auto api = dsp_config_manager_v2::get();
-	const t_size count = api->get_preset_count();
+	const size_t count = api->get_preset_count();
 	if (idx < count)
 	{
 		api->select_preset(idx);

@@ -70,13 +70,13 @@ pfc::string8_fast host_comm::get_default_script_engine_str()
 	return helpers::supports_chakra() ? "Chakra" : "JScript";
 }
 
-void host_comm::load_config(stream_reader* reader, t_size size, abort_callback& abort)
+void host_comm::load_config(stream_reader* reader, size_t size, abort_callback& abort)
 {
 	reset_config();
 
-	if (size > sizeof(t_size))
+	if (size > sizeof(size_t))
 	{
-		t_size ver = 0;
+		size_t ver = 0;
 		try
 		{
 			reader->read_object_t(ver, abort);
@@ -109,7 +109,7 @@ void host_comm::reset_config()
 
 void host_comm::save_config(stream_writer* writer, abort_callback& abort) const
 {
-	constexpr t_size ver = 123;
+	constexpr size_t ver = 123;
 
 	try
 	{

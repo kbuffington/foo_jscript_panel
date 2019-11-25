@@ -207,11 +207,11 @@ STDMETHODIMP GdiGraphics::EstimateLineWrap(BSTR str, IGdiFont* font, int max_wid
 
 	m_ptr->ReleaseHDC(dc);
 
-	const t_size count = result.size();
+	const size_t count = result.size();
 	com_array helper;
 	if (!helper.create(count * 2)) return E_OUTOFMEMORY;
 
-	for (t_size i = 0; i < count; ++i)
+	for (size_t i = 0; i < count; ++i)
 	{
 		_variant_t var1, var2;
 		var1.vt = VT_BSTR;

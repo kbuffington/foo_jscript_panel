@@ -53,7 +53,7 @@ STDMETHODIMP MetadbHandleList::AttachImage(BSTR path, UINT art_id)
 			if (file.is_valid())
 			{
 				auto tmp = fb2k::service_new<album_art_data_impl>();
-				tmp->from_stream(file.get_ptr(), t_size(file->get_size_ex(fb2k::noAbort)), fb2k::noAbort);
+				tmp->from_stream(file.get_ptr(), static_cast<size_t>(file->get_size_ex(fb2k::noAbort)), fb2k::noAbort);
 				data = tmp;
 			}
 		}
@@ -107,11 +107,11 @@ STDMETHODIMP MetadbHandleList::Convert(VARIANT* p)
 {
 	if (!p) return E_POINTER;
 
-	const t_size count = m_handles.get_count();
+	const size_t count = m_handles.get_count();
 	com_array helper;
 	if (!helper.create(count)) return E_OUTOFMEMORY;
 
-	for (t_size i = 0; i < count; ++i)
+	for (size_t i = 0; i < count; ++i)
 	{
 		_variant_t var;
 		var.vt = VT_DISPATCH;
@@ -139,13 +139,13 @@ STDMETHODIMP MetadbHandleList::GetLibraryRelativePaths(VARIANT* p)
 	if (!p) return E_POINTER;
 
 	auto api = library_manager::get();
-	const t_size count = m_handles.get_count();
+	const size_t count = m_handles.get_count();
 
 	pfc::string8_fastalloc str;
 	str.prealloc(512);
 
 	str_vec strings;
-	for (t_size i = 0; i < count; ++i)
+	for (size_t i = 0; i < count; ++i)
 	{
 		metadb_handle_ptr item = m_handles[i];
 		if (!api->get_relative_path(item, str)) str = "";
@@ -196,10 +196,10 @@ STDMETHODIMP MetadbHandleList::MakeIntersection(IMetadbHandleList* handles)
 
 	const metadb_handle_list_ref handles_ref = *handles_ptr;
 	metadb_handle_list result;
-	t_size walk1 = 0;
-	t_size walk2 = 0;
-	const t_size last1 = m_handles.get_count();
-	const t_size last2 = handles_ptr->get_count();
+	size_t walk1 = 0;
+	size_t walk2 = 0;
+	const size_t last1 = m_handles.get_count();
+	const size_t last2 = handles_ptr->get_count();
 
 	while (walk1 != last1 && walk2 != last2)
 	{
@@ -258,8 +258,8 @@ STDMETHODIMP MetadbHandleList::OrderByRelativePath()
 {
 	// lifted from metadb_handle_list.cpp - adds subsong index for better sorting. github issue #16
 	auto api = library_manager::get();
-	const t_size count = m_handles.get_count();
-	t_size i;
+	const size_t count = m_handles.get_count();
+	size_t i;
 
 	std::vector<helpers::custom_sort_data> data(count);
 
@@ -359,7 +359,7 @@ STDMETHODIMP MetadbHandleList::Sort()
 
 STDMETHODIMP MetadbHandleList::UpdateFileInfoFromJSON(BSTR str)
 {
-	const t_size count = m_handles.get_count();
+	const size_t count = m_handles.get_count();
 	if (count == 0) return E_POINTER;
 
 	json j = json::parse(string_utf8_from_wide(str).get_ptr(), nullptr, false);
@@ -368,7 +368,7 @@ STDMETHODIMP MetadbHandleList::UpdateFileInfoFromJSON(BSTR str)
 	{
 		std::vector<file_info_impl> info(count);
 
-		for (t_size i = 0; i < count; ++i)
+		for (size_t i = 0; i < count; ++i)
 		{
 			if (!j[i].is_object() || j[i].size() == 0) return E_INVALIDARG;
 

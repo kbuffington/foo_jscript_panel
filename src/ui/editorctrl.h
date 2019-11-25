@@ -43,8 +43,8 @@ private:
 		Colour back, fore;
 		bool bold, italics, underlined;
 		int case_force;
+		size_t flags, size;
 		std::string font;
-		t_size flags, size;
 	};
 
 	struct Range
@@ -79,8 +79,8 @@ private:
 	bool RangeIsAllWhitespace(Position start, Position end);
 	int IndentOfBlock(Line line);
 	std::string GetCurrentLine();
-	std::string GetNearestWord(const char* wordStart, t_size searchLen, int wordIndex);
-	std::string GetNearestWords(const char* wordStart, t_size searchLen);
+	std::string GetNearestWord(const char* wordStart, size_t searchLen, int wordIndex);
+	std::string GetNearestWords(const char* wordStart, size_t searchLen);
 	str_vec GetLinePartsInStyle(Line line, const StyleAndWords& saw);
 	void AutoMarginWidth();
 	void AutomaticIndentation(int ch);

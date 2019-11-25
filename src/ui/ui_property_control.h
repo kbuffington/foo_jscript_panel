@@ -53,12 +53,12 @@ public:
 		return true;
 	}
 
-	bool CanSelectItem(t_size row) const override
+	bool CanSelectItem(size_t row) const override
 	{
 		return true;
 	}
 
-	bool GetCellCheckState(t_size item, t_size sub_item) const override
+	bool GetCellCheckState(size_t item, size_t sub_item) const override
 	{
 		if (sub_item == 1 && m_data[item].is_bool) return m_data[item].bool_value;
 		return false;
@@ -69,7 +69,7 @@ public:
 		return true;
 	}
 
-	bool GetSubItemText(t_size item, t_size sub_item, pfc::string_base& out) const override
+	bool GetSubItemText(size_t item, size_t sub_item, pfc::string_base& out) const override
 	{
 		switch(sub_item)
 		{
@@ -89,12 +89,12 @@ public:
 		}
 	}
 
-	bool TableEdit_IsColumnEditable(t_size sub_item) const override
+	bool TableEdit_IsColumnEditable(size_t sub_item) const override
 	{
 		return sub_item == 1;
 	}
 
-	cellType_t GetCellType(t_size item, t_size sub_item) const override
+	cellType_t GetCellType(size_t item, size_t sub_item) const override
 	{
 		if (sub_item == 1 && m_data[item].is_bool)
 		{
@@ -106,14 +106,14 @@ public:
 		}
 	}
 
-	t_size GetItemCount() const override
+	size_t GetItemCount() const override
 	{
 		return m_data.size();
 	}
 
-	void ExecuteDefaultAction(t_size index) override {}
+	void ExecuteDefaultAction(size_t index) override {}
 
-	void OnItemsRemoved(const pfc::bit_array& mask, t_size oldCount) override
+	void OnItemsRemoved(const pfc::bit_array& mask, size_t oldCount) override
 	{
 		__super::OnItemsRemoved(mask, oldCount);
 		if (m_data.empty())
@@ -122,7 +122,7 @@ public:
 		}
 	}
 
-	void OnSubItemClicked(t_size item, t_size sub_item, CPoint pt) override
+	void OnSubItemClicked(size_t item, size_t sub_item, CPoint pt) override
 	{
 		if (sub_item == 1 && !m_data[item].is_bool)
 		{
@@ -144,9 +144,9 @@ public:
 		RemoveMask(GetSelectionMask());
 	}
 
-	void RequestReorder(t_size const* order, t_size count) override {}
+	void RequestReorder(size_t const* order, size_t count) override {}
 
-	void SetCellCheckState(t_size item, t_size sub_item, bool value) override
+	void SetCellCheckState(size_t item, size_t sub_item, bool value) override
 	{
 		if (sub_item == 1 && m_data[item].is_bool)
 		{
@@ -155,7 +155,7 @@ public:
 		}
 	}
 
-	void TableEdit_SetField(t_size item, t_size sub_item, const char* value) override
+	void TableEdit_SetField(size_t item, size_t sub_item, const char* value) override
 	{
 		if (sub_item == 1 && !m_data[item].is_bool)
 		{

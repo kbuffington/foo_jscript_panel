@@ -41,7 +41,7 @@ public:
 		out = JSP_NAME;
 	}
 
-	DWORD get_colour_ui(t_size type) override
+	DWORD get_colour_ui(size_t type) override
 	{
 		static constexpr std::array<const GUID*, 4> guids =
 		{
@@ -68,7 +68,7 @@ public:
 		return m_hwnd;
 	}
 
-	IGdiFont* get_font_ui(t_size type) override
+	IGdiFont* get_font_ui(size_t type) override
 	{
 		IGdiFont* ret = nullptr;
 
@@ -131,17 +131,17 @@ public:
 		return builder.finish(g_get_guid());
 	}
 
-	void edit_mode_context_menu_build(const POINT& p_point, bool p_fromkeyboard, HMENU p_menu, t_size p_id_base) override
+	void edit_mode_context_menu_build(const POINT& p_point, bool p_fromkeyboard, HMENU p_menu, size_t p_id_base) override
 	{
 		build_context_menu(p_menu, p_id_base);
 	}
 
-	void edit_mode_context_menu_command(const POINT& p_point, bool p_fromkeyboard, t_size p_id, t_size p_id_base) override
+	void edit_mode_context_menu_command(const POINT& p_point, bool p_fromkeyboard, size_t p_id, size_t p_id_base) override
 	{
 		execute_context_menu_command(p_id, p_id_base);
 	}
 
-	void notify(const GUID& p_what, t_size p_param1, const void* p_param2, t_size p_param2size) override
+	void notify(const GUID& p_what, size_t p_param1, const void* p_param2, size_t p_param2size) override
 	{
 		if (p_what == ui_element_notify_colors_changed)
 		{

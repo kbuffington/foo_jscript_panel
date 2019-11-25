@@ -7,7 +7,7 @@ namespace helpers
 	struct custom_sort_data
 	{
 		wchar_t* text;
-		t_size index;
+		size_t index;
 	};
 
 	struct stricmp_ascii
@@ -25,13 +25,13 @@ namespace helpers
 	};
 
 	using wrapped_item_list = std::vector<wrapped_item>;
-	static constexpr t_size threaded_process_flags = threaded_process::flag_show_progress | threaded_process::flag_show_delayed | threaded_process::flag_show_item;
+	static constexpr size_t threaded_process_flags = threaded_process::flag_show_progress | threaded_process::flag_show_delayed | threaded_process::flag_show_item;
 	namespace fs = std::filesystem;
 
 	COLORREF convert_argb_to_colorref(DWORD argb);
 	DWORD convert_colorref_to_argb(COLORREF color);
-	IGdiBitmap* get_album_art(const metadb_handle_ptr& handle, t_size art_id, bool need_stub, bool no_load, pfc::string_base& image_path);
-	IGdiBitmap* get_album_art_embedded(const pfc::string8_fast& path, t_size art_id);
+	IGdiBitmap* get_album_art(const metadb_handle_ptr& handle, size_t art_id, bool need_stub, bool no_load, pfc::string_base& image_path);
+	IGdiBitmap* get_album_art_embedded(const pfc::string8_fast& path, size_t art_id);
 	IGdiBitmap* load_image(BSTR path);
 	IGdiBitmap* read_album_art_into_bitmap(const album_art_data_ptr& data);
 	bool execute_context_command_by_name(const char* p_command, metadb_handle_list_cref p_handles);
@@ -42,7 +42,7 @@ namespace helpers
 	bool is_wrap_char(wchar_t current, wchar_t next);
 	bool supports_chakra();
 	bool write_file(const char* path, const pfc::string8_fast& content);
-	const GUID convert_artid_to_guid(t_size art_id);
+	const GUID convert_artid_to_guid(size_t art_id);
 	int get_text_height(HDC hdc, const wchar_t* text, int len);
 	int get_text_width(HDC hdc, const wchar_t* text, int len);
 	pfc::string8_fast get_fb2k_component_path();
@@ -50,13 +50,13 @@ namespace helpers
 	pfc::string8_fast get_profile_path();
 	pfc::string8_fast get_resource_text(int id);
 	pfc::string8_fast read_file(const char* path);
+	size_t guess_codepage(const pfc::string8_fast& content);
 	str_vec split_string(const std::string& str, const std::string& delims);
-	t_size guess_codepage(const pfc::string8_fast& content);
 	void estimate_line_wrap(HDC hdc, const wchar_t* text, int max_width, wrapped_item_list& out);
 	void estimate_line_wrap_recur(HDC hdc, const wchar_t* text, int len, int max_width, wrapped_item_list& out);
 	void list_files(const char* path, bool recur, pfc::string_list_impl& out);
 	void list_folders(const char* path, pfc::string_list_impl& out);
-	void read_file_wide(t_size codepage, const wchar_t* path, std::vector<wchar_t>& content);
+	void read_file_wide(size_t codepage, const wchar_t* path, std::vector<wchar_t>& content);
 	wchar_t* make_sort_string(const char* in);
 
 	template <class T>
@@ -83,15 +83,15 @@ namespace helpers
 			remove_all
 		};
 
-		embed(actions action, album_art_data_ptr data, metadb_handle_list_cref handles, t_size art_id) : m_action(action), m_data(data), m_handles(handles), m_art_id(art_id) {}
+		embed(actions action, album_art_data_ptr data, metadb_handle_list_cref handles, size_t art_id) : m_action(action), m_data(data), m_handles(handles), m_art_id(art_id) {}
 
 		void run(threaded_process_status& p_status, abort_callback& p_abort) override
 		{
 			const GUID what = convert_artid_to_guid(m_art_id);
 			auto api = file_lock_manager::get();
-			const t_size count = m_handles.get_count();
+			const size_t count = m_handles.get_count();
 
-			for (t_size i = 0; i < count; ++i)
+			for (size_t i = 0; i < count; ++i)
 			{
 				pfc::string8_fast path = m_handles[i]->get_path();
 				p_status.set_progress(i, count);
@@ -126,7 +126,7 @@ namespace helpers
 		actions m_action;
 		album_art_data_ptr m_data;
 		metadb_handle_list m_handles;
-		t_size m_art_id;
+		size_t m_art_id;
 	};
 
 	class optimise_layout : public threaded_process_callback
@@ -137,9 +137,9 @@ namespace helpers
 		void run(threaded_process_status& p_status, abort_callback& p_abort) override
 		{
 			auto api = file_lock_manager::get();
-			const t_size count = m_handles.get_count();
+			const size_t count = m_handles.get_count();
 
-			for (t_size i = 0; i < count; ++i)
+			for (size_t i = 0; i < count; ++i)
 			{
 				auto path = m_handles[i]->get_path();
 				p_status.set_progress(i, count);
@@ -165,11 +165,11 @@ namespace helpers
 	class album_art_async : public simple_thread_task
 	{
 	public:
-		album_art_async(HWND p_wnd, const metadb_handle_ptr& handle, t_size art_id, bool need_stub, bool only_embed, bool no_load) : m_hwnd(p_wnd), m_handle(handle), m_art_id(art_id), m_need_stub(need_stub), m_only_embed(only_embed), m_no_load(no_load) {}
+		album_art_async(HWND p_wnd, const metadb_handle_ptr& handle, size_t art_id, bool need_stub, bool only_embed, bool no_load) : m_hwnd(p_wnd), m_handle(handle), m_art_id(art_id), m_need_stub(need_stub), m_only_embed(only_embed), m_no_load(no_load) {}
 
 		struct t_param
 		{
-			t_param(IMetadbHandle* p_handle, t_size p_art_id, IGdiBitmap* p_bitmap, BSTR p_path) : handle(p_handle), art_id(p_art_id), bitmap(p_bitmap), path(p_path) {}
+			t_param(IMetadbHandle* p_handle, size_t p_art_id, IGdiBitmap* p_bitmap, BSTR p_path) : handle(p_handle), art_id(p_art_id), bitmap(p_bitmap), path(p_path) {}
 
 			~t_param()
 			{
@@ -187,7 +187,7 @@ namespace helpers
 			IGdiBitmap* bitmap;
 			IMetadbHandle* handle;
 			_bstr_t path;
-			t_size art_id;
+			size_t art_id;
 		};
 
 		void run() override
@@ -225,7 +225,7 @@ namespace helpers
 		bool m_no_load;
 		bool m_only_embed;
 		metadb_handle_ptr m_handle;
-		t_size m_art_id;
+		size_t m_art_id;
 	};
 
 	class load_image_async : public simple_thread_task
@@ -235,7 +235,7 @@ namespace helpers
 
 		struct t_param
 		{
-			t_param(t_size p_cookie, IGdiBitmap* p_bitmap, BSTR p_path) : cookie(p_cookie), bitmap(p_bitmap), path(p_path) {}
+			t_param(size_t p_cookie, IGdiBitmap* p_bitmap, BSTR p_path) : cookie(p_cookie), bitmap(p_bitmap), path(p_path) {}
 
 			~t_param()
 			{
@@ -247,13 +247,13 @@ namespace helpers
 
 			IGdiBitmap* bitmap;
 			_bstr_t path;
-			t_size cookie;
+			size_t cookie;
 		};
 
 		void run() override
 		{
 			IGdiBitmap* bitmap = load_image(m_path);
-			t_param param(reinterpret_cast<t_size>(this), bitmap, m_path);
+			t_param param(reinterpret_cast<size_t>(this), bitmap, m_path);
 			SendMessage(m_hwnd, static_cast<unsigned int>(callback_id::on_load_image_done), reinterpret_cast<WPARAM>(&param), 0);
 		}
 
@@ -265,7 +265,7 @@ namespace helpers
 	class js_process_locations : public process_locations_notify
 	{
 	public:
-		js_process_locations(bool to_select, t_size base, t_size playlist) : m_to_select(to_select), m_base(base), m_playlist(playlist) {}
+		js_process_locations(bool to_select, size_t base, size_t playlist) : m_to_select(to_select), m_base(base), m_playlist(playlist) {}
 
 		void on_aborted() override {}
 
@@ -287,8 +287,8 @@ namespace helpers
 
 	private:
 		bool m_to_select;
-		t_size m_base;
-		t_size m_playlist;
+		size_t m_base;
+		size_t m_playlist;
 	};
 
 	class js_file_info_filter : public file_info_filter

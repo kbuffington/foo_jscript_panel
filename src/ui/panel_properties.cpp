@@ -52,14 +52,14 @@ int panel_properties::g_get_sizeof(VARTYPE p_vt)
 
 void panel_properties::g_load(property_map& data, stream_reader* reader, abort_callback& abort) throw()
 {
-	t_size count;
+	size_t count;
 	data.clear();
 
 	try
 	{
 		reader->read_lendian_t(count, abort);
 
-		for (t_size i = 0; i < count; ++i)
+		for (size_t i = 0; i < count; ++i)
 		{
 			pfc::string8_fast key;
 			VARTYPE vt;

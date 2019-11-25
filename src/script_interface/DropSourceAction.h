@@ -26,6 +26,6 @@ public:
 
 	DWORD m_effect;
 	bool m_to_select;
-	t_size m_base;
-	t_size m_playlist_idx;
+	size_t m_base;
+	size_t m_playlist_idx;
 };

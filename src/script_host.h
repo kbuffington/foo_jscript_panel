@@ -38,7 +38,7 @@ public:
 	bool Ready();
 	std::string ExtractValue(const std::string& source);
 	void Finalise();
-	void InvokeCallback(callback_id id, VARIANTARG* argv = nullptr, t_size argc = 0, VARIANT* ret = nullptr);
+	void InvokeCallback(callback_id id, VARIANTARG* argv = nullptr, size_t argc = 0, VARIANT* ret = nullptr);
 	void ProcessScriptInfo(script_info& info);
 
 private:

@@ -195,9 +195,9 @@ HRESULT script_host::ProcessScripts(IActiveScriptParsePtr& parser)
 	HRESULT hr = S_OK;
 	bool import_error = false;
 	pfc::string8_fast path, code;
-	const t_size count = m_host->m_script_info.imports.size();
+	const size_t count = m_host->m_script_info.imports.size();
 
-	for (t_size i = 0; i <= count; ++i)
+	for (size_t i = 0; i <= count; ++i)
 	{
 		if (i < count) // import
 		{
@@ -423,8 +423,8 @@ bool script_host::Ready()
 std::string script_host::ExtractValue(const std::string& source)
 {
 	constexpr char q = '"';
-	const t_size first = source.find_first_of(q);
-	const t_size last = source.find_last_of(q);
+	const size_t first = source.find_first_of(q);
+	const size_t last = source.find_last_of(q);
 	if (first < last && last < source.length())
 	{
 		return source.substr(first + 1, last - first - 1);
@@ -465,7 +465,7 @@ void script_host::Finalise()
 	}
 }
 
-void script_host::InvokeCallback(callback_id id, VARIANTARG* argv, t_size argc, VARIANT* ret)
+void script_host::InvokeCallback(callback_id id, VARIANTARG* argv, size_t argc, VARIANT* ret)
 {
 	if (Ready() && m_callback_map.count(id))
 	{
@@ -477,12 +477,12 @@ void script_host::InvokeCallback(callback_id id, VARIANTARG* argv, t_size argc, 
 void script_host::ProcessScriptInfo(script_info& info)
 {
 	info.clear();
-	info.id = reinterpret_cast<t_size>(m_host->get_hwnd());
+	info.id = reinterpret_cast<size_t>(m_host->get_hwnd());
 
 	std::string source(m_host->m_script_code);
-	const t_size start = source.find("// ==PREPROCESSOR==");
-	const t_size end = source.find("// ==/PREPROCESSOR==");
-	constexpr t_size argh = std::string::npos;
+	const size_t start = source.find("// ==PREPROCESSOR==");
+	const size_t end = source.find("// ==/PREPROCESSOR==");
+	constexpr size_t argh = std::string::npos;
 
 	if (start == argh || end == argh || start > end)
 	{

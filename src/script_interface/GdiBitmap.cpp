@@ -56,10 +56,10 @@ STDMETHODIMP GdiBitmap::ApplyMask(IGdiBitmap* mask, VARIANT_BOOL* p)
 		return S_OK;
 	}
 
-	t_size* p_mask = reinterpret_cast<t_size*>(bmpdata_mask.Scan0);
-	t_size* p_dst = reinterpret_cast<t_size*>(bmpdata_dst.Scan0);
-	const t_size* p_mask_end = p_mask + (rect.Width * rect.Height);
-	t_size alpha;
+	size_t* p_mask = reinterpret_cast<size_t*>(bmpdata_mask.Scan0);
+	size_t* p_dst = reinterpret_cast<size_t*>(bmpdata_dst.Scan0);
+	const size_t* p_mask_end = p_mask + (rect.Width * rect.Height);
+	size_t alpha;
 
 	while (p_mask < p_mask_end)
 	{
@@ -118,11 +118,11 @@ STDMETHODIMP GdiBitmap::GetColourSchemeJSON(UINT count, BSTR* p)
 	Gdiplus::BitmapData bmpdata;
 	if (bitmap->LockBits(&rect, Gdiplus::ImageLockModeRead, PixelFormat32bppARGB, &bmpdata) != Gdiplus::Ok) return E_POINTER;
 
-	const t_size colours_length = bmpdata.Width * bmpdata.Height;
-	const t_size* colours = static_cast<const t_size*>(bmpdata.Scan0);
-	std::map<t_size, int> colour_counters;
+	const size_t colours_length = bmpdata.Width * bmpdata.Height;
+	const size_t* colours = static_cast<const size_t*>(bmpdata.Scan0);
+	std::map<size_t, int> colour_counters;
 
-	for (t_size i = 0; i < colours_length; ++i)
+	for (size_t i = 0; i < colours_length; ++i)
 	{
 		BYTE r = (colours[i] >> 16) & UCHAR_MAX;
 		BYTE g = (colours[i] >> 8) & UCHAR_MAX;
@@ -147,7 +147,7 @@ STDMETHODIMP GdiBitmap::GetColourSchemeJSON(UINT count, BSTR* p)
 		const BYTE g = (elem.first >> 8) & UCHAR_MAX;
 		const BYTE b = elem.first & UCHAR_MAX;
 
-		std::vector<t_size> values = { r, g, b };
+		std::vector<size_t> values = { r, g, b };
 		KPoint pt(id, values, elem.second);
 		points.emplace_back(pt);
 		id++;
@@ -164,7 +164,7 @@ STDMETHODIMP GdiBitmap::GetColourSchemeJSON(UINT count, BSTR* p)
 	json j = json::array();
 
 	if (count > clusters.size()) count = clusters.size();
-	for (t_size i = 0; i < count; ++i)
+	for (size_t i = 0; i < count; ++i)
 	{
 		double frequency = clusters[i].get_total_points() / static_cast<double>(colours_length);
 

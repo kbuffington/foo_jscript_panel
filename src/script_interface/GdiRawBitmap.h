@@ -12,7 +12,7 @@ protected:
 
 	HBITMAP m_hbmp, m_hbmpold;
 	HDC m_hdc;
-	t_size m_height, m_width;
+	size_t m_height, m_width;
 
 public:
 	STDMETHODIMP get__Handle(HDC* p) override;

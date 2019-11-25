@@ -15,7 +15,7 @@ namespace helpers
 		return GetRValue(color) << RED_SHIFT | GetGValue(color) << GREEN_SHIFT | GetBValue(color) << BLUE_SHIFT | 0xff000000;
 	}
 
-	IGdiBitmap* get_album_art(const metadb_handle_ptr& handle, t_size art_id, bool need_stub, bool no_load, pfc::string_base& image_path)
+	IGdiBitmap* get_album_art(const metadb_handle_ptr& handle, size_t art_id, bool need_stub, bool no_load, pfc::string_base& image_path)
 	{
 		IGdiBitmap* ret = nullptr;
 		const GUID what = convert_artid_to_guid(art_id);
@@ -57,7 +57,7 @@ namespace helpers
 		return ret;
 	}
 
-	IGdiBitmap* get_album_art_embedded(const pfc::string8_fast& path, t_size art_id)
+	IGdiBitmap* get_album_art_embedded(const pfc::string8_fast& path, size_t art_id)
 	{
 		IGdiBitmap* ret = nullptr;
 		const GUID what = convert_artid_to_guid(art_id);
@@ -137,7 +137,7 @@ namespace helpers
 
 	bool execute_context_command_recur(const char* p_command, const pfc::string_base& p_path, contextmenu_node* p_parent)
 	{
-		for (t_size i = 0; i < p_parent->get_num_children(); ++i)
+		for (size_t i = 0; i < p_parent->get_num_children(); ++i)
 		{
 			contextmenu_node* child = p_parent->get_child(i);
 			pfc::string8_fast path = p_path;
@@ -182,7 +182,7 @@ namespace helpers
 		for (auto e = service_enum_t<mainmenu_commands>(); !e.finished(); ++e)
 		{
 			auto ptr = *e;
-			for (t_size i = 0; i < ptr->get_command_count(); ++i)
+			for (size_t i = 0; i < ptr->get_command_count(); ++i)
 			{
 				pfc::string8_fast path;
 
@@ -234,7 +234,7 @@ namespace helpers
 	bool execute_mainmenu_command_recur(const char* p_command, pfc::string8_fast path, mainmenu_node::ptr node)
 	{
 		pfc::string8_fast text;
-		t_size flags;
+		size_t flags;
 		node->get_display(text, flags);
 		path += text;
 
@@ -245,7 +245,7 @@ namespace helpers
 			{
 				path.add_char('/');
 			}
-			for (t_size i = 0; i < node->get_children_count(); ++i)
+			for (size_t i = 0; i < node->get_children_count(); ++i)
 			{
 				mainmenu_node::ptr child = node->get_child(i);
 				if (execute_mainmenu_command_recur(p_command, path, child))
@@ -270,8 +270,8 @@ namespace helpers
 		using namespace Gdiplus;
 
 		bool ret = false;
-		t_size num = 0;
-		t_size size = 0;
+		size_t num = 0;
+		size_t size = 0;
 
 		GetImageEncodersSize(&num, &size);
 		if (size == 0) return ret;
@@ -281,7 +281,7 @@ namespace helpers
 
 		GetImageEncoders(num, size, pImageCodecInfo.get_ptr());
 
-		for (t_size i = 0; i < num; ++i)
+		for (size_t i = 0; i < num; ++i)
 		{
 			if (wcscmp(pImageCodecInfo.get_ptr()[i].MimeType, format) == 0)
 			{
@@ -333,7 +333,7 @@ namespace helpers
 		return false;
 	}
 
-	const GUID convert_artid_to_guid(t_size art_id)
+	const GUID convert_artid_to_guid(size_t art_id)
 	{
 		static constexpr std::array<const GUID*, 5> guids =
 		{
@@ -408,23 +408,7 @@ namespace helpers
 		return content;
 	}
 
-	str_vec split_string(const std::string& str, const std::string& delims)
-	{
-		str_vec output;
-		t_size first = 0;
-		while (first < str.size())
-		{
-			const auto second = str.find_first_of(delims, first);
-			if (first != second)
-				output.emplace_back(str.substr(first, second - first));
-			if (second == std::string::npos)
-				break;
-			first = second + 1;
-		}
-		return output;
-	}
-
-	t_size guess_codepage(const pfc::string8_fast& content)
+	size_t guess_codepage(const pfc::string8_fast& content)
 	{
 		int size = static_cast<int>(content.get_length());
 		if (size == 0) return 0;
@@ -438,7 +422,7 @@ namespace helpers
 		if (FAILED(lang.CreateInstance(CLSID_CMultiLanguage, nullptr, CLSCTX_INPROC_SERVER))) return 0;
 		if (FAILED(lang->DetectInputCodepage(MLDETECTCP_NONE, 0, const_cast<char*>(content.get_ptr()), &size, encodings, &encodingCount))) return 0;
 
-		t_size codepage = encodings[0].nCodePage;
+		size_t codepage = encodings[0].nCodePage;
 
 		if (encodingCount == 2 && codepage == 1252)
 		{
@@ -458,6 +442,22 @@ namespace helpers
 
 		if (codepage == 20127) return 0; // ASCII
 		return codepage;
+	}
+
+	str_vec split_string(const std::string& str, const std::string& delims)
+	{
+		str_vec output;
+		size_t first = 0;
+		while (first < str.size())
+		{
+			const auto second = str.find_first_of(delims, first);
+			if (first != second)
+				output.emplace_back(str.substr(first, second - first));
+			if (second == std::string::npos)
+				break;
+			first = second + 1;
+		}
+		return output;
 	}
 
 	void estimate_line_wrap(HDC hdc, const wchar_t* text, int max_width, wrapped_item_list& out)
@@ -567,7 +567,7 @@ namespace helpers
 		catch (...) {}
 	}
 
-	void read_file_wide(t_size codepage, const wchar_t* path, std::vector<wchar_t>& content)
+	void read_file_wide(size_t codepage, const wchar_t* path, std::vector<wchar_t>& content)
 	{
 		HANDLE hFile = CreateFile(path, GENERIC_READ, FILE_SHARE_READ, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
 
@@ -606,7 +606,7 @@ namespace helpers
 		if (dwFileSize >= 2 && pAddr[0] == 0xFF && pAddr[1] == 0xFE) // UTF16 LE?
 		{
 			const wchar_t* pSource = reinterpret_cast<const wchar_t*>(pAddr + 2);
-			const t_size len = (dwFileSize - 2) >> 1;
+			const size_t len = (dwFileSize - 2) >> 1;
 
 			content.resize(len + 1);
 			pfc::__unsafe__memcpy_t(content.data(), pSource, len);
@@ -615,9 +615,9 @@ namespace helpers
 		else if (dwFileSize >= 3 && pAddr[0] == 0xEF && pAddr[1] == 0xBB && pAddr[2] == 0xBF) // UTF8-BOM?
 		{
 			const char* pSource = reinterpret_cast<const char*>(pAddr + 3);
-			const t_size pSourceSize = dwFileSize - 3;
+			const size_t pSourceSize = dwFileSize - 3;
 
-			const t_size size = estimate_utf8_to_wide_quick(pSource, pSourceSize);
+			const size_t size = estimate_utf8_to_wide_quick(pSource, pSourceSize);
 			content.resize(size);
 			convert_utf8_to_wide(content.data(), size, pSource, pSourceSize);
 		}
@@ -627,13 +627,13 @@ namespace helpers
 
 			if (guess_codepage(pSource) == CP_UTF8)
 			{
-				const t_size size = estimate_utf8_to_wide_quick(pSource, dwFileSize);
+				const size_t size = estimate_utf8_to_wide_quick(pSource, dwFileSize);
 				content.resize(size);
 				convert_utf8_to_wide(content.data(), size, pSource, dwFileSize);
 			}
 			else
 			{
-				const t_size size = estimate_codepage_to_wide(codepage, pSource, dwFileSize);
+				const size_t size = estimate_codepage_to_wide(codepage, pSource, dwFileSize);
 				content.resize(size);
 				convert_codepage_to_wide(codepage, content.data(), size, pSource, dwFileSize);
 			}

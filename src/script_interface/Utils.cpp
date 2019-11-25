@@ -261,10 +261,10 @@ STDMETHODIMP Utils::ListFiles(BSTR folder, VARIANT_BOOL recur, VARIANT* p)
 	pfc::string_list_impl list;
 	helpers::list_files(string_utf8_from_wide(folder).get_ptr(), recur != VARIANT_FALSE, list);
 
-	const t_size count = list.get_count();
+	const size_t count = list.get_count();
 
 	str_vec strings;
-	for (t_size i = 0; i < count; ++i)
+	for (size_t i = 0; i < count; ++i)
 	{
 		strings.emplace_back(file_path_display(list[i]).get_ptr());
 	}
@@ -284,10 +284,10 @@ STDMETHODIMP Utils::ListFolders(BSTR folder, VARIANT* p)
 	pfc::string_list_impl list;
 	helpers::list_folders(string_utf8_from_wide(folder).get_ptr(), list);
 
-	const t_size count = list.get_count();
+	const size_t count = list.get_count();
 
 	str_vec strings;
-	for (t_size i = 0; i < count; ++i)
+	for (size_t i = 0; i < count; ++i)
 	{
 		pfc::string8_fast path = file_path_display(list[i]).get_ptr();
 		path.add_char('\\');

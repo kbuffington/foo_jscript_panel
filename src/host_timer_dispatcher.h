@@ -3,7 +3,7 @@
 class host_timer
 {
 public:
-	host_timer(HWND hwnd, t_size id, t_size delay, bool isRepeated);
+	host_timer(HWND hwnd, size_t id, size_t delay, bool isRepeated);
 	~host_timer();
 
 	static VOID CALLBACK timerProc(PVOID lpParameter, BOOLEAN TimerOrWaitFired);
@@ -18,15 +18,15 @@ private:
 	IDispatch* m_pDisp;
 	bool m_is_repeated;
 	bool m_is_stopped;
+	size_t m_delay;
+	size_t m_id;
 	std::atomic<bool> m_is_stop_requested;
-	t_size m_delay;
-	t_size m_id;
 };
 
 class host_timer_task
 {
 public:
-	host_timer_task(IDispatch* pDisp, t_size timerId);
+	host_timer_task(IDispatch* pDisp, size_t timerId);
 	~host_timer_task();
 
 	void acquire();
@@ -35,8 +35,8 @@ public:
 
 private:
 	IDispatch* m_pDisp;
-	t_size m_refCount;
-	t_size m_timerId;
+	size_t m_refCount;
+	size_t m_timerId;
 };
 
 class host_timer_dispatcher
@@ -47,16 +47,16 @@ public:
 
 	static host_timer_dispatcher& instance();
 
-	t_size set_interval(HWND hwnd, t_size delay, IDispatch* pDisp);
-	t_size set_timeout(HWND hwnd, t_size delay, IDispatch* pDisp);
-	void invoke_message(t_size timerId);
-	void kill_timer(t_size timerId);
+	size_t set_interval(HWND hwnd, size_t delay, IDispatch* pDisp);
+	size_t set_timeout(HWND hwnd, size_t delay, IDispatch* pDisp);
+	void invoke_message(size_t timerId);
+	void kill_timer(size_t timerId);
 	void kill_timers(HWND hwnd);
-	void on_task_complete(t_size timerId);
-	void on_timer_stop_request(HWND hwnd, HANDLE hTimer, t_size timerId);
+	void on_task_complete(size_t timerId);
+	void on_timer_stop_request(HWND hwnd, HANDLE hTimer, size_t timerId);
 
 private:
-	t_size create_timer(HWND hwnd, t_size delay, bool isRepeated, IDispatch* pDisp);
+	size_t create_timer(HWND hwnd, size_t delay, bool isRepeated, IDispatch* pDisp);
 	void create_thread();
 	void stop_thread();
 	void thread_main();
@@ -72,19 +72,19 @@ private:
 		HANDLE hTimer;
 		HWND hwnd;
 		thread_task_id taskId;
-		t_size timerId;
+		size_t timerId;
 	};
 
-	using task_map = std::map<t_size, std::unique_ptr<host_timer_task>>;
-	using timer_map = std::map<t_size, std::unique_ptr<host_timer>>;
+	using task_map = std::map<size_t, std::unique_ptr<host_timer_task>>;
+	using timer_map = std::map<size_t, std::unique_ptr<host_timer>>;
 
 	HANDLE m_timer_queue;
 	task_map m_task_map;
 	timer_map m_timer_map;
+	size_t m_cur_timer_id;
 	std::condition_variable m_cv;
 	std::list<thread_task> m_thread_task_list;
 	std::mutex m_timer_mutex;
 	std::mutex m_thread_task_mutex;
 	std::thread* m_thread;
-	t_size m_cur_timer_id;
 };

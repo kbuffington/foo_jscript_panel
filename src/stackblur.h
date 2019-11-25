@@ -52,18 +52,18 @@ static BYTE const stackblur_shr[255] =
 
 /// Stackblur algorithm body
 void stackblurJob(BYTE* src, ///< input image data
-	t_size w, ///< image width
-	t_size h, ///< image height
-	t_size radius, ///< blur intensity (should be in 2..254 range)
-	t_size cores, ///< total number of working threads
-	t_size core, ///< current thread number
-	t_size step, ///< step of processing (1,2)
+	size_t w, ///< image width
+	size_t h, ///< image height
+	size_t radius, ///< blur intensity (should be in 2..254 range)
+	size_t cores, ///< total number of working threads
+	size_t core, ///< current thread number
+	size_t step, ///< step of processing (1,2)
 	BYTE* stack ///< stack buffer
 )
 {
-	t_size x, y, xp, yp, i;
-	t_size sp;
-	t_size stack_start;
+	size_t x, y, xp, yp, i;
+	size_t sp;
+	size_t stack_start;
 	BYTE* stack_ptr;
 
 	BYTE* src_ptr;
@@ -82,17 +82,17 @@ void stackblurJob(BYTE* src, ///< input image data
 	unsigned long sum_out_b;
 	unsigned long sum_out_a;
 
-	t_size wm = w - 1;
-	t_size hm = h - 1;
-	t_size w4 = w * 4;
-	t_size div = (radius * 2) + 1;
-	t_size mul_sum = stackblur_mul[radius];
+	size_t wm = w - 1;
+	size_t hm = h - 1;
+	size_t w4 = w * 4;
+	size_t div = (radius * 2) + 1;
+	size_t mul_sum = stackblur_mul[radius];
 	BYTE shr_sum = stackblur_shr[radius];
 
 	if (step == 1)
 	{
-		t_size minY = core * h / cores;
-		t_size maxY = (core + 1) * h / cores;
+		size_t minY = core * h / cores;
+		size_t maxY = (core + 1) * h / cores;
 
 		for (y = minY; y < maxY; ++y)
 		{
@@ -203,8 +203,8 @@ void stackblurJob(BYTE* src, ///< input image data
 	// step 2
 	if (step == 2)
 	{
-		t_size minX = core * w / cores;
-		t_size maxX = (core + 1) * w / cores;
+		size_t minX = core * w / cores;
+		size_t maxX = (core + 1) * w / cores;
 
 		for (x = minX; x < maxX; ++x)
 		{
@@ -316,15 +316,15 @@ class stack_blur_task : public pfc::thread
 {
 public:
 	BYTE* src;
-	t_size w;
-	t_size h;
-	t_size radius;
-	t_size cores;
-	t_size core;
-	t_size step;
+	size_t w;
+	size_t h;
+	size_t radius;
+	size_t cores;
+	size_t core;
+	size_t step;
 	BYTE* stack;
 
-	inline stack_blur_task(BYTE* src, t_size w, t_size h, t_size radius, t_size cores, t_size core, t_size step, BYTE* stack)
+	inline stack_blur_task(BYTE* src, size_t w, size_t h, size_t radius, size_t cores, size_t core, size_t step, BYTE* stack)
 	{
 		this->src = src;
 		this->w = w;
@@ -343,13 +343,13 @@ public:
 };
 
 void stackblur(BYTE* src, ///< input image data
-	t_size w, ///< image width
-	t_size h, ///< image height
-	t_size radius ///< blur intensity (should be in 2..254 range)
+	size_t w, ///< image width
+	size_t h, ///< image height
+	size_t radius ///< blur intensity (should be in 2..254 range)
 )
 {
-	t_size cores = std::max(1, (int)pfc::getOptimalWorkerThreadCount());
-	t_size div = (radius * 2) + 1;
+	size_t cores = std::max(1, (int)pfc::getOptimalWorkerThreadCount());
+	size_t div = (radius * 2) + 1;
 	BYTE* stack = new BYTE[div * 4 * cores];
 
 	if (cores == 1)
@@ -360,7 +360,7 @@ void stackblur(BYTE* src, ///< input image data
 	}
 	else
 	{
-		t_size i;
+		size_t i;
 		stack_blur_task** workers = new stack_blur_task*[cores];
 		for (i = 0; i < cores; ++i)
 		{
@@ -395,8 +395,8 @@ void stack_blur_filter(Gdiplus::Bitmap& img, BYTE radius) throw()
 {
 	if (radius < 2) radius = 2;
 	if (radius > 254) radius = 254;
-	t_size width = img.GetWidth();
-	t_size height = img.GetHeight();
+	size_t width = img.GetWidth();
+	size_t height = img.GetHeight();
 
 	Gdiplus::Rect rect(0, 0, width, height);
 	Gdiplus::BitmapData bmpdata;

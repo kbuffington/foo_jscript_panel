@@ -67,7 +67,7 @@ public:
 	STDMETHODIMP GetIDsOfNames(REFIID riid, OLECHAR** names, UINT cNames, LCID lcid, DISPID* dispids) override
 	{
 		if (!dispids) return E_POINTER;
-		for (t_size i = 0; i < cNames; ++i)
+		for (size_t i = 0; i < cNames; ++i)
 		{
 			const ULONG hash = LHashValOfName(LANG_NEUTRAL, names[i]);
 			if (!g_type_info_cache.query(hash, dispids[i]))

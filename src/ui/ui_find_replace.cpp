@@ -24,7 +24,7 @@ CDialogFindReplace::CDialogFindReplace(CScriptEditorCtrl* parent) : m_parent(par
 
 BOOL CDialogFindReplace::OnInitDialog(HWND, LPARAM)
 {
-	for (t_size i = 0; i < ids.size(); ++i)
+	for (size_t i = 0; i < ids.size(); ++i)
 	{
 		const int id = ids[i];
 		HWND hwnd = GetDlgItem(id);

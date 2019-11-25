@@ -35,7 +35,7 @@ struct script_info
 		return ret;
 	}
 
-	std::string expand_import(t_size idx)
+	std::string expand_import(size_t idx)
 	{
 		std::string tmp = imports[idx];
 		for (const auto& [key, value] : expand_table)
@@ -58,9 +58,9 @@ struct script_info
 		id = 0;
 	}
 
+	size_t id;
 	std::string name;
 	std::string version;
 	std::string author;
 	str_vec imports;
-	t_size id;
 };

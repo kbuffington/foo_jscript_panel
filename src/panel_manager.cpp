@@ -40,11 +40,11 @@ void panel_manager::add_window(HWND p_wnd)
 
 void panel_manager::notify_others(HWND p_wnd_except, pfc::refcounted_object_root* p_param)
 {
-	const t_size count = m_hwnds.size();
+	const size_t count = m_hwnds.size();
 
 	if (count < 2 || !p_param) return;
 
-	for (t_size i = 0; i < count - 1; ++i)
+	for (size_t i = 0; i < count - 1; ++i)
 	{
 		p_param->refcount_add_ref();
 	}
@@ -68,11 +68,11 @@ void panel_manager::post_msg_to_all(callback_id id, WPARAM p_wp, LPARAM p_lp)
 
 void panel_manager::post_msg_to_all_pointer(callback_id id, pfc::refcounted_object_root* p_param)
 {
-	const t_size count = m_hwnds.size();
+	const size_t count = m_hwnds.size();
 
 	if (count == 0 || !p_param) return;
 
-	for (t_size i = 0; i < count; ++i)
+	for (size_t i = 0; i < count; ++i)
 	{
 		p_param->refcount_add_ref();
 	}
