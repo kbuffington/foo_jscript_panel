@@ -151,7 +151,7 @@ public:
 		if (sub_item == 1 && m_data[item].is_bool)
 		{
 			m_data[item].bool_value = value;
-			ReloadItem(item);
+			__super::SetCellCheckState(item, sub_item, value);
 		}
 	}
 
