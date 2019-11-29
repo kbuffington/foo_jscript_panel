@@ -348,7 +348,7 @@ void stackblur(BYTE* src, ///< input image data
 	size_t radius ///< blur intensity (should be in 2..254 range)
 )
 {
-	size_t cores = std::max(1, (int)pfc::getOptimalWorkerThreadCount());
+	size_t cores = std::max(1U, pfc::getOptimalWorkerThreadCount());
 	size_t div = (radius * 2) + 1;
 	BYTE* stack = new BYTE[div * 4 * cores];
 

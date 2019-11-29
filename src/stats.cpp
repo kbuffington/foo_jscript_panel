@@ -137,7 +137,7 @@ namespace stats
 					hash_set hashes;
 					get_hashes(items, hashes);
 
-					size_t total = std::accumulate(hashes.begin(), hashes.end(), std::size_t(0), [](size_t t, const metadb_index_hash hash)
+					size_t total = std::accumulate(hashes.begin(), hashes.end(), 0U, [](size_t t, const metadb_index_hash hash)
 						{
 							return t + get(hash).playcount;
 						});

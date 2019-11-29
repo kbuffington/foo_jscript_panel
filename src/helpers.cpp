@@ -460,7 +460,7 @@ namespace helpers
 		return output;
 	}
 
-	void estimate_line_wrap(HDC hdc, const wchar_t* text, int max_width, wrapped_item_list& out)
+	void estimate_line_wrap(HDC hdc, const wchar_t* text, int max_width, wrapped_item_vec& out)
 	{
 		for (;;)
 		{
@@ -483,7 +483,7 @@ namespace helpers
 		}
 	}
 
-	void estimate_line_wrap_recur(HDC hdc, const wchar_t* text, int len, int max_width, wrapped_item_list& out)
+	void estimate_line_wrap_recur(HDC hdc, const wchar_t* text, int len, int max_width, wrapped_item_vec& out)
 	{
 		int textLength = len;
 		const int textWidth = get_text_width(hdc, text, len);

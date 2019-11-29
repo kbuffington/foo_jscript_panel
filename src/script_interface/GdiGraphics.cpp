@@ -194,7 +194,7 @@ STDMETHODIMP GdiGraphics::EstimateLineWrap(BSTR str, IGdiFont* font, int max_wid
 {
 	if (!m_ptr || !p) return E_POINTER;
 
-	helpers::wrapped_item_list result;
+	helpers::wrapped_item_vec result;
 
 	HFONT hFont = nullptr;
 	font->get__HFont(reinterpret_cast<UINT*>(&hFont));

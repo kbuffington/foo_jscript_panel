@@ -24,7 +24,7 @@ namespace helpers
 		int width;
 	};
 
-	using wrapped_item_list = std::vector<wrapped_item>;
+	using wrapped_item_vec = std::vector<wrapped_item>;
 	static constexpr size_t threaded_process_flags = threaded_process::flag_show_progress | threaded_process::flag_show_delayed | threaded_process::flag_show_item;
 	namespace fs = std::filesystem;
 
@@ -52,8 +52,8 @@ namespace helpers
 	pfc::string8_fast read_file(const char* path);
 	size_t guess_codepage(const pfc::string8_fast& content);
 	str_vec split_string(const std::string& str, const std::string& delims);
-	void estimate_line_wrap(HDC hdc, const wchar_t* text, int max_width, wrapped_item_list& out);
-	void estimate_line_wrap_recur(HDC hdc, const wchar_t* text, int len, int max_width, wrapped_item_list& out);
+	void estimate_line_wrap(HDC hdc, const wchar_t* text, int max_width, wrapped_item_vec& out);
+	void estimate_line_wrap_recur(HDC hdc, const wchar_t* text, int len, int max_width, wrapped_item_vec& out);
 	void list_files(const char* path, bool recur, pfc::string_list_impl& out);
 	void list_folders(const char* path, pfc::string_list_impl& out);
 	void read_file_wide(size_t codepage, const wchar_t* path, std::vector<wchar_t>& content);
