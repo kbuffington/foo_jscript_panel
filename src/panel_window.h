@@ -10,9 +10,12 @@ public:
 	panel_window();
 	~panel_window();
 
+	HDC get_hdc();
 	LRESULT on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp) override;
 	class_data& get_class_data() const override;
 	bool show_configure_popup(HWND parent) override;
+	void build_context_menu(HMENU menu, int id_base);
+	void execute_context_menu_command(int id, int id_base);
 	void repaint() override;
 	void repaint_rect(int x, int y, int w, int h) override;
 	void script_invoke(callback_id id, VARIANTARG* argv = nullptr, size_t argc = 0, VARIANT* ret = nullptr);
@@ -20,13 +23,8 @@ public:
 	void unload_script() override;
 	void update_script() override;
 
-protected:
-	void build_context_menu(HMENU menu, int id_base);
-	void execute_context_menu_command(int id, int id_base);
-
-	HDC m_hdc;
-
 private:
+	bool invoke_callback(callback_id id, WPARAM wp, LPARAM lp);
 	void create_context();
 	void delete_context();
 	void load_script();
@@ -40,6 +38,7 @@ private:
 	CComPtr<IDropTargetImpl> m_drop_target;
 	HBITMAP m_gr_bmp;
 	HBITMAP m_gr_bmp_bk;
+	HDC m_hdc;
 	IGdiGraphicsPtr m_gr_wrap;
 	bool m_is_droptarget_registered;
 	bool m_is_mouse_tracked;

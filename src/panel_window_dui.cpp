@@ -87,7 +87,7 @@ public:
 			HFONT hFont = m_callback->query_font_ex(*guids[type]);
 			if (hFont)
 			{
-				auto font = new Gdiplus::Font(m_hdc, hFont);
+				auto font = new Gdiplus::Font(get_hdc(), hFont);
 				if (helpers::ensure_gdiplus_object(font))
 				{
 					ret = new com_object_impl_t<GdiFont>(font, hFont, false);
