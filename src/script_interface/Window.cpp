@@ -207,7 +207,7 @@ STDMETHODIMP Window::get_Height(int* p)
 {
 	if (!p) return E_POINTER;
 
-	*p = m_host->get_height();
+	*p = m_host->m_size.height;
 	return S_OK;
 }
 
@@ -247,7 +247,7 @@ STDMETHODIMP Window::get_MaxHeight(UINT* p)
 {
 	if (!p) return E_POINTER;
 
-	*p = m_host->m_max_size.y;
+	*p = m_host->m_size.max.y;
 	return S_OK;
 }
 
@@ -255,7 +255,7 @@ STDMETHODIMP Window::get_MaxWidth(UINT* p)
 {
 	if (!p) return E_POINTER;
 
-	*p = m_host->m_max_size.x;
+	*p = m_host->m_size.max.x;
 	return S_OK;
 }
 
@@ -263,7 +263,7 @@ STDMETHODIMP Window::get_MinHeight(UINT* p)
 {
 	if (!p) return E_POINTER;
 
-	*p = m_host->m_min_size.y;
+	*p = m_host->m_size.min.y;
 	return S_OK;
 }
 
@@ -271,7 +271,7 @@ STDMETHODIMP Window::get_MinWidth(UINT* p)
 {
 	if (!p) return E_POINTER;
 
-	*p = m_host->m_min_size.x;
+	*p = m_host->m_size.min.x;
 	return S_OK;
 }
 
@@ -292,34 +292,34 @@ STDMETHODIMP Window::get_Width(int* p)
 {
 	if (!p) return E_POINTER;
 
-	*p = m_host->get_width();
+	*p = m_host->m_size.width;
 	return S_OK;
 }
 
 STDMETHODIMP Window::put_MaxHeight(UINT height)
 {
-	m_host->m_max_size.y = height;
+	m_host->m_size.max.y = height;
 	m_host->notify_size_limit_changed();
 	return S_OK;
 }
 
 STDMETHODIMP Window::put_MaxWidth(UINT width)
 {
-	m_host->m_max_size.x = width;
+	m_host->m_size.max.x = width;
 	m_host->notify_size_limit_changed();
 	return S_OK;
 }
 
 STDMETHODIMP Window::put_MinHeight(UINT height)
 {
-	m_host->m_min_size.y = height;
+	m_host->m_size.min.y = height;
 	m_host->notify_size_limit_changed();
 	return S_OK;
 }
 
 STDMETHODIMP Window::put_MinWidth(UINT width)
 {
-	m_host->m_min_size.x = width;
+	m_host->m_size.min.x = width;
 	m_host->notify_size_limit_changed();
 	return S_OK;
 }

@@ -3,8 +3,6 @@
 
 host_comm::host_comm()
 	: m_hwnd(nullptr)
-	, m_width(0)
-	, m_height(0)
 	, m_dragdrop(false)
 	, m_grabfocus(false)
 	, m_pseudo_transparent(false)
@@ -12,10 +10,12 @@ host_comm::host_comm()
 	, m_instance_type(instance_type::cui)
 	, m_script_info()
 	, m_panel_tooltip_param_ptr(new panel_tooltip_param)
-	, m_max_size { INT_MAX, INT_MAX }
-	, m_min_size { 0, 0 }
 {
 	reset_config();
+	m_size.min = { 0, 0 };
+	m_size.max = { INT_MAX, INT_MAX };
+	m_size.width = 0;
+	m_size.height = 0;
 }
 
 host_comm::~host_comm() {}
@@ -43,16 +43,6 @@ HWND host_comm::get_hwnd()
 bool host_comm::is_dui()
 {
 	return m_instance_type == instance_type::dui;
-}
-
-int host_comm::get_height()
-{
-	return m_height;
-}
-
-int host_comm::get_width()
-{
-	return m_width;
 }
 
 panel_tooltip_param_ptr& host_comm::panel_tooltip()

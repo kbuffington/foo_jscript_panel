@@ -77,8 +77,8 @@ LRESULT panel_window::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 		{
 			RECT rc;
 			GetClientRect(m_hwnd, &rc);
-			m_width = RECT_CX(rc);
-			m_height = RECT_CY(rc);
+			m_size.width = RECT_CX(rc);
+			m_size.height = RECT_CY(rc);
 			on_size();
 			if (m_pseudo_transparent)
 				redraw();
@@ -88,9 +88,9 @@ LRESULT panel_window::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 		return 0;
 	case WM_GETMINMAXINFO:
 		{
-			LPMINMAXINFO pmmi = reinterpret_cast<LPMINMAXINFO>(lp);
-			memcpy(&pmmi->ptMaxTrackSize, &m_max_size, sizeof(POINT));
-			memcpy(&pmmi->ptMinTrackSize, &m_min_size, sizeof(POINT));
+			auto info = reinterpret_cast<LPMINMAXINFO>(lp);
+			info->ptMaxTrackSize = m_size.max;
+			info->ptMinTrackSize = m_size.min;
 		}
 		return 0;
 	case WM_LBUTTONDOWN:
@@ -526,11 +526,11 @@ void panel_window::create_context()
 		delete_context();
 	}
 
-	m_gr_bmp = CreateCompatibleBitmap(m_hdc, m_width, m_height);
+	m_gr_bmp = CreateCompatibleBitmap(m_hdc, m_size.width, m_size.height);
 
 	if (m_pseudo_transparent)
 	{
-		m_gr_bmp_bk = CreateCompatibleBitmap(m_hdc, m_width, m_height);
+		m_gr_bmp_bk = CreateCompatibleBitmap(m_hdc, m_size.width, m_size.height);
 	}
 }
 
@@ -576,8 +576,8 @@ void panel_window::load_script()
 	SetWindowLongPtr(m_hwnd, GWL_EXSTYLE, extstyle);
 	SetWindowPos(m_hwnd, nullptr, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
 
-	m_max_size = { INT_MAX, INT_MAX };
-	m_min_size = { 0, 0 };
+	m_size.min = { 0, 0 };
+	m_size.max = { INT_MAX, INT_MAX };
 	notify_size_limit_changed();
 	m_dragdrop = false;
 	m_grabfocus = false;
@@ -638,14 +638,14 @@ void panel_window::on_paint()
 			}
 			else
 			{
-				RECT rc = { 0, 0, m_width, m_height };
+				RECT rc = { 0, 0, m_size.width, m_size.height };
 				FillRect(memdc, &rc, reinterpret_cast<HBRUSH>(COLOR_WINDOW + 1));
 			}
 
 			on_paint_user(memdc, &ps.rcPaint);
 		}
 
-		BitBlt(dc, 0, 0, m_width, m_height, memdc, 0, 0, SRCCOPY);
+		BitBlt(dc, 0, 0, m_size.width, m_size.height, memdc, 0, 0, SRCCOPY);
 	}
 
 	DeleteDC(memdc);
@@ -673,7 +673,7 @@ void panel_window::on_paint_error(HDC memdc)
 	{
 		LOGBRUSH lbBack = { BS_SOLID, RGB(225, 60, 45), 0 };
 		HBRUSH hBack = CreateBrushIndirect(&lbBack);
-		RECT rc = { 0, 0, m_width, m_height };
+		RECT rc = { 0, 0, m_size.width, m_size.height };
 		SelectObjectScope scope(memdc, hFont);
 
 		FillRect(memdc, &rc, hBack);
@@ -741,7 +741,7 @@ void panel_window::refresh_background(LPRECT lprcUpdate)
 	HDC dc_parent = GetDC(wnd_parent);
 	HDC hdc_bk = CreateCompatibleDC(dc_parent);
 	POINT pt = { 0, 0 };
-	RECT rect_child = { 0, 0, m_width, m_height };
+	RECT rect_child = { 0, 0, m_size.width, m_size.height };
 	RECT rect_parent;
 	HRGN rgn_child = nullptr;
 

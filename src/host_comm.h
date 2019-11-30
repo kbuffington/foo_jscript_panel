@@ -21,8 +21,6 @@ protected:
 
 	HWND m_hwnd;
 	instance_type m_instance_type;
-	int m_height;
-	int m_width;
 	panel_tooltip_param_ptr m_panel_tooltip_param_ptr;
 	ui_selection_holder::ptr m_selection_holder;
 
@@ -45,18 +43,20 @@ public:
 		grey,
 	};
 
+	struct size
+	{
+		POINT min, max;
+		int width, height;
+	};
+
 	static pfc::string8_fast get_default_script_code();
 	static pfc::string8_fast get_default_script_engine_str();
 
 	DWORD get_edge_style() const;
 	HWND get_hwnd();
 	bool is_dui();
-	int get_height();
-	int get_width();
 	panel_tooltip_param_ptr& panel_tooltip();
 
-	POINT m_max_size;
-	POINT m_min_size;
 	bool m_dragdrop;
 	bool m_grabfocus;
 	bool m_pseudo_transparent;
@@ -65,4 +65,5 @@ public:
 	pfc::string8_fast m_script_engine_str;
 	panel_properties m_panel_properties;
 	script_info m_script_info;
+	size m_size;
 };
