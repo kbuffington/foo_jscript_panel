@@ -192,6 +192,9 @@
     <ClInclude Include="ui\config.h">
       <Filter>Header Files\ui</Filter>
     </ClInclude>
+    <ClInclude Include="callback_data.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="helpers.cpp">
