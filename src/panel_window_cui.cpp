@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "panel_window.h"
 
-class panel_window_cui : public panel_window, public uie::window, public cui::fonts::common_callback, public cui::colours::common_callback
+class panel_window_cui : public panel_window, public uie::container_ui_extension, public cui::fonts::common_callback, public cui::colours::common_callback
 {
 protected:
 	DWORD get_colour_ui(size_t type) override
@@ -61,6 +61,14 @@ protected:
 	{
 		switch (msg)
 		{
+		case WM_SETCURSOR:
+			return 1;
+		case WM_ERASEBKGND:
+			if (m_pseudo_transparent) redraw();
+			return 1;
+		case WM_CONTEXTMENU:
+			on_context_menu(lp);
+			return 1;
 		case WM_CREATE:
 			try
 			{
@@ -83,7 +91,9 @@ protected:
 				return 0;
 			break;
 		}
-		return panel_window::on_message(hwnd, msg, wp, lp);
+
+		if (handle_message(hwnd, msg, wp, lp)) return 0;
+		return uDefWindowProc(hwnd, msg, wp, lp);
 	}
 
 	bool have_config_popup() const override
@@ -99,6 +109,11 @@ protected:
 	bool show_config_popup(HWND parent) override
 	{
 		return show_configure_popup(parent);
+	}
+
+	class_data& get_class_data() const override
+	{
+		__implement_get_class_data_ex(PFC_WIDESTRING(JSP_NAME), L"", false, 0, WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN, get_edge_style(), CS_DBLCLKS);
 	}
 
 	const GUID& get_extension_guid() const override
@@ -136,12 +151,12 @@ protected:
 
 	void on_colour_changed(size_t mask) const override
 	{
-		PostMessage(m_hwnd, static_cast<unsigned int>(callback_id::on_colours_changed), 0, 0);
+		script_invoke(callback_id::on_colours_changed);
 	}
 
 	void on_font_changed(size_t mask) const override
 	{
-		PostMessage(m_hwnd, static_cast<unsigned int>(callback_id::on_font_changed), 0, 0);
+		script_invoke(callback_id::on_font_changed);
 	}
 
 	void set_config(stream_reader* reader, size_t size, abort_callback& abort) override
@@ -161,5 +176,4 @@ private:
 	uie::window_host_ptr m_host;
 };
 
-// CUI panel instance
 static uie::window_factory<panel_window_cui> g_panel_window_cui;

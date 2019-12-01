@@ -24,7 +24,7 @@ HDC panel_window::get_hdc()
 	return m_hdc;
 }
 
-LRESULT panel_window::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
+bool panel_window::handle_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 {
 	switch (msg)
 	{
@@ -35,7 +35,7 @@ LRESULT panel_window::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 		m_gr_wrap.Attach(new com_object_impl_t<GdiGraphics>(), false);
 		panel_manager::instance().add_window(m_hwnd);
 		load_script();
-		return 0;
+		return true;
 	case WM_DESTROY:
 		unload_script();
 		panel_manager::instance().remove_window(m_hwnd);
@@ -45,17 +45,11 @@ LRESULT panel_window::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 		}
 		delete_context();
 		ReleaseDC(m_hwnd, m_hdc);
-		return 0;
+		return true;
 	case WM_DISPLAYCHANGE:
 	case WM_THEMECHANGED:
 		update_script();
-		return 0;
-	case WM_ERASEBKGND:
-		if (m_pseudo_transparent)
-		{
-			redraw();
-		}
-		return 1;
+		return true;
 	case WM_PAINT:
 		{
 			if (m_suppress_drawing)
@@ -66,13 +60,13 @@ LRESULT panel_window::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 				RECT rc;
 				GetUpdateRect(m_hwnd, &rc, FALSE);
 				refresh_background(&rc);
-				return 0;
+				return true;
 			}
 
 			on_paint();
 			m_paint_pending = false;
 		}
-		return 0;
+		return true;
 	case WM_SIZE:
 		{
 			RECT rc;
@@ -85,14 +79,14 @@ LRESULT panel_window::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 			else
 				repaint();
 		}
-		return 0;
+		return true;
 	case WM_GETMINMAXINFO:
 		{
 			auto info = reinterpret_cast<LPMINMAXINFO>(lp);
 			info->ptMaxTrackSize = m_size.max;
 			info->ptMinTrackSize = m_size.min;
 		}
-		return 0;
+		return true;
 	case WM_LBUTTONDOWN:
 	case WM_MBUTTONDOWN:
 	case WM_RBUTTONDOWN:
@@ -117,17 +111,15 @@ LRESULT panel_window::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 			case WM_LBUTTONDOWN:
 				script_invoke(callback_id::on_mouse_lbtn_down, args, _countof(args));
 				break;
-
 			case WM_MBUTTONDOWN:
 				script_invoke(callback_id::on_mouse_mbtn_down, args, _countof(args));
 				break;
-
 			case WM_RBUTTONDOWN:
 				script_invoke(callback_id::on_mouse_rbtn_down, args, _countof(args));
 				break;
 			}
 		}
-		break;
+		return false;
 	case WM_LBUTTONUP:
 	case WM_MBUTTONUP:
 	case WM_RBUTTONUP:
@@ -147,34 +139,30 @@ LRESULT panel_window::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 			case WM_LBUTTONUP:
 				script_invoke(callback_id::on_mouse_lbtn_up, args, _countof(args));
 				break;
-
 			case WM_MBUTTONUP:
 				script_invoke(callback_id::on_mouse_mbtn_up, args, _countof(args));
 				break;
-
 			case WM_RBUTTONUP:
-			{
-				// Bypass the user code?
-				if (IsKeyPressed(VK_LSHIFT) && IsKeyPressed(VK_LWIN))
 				{
-					break;
-				}
+					// Bypass the user code?
+					if (IsKeyPressed(VK_LSHIFT) && IsKeyPressed(VK_LWIN))
+					{
+						break;
+					}
 
-				_variant_t result;
-				script_invoke(callback_id::on_mouse_rbtn_up, args, _countof(args), &result);
-				if (SUCCEEDED(VariantChangeType(&result, &result, 0, VT_BOOL)))
-				{
-					ret = !!result.boolVal;
+					_variant_t result;
+					script_invoke(callback_id::on_mouse_rbtn_up, args, _countof(args), &result);
+					if (SUCCEEDED(VariantChangeType(&result, &result, 0, VT_BOOL)))
+					{
+						ret = !!result.boolVal;
+					}
 				}
-			}
-			break;
+				break;
 			}
 
 			ReleaseCapture();
-			if (ret)
-				return 0;
+			return ret;
 		}
-		break;
 	case WM_LBUTTONDBLCLK:
 	case WM_MBUTTONDBLCLK:
 	case WM_RBUTTONDBLCLK:
@@ -192,33 +180,15 @@ LRESULT panel_window::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 			case WM_LBUTTONDBLCLK:
 				script_invoke(callback_id::on_mouse_lbtn_dblclk, args, _countof(args));
 				break;
-
 			case WM_MBUTTONDBLCLK:
 				script_invoke(callback_id::on_mouse_mbtn_dblclk, args, _countof(args));
 				break;
-
 			case WM_RBUTTONDBLCLK:
 				script_invoke(callback_id::on_mouse_rbtn_dblclk, args, _countof(args));
 				break;
 			}
 		}
-		break;
-	case WM_CONTEXTMENU:
-		{
-			POINT pt = { GET_X_LPARAM(lp), GET_Y_LPARAM(lp) };
-			if (pt.x == -1 && pt.y == -1)
-			{
-				GetMessagePos(&pt);
-			}
-
-			HMENU menu = CreatePopupMenu();
-			constexpr int base_id = 0;
-			build_context_menu(menu, base_id);
-			const int idx = TrackPopupMenu(menu, TPM_RIGHTBUTTON | TPM_NONOTIFY | TPM_RETURNCMD, pt.x, pt.y, 0, m_hwnd, nullptr);
-			execute_context_menu_command(idx, base_id);
-			DestroyMenu(menu);
-		}
-		return 1;
+		return false;
 	case WM_MOUSEMOVE:
 		{
 			if (!m_is_mouse_tracked)
@@ -242,13 +212,13 @@ LRESULT panel_window::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 			args[2].lVal = GET_X_LPARAM(lp);
 			script_invoke(callback_id::on_mouse_move, args, _countof(args));
 		}
-		break;
+		return false;
 	case WM_MOUSELEAVE:
 		m_is_mouse_tracked = false;
 
 		script_invoke(callback_id::on_mouse_leave);
 		SetCursor(LoadCursor(nullptr, IDC_ARROW));
-		break;
+		return false;
 	case WM_MOUSEWHEEL:
 	case WM_MOUSEHWHEEL:
 		{
@@ -257,9 +227,7 @@ LRESULT panel_window::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 			args[0].lVal = GET_WHEEL_DELTA_WPARAM(wp) > 0 ? 1 : -1;
 			script_invoke(msg == WM_MOUSEWHEEL ? callback_id::on_mouse_wheel : callback_id::on_mouse_wheel_h, args, _countof(args));
 		}
-		break;
-	case WM_SETCURSOR:
-		return 1;
+		return false;
 	case WM_SYSKEYDOWN:
 	case WM_KEYDOWN:
 		{
@@ -268,7 +236,7 @@ LRESULT panel_window::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 			args[0].ulVal = wp;
 			script_invoke(callback_id::on_key_down, args, _countof(args));
 		}
-		return 0;
+		return true;
 	case WM_KEYUP:
 		{
 			VARIANTARG args[1];
@@ -276,7 +244,7 @@ LRESULT panel_window::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 			args[0].ulVal = wp;
 			script_invoke(callback_id::on_key_up, args, _countof(args));
 		}
-		return 0;
+		return true;
 	case WM_CHAR:
 		{
 			VARIANTARG args[1];
@@ -284,7 +252,7 @@ LRESULT panel_window::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 			args[0].ulVal = wp;
 			script_invoke(callback_id::on_char, args, _countof(args));
 		}
-		return 0;
+		return true;
 	case WM_SETFOCUS:
 		{
 			m_selection_holder = ui_selection_manager::get()->acquire();
@@ -294,7 +262,7 @@ LRESULT panel_window::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 			args[0].boolVal = VARIANT_TRUE;
 			script_invoke(callback_id::on_focus, args, _countof(args));
 		}
-		break;
+		return false;
 	case WM_KILLFOCUS:
 		{
 			m_selection_holder.release();
@@ -304,27 +272,25 @@ LRESULT panel_window::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 			args[0].boolVal = VARIANT_FALSE;
 			script_invoke(callback_id::on_focus, args, _countof(args));
 		}
-		break;
+		return false;
 	case UWM_TIMER:
 		host_timer_dispatcher::instance().invoke_message(wp);
-		return 0;
+		return true;
 	case UWM_UNLOAD:
 		unload_script();
-		return 0;
+		return true;
 	}
-	
+
 	callback_id id = static_cast<callback_id>(msg);
-	if (invoke_callback(id, wp, lp)) return 0;
-	return uDefWindowProc(hwnd, msg, wp, lp);
+	if (invoke_callback(id, wp, lp)) return true;
+	return false;
 }
 
 bool panel_window::invoke_callback(callback_id id, WPARAM wp, LPARAM lp)
 {
 	switch (id)
 	{
-	case callback_id::on_colours_changed:
 	case callback_id::on_dsp_preset_changed:
-	case callback_id::on_font_changed:
 	case callback_id::on_output_device_changed:
 	case callback_id::on_playback_dynamic_info:
 	case callback_id::on_playback_dynamic_info_track:
@@ -506,11 +472,6 @@ bool panel_window::show_configure_popup(HWND parent)
 	return false;
 }
 
-ui_helpers::container_window::class_data& panel_window::get_class_data() const
-{
-	__implement_get_class_data_ex(JSP_NAME L" Class", L"", false, 0, WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN, get_edge_style(), CS_DBLCLKS);
-}
-
 void panel_window::build_context_menu(HMENU menu, int id_base)
 {
 	uAppendMenu(menu, MF_STRING, id_base + 1, "&Reload");
@@ -606,6 +567,22 @@ void panel_window::load_script()
 	}
 
 	FB2K_console_formatter() << m_script_info.build_info_string() << ": initialised in " << static_cast<int>(timer.query() * 1000) << " ms";
+}
+
+void panel_window::on_context_menu(LPARAM lp)
+{
+	POINT pt = { GET_X_LPARAM(lp), GET_Y_LPARAM(lp) };
+	if (pt.x == -1 && pt.y == -1)
+	{
+		GetMessagePos(&pt);
+	}
+
+	HMENU menu = CreatePopupMenu();
+	constexpr int base_id = 0;
+	build_context_menu(menu, base_id);
+	const int idx = TrackPopupMenu(menu, TPM_RIGHTBUTTON | TPM_NONOTIFY | TPM_RETURNCMD, pt.x, pt.y, 0, m_hwnd, nullptr);
+	execute_context_menu_command(idx, base_id);
+	DestroyMenu(menu);
 }
 
 void panel_window::on_paint()
@@ -800,7 +777,7 @@ void panel_window::repaint_rect(int x, int y, int w, int h)
 	InvalidateRect(m_hwnd, &rc, FALSE);
 }
 
-void panel_window::script_invoke(callback_id id, VARIANTARG* argv, size_t argc, VARIANT* ret)
+void panel_window::script_invoke(callback_id id, VARIANTARG* argv, size_t argc, VARIANT* ret) const
 {
 	m_script_host->InvokeCallback(id, argv, argc, ret);
 }

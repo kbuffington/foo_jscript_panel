@@ -1,18 +1,15 @@
 #include "stdafx.h"
 #include "panel_window.h"
 
-class panel_window_dui : public panel_window, public ui_element_instance
+class panel_window_dui : public panel_window, public ui_element_instance, public CWindowImpl<panel_window_dui>
 {
 public:
+	DECLARE_WND_CLASS_EX(PFC_WIDESTRING(JSP_NAME), CS_VREDRAW | CS_HREDRAW | CS_DBLCLKS, -1);
+
 	panel_window_dui(ui_element_config::ptr cfg, ui_element_instance_callback::ptr callback) : m_callback(callback)
 	{
 		m_instance_type = instance_type::dui;
 		set_configuration(cfg);
-	}
-
-	~panel_window_dui()
-	{
-		panel_window::destroy();
 	}
 
 	static GUID g_get_guid()
@@ -39,6 +36,35 @@ public:
 	static void g_get_name(pfc::string_base& out)
 	{
 		out = JSP_NAME;
+	}
+
+	BOOL ProcessWindowMessage(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp, LRESULT& res, DWORD) override
+	{
+		res = 0;
+
+		switch (msg)
+		{
+		case WM_SETCURSOR:
+		case WM_ERASEBKGND:
+			res = 1;
+			return TRUE;
+		case WM_CONTEXTMENU:
+			res = 1;
+			if (m_callback->is_edit_mode_enabled()) return FALSE;
+			on_context_menu(lp);
+			return TRUE;
+		case WM_RBUTTONUP:
+		case WM_RBUTTONDOWN:
+		case WM_RBUTTONDBLCLK:
+			if (m_callback->is_edit_mode_enabled()) return FALSE;
+			break;
+		case WM_GETDLGCODE:
+			res = DLGC_WANTALLKEYS;
+			return TRUE;
+		}
+
+		if (handle_message(hwnd, msg, wp, lp)) return TRUE;
+		return FALSE;
 	}
 
 	DWORD get_colour_ui(size_t type) override
@@ -102,23 +128,6 @@ public:
 		return ret;
 	}
 
-	LRESULT on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp) override
-	{
-		switch (msg)
-		{
-		case WM_RBUTTONUP:
-		case WM_RBUTTONDOWN:
-		case WM_RBUTTONDBLCLK:
-		case WM_CONTEXTMENU:
-			if (m_callback->is_edit_mode_enabled())
-				return DefWindowProc(hwnd, msg, wp, lp);
-			break;
-		case WM_GETDLGCODE:
-			return DLGC_WANTALLKEYS;
-		}
-		return panel_window::on_message(hwnd, msg, wp, lp);
-	}
-
 	bool edit_mode_context_menu_test(const POINT& p_point, bool p_fromkeyboard) override
 	{
 		return true;
@@ -141,15 +150,20 @@ public:
 		execute_context_menu_command(p_id, p_id_base);
 	}
 
+	void initialize_window(HWND parent)
+	{
+		Create(parent);
+	}
+
 	void notify(const GUID& p_what, size_t p_param1, const void* p_param2, size_t p_param2size) override
 	{
 		if (p_what == ui_element_notify_colors_changed)
 		{
-			PostMessage(m_hwnd, static_cast<unsigned int>(callback_id::on_colours_changed), 0, 0);
+			script_invoke(callback_id::on_colours_changed);
 		}
 		else if (p_what == ui_element_notify_font_changed)
 		{
-			PostMessage(m_hwnd, static_cast<unsigned int>(callback_id::on_font_changed), 0, 0);
+			script_invoke(callback_id::on_font_changed);
 		}
 	}
 
@@ -175,49 +189,6 @@ private:
 	ui_element_instance_callback::ptr m_callback;
 };
 
-template <class T>
-class my_ui_element : public ui_element
-{
-public:
-	GUID get_guid() override
-	{
-		return T::g_get_guid();
-	}
+class my_ui_element_impl : public ui_element_impl<panel_window_dui> {};
 
-	GUID get_subclass() override
-	{
-		return T::g_get_subclass();
-	}
-
-	bool get_description(pfc::string_base& out) override
-	{
-		out = T::g_get_description();
-		return true;
-	}
-
-	ui_element_children_enumerator_ptr enumerate_children(ui_element_config::ptr cfg) override
-	{
-		return nullptr;
-	}
-
-	ui_element_config::ptr get_default_configuration() override
-	{
-		return T::g_get_default_configuration();
-	}
-
-	ui_element_instance::ptr instantiate(HWND parent, ui_element_config::ptr cfg, ui_element_instance_callback::ptr callback) override
-	{
-		PFC_ASSERT(cfg->get_guid() == get_guid());
-		auto item = fb2k::service_new<T>(cfg, callback);
-		item->create(parent);
-		return item;
-	}
-
-	void get_name(pfc::string_base& out) override
-	{
-		T::g_get_name(out);
-	}
-};
-
-// DUI panel instance
-static service_factory_t<my_ui_element<panel_window_dui>> g_my_ui_element;
+FB2K_SERVICE_FACTORY(my_ui_element_impl);

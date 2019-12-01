@@ -4,21 +4,22 @@
 #include "panel_manager.h"
 #include "script_host.h"
 
-class panel_window : public host_comm, public ui_helpers::container_window
+class panel_window : public host_comm
 {
 public:
 	panel_window();
 	~panel_window();
 
 	HDC get_hdc();
-	LRESULT on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp) override;
-	class_data& get_class_data() const override;
+	bool handle_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp);
 	bool show_configure_popup(HWND parent) override;
 	void build_context_menu(HMENU menu, int id_base);
 	void execute_context_menu_command(int id, int id_base);
+	void on_context_menu(LPARAM lp);
+	void redraw();
 	void repaint() override;
 	void repaint_rect(int x, int y, int w, int h) override;
-	void script_invoke(callback_id id, VARIANTARG* argv = nullptr, size_t argc = 0, VARIANT* ret = nullptr);
+	void script_invoke(callback_id id, VARIANTARG* argv = nullptr, size_t argc = 0, VARIANT* ret = nullptr) const;
 	void show_property_popup(HWND parent) override;
 	void unload_script() override;
 	void update_script() override;
@@ -32,7 +33,6 @@ private:
 	void on_paint_error(HDC memdc);
 	void on_paint_user(HDC memdc, LPRECT lpUpdateRect);
 	void on_size();
-	void redraw();
 	void refresh_background(LPRECT lprcUpdate);
 
 	CComPtr<IDropTargetImpl> m_drop_target;
