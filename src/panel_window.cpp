@@ -53,7 +53,7 @@ bool panel_window::handle_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 	case WM_PAINT:
 		{
 			if (m_suppress_drawing)
-				break;
+				return false;
 
 			if (m_pseudo_transparent && !m_paint_pending)
 			{
