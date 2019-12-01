@@ -4,9 +4,15 @@
 class panel_window_cui : public panel_window, public uie::container_ui_extension, public cui::fonts::common_callback, public cui::colours::common_callback
 {
 protected:
-	DWORD get_colour_ui(size_t type) override
+	COLORREF get_colour_ui(size_t type) override
 	{
-		return type <= cui::colours::colour_active_item_frame ? helpers::convert_colorref_to_argb(cui::colours::helper(pfc::guid_null).get_colour(static_cast<cui::colours::colour_identifier_t>(type))) : 0;
+		const auto t = static_cast<cui::colours::colour_identifier_t>(type);
+		if (t <= cui::colours::colour_active_item_frame)
+		{
+			cui::colours::helper helper(pfc::guid_null);
+			return helper.get_colour(t);
+		}
+		return 0;
 	}
 
 	HWND create_or_transfer_window(HWND parent, const uie::window_host_ptr& host, const ui_helpers::window_position_t& p_position) override

@@ -33,59 +33,59 @@ std::vector<panel_manager::api_item> panel_manager::get_apis()
 	return m_apis;
 }
 
-void panel_manager::add_window(HWND p_wnd)
+void panel_manager::add_window(HWND hwnd)
 {
-	m_hwnds.insert(p_wnd);
+	m_hwnds.insert(hwnd);
 }
 
-void panel_manager::notify_others(HWND p_wnd_except, pfc::refcounted_object_root* p_param)
+void panel_manager::notify_others(HWND hwnd_except, pfc::refcounted_object_root* param)
 {
 	const size_t count = m_hwnds.size();
 
-	if (count < 2 || !p_param) return;
+	if (count < 2 || !param) return;
 
 	for (size_t i = 0; i < count - 1; ++i)
 	{
-		p_param->refcount_add_ref();
+		param->refcount_add_ref();
 	}
 
 	for (const auto& hwnd : m_hwnds)
 	{
-		if (hwnd != p_wnd_except)
+		if (hwnd != hwnd_except)
 		{
-			SendMessage(hwnd, static_cast<unsigned int>(callback_id::on_notify_data), reinterpret_cast<WPARAM>(p_param), 0);
+			SendMessage(hwnd, static_cast<unsigned int>(callback_id::on_notify_data), reinterpret_cast<WPARAM>(param), 0);
 		}
 	}
 }
 
-void panel_manager::post_msg_to_all(callback_id id, WPARAM p_wp, LPARAM p_lp)
+void panel_manager::post_msg_to_all(callback_id id, WPARAM wp, LPARAM lp)
 {
 	for (const auto& hwnd : m_hwnds)
 	{
-		PostMessage(hwnd, static_cast<unsigned int>(id), p_wp, p_lp);
+		PostMessage(hwnd, static_cast<unsigned int>(id), wp, lp);
 	}
 }
 
-void panel_manager::post_msg_to_all_pointer(callback_id id, pfc::refcounted_object_root* p_param)
+void panel_manager::post_msg_to_all_pointer(callback_id id, pfc::refcounted_object_root* param)
 {
 	const size_t count = m_hwnds.size();
 
-	if (count == 0 || !p_param) return;
+	if (count == 0 || !param) return;
 
 	for (size_t i = 0; i < count; ++i)
 	{
-		p_param->refcount_add_ref();
+		param->refcount_add_ref();
 	}
 
 	for (const auto& hwnd : m_hwnds)
 	{
-		PostMessage(hwnd, static_cast<unsigned int>(id), reinterpret_cast<WPARAM>(p_param), 0);
+		PostMessage(hwnd, static_cast<unsigned int>(id), reinterpret_cast<WPARAM>(param), 0);
 	}
 }
 
-void panel_manager::remove_window(HWND p_wnd)
+void panel_manager::remove_window(HWND hwnd)
 {
-	m_hwnds.erase(p_wnd);
+	m_hwnds.erase(hwnd);
 }
 
 void panel_manager::unload_all()

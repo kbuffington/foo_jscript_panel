@@ -67,7 +67,7 @@ public:
 		return FALSE;
 	}
 
-	DWORD get_colour_ui(size_t type) override
+	COLORREF get_colour_ui(size_t type) override
 	{
 		static constexpr std::array<const GUID*, 4> guids =
 		{
@@ -76,7 +76,7 @@ public:
 			&ui_color_highlight,
 			&ui_color_selection,
 		};
-		return type < guids.size() ? helpers::convert_colorref_to_argb(m_callback->query_std_color(*guids[type])) : 0;
+		return type < guids.size() ? m_callback->query_std_color(*guids[type]) : 0;
 	}
 
 	GUID get_guid() override

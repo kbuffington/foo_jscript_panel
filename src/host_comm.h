@@ -25,7 +25,7 @@ protected:
 	ui_selection_holder::ptr m_selection_holder;
 
 public:
-	virtual DWORD get_colour_ui(size_t type) = 0;
+	virtual COLORREF get_colour_ui(size_t type) = 0;
 	virtual IGdiFont* get_font_ui(size_t type) = 0;
 	virtual bool show_configure_popup(HWND parent) = 0;
 	virtual void notify_size_limit_changed() = 0;

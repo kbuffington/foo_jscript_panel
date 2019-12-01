@@ -11,11 +11,11 @@ public:
 	static panel_manager& instance();
 
 	std::vector<api_item> get_apis();
-	void add_window(HWND p_wnd);
-	void notify_others(HWND p_wnd_except, pfc::refcounted_object_root* p_param);
-	void post_msg_to_all(callback_id id, WPARAM p_wp = 0, LPARAM p_lp = 0);
-	void post_msg_to_all_pointer(callback_id id, pfc::refcounted_object_root* p_param);
-	void remove_window(HWND p_wnd);
+	void add_window(HWND hwnd);
+	void notify_others(HWND hwnd_except, pfc::refcounted_object_root* param);
+	void post_msg_to_all(callback_id id, WPARAM wp = 0, LPARAM lp = 0);
+	void post_msg_to_all_pointer(callback_id id, pfc::refcounted_object_root* param);
+	void remove_window(HWND hwnd);
 	void unload_all();
 
 private:

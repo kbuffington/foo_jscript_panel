@@ -68,7 +68,7 @@ STDMETHODIMP Window::GetColourCUI(UINT type, int* p)
 	if (!p) return E_POINTER;
 	if (m_host->is_dui()) return E_NOTIMPL;
 
-	*p = m_host->get_colour_ui(type);
+	*p = helpers::convert_colorref_to_argb(m_host->get_colour_ui(type));
 	return S_OK;
 }
 
@@ -77,7 +77,7 @@ STDMETHODIMP Window::GetColourDUI(UINT type, int* p)
 	if (!p) return E_POINTER;
 	if (!m_host->is_dui()) return E_NOTIMPL;
 
-	*p = m_host->get_colour_ui(type);
+	*p = helpers::convert_colorref_to_argb(m_host->get_colour_ui(type));
 	return S_OK;
 }
 
