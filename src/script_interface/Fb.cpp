@@ -288,19 +288,9 @@ STDMETHODIMP Fb::GetSelectionType(UINT* p)
 {
 	if (!p) return E_POINTER;
 
-	static constexpr std::array<const GUID*, 7> guids =
-	{
-		&contextmenu_item::caller_undefined,
-		&contextmenu_item::caller_active_playlist_selection,
-		&contextmenu_item::caller_active_playlist,
-		&contextmenu_item::caller_playlist_manager,
-		&contextmenu_item::caller_now_playing,
-		&contextmenu_item::caller_keyboard_shortcut_list,
-		&contextmenu_item::caller_media_library_viewer,
-	};
 	const GUID type = ui_selection_manager_v2::get()->get_selection_type(0);
-	const auto it = std::find_if(guids.begin(), guids.end(), [type](const auto& guid) { return *guid == type; } );
-	*p = it != guids.end() ? std::distance(guids.begin(), it) : 0;
+	const auto it = std::find_if(jsp_guids::selections.begin(), jsp_guids::selections.end(), [type](const auto& guid) { return *guid == type; } );
+	*p = it != jsp_guids::selections.end() ? std::distance(jsp_guids::selections.begin(), it) : 0;
 	return S_OK;
 }
 

@@ -15,6 +15,11 @@ namespace helpers
 		return GetRValue(color) << RED_SHIFT | GetGValue(color) << GREEN_SHIFT | GetBValue(color) << BLUE_SHIFT | 0xff000000;
 	}
 
+	GUID convert_artid_to_guid(size_t art_id)
+	{
+		return *jsp_guids::art[art_id < jsp_guids::art.size() ? art_id : 0];
+	}
+
 	IGdiBitmap* get_album_art(const metadb_handle_ptr& handle, size_t art_id, bool need_stub, bool no_load, pfc::string_base& image_path)
 	{
 		IGdiBitmap* ret = nullptr;
@@ -331,19 +336,6 @@ namespace helpers
 			return true;
 		}
 		return false;
-	}
-
-	const GUID convert_artid_to_guid(size_t art_id)
-	{
-		static constexpr std::array<const GUID*, 5> guids =
-		{
-			&album_art_ids::cover_front,
-			&album_art_ids::cover_back,
-			&album_art_ids::disc,
-			&album_art_ids::icon,
-			&album_art_ids::artist,
-		};
-		return art_id < guids.size() ? *guids[art_id] : *guids[0];
 	}
 
 	int get_text_height(HDC hdc, const wchar_t* text, int len)

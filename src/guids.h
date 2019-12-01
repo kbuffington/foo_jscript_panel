@@ -22,4 +22,42 @@ namespace jsp_guids
 		0xca840da4, 0xfc99, 0x44bc,{ 0x90, 0x71, 0xd2, 0xb0, 0x2b, 0x26, 0xd4, 0x35 },
 		0xab05eee8, 0xbadc, 0x49ba,{ 0x80, 0x27, 0x84, 0x72, 0xa8, 0xbd, 0x49, 0xdb }
 	};
+
+	static constexpr std::array<const GUID*, 5> art =
+	{
+		&album_art_ids::cover_front,
+		&album_art_ids::cover_back,
+		&album_art_ids::disc,
+		&album_art_ids::icon,
+		&album_art_ids::artist,
+	};
+
+	static constexpr std::array<const GUID*, 4> colours =
+	{
+		&ui_color_text,
+		&ui_color_background,
+		&ui_color_highlight,
+		&ui_color_selection,
+	};
+
+	static constexpr std::array<const GUID*, 6> fonts =
+	{
+		&ui_font_default,
+		&ui_font_tabs,
+		&ui_font_lists,
+		&ui_font_playlists,
+		&ui_font_statusbar,
+		&ui_font_console,
+	};
+
+	static constexpr std::array<const GUID*, 7> selections =
+	{
+		&contextmenu_item::caller_undefined,
+		&contextmenu_item::caller_active_playlist_selection,
+		&contextmenu_item::caller_active_playlist,
+		&contextmenu_item::caller_playlist_manager,
+		&contextmenu_item::caller_now_playing,
+		&contextmenu_item::caller_keyboard_shortcut_list,
+		&contextmenu_item::caller_media_library_viewer,
+	};
 }

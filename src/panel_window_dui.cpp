@@ -69,14 +69,7 @@ public:
 
 	COLORREF get_colour_ui(size_t type) override
 	{
-		static constexpr std::array<const GUID*, 4> guids =
-		{
-			&ui_color_text,
-			&ui_color_background,
-			&ui_color_highlight,
-			&ui_color_selection,
-		};
-		return type < guids.size() ? m_callback->query_std_color(*guids[type]) : 0;
+		return type < jsp_guids::colours.size() ? m_callback->query_std_color(*jsp_guids::colours[type]) : 0;
 	}
 
 	GUID get_guid() override
@@ -98,19 +91,9 @@ public:
 	{
 		IGdiFont* ret = nullptr;
 
-		static constexpr std::array<const GUID*, 6> guids =
+		if (type < jsp_guids::fonts.size())
 		{
-			&ui_font_default,
-			&ui_font_tabs,
-			&ui_font_lists,
-			&ui_font_playlists,
-			&ui_font_statusbar,
-			&ui_font_console,
-		};
-
-		if (type < guids.size())
-		{
-			HFONT hFont = m_callback->query_font_ex(*guids[type]);
+			HFONT hFont = m_callback->query_font_ex(*jsp_guids::fonts[type]);
 			if (hFont)
 			{
 				auto font = new Gdiplus::Font(get_hdc(), hFont);

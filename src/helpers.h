@@ -30,6 +30,7 @@ namespace helpers
 
 	COLORREF convert_argb_to_colorref(DWORD argb);
 	DWORD convert_colorref_to_argb(COLORREF color);
+	GUID convert_artid_to_guid(size_t art_id);
 	IGdiBitmap* get_album_art(const metadb_handle_ptr& handle, size_t art_id, bool need_stub, bool no_load, pfc::string_base& image_path);
 	IGdiBitmap* get_album_art_embedded(const pfc::string8_fast& path, size_t art_id);
 	IGdiBitmap* load_image(BSTR path);
@@ -42,7 +43,6 @@ namespace helpers
 	bool is_wrap_char(wchar_t current, wchar_t next);
 	bool supports_chakra();
 	bool write_file(const char* path, const pfc::string8_fast& content);
-	const GUID convert_artid_to_guid(size_t art_id);
 	int get_text_height(HDC hdc, const wchar_t* text, int len);
 	int get_text_width(HDC hdc, const wchar_t* text, int len);
 	pfc::string8_fast get_fb2k_component_path();
