@@ -575,6 +575,17 @@ void panel_window::on_context_menu(LPARAM lp)
 	if (pt.x == -1 && pt.y == -1)
 	{
 		GetMessagePos(&pt);
+
+		RECT rc;
+		GetWindowRect(m_hwnd, &rc);
+
+		if (pt.x < rc.left || pt.x > rc.right || pt.y < rc.top || pt.y > rc.bottom)
+		{
+			pt = { 0, 0 };
+			MapWindowPoints(m_hwnd, HWND_DESKTOP, &pt, 1);
+			pt.x += m_size.width / 2;
+			pt.y += m_size.height / 2;
+		}
 	}
 
 	HMENU menu = CreatePopupMenu();
