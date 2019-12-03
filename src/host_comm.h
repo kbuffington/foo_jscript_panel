@@ -27,13 +27,13 @@ protected:
 public:
 	virtual COLORREF get_colour_ui(size_t type) = 0;
 	virtual IGdiFont* get_font_ui(size_t type) = 0;
-	virtual bool show_configure_popup(HWND parent) = 0;
 	virtual void notify_size_limit_changed() = 0;
+	virtual void repaint() = 0;
+	virtual void repaint_rect(int x, int y, int w, int h) = 0;
+	virtual void show_configure_popup(HWND parent) = 0;
 	virtual void show_property_popup(HWND parent) = 0;
 	virtual void unload_script() = 0;
 	virtual void update_script() = 0;
-	virtual void repaint() = 0;
-	virtual void repaint_rect(int x, int y, int w, int h) = 0;
 
 public:
 	enum class edge_style : char

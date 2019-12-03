@@ -19,11 +19,6 @@ panel_window::~panel_window()
 	m_script_host->Release();
 }
 
-HDC panel_window::get_hdc()
-{
-	return m_hdc;
-}
-
 bool panel_window::handle_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 {
 	switch (msg)
@@ -60,11 +55,12 @@ bool panel_window::handle_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 				RECT rc;
 				GetUpdateRect(m_hwnd, &rc, FALSE);
 				refresh_background(&rc);
-				return true;
 			}
-
-			on_paint();
-			m_paint_pending = false;
+			else
+			{
+				on_paint();
+				m_paint_pending = false;
+			}
 		}
 		return true;
 	case WM_SIZE:
@@ -282,12 +278,7 @@ bool panel_window::handle_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 	}
 
 	callback_id id = static_cast<callback_id>(msg);
-	if (invoke_callback(id, wp, lp)) return true;
-	return false;
-}
 
-bool panel_window::invoke_callback(callback_id id, WPARAM wp, LPARAM lp)
-{
 	switch (id)
 	{
 	case callback_id::on_dsp_preset_changed:
@@ -460,18 +451,6 @@ bool panel_window::invoke_callback(callback_id id, WPARAM wp, LPARAM lp)
 	return false;
 }
 
-bool panel_window::show_configure_popup(HWND parent)
-{
-	modal_dialog_scope scope;
-	if (scope.can_create())
-	{
-		scope.initialize(parent);
-		CDialogConf dlg(this);
-		return dlg.DoModal(parent) == IDOK;
-	}
-	return false;
-}
-
 void panel_window::build_context_menu(HMENU menu, int id_base)
 {
 	uAppendMenu(menu, MF_STRING, id_base + 1, "&Reload");
@@ -482,10 +461,7 @@ void panel_window::build_context_menu(HMENU menu, int id_base)
 
 void panel_window::create_context()
 {
-	if (m_gr_bmp || m_gr_bmp_bk)
-	{
-		delete_context();
-	}
+	delete_context();
 
 	m_gr_bmp = CreateCompatibleBitmap(m_hdc, m_size.width, m_size.height);
 
@@ -694,7 +670,6 @@ void panel_window::on_paint_user(HDC memdc, LPRECT lpUpdateRect)
 
 void panel_window::on_size()
 {
-	delete_context();
 	create_context();
 	script_invoke(callback_id::on_size);
 }
@@ -791,6 +766,17 @@ void panel_window::repaint_rect(int x, int y, int w, int h)
 void panel_window::script_invoke(callback_id id, VARIANTARG* argv, size_t argc, VARIANT* ret) const
 {
 	m_script_host->InvokeCallback(id, argv, argc, ret);
+}
+
+void panel_window::show_configure_popup(HWND parent)
+{
+	modal_dialog_scope scope;
+	if (scope.can_create())
+	{
+		scope.initialize(parent);
+		CDialogConf dlg(this);
+		dlg.DoModal(parent);
+	}
 }
 
 void panel_window::show_property_popup(HWND parent)

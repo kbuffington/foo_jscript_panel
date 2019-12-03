@@ -43,12 +43,13 @@ protected:
 	{
 		IGdiFont* ret = nullptr;
 
-		if (type <= cui::fonts::font_type_labels)
+		const auto t = static_cast<cui::fonts::font_type_t>(type);
+		if (t <= cui::fonts::font_type_labels)
 		{
-			HFONT hFont = static_api_ptr_t<cui::fonts::manager>()->get_font(static_cast<cui::fonts::font_type_t>(type));
+			HFONT hFont = static_api_ptr_t<cui::fonts::manager>()->get_font(t);
 			if (hFont)
 			{
-				auto font = new Gdiplus::Font(get_hdc(), hFont);
+				auto font = new Gdiplus::Font(m_hdc, hFont);
 				if (helpers::ensure_gdiplus_object(font))
 				{
 					ret = new com_object_impl_t<GdiFont>(font, hFont);
@@ -114,7 +115,8 @@ protected:
 
 	bool show_config_popup(HWND parent) override
 	{
-		return show_configure_popup(parent);
+		show_configure_popup(parent);
+		return true;
 	}
 
 	class_data& get_class_data() const override
