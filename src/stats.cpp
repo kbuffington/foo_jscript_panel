@@ -35,7 +35,7 @@ namespace stats
 				catch (const std::exception& e)
 				{
 					api->remove(jsp_guids::metadb_index);
-					FB2K_console_formatter() << JSP_NAME " stats: Critical initialisation failure: " << e;
+					FB2K_console_formatter() << COMPONENT_NAME " stats: Critical initialisation failure: " << e;
 					return;
 				}
 				api->dispatch_global_refresh();
@@ -116,7 +116,7 @@ namespace stats
 
 		void enumerate_properties_helper(metadb_handle_list_cref items, track_property_provider_v3_info_source& info, track_property_callback_v2& callback, abort_callback& abort)
 		{
-			if (callback.is_group_wanted(JSP_NAME))
+			if (callback.is_group_wanted(COMPONENT_NAME))
 			{
 				const size_t count = items.get_count();
 				if (count == 1)
@@ -125,11 +125,11 @@ namespace stats
 					if (hashHandle(items[0], hash))
 					{
 						const fields tmp = get(hash);
-						callback.set_property(JSP_NAME, 0, "Playcount", std::to_string(tmp.playcount).c_str());
-						callback.set_property(JSP_NAME, 1, "Loved", std::to_string(tmp.loved).c_str());
-						callback.set_property(JSP_NAME, 2, "First Played", tmp.first_played);
-						callback.set_property(JSP_NAME, 3, "Last Played", tmp.last_played);
-						callback.set_property(JSP_NAME, 4, "Rating", std::to_string(tmp.rating).c_str());
+						callback.set_property(COMPONENT_NAME, 0, "Playcount", std::to_string(tmp.playcount).c_str());
+						callback.set_property(COMPONENT_NAME, 1, "Loved", std::to_string(tmp.loved).c_str());
+						callback.set_property(COMPONENT_NAME, 2, "First Played", tmp.first_played);
+						callback.set_property(COMPONENT_NAME, 3, "Last Played", tmp.last_played);
+						callback.set_property(COMPONENT_NAME, 4, "Rating", std::to_string(tmp.rating).c_str());
 					}
 				}
 				else
@@ -144,7 +144,7 @@ namespace stats
 
 					if (total > 0)
 					{
-						callback.set_property(JSP_NAME, 0, "Playcount", std::to_string(total).c_str());
+						callback.set_property(COMPONENT_NAME, 0, "Playcount", std::to_string(total).c_str());
 					}
 				}
 			}

@@ -5,17 +5,9 @@ ITypeLibPtr g_typelib;
 
 namespace
 {
-	DECLARE_COMPONENT_VERSION(
-		JSP_NAME,
-		JSP_VERSION,
-		JSP_NAME_VERSION " by marc2003\n"
-		"Based on WSH Panel Mod by T.P. Wang\n"
-		"Thanks for the contributions by TheQwertiest and kbuffington\n\n"
-		"Build: " __TIME__ ", " __DATE__ "\n"
-		"Columns UI SDK Version: " UI_EXTENSION_VERSION
-	);
+	DECLARE_COMPONENT_VERSION(COMPONENT_NAME, COMPONENT_VERSION, COMPONENT_INFO);
 
-	VALIDATE_COMPONENT_FILENAME(JSP_DLL_NAME);
+	VALIDATE_COMPONENT_FILENAME(COMPONENT_DLL_NAME);
 
 	CAppModule _Module;
 

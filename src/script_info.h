@@ -14,7 +14,7 @@ struct script_info
 	pfc::string8_fast build_info_string() const
 	{
 		pfc::string8_fast ret;
-		ret << JSP_NAME_VERSION " (";
+		ret << COMPONENT_NAME_VERSION " (";
 		if (name.length())
 		{
 			ret << name.c_str();

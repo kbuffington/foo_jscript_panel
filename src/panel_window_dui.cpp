@@ -4,7 +4,7 @@
 class panel_window_dui : public panel_window, public ui_element_instance, public CWindowImpl<panel_window_dui>
 {
 public:
-	DECLARE_WND_CLASS_EX(PFC_WIDESTRING(JSP_NAME), CS_VREDRAW | CS_HREDRAW | CS_DBLCLKS, -1);
+	DECLARE_WND_CLASS_EX(PFC_WIDESTRING(COMPONENT_NAME), CS_VREDRAW | CS_HREDRAW | CS_DBLCLKS, -1);
 
 	panel_window_dui(ui_element_config::ptr cfg, ui_element_instance_callback::ptr callback) : m_callback(callback)
 	{
@@ -35,7 +35,7 @@ public:
 
 	static void g_get_name(pfc::string_base& out)
 	{
-		out = JSP_NAME;
+		out = COMPONENT_NAME;
 	}
 
 	BOOL ProcessWindowMessage(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp, LRESULT& res, DWORD) override

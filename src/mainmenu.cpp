@@ -45,6 +45,6 @@ namespace
 		}
 	};
 
-	static mainmenu_group_popup_factory g_my_mainmenu_group(jsp_guids::mainmenu_group_id, mainmenu_groups::file, mainmenu_commands::sort_priority_base, JSP_NAME);
+	static mainmenu_group_popup_factory g_my_mainmenu_group(jsp_guids::mainmenu_group_id, mainmenu_groups::file, mainmenu_commands::sort_priority_base, COMPONENT_NAME);
 	FB2K_SERVICE_FACTORY(my_mainmenu_commands);
 }

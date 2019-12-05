@@ -1,20 +1,25 @@
 #pragma once
 
-#define JSP_NAME "JScript Panel"
-#define JSP_DLL_NAME "foo_jscript_panel.dll"
+#define COMPONENT_NAME "JScript Panel"
+#define COMPONENT_DLL_NAME "foo_jscript_panel.dll"
+#define COMPONENT_INFO \
+	COMPONENT_NAME " by marc2003\n" \
+	"Based on WSH Panel Mod by T.P. Wang\n" \
+	"Thanks for the contributions by TheQwertiest and kbuffington\n\n" \
+	"Build: " __TIME__ ", " __DATE__ "\n" \
+	"Columns UI SDK Version: " UI_EXTENSION_VERSION
 
 // Remember to bump utils.version too
-#define JSP_VERSION_NUMBER "2.3.4"
-#define JSP_VERSION_TEST "-dev"
+#define COMPONENT_VERSION_NUMBER "2.3.4"
+#define COMPONENT_VERSION_TEST "-dev"
 
 #ifdef _DEBUG
-#define JSP_VERSION_DEBUG_SUFFIX " (Debug)"
+#define COMPONENT_VERSION COMPONENT_VERSION_NUMBER COMPONENT_VERSION_TEST " (Debug)"
 #else
-#define JSP_VERSION_DEBUG_SUFFIX ""
+#define COMPONENT_VERSION COMPONENT_VERSION_NUMBER COMPONENT_VERSION_TEST
 #endif
 
-#define JSP_VERSION JSP_VERSION_NUMBER JSP_VERSION_TEST JSP_VERSION_DEBUG_SUFFIX
-#define JSP_NAME_VERSION JSP_NAME " v" JSP_VERSION
+#define COMPONENT_NAME_VERSION COMPONENT_NAME " v" COMPONENT_VERSION
 
 #define TO_VARIANT_BOOL(v) (v ? VARIANT_TRUE : VARIANT_FALSE)
 #define TO_BSTR(str) SysAllocString(string_wide_from_utf8_fast(str))

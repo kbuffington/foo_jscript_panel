@@ -295,7 +295,7 @@ STDMETHODIMP script_host::OnScriptError(IActiveScriptError* err)
 
 	fb2k::inMainThread([=]()
 		{
-			popup_message::g_show(formatter, JSP_NAME_VERSION);
+			popup_message::g_show(formatter, COMPONENT_NAME_VERSION);
 		});
 
 	if (excep.bstrSource) SysFreeString(excep.bstrSource);

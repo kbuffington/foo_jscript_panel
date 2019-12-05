@@ -121,7 +121,7 @@ protected:
 
 	class_data& get_class_data() const override
 	{
-		__implement_get_class_data_ex(PFC_WIDESTRING(JSP_NAME), L"", false, 0, WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN, get_edge_style(), CS_DBLCLKS);
+		__implement_get_class_data_ex(PFC_WIDESTRING(COMPONENT_NAME), L"", false, 0, WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN, get_edge_style(), CS_DBLCLKS);
 	}
 
 	const GUID& get_extension_guid() const override
@@ -152,7 +152,7 @@ protected:
 
 	void get_name(pfc::string_base& out) const override
 	{
-		out = JSP_NAME;
+		out = COMPONENT_NAME;
 	}
 
 	void on_bool_changed(size_t mask) const override {}

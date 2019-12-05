@@ -415,7 +415,7 @@ bool CScriptEditorCtrl::FindResult(Position pos)
 
 	pfc::string8_fast msg;
 	msg << "Cannot find \"" << DlgFindReplace->m_find_text.get_ptr() << "\"";
-	uMessageBox(DlgFindReplace->m_hWnd, msg, JSP_NAME, MB_SYSTEMMODAL | MB_ICONINFORMATION);
+	uMessageBox(DlgFindReplace->m_hWnd, msg, COMPONENT_NAME, MB_SYSTEMMODAL | MB_ICONINFORMATION);
 	return false;
 }
 
