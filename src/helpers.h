@@ -216,7 +216,7 @@ namespace helpers
 			}
 
 			t_param param(handle, m_art_id, bitmap, TO_BSTR(image_path));
-			SendMessage(m_hwnd, static_cast<unsigned int>(callback_id::on_get_album_art_done), reinterpret_cast<WPARAM>(&param), 0);
+			SendMessage(m_hwnd, TO_UINT(callback_id::on_get_album_art_done), reinterpret_cast<WPARAM>(&param), 0);
 		}
 
 	private:
@@ -254,7 +254,7 @@ namespace helpers
 		{
 			IGdiBitmap* bitmap = load_image(m_path);
 			t_param param(reinterpret_cast<size_t>(this), bitmap, m_path);
-			SendMessage(m_hwnd, static_cast<unsigned int>(callback_id::on_load_image_done), reinterpret_cast<WPARAM>(&param), 0);
+			SendMessage(m_hwnd, TO_UINT(callback_id::on_load_image_done), reinterpret_cast<WPARAM>(&param), 0);
 		}
 
 	private:

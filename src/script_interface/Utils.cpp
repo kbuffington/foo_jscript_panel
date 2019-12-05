@@ -76,7 +76,7 @@ STDMETHODIMP Utils::DateStringToTimestamp(BSTR str, UINT* p)
 {
 	if (!p) return E_POINTER;
 
-	*p = static_cast<UINT>(pfc::fileTimeWtoU(filetimestamp_from_string(string_utf8_from_wide(str).get_ptr())));
+	*p = TO_UINT(pfc::fileTimeWtoU(filetimestamp_from_string(string_utf8_from_wide(str).get_ptr())));
 	return S_OK;
 }
 

@@ -53,7 +53,7 @@ STDMETHODIMP MetadbHandleList::AttachImage(BSTR path, UINT art_id)
 			if (file.is_valid())
 			{
 				auto tmp = fb2k::service_new<album_art_data_impl>();
-				tmp->from_stream(file.get_ptr(), static_cast<size_t>(file->get_size_ex(fb2k::noAbort)), fb2k::noAbort);
+				tmp->from_stream(file.get_ptr(), TO_UINT(file->get_size_ex(fb2k::noAbort)), fb2k::noAbort);
 				data = tmp;
 			}
 		}

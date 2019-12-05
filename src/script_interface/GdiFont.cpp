@@ -29,7 +29,7 @@ STDMETHODIMP GdiFont::get_Height(UINT* p)
 
 	Gdiplus::Bitmap img(1, 1, PixelFormat32bppPARGB);
 	Gdiplus::Graphics g(&img);
-	*p = static_cast<UINT>(m_ptr->GetHeight(&g));
+	*p = TO_UINT(m_ptr->GetHeight(&g));
 	return S_OK;
 }
 

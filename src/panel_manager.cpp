@@ -53,7 +53,7 @@ void panel_manager::notify_others(HWND hwnd_except, pfc::refcounted_object_root*
 	{
 		if (hwnd != hwnd_except)
 		{
-			SendMessage(hwnd, static_cast<unsigned int>(callback_id::on_notify_data), reinterpret_cast<WPARAM>(param), 0);
+			SendMessage(hwnd, TO_UINT(callback_id::on_notify_data), reinterpret_cast<WPARAM>(param), 0);
 		}
 	}
 }
@@ -62,7 +62,7 @@ void panel_manager::post_msg_to_all(callback_id id, WPARAM wp, LPARAM lp)
 {
 	for (const auto& hwnd : m_hwnds)
 	{
-		PostMessage(hwnd, static_cast<unsigned int>(id), wp, lp);
+		PostMessage(hwnd, TO_UINT(id), wp, lp);
 	}
 }
 
@@ -79,7 +79,7 @@ void panel_manager::post_msg_to_all_pointer(callback_id id, pfc::refcounted_obje
 
 	for (const auto& hwnd : m_hwnds)
 	{
-		PostMessage(hwnd, static_cast<unsigned int>(id), reinterpret_cast<WPARAM>(param), 0);
+		PostMessage(hwnd, TO_UINT(id), reinterpret_cast<WPARAM>(param), 0);
 	}
 }
 

@@ -272,7 +272,7 @@ STDMETHODIMP script_host::OnScriptError(IActiveScriptError* err)
 			}
 			else
 			{
-				formatter << "Unknown error code: 0x" << pfc::format_hex_lowercase(static_cast<unsigned int>(excep.scode));
+				formatter << "Unknown error code: 0x" << pfc::format_hex_lowercase(TO_UINT(excep.scode));
 			}
 		}
 	}
