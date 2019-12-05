@@ -2,7 +2,7 @@
 
 enum class callback_id
 {
-	on_always_on_top_changed = UWM_FIRST_CALLBACK_ID,
+	on_always_on_top_changed = WM_USER + 10,
 	on_char,
 	on_colours_changed,
 	on_cursor_follow_playback_changed,

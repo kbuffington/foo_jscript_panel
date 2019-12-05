@@ -13,7 +13,10 @@ public:
 	{
 		AddColumn("Name", MulDiv(360, m_dpi.cx, 96));
 		AddColumnAutoWidth("Value");
+
 		m_data.resize(100); // scrollbar hack
+		m_parent_clear_btn = ::GetDlgItem(GetParent(), IDC_BTN_CLEAR);
+		m_parent_export_btn = ::GetDlgItem(GetParent(), IDC_BTN_EXPORT);
 		return 0;
 	}
 
@@ -118,7 +121,8 @@ public:
 		__super::OnItemsRemoved(mask, oldCount);
 		if (m_data.empty())
 		{
-			::PostMessage(GetParent(), UWM_PROPERTIES_CLEARED, 0, 0);
+			m_parent_clear_btn.EnableWindow(false);
+			m_parent_export_btn.EnableWindow(false);
 		}
 	}
 
@@ -170,5 +174,6 @@ public:
 		bool is_string, is_bool, bool_value;
 	};
 
+	CButton m_parent_clear_btn, m_parent_export_btn;
 	std::vector<data_t> m_data;
 };

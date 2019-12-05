@@ -24,7 +24,5 @@
 	X->get__ptr(reinterpret_cast<void**>(&Y)); \
 	if (!Y) return E_INVALIDARG;
 
-#define UWM_PROPERTIES_CLEARED 1030
-#define UWM_TIMER 1031
-#define UWM_UNLOAD 1032
-#define UWM_FIRST_CALLBACK_ID 1033
+#define UWM_TIMER WM_USER + 1
+#define UWM_UNLOAD WM_USER + 2

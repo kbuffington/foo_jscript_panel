@@ -11,7 +11,6 @@ public:
 	BEGIN_MSG_MAP(CDialogProperty)
 		CHAIN_MSG_MAP_MEMBER(m_resizer)
 		MSG_WM_INITDIALOG(OnInitDialog)
-		MESSAGE_HANDLER(UWM_PROPERTIES_CLEARED, OnPropertiesCleared)
 		COMMAND_RANGE_HANDLER_EX(IDOK, IDCANCEL, OnCloseCmd)
 		COMMAND_ID_HANDLER_EX(IDC_BTN_APPLY, OnCloseCmd)
 		COMMAND_HANDLER_EX(IDC_BTN_CLEAR, BN_CLICKED, OnClearBnClicked)
@@ -22,7 +21,6 @@ public:
 	enum { IDD = IDD_DIALOG_PROPERTY };
 
 	BOOL OnInitDialog(HWND, LPARAM);
-	LRESULT OnPropertiesCleared(UINT, WPARAM, LPARAM, BOOL&);
 	void Apply();
 	void LoadProperties(bool reload = true);
 	void OnClearBnClicked(UINT, int, HWND);

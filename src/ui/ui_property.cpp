@@ -44,13 +44,6 @@ BOOL CDialogProperty::OnInitDialog(HWND, LPARAM)
 	return TRUE;
 }
 
-LRESULT CDialogProperty::OnPropertiesCleared(UINT, WPARAM, LPARAM, BOOL&)
-{
-	m_clear_btn.EnableWindow(false);
-	m_export_btn.EnableWindow(false);
-	return 0;
-}
-
 void CDialogProperty::Apply()
 {
 	m_dup_prop_map.clear();
