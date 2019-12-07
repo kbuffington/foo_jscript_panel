@@ -1,12 +1,12 @@
 #pragma once
 #include "script_interface.h"
 
-class host_comm;
+class panel_base;
 
 class Window : public IDispatchImpl3<IWindow>
 {
 protected:
-	Window(host_comm* p);
+	Window(panel_base* p);
 	~Window();
 
 public:
@@ -47,5 +47,5 @@ public:
 	STDMETHODIMP put_MinWidth(UINT width) override;
 
 private:
-	host_comm* m_host;
+	panel_base* m_host;
 };

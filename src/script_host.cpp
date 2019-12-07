@@ -1,8 +1,8 @@
 #include "stdafx.h"
-#include "host_comm.h"
+#include "panel_base.h"
 #include "script_host.h"
 
-script_host::script_host(host_comm* host)
+script_host::script_host(panel_base* host)
 	: m_host(host)
 	, m_window(new com_object_impl_t<Window, false>(host))
 	, m_gdi(com_object_singleton_t<Gdi>::instance())

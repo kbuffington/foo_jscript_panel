@@ -1,7 +1,7 @@
 #include "stdafx.h"
-#include "host_comm.h"
+#include "panel_base.h"
 
-host_comm::host_comm()
+panel_base::panel_base()
 	: m_hwnd(nullptr)
 	, m_dragdrop(false)
 	, m_grabfocus(false)
@@ -18,9 +18,9 @@ host_comm::host_comm()
 	m_size.height = 0;
 }
 
-host_comm::~host_comm() {}
+panel_base::~panel_base() {}
 
-DWORD host_comm::get_edge_style() const
+DWORD panel_base::get_edge_style() const
 {
 	switch (m_edge_style)
 	{
@@ -35,32 +35,32 @@ DWORD host_comm::get_edge_style() const
 	}
 }
 
-HWND host_comm::get_hwnd()
+HWND panel_base::get_hwnd()
 {
 	return m_hwnd;
 }
 
-bool host_comm::is_dui()
+bool panel_base::is_dui()
 {
 	return m_instance_type == instance_type::dui;
 }
 
-panel_tooltip_param_ptr& host_comm::panel_tooltip()
+panel_tooltip_param_ptr& panel_base::panel_tooltip()
 {
 	return m_panel_tooltip_param_ptr;
 }
 
-pfc::string8_fast host_comm::get_default_script_code()
+pfc::string8_fast panel_base::get_default_script_code()
 {
 	return helpers::get_resource_text(IDR_SCRIPT);
 }
 
-pfc::string8_fast host_comm::get_default_script_engine_str()
+pfc::string8_fast panel_base::get_default_script_engine_str()
 {
 	return helpers::supports_chakra() ? "Chakra" : "JScript";
 }
 
-void host_comm::load_config(stream_reader* reader, size_t size, abort_callback& abort)
+void panel_base::load_config(stream_reader* reader, size_t size, abort_callback& abort)
 {
 	reset_config();
 
@@ -89,7 +89,7 @@ void host_comm::load_config(stream_reader* reader, size_t size, abort_callback& 
 	}
 }
 
-void host_comm::reset_config()
+void panel_base::reset_config()
 {
 	m_script_engine_str = get_default_script_engine_str();
 	m_script_code = get_default_script_code();
@@ -97,7 +97,7 @@ void host_comm::reset_config()
 	m_edge_style = edge_style::none;
 }
 
-void host_comm::save_config(stream_writer* writer, abort_callback& abort) const
+void panel_base::save_config(stream_writer* writer, abort_callback& abort) const
 {
 	constexpr size_t ver = 123;
 

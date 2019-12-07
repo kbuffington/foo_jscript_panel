@@ -27,10 +27,44 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="helpers.h">
+    <None Include="resource\cfgBright.cfg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resource\cfgDark.cfg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resource\cfgRubyBlue.cfg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resource\foo_jscript_panel.api">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resource\foo_jscript_panel.js">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resource\foo_jscript_panel.tlb">
+      <Filter>Resource Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="resource\foo_jscript_panel.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="callback_data.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="host_comm.h">
+    <ClInclude Include="callback_id.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="foo_jscript_panel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="guids.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="helpers.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="host_drop_target.h">
@@ -39,16 +73,28 @@
     <ClInclude Include="host_timer_dispatcher.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="panel_window.h">
+    <ClInclude Include="kmeans.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="panel_base.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="panel_manager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="panel_window.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="script_host.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="script_info.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="stackblur.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="stats.h">
@@ -58,45 +104,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="thread_pool.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="script_info.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ui\editorctrl.h">
-      <Filter>Header Files\ui</Filter>
-    </ClInclude>
-    <ClInclude Include="ui\panel_properties.h">
-      <Filter>Header Files\ui</Filter>
-    </ClInclude>
-    <ClInclude Include="ui\ui_conf.h">
-      <Filter>Header Files\ui</Filter>
-    </ClInclude>
-    <ClInclude Include="ui\ui_goto.h">
-      <Filter>Header Files\ui</Filter>
-    </ClInclude>
-    <ClInclude Include="ui\ui_input_box.h">
-      <Filter>Header Files\ui</Filter>
-    </ClInclude>
-    <ClInclude Include="ui\ui_property.h">
-      <Filter>Header Files\ui</Filter>
-    </ClInclude>
-    <ClInclude Include="ui\ui_property_control.h">
-      <Filter>Header Files\ui</Filter>
-    </ClInclude>
-    <ClInclude Include="ui\ui_find_replace.h">
-      <Filter>Header Files\ui</Filter>
-    </ClInclude>
-    <ClInclude Include="ui\wtlscintilla.h">
-      <Filter>Header Files\ui</Filter>
-    </ClInclude>
-    <ClInclude Include="guids.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="kmeans.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="stackblur.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="script_interface\com_tools.h">
@@ -183,30 +190,65 @@
     <ClInclude Include="script_interface\Window.h">
       <Filter>Header Files\script_interface</Filter>
     </ClInclude>
-    <ClInclude Include="foo_jscript_panel.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="callback_id.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ui\config.h">
       <Filter>Header Files\ui</Filter>
     </ClInclude>
-    <ClInclude Include="callback_data.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="ui\editorctrl.h">
+      <Filter>Header Files\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\panel_properties.h">
+      <Filter>Header Files\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\ui_conf.h">
+      <Filter>Header Files\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\ui_find_replace.h">
+      <Filter>Header Files\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\ui_goto.h">
+      <Filter>Header Files\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\ui_input_box.h">
+      <Filter>Header Files\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\ui_property.h">
+      <Filter>Header Files\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\ui_property_control.h">
+      <Filter>Header Files\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\wtlscintilla.h">
+      <Filter>Header Files\ui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="helpers.cpp">
+    <Midl Include="script_interface\script_interface.idl">
+      <Filter>Header Files\script_interface</Filter>
+    </Midl>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="foo_jscript_panel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="host_comm.cpp">
+    <ClCompile Include="helpers.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="host_drop_target.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="host_timer_dispatcher.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="mainmenu.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="panel_base.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="panel_manager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="panel_manager_callbacks.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="panel_window.cpp">
@@ -218,53 +260,17 @@
     <ClCompile Include="panel_window_dui.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="mainmenu.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="panel_manager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="script_host.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="stats.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="thread_pool.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="foo_jscript_panel.cpp">
+    <ClCompile Include="thread_pool.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="panel_manager_callbacks.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ui\editorctrl.cpp">
-      <Filter>Source Files\ui</Filter>
-    </ClCompile>
-    <ClCompile Include="ui\panel_properties.cpp">
-      <Filter>Source Files\ui</Filter>
-    </ClCompile>
-    <ClCompile Include="ui\ui_conf.cpp">
-      <Filter>Source Files\ui</Filter>
-    </ClCompile>
-    <ClCompile Include="ui\ui_goto.cpp">
-      <Filter>Source Files\ui</Filter>
-    </ClCompile>
-    <ClCompile Include="ui\ui_input_box.cpp">
-      <Filter>Source Files\ui</Filter>
-    </ClCompile>
-    <ClCompile Include="ui\ui_pref.cpp">
-      <Filter>Source Files\ui</Filter>
-    </ClCompile>
-    <ClCompile Include="ui\ui_property.cpp">
-      <Filter>Source Files\ui</Filter>
-    </ClCompile>
-    <ClCompile Include="ui\ui_find_replace.cpp">
-      <Filter>Source Files\ui</Filter>
     </ClCompile>
     <ClCompile Include="script_interface\Console.cpp">
       <Filter>Source Files\script_interface</Filter>
@@ -344,35 +350,29 @@
     <ClCompile Include="ui\config.cpp">
       <Filter>Source Files\ui</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="resource\cfgBright.cfg">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="resource\cfgDark.cfg">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="resource\cfgRubyBlue.cfg">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="resource\foo_jscript_panel.api">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="resource\foo_jscript_panel.js">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="resource\foo_jscript_panel.tlb">
-      <Filter>Resource Files</Filter>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="resource\foo_jscript_panel.rc">
-      <Filter>Resource Files</Filter>
-    </ResourceCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <Midl Include="script_interface\script_interface.idl">
-      <Filter>Header Files\script_interface</Filter>
-    </Midl>
+    <ClCompile Include="ui\editorctrl.cpp">
+      <Filter>Source Files\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\panel_properties.cpp">
+      <Filter>Source Files\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\ui_conf.cpp">
+      <Filter>Source Files\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\ui_find_replace.cpp">
+      <Filter>Source Files\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\ui_goto.cpp">
+      <Filter>Source Files\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\ui_input_box.cpp">
+      <Filter>Source Files\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\ui_pref.cpp">
+      <Filter>Source Files\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\ui_property.cpp">
+      <Filter>Source Files\ui</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

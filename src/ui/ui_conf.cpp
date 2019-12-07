@@ -115,7 +115,7 @@ void CDialogConf::Apply()
 {
 	// Save panel settings
 	uGetWindowText(m_engine_combo, m_parent->m_script_engine_str);
-	m_parent->m_edge_style = static_cast<host_comm::edge_style>(m_edge_combo.GetCurSel());
+	m_parent->m_edge_style = static_cast<panel_base::edge_style>(m_edge_combo.GetCurSel());
 	m_parent->m_pseudo_transparent = m_pseudo_check.IsChecked();
 
 	// Get script text
@@ -250,10 +250,10 @@ void CDialogConf::OnLinks(UINT, int nID, HWND)
 
 void CDialogConf::OnReset(UINT, int, HWND)
 {
-	uComboBox_SelectString(m_engine_combo, host_comm::get_default_script_engine_str());
+	uComboBox_SelectString(m_engine_combo, panel_base::get_default_script_engine_str());
 	m_edge_combo.SetCurSel(0);
 	m_pseudo_check.SetCheck(false);
-	m_editorctrl.SetContent(host_comm::get_default_script_code());
+	m_editorctrl.SetContent(panel_base::get_default_script_code());
 }
 
 void CDialogConf::OnSamples(UINT, int nID, HWND)

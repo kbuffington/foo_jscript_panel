@@ -12,7 +12,7 @@ _COM_SMARTPTR_TYPEDEF(IWindow, __uuidof(IWindow));
 class script_host : public IActiveScriptSite, public IActiveScriptSiteWindow
 {
 public:
-	script_host(host_comm* host);
+	script_host(panel_base* host);
 	virtual ~script_host();
 
 	COM_QI_TWO(IActiveScriptSite, IActiveScriptSiteWindow)
@@ -53,7 +53,7 @@ private:
 	IWindowPtr m_window;
 	bool m_engine_inited;
 	bool m_has_error;
-	host_comm* m_host;
+	panel_base* m_host;
 	std::unordered_map<DWORD, pfc::string8_fast> m_context_to_path_map;
 	std::unordered_map<callback_id, DISPID> m_callback_map;
 	volatile DWORD m_ref_count;

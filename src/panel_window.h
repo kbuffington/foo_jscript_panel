@@ -1,10 +1,10 @@
 #pragma once
-#include "host_comm.h"
+#include "panel_base.h"
 #include "host_drop_target.h"
 #include "panel_manager.h"
 #include "script_host.h"
 
-class panel_window : public host_comm
+class panel_window : public panel_base
 {
 protected:
 	bool handle_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp);

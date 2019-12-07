@@ -3,11 +3,11 @@
 #include "panel_properties.h"
 #include "script_info.h"
 
-class host_comm
+class panel_base
 {
 protected:
-	host_comm();
-	virtual ~host_comm();
+	panel_base();
+	virtual ~panel_base();
 
 	enum class instance_type
 	{

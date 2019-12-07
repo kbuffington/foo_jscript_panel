@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "host_comm.h"
+#include "panel_base.h"
 #include "host_drop_target.h"
 #include "panel_window.h"
 
