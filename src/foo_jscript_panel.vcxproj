@@ -79,7 +79,7 @@
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
     <PostBuildEvent>
-      <Command>set component_path=$(SolutionDir)..\$(ProjectName)
+      <Command>set component_path=$(SolutionDir)..\component
 copy /Y "$(TargetPath)" "%component_path%\"
 copy /Y "$(TargetDir)$(TargetName).pdb" "%component_path%\"</Command>
     </PostBuildEvent>
@@ -122,7 +122,7 @@ copy /Y "$(TargetDir)$(TargetName).pdb" "%component_path%\"</Command>
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>set component_path=$(SolutionDir)..\$(ProjectName)
+      <Command>set component_path=$(SolutionDir)..\component
 copy /Y "$(TargetPath)" "%component_path%\"
 copy /Y "$(TargetDir)$(TargetName).pdb" "%component_path%\"</Command>
     </PostBuildEvent>
