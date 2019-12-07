@@ -82,7 +82,7 @@ STDMETHODIMP MetadbHandle::RefreshStats()
 	metadb_index_hash hash;
 	if (stats::hashHandle(m_handle, hash))
 	{
-		stats::theAPI()->dispatch_refresh(jsp_guids::metadb_index, hash);
+		stats::theAPI()->dispatch_refresh(jsp::guids::metadb_index, hash);
 	}
 	return S_OK;
 }

@@ -289,8 +289,8 @@ STDMETHODIMP Fb::GetSelectionType(UINT* p)
 	if (!p) return E_POINTER;
 
 	const GUID type = ui_selection_manager_v2::get()->get_selection_type(0);
-	const auto it = std::find_if(jsp_guids::selections.begin(), jsp_guids::selections.end(), [type](const auto& guid) { return *guid == type; } );
-	*p = it != jsp_guids::selections.end() ? std::distance(jsp_guids::selections.begin(), it) : 0;
+	const auto it = std::find_if(jsp::guids::selections.begin(), jsp::guids::selections.end(), [type](const auto& guid) { return *guid == type; } );
+	*p = it != jsp::guids::selections.end() ? std::distance(jsp::guids::selections.begin(), it) : 0;
 	return S_OK;
 }
 

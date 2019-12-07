@@ -3,13 +3,13 @@
 // Script TypeLib
 ITypeLibPtr g_typelib;
 
-namespace
+namespace jsp
 {
-	DECLARE_COMPONENT_VERSION(COMPONENT_NAME, COMPONENT_VERSION, COMPONENT_INFO);
-
-	VALIDATE_COMPONENT_FILENAME(COMPONENT_DLL_NAME);
+	DECLARE_COMPONENT_VERSION(component_name, component_version, component_info);
+	VALIDATE_COMPONENT_FILENAME(component_dll_name);
 
 	CAppModule _Module;
+	GdiplusScope scope;
 
 	extern "C" BOOL WINAPI DllMain(HINSTANCE ins, DWORD reason, LPVOID lp)
 	{
@@ -32,6 +32,4 @@ namespace
 		}
 		return TRUE;
 	}
-
-	GdiplusScope scope;
 }

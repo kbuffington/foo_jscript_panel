@@ -8,12 +8,12 @@ namespace
 	public:
 		GUID get_command(size_t p_index) override
 		{
-			return jsp_guids::mainmenu_items[p_index];
+			return jsp::guids::mainmenu_items[p_index];
 		}
 
 		GUID get_parent() override
 		{
-			return jsp_guids::mainmenu_group_id;
+			return jsp::guids::mainmenu_group_id;
 		}
 
 		bool get_description(size_t p_index, pfc::string_base& p_out) override
@@ -31,7 +31,7 @@ namespace
 
 		size_t get_command_count() override
 		{
-			return jsp_guids::mainmenu_items.size();
+			return jsp::guids::mainmenu_items.size();
 		}
 
 		void execute(size_t p_index, service_ptr_t<service_base> p_callback) override
@@ -45,6 +45,6 @@ namespace
 		}
 	};
 
-	static mainmenu_group_popup_factory g_my_mainmenu_group(jsp_guids::mainmenu_group_id, mainmenu_groups::file, mainmenu_commands::sort_priority_base, COMPONENT_NAME);
+	static mainmenu_group_popup_factory g_my_mainmenu_group(jsp::guids::mainmenu_group_id, mainmenu_groups::file, mainmenu_commands::sort_priority_base, jsp::component_name);
 	FB2K_SERVICE_FACTORY(my_mainmenu_commands);
 }

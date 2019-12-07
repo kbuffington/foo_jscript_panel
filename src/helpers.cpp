@@ -17,7 +17,7 @@ namespace helpers
 
 	GUID convert_artid_to_guid(size_t art_id)
 	{
-		return *jsp_guids::art[art_id < jsp_guids::art.size() ? art_id : 0];
+		return *jsp::guids::art[art_id < jsp::guids::art.size() ? art_id : 0];
 	}
 
 	IGdiBitmap* get_album_art(const metadb_handle_ptr& handle, size_t art_id, bool need_stub, bool no_load, pfc::string_base& image_path)

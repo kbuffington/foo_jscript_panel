@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "Tooltip.h"
 
-Tooltip::Tooltip(HWND p_wndparent, const panel_tooltip_param_ptr& p_param_ptr) : m_wndparent(p_wndparent), m_panel_tooltip_param_ptr(p_param_ptr), m_tip_buffer(SysAllocString(PFC_WIDESTRING(COMPONENT_NAME)))
+Tooltip::Tooltip(HWND p_wndparent, const panel_tooltip_param_ptr& p_param_ptr) : m_wndparent(p_wndparent), m_panel_tooltip_param_ptr(p_param_ptr), m_tip_buffer(TO_BSTR(jsp::component_name))
 {
 	m_wndtooltip = CreateWindowEx(
 		WS_EX_TOPMOST,

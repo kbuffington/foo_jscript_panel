@@ -22,7 +22,7 @@ static const std::vector<config::simple_key_val> init_table =
 	{"style.caret.line.back.alpha", "256"}
 };
 
-config g_config(jsp_guids::config);
+config g_config(jsp::guids::config);
 
 config::config(const GUID& p_guid) : cfg_var(p_guid), m_conf_wndpl{}, m_property_wndpl{}
 {

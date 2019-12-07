@@ -4,7 +4,7 @@
 class panel_window_dui : public panel_window, public ui_element_instance, public CWindowImpl<panel_window_dui>
 {
 public:
-	DECLARE_WND_CLASS_EX(PFC_WIDESTRING(COMPONENT_NAME), CS_VREDRAW | CS_HREDRAW | CS_DBLCLKS, -1);
+	DECLARE_WND_CLASS_EX(jsp::class_name, CS_VREDRAW | CS_HREDRAW | CS_DBLCLKS, -1);
 
 	panel_window_dui(ui_element_config::ptr cfg, ui_element_instance_callback::ptr callback) : m_callback(callback)
 	{
@@ -14,7 +14,7 @@ public:
 
 	static GUID g_get_guid()
 	{
-		return jsp_guids::window_dui;
+		return jsp::guids::window_dui;
 	}
 
 	static GUID g_get_subclass()
@@ -35,7 +35,7 @@ public:
 
 	static void g_get_name(pfc::string_base& out)
 	{
-		out = COMPONENT_NAME;
+		out = jsp::component_name;
 	}
 
 	BOOL ProcessWindowMessage(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp, LRESULT& res, DWORD) override
@@ -69,7 +69,7 @@ public:
 
 	COLORREF get_colour_ui(size_t type) override
 	{
-		return type < jsp_guids::colours.size() ? m_callback->query_std_color(*jsp_guids::colours[type]) : 0;
+		return type < jsp::guids::colours.size() ? m_callback->query_std_color(*jsp::guids::colours[type]) : 0;
 	}
 
 	GUID get_guid() override
@@ -91,9 +91,9 @@ public:
 	{
 		IGdiFont* ret = nullptr;
 
-		if (type < jsp_guids::fonts.size())
+		if (type < jsp::guids::fonts.size())
 		{
-			HFONT hFont = m_callback->query_font_ex(*jsp_guids::fonts[type]);
+			HFONT hFont = m_callback->query_font_ex(*jsp::guids::fonts[type]);
 			if (hFont)
 			{
 				auto font = new Gdiplus::Font(m_hdc, hFont);

@@ -84,7 +84,7 @@ void host_comm::load_config(stream_reader* reader, size_t size, abort_callback& 
 		catch (...)
 		{
 			reset_config();
-			FB2K_console_formatter() << COMPONENT_NAME_VERSION ": Configuration has been corrupted. All settings have been reset.";
+			FB2K_console_formatter() << jsp::component_name << ": Configuration has been corrupted. All settings have been reset.";
 		}
 	}
 }

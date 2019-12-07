@@ -269,10 +269,10 @@ bool panel_window::handle_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 			script_invoke(callback_id::on_focus, args, _countof(args));
 		}
 		return false;
-	case UWM_TIMER:
+	case jsp::uwm_timer:
 		host_timer_dispatcher::instance().invoke_message(wp);
 		return true;
-	case UWM_UNLOAD:
+	case jsp::uwm_unload:
 		unload_script();
 		return true;
 	}

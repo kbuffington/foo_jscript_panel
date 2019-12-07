@@ -1,25 +1,15 @@
 #pragma once
 
-#define COMPONENT_NAME "JScript Panel"
-#define COMPONENT_DLL_NAME "foo_jscript_panel.dll"
-#define COMPONENT_INFO \
-	COMPONENT_NAME " by marc2003\n" \
-	"Based on WSH Panel Mod by T.P. Wang\n" \
-	"Thanks for the contributions by TheQwertiest and kbuffington\n\n" \
-	"Build: " __TIME__ ", " __DATE__ "\n" \
-	"Columns UI SDK Version: " UI_EXTENSION_VERSION
-
-// Remember to bump utils.version too
-#define COMPONENT_VERSION_NUMBER "2.3.4"
-#define COMPONENT_VERSION_TEST "-dev"
-
-#ifdef _DEBUG
-#define COMPONENT_VERSION COMPONENT_VERSION_NUMBER COMPONENT_VERSION_TEST " (Debug)"
-#else
-#define COMPONENT_VERSION COMPONENT_VERSION_NUMBER COMPONENT_VERSION_TEST
-#endif
-
-#define COMPONENT_NAME_VERSION COMPONENT_NAME " v" COMPONENT_VERSION
+namespace jsp
+{
+	static constexpr const char* component_name = "JScript Panel";
+	static constexpr const char* component_version = "2.3.4-dev";
+	static constexpr const char* component_dll_name = "foo_jscript_panel.dll";
+	static constexpr const char* component_info = "Copyright (C) 2015-2019 marc2003\nBased on WSH Panel Mod by T.P. Wang\nThanks for the contributions by TheQwertiest and kbuffington\n\nBuild: " __TIME__ ", " __DATE__ "\nColumns UI SDK Version: " UI_EXTENSION_VERSION;
+	static constexpr size_t uwm_timer = WM_USER + 1;
+	static constexpr size_t uwm_unload = WM_USER + 2;
+	static const wchar_t* class_name = L"jsp_class";
+}
 
 #define TO_VARIANT_BOOL(v) (v ? VARIANT_TRUE : VARIANT_FALSE)
 #define TO_BSTR(str) SysAllocString(string_wide_from_utf8_fast(str))
@@ -29,6 +19,3 @@
 #define GET_PTR(X, Y) \
 	X->get__ptr(reinterpret_cast<void**>(&Y)); \
 	if (!Y) return E_INVALIDARG;
-
-#define UWM_TIMER WM_USER + 1
-#define UWM_UNLOAD WM_USER + 2

@@ -21,7 +21,7 @@ static const CRect resize_min_max(620, 381, 0, 0);
 
 CDialogConf::CDialogConf(panel_window* p_parent) : m_parent(p_parent), m_resizer(resize_data, resize_min_max)
 {
-	m_caption << COMPONENT_NAME " Configuration (id:" << m_parent->m_script_info.id << ")";
+	m_caption << jsp::component_name << " Configuration (id:" << m_parent->m_script_info.id << ")";
 }
 
 BOOL CDialogConf::OnInitDialog(HWND, LPARAM)
@@ -200,7 +200,7 @@ void CDialogConf::OnCloseCmd(UINT, int nID, HWND)
 		Apply();
 		return;
 	case IDCANCEL:
-		if (m_editorctrl.GetModify() && uMessageBox(m_hWnd, "Unsaved changes will be lost. Are you sure?", COMPONENT_NAME, MB_ICONWARNING | MB_SETFOREGROUND | MB_YESNO) != IDYES)
+		if (m_editorctrl.GetModify() && uMessageBox(m_hWnd, "Unsaved changes will be lost. Are you sure?", jsp::component_name, MB_ICONWARNING | MB_SETFOREGROUND | MB_YESNO) != IDYES)
 		{
 			return;
 		}

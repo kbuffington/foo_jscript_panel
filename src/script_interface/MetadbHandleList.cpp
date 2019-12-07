@@ -298,7 +298,7 @@ STDMETHODIMP MetadbHandleList::RefreshStats()
 	{
 		to_refresh += hash;
 	}
-	stats::theAPI()->dispatch_refresh(jsp_guids::metadb_index, to_refresh);
+	stats::theAPI()->dispatch_refresh(jsp::guids::metadb_index, to_refresh);
 	return S_OK;
 }
 

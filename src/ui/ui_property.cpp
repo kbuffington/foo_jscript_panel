@@ -17,7 +17,7 @@ static const CRect resize_min_max(620, 381, 0, 0);
 
 CDialogProperty::CDialogProperty(panel_window* p_parent) : m_parent(p_parent), m_resizer(resize_data, resize_min_max)
 {
-	m_caption << COMPONENT_NAME " Properties (id:" << m_parent->m_script_info.id << ")";
+	m_caption << jsp::component_name << " Properties (id:" << m_parent->m_script_info.id << ")";
 }
 
 BOOL CDialogProperty::OnInitDialog(HWND, LPARAM)
