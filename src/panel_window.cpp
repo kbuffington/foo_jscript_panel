@@ -7,7 +7,6 @@
 panel_window::panel_window()
 	: m_script_host(new script_host(this))
 	, m_is_mouse_tracked(false)
-	, m_is_droptarget_registered(false)
 	, m_suppress_drawing(false)
 	, m_paint_pending(false)
 	, m_gr_bmp(nullptr)
@@ -528,7 +527,6 @@ void panel_window::load_script()
 	{
 		m_drop_target.Attach(new com_object_impl_t<host_drop_target>(this));
 		m_drop_target->RegisterDragDrop();
-		m_is_droptarget_registered = true;
 	}
 
 	// HACK: Script update will not call on_size, so invoke it explicitly
@@ -794,10 +792,9 @@ void panel_window::unload_script()
 {
 	m_script_host->Finalise();
 
-	if (m_is_droptarget_registered)
+	if (m_dragdrop)
 	{
 		m_drop_target->RevokeDragDrop();
-		m_is_droptarget_registered = false;
 	}
 
 	host_timer_dispatcher::instance().kill_timers(m_hwnd);

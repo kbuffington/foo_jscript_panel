@@ -131,9 +131,9 @@ STDMETHODIMP Window::NotifyOthers(BSTR name, VARIANT info)
 
 	_variant_t var;
 	if (FAILED(VariantCopy(&var, &info))) return E_INVALIDARG;
+	auto d = var.Detach();
 
 	auto data = new callback_data<_bstr_t, _variant_t>(name, 0);
-	auto d = var.Detach();
 	data->m_item2.Attach(d);
 	panel_manager::instance().notify_others(m_host->get_hwnd(), data);
 	return S_OK;

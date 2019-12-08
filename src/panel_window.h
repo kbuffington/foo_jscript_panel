@@ -41,7 +41,6 @@ private:
 	HBITMAP m_gr_bmp;
 	HBITMAP m_gr_bmp_bk;
 	IGdiGraphicsPtr m_gr_wrap;
-	bool m_is_droptarget_registered;
 	bool m_is_mouse_tracked;
 	bool m_paint_pending;
 	bool m_suppress_drawing;

@@ -9,16 +9,13 @@ namespace helpers
 	{
 		std::vector<wchar_t> content;
 
-		HANDLE hFile = nullptr, hFileMapping = nullptr;
-		LPCBYTE pAddr = nullptr;
-
-		hFile = CreateFile(path, GENERIC_READ, FILE_SHARE_READ, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
+		HANDLE hFile = CreateFile(path, GENERIC_READ, FILE_SHARE_READ, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
 		if (hFile != INVALID_HANDLE_VALUE)
 		{
-			hFileMapping = CreateFileMapping(hFile, nullptr, PAGE_READONLY, 0, 0, nullptr);
+			HANDLE hFileMapping = CreateFileMapping(hFile, nullptr, PAGE_READONLY, 0, 0, nullptr);
 			if (hFileMapping != nullptr)
 			{
-				pAddr = static_cast<LPCBYTE>(MapViewOfFile(hFileMapping, FILE_MAP_READ, 0, 0, 0));
+				LPCBYTE pAddr = static_cast<LPCBYTE>(MapViewOfFile(hFileMapping, FILE_MAP_READ, 0, 0, 0));
 				if (pAddr != nullptr)
 				{
 					const DWORD dwFileSize = GetFileSize(hFile, nullptr);
