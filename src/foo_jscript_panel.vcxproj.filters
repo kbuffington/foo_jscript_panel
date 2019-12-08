@@ -82,6 +82,9 @@
     <ClInclude Include="panel_manager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="panel_properties.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="panel_window.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -196,9 +199,6 @@
     <ClInclude Include="ui\editorctrl.h">
       <Filter>Header Files\ui</Filter>
     </ClInclude>
-    <ClInclude Include="ui\panel_properties.h">
-      <Filter>Header Files\ui</Filter>
-    </ClInclude>
     <ClInclude Include="ui\ui_conf.h">
       <Filter>Header Files\ui</Filter>
     </ClInclude>
@@ -249,6 +249,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="panel_manager_callbacks.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="panel_properties.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="panel_window.cpp">
@@ -351,9 +354,6 @@
       <Filter>Source Files\ui</Filter>
     </ClCompile>
     <ClCompile Include="ui\editorctrl.cpp">
-      <Filter>Source Files\ui</Filter>
-    </ClCompile>
-    <ClCompile Include="ui\panel_properties.cpp">
       <Filter>Source Files\ui</Filter>
     </ClCompile>
     <ClCompile Include="ui\ui_conf.cpp">
