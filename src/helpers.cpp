@@ -5,6 +5,72 @@
 
 namespace helpers
 {
+	BSTR read_file_wide(const wchar_t* path, size_t codepage)
+	{
+		std::vector<wchar_t> content;
+
+		HANDLE hFile = nullptr, hFileMapping = nullptr;
+		LPCBYTE pAddr = nullptr;
+
+		hFile = CreateFile(path, GENERIC_READ, FILE_SHARE_READ, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
+		if (hFile != INVALID_HANDLE_VALUE)
+		{
+			hFileMapping = CreateFileMapping(hFile, nullptr, PAGE_READONLY, 0, 0, nullptr);
+			if (hFileMapping != nullptr)
+			{
+				pAddr = static_cast<LPCBYTE>(MapViewOfFile(hFileMapping, FILE_MAP_READ, 0, 0, 0));
+				if (pAddr != nullptr)
+				{
+					const DWORD dwFileSize = GetFileSize(hFile, nullptr);
+					if (dwFileSize != INVALID_FILE_SIZE)
+					{
+						if (dwFileSize >= 2 && pAddr[0] == 0xFF && pAddr[1] == 0xFE) // UTF16 LE?
+						{
+							const wchar_t* pSource = reinterpret_cast<const wchar_t*>(pAddr + 2);
+							const size_t len = (dwFileSize - 2) >> 1;
+
+							content.resize(len + 1);
+							pfc::__unsafe__memcpy_t(content.data(), pSource, len);
+							content[len] = L'\0';
+						}
+						else if (dwFileSize >= 3 && pAddr[0] == 0xEF && pAddr[1] == 0xBB && pAddr[2] == 0xBF) // UTF8-BOM?
+						{
+							const char* pSource = reinterpret_cast<const char*>(pAddr + 3);
+							const size_t pSourceSize = dwFileSize - 3;
+
+							const size_t size = estimate_utf8_to_wide_quick(pSource, pSourceSize);
+							content.resize(size);
+							convert_utf8_to_wide(content.data(), size, pSource, pSourceSize);
+						}
+						else
+						{
+							pfc::string8_fast pSource(reinterpret_cast<const char*>(pAddr), dwFileSize);
+
+							if (guess_codepage(pSource) == CP_UTF8)
+							{
+								const size_t size = estimate_utf8_to_wide_quick(pSource, dwFileSize);
+								content.resize(size);
+								convert_utf8_to_wide(content.data(), size, pSource, dwFileSize);
+							}
+							else
+							{
+								const size_t size = estimate_codepage_to_wide(codepage, pSource, dwFileSize);
+								content.resize(size);
+								convert_codepage_to_wide(codepage, content.data(), size, pSource, dwFileSize);
+							}
+						}
+					}
+					UnmapViewOfFile(pAddr);
+				}
+				CloseHandle(hFileMapping);
+			}
+			CloseHandle(hFile);
+		}
+
+		if (content.empty()) content.emplace_back(L'\0');
+		return SysAllocString(content.data());
+	}
+
 	COLORREF convert_argb_to_colorref(DWORD argb)
 	{
 		return RGB(argb >> RED_SHIFT, argb >> GREEN_SHIFT, argb >> BLUE_SHIFT);
@@ -557,84 +623,6 @@ namespace helpers
 			foobar2000_io::listDirectories(cpath, out, fb2k::noAbort);
 		}
 		catch (...) {}
-	}
-
-	void read_file_wide(size_t codepage, const wchar_t* path, std::vector<wchar_t>& content)
-	{
-		HANDLE hFile = CreateFile(path, GENERIC_READ, FILE_SHARE_READ, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
-
-		if (hFile == INVALID_HANDLE_VALUE)
-		{
-			return;
-		}
-
-		HANDLE hFileMapping = CreateFileMapping(hFile, nullptr, PAGE_READONLY, 0, 0, nullptr);
-
-		if (hFileMapping == nullptr)
-		{
-			CloseHandle(hFile);
-			return;
-		}
-
-		LPCBYTE pAddr = static_cast<LPCBYTE>(MapViewOfFile(hFileMapping, FILE_MAP_READ, 0, 0, 0));
-
-		if (pAddr == nullptr)
-		{
-			CloseHandle(hFileMapping);
-			CloseHandle(hFile);
-			return;
-		}
-
-		const DWORD dwFileSize = GetFileSize(hFile, nullptr);
-
-		if (dwFileSize == INVALID_FILE_SIZE)
-		{
-			UnmapViewOfFile(pAddr);
-			CloseHandle(hFileMapping);
-			CloseHandle(hFile);
-			return;
-		}
-
-		if (dwFileSize >= 2 && pAddr[0] == 0xFF && pAddr[1] == 0xFE) // UTF16 LE?
-		{
-			const wchar_t* pSource = reinterpret_cast<const wchar_t*>(pAddr + 2);
-			const size_t len = (dwFileSize - 2) >> 1;
-
-			content.resize(len + 1);
-			pfc::__unsafe__memcpy_t(content.data(), pSource, len);
-			content[len] = 0;
-		}
-		else if (dwFileSize >= 3 && pAddr[0] == 0xEF && pAddr[1] == 0xBB && pAddr[2] == 0xBF) // UTF8-BOM?
-		{
-			const char* pSource = reinterpret_cast<const char*>(pAddr + 3);
-			const size_t pSourceSize = dwFileSize - 3;
-
-			const size_t size = estimate_utf8_to_wide_quick(pSource, pSourceSize);
-			content.resize(size);
-			convert_utf8_to_wide(content.data(), size, pSource, pSourceSize);
-		}
-		else
-		{
-			pfc::string8_fast pSource(reinterpret_cast<const char*>(pAddr), dwFileSize);
-
-			if (guess_codepage(pSource) == CP_UTF8)
-			{
-				const size_t size = estimate_utf8_to_wide_quick(pSource, dwFileSize);
-				content.resize(size);
-				convert_utf8_to_wide(content.data(), size, pSource, dwFileSize);
-			}
-			else
-			{
-				const size_t size = estimate_codepage_to_wide(codepage, pSource, dwFileSize);
-				content.resize(size);
-				convert_codepage_to_wide(codepage, content.data(), size, pSource, dwFileSize);
-			}
-		}
-
-		UnmapViewOfFile(pAddr);
-		CloseHandle(hFileMapping);
-		CloseHandle(hFile);
-		return;
 	}
 
 	wchar_t* make_sort_string(const char* in)

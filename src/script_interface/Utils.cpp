@@ -355,10 +355,7 @@ STDMETHODIMP Utils::ReadTextFile(BSTR filename, UINT codepage, BSTR* p)
 {
 	if (!p) return E_POINTER;
 
-	std::vector<wchar_t> content;
-	helpers::read_file_wide(codepage, filename, content);
-	if (content.empty()) content.emplace_back(L'\0');
-	*p = SysAllocString(content.data());
+	*p = helpers::read_file_wide(filename, codepage);
 	return S_OK;
 }
 
