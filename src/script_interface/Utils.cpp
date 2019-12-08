@@ -101,7 +101,7 @@ STDMETHODIMP Utils::FormatFileSize(__int64 bytes, BSTR* p)
 STDMETHODIMP Utils::GetAlbumArtAsync(UINT window_id, IMetadbHandle* handle, UINT art_id, VARIANT_BOOL need_stub, VARIANT_BOOL only_embed, VARIANT_BOOL no_load)
 {
 	metadb_handle* ptr = nullptr;
-	GET_PTR(handle, ptr)
+	GET_PTR(handle, ptr);
 
 	auto task = new helpers::album_art_async(reinterpret_cast<HWND>(window_id), ptr, art_id, need_stub != VARIANT_FALSE, only_embed != VARIANT_FALSE, no_load != VARIANT_FALSE);
 	simple_thread_pool::instance().enqueue(task);
@@ -121,7 +121,7 @@ STDMETHODIMP Utils::GetAlbumArtV2(IMetadbHandle* handle, UINT art_id, VARIANT_BO
 	if (!pp) return E_POINTER;
 
 	metadb_handle* ptr = nullptr;
-	GET_PTR(handle, ptr)
+	GET_PTR(handle, ptr);
 
 	pfc::string8_fast dummy;
 	*pp = helpers::get_album_art(ptr, art_id, need_stub != VARIANT_FALSE, false, dummy);

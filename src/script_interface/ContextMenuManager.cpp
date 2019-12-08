@@ -31,7 +31,7 @@ STDMETHODIMP ContextMenuManager::ExecuteByID(UINT id, VARIANT_BOOL* p)
 STDMETHODIMP ContextMenuManager::InitContext(IMetadbHandleList* handles)
 {
 	metadb_handle_list* handles_ptr = nullptr;
-	GET_PTR(handles, handles_ptr)
+	GET_PTR(handles, handles_ptr);
 
 	contextmenu_manager::g_create(m_cm);
 	m_cm->init_context(*handles_ptr, contextmenu_manager::flag_show_shortcuts);

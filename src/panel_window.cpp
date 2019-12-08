@@ -648,12 +648,12 @@ void panel_window::on_paint_error(HDC memdc)
 	}
 }
 
-void panel_window::on_paint_user(HDC memdc, LPRECT lpUpdateRect)
+void panel_window::on_paint_user(HDC memdc, LPRECT lpRect)
 {
 	if (m_script_host->Ready())
 	{
 		Gdiplus::Graphics gr(memdc);
-		const Gdiplus::Rect rect(lpUpdateRect->left, lpUpdateRect->top, lpUpdateRect->right - lpUpdateRect->left, lpUpdateRect->bottom - lpUpdateRect->top);
+		const Gdiplus::Rect rect(lpRect->left, lpRect->top, lpRect->right - lpRect->left, lpRect->bottom - lpRect->top);
 		gr.SetClip(rect);
 		m_gr_wrap->put__ptr(&gr);
 
@@ -680,7 +680,7 @@ void panel_window::redraw()
 	RedrawWindow(m_hwnd, nullptr, nullptr, RDW_INVALIDATE | RDW_UPDATENOW);
 }
 
-void panel_window::refresh_background(LPRECT lprcUpdate)
+void panel_window::refresh_background(LPRECT lpRect)
 {
 	HWND wnd_parent = GetAncestor(m_hwnd, GA_PARENT);
 
@@ -708,9 +708,9 @@ void panel_window::refresh_background(LPRECT lprcUpdate)
 	RECT rect_parent;
 	HRGN rgn_child = nullptr;
 
-	if (lprcUpdate)
+	if (lpRect)
 	{
-		HRGN rgn = CreateRectRgnIndirect(lprcUpdate);
+		HRGN rgn = CreateRectRgnIndirect(lpRect);
 		rgn_child = CreateRectRgnIndirect(&rect_child);
 		CombineRgn(rgn_child, rgn_child, rgn, RGN_DIFF);
 		DeleteRgn(rgn);

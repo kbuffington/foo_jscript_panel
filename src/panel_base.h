@@ -15,6 +15,12 @@ protected:
 		dui,
 	};
 
+	struct size
+	{
+		POINT min, max;
+		int width, height;
+	};
+
 	void load_config(stream_reader* reader, size_t size, abort_callback& abort);
 	void reset_config();
 	void save_config(stream_writer* writer, abort_callback& abort) const;
@@ -41,12 +47,6 @@ public:
 		none,
 		sunken,
 		grey,
-	};
-
-	struct size
-	{
-		POINT min, max;
-		int width, height;
 	};
 
 	static pfc::string8_fast get_default_script_code();

@@ -24,7 +24,7 @@ STDMETHODIMP UiSelectionHolder::SetPlaylistTracking()
 STDMETHODIMP UiSelectionHolder::SetSelection(IMetadbHandleList* handles)
 {
 	metadb_handle_list* handles_ptr = nullptr;
-	GET_PTR(handles, handles_ptr)
+	GET_PTR(handles, handles_ptr);
 
 	m_holder->set_selection(*handles_ptr);
 	return S_OK;

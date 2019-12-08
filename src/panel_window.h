@@ -33,9 +33,9 @@ private:
 	void load_script();
 	void on_paint();
 	void on_paint_error(HDC memdc);
-	void on_paint_user(HDC memdc, LPRECT lpUpdateRect);
+	void on_paint_user(HDC memdc, LPRECT lpRect);
 	void on_size();
-	void refresh_background(LPRECT lprcUpdate);
+	void refresh_background(LPRECT lpRect);
 
 	CComPtr<IDropTargetImpl> m_drop_target;
 	HBITMAP m_gr_bmp;

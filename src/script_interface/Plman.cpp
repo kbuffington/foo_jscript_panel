@@ -8,7 +8,7 @@ Plman::~Plman() {}
 STDMETHODIMP Plman::AddItemToPlaybackQueue(IMetadbHandle* handle)
 {
 	metadb_handle* ptr = nullptr;
-	GET_PTR(handle, ptr)
+	GET_PTR(handle, ptr);
 
 	playlist_manager::get()->queue_add_item(ptr);
 	return S_OK;
@@ -162,7 +162,7 @@ STDMETHODIMP Plman::FindPlaybackQueueItemIndex(IMetadbHandle* handle, UINT playl
 	if (!p) return E_POINTER;
 
 	metadb_handle* ptr = nullptr;
-	GET_PTR(handle, ptr)
+	GET_PTR(handle, ptr);
 
 	t_playback_queue_item item;
 	item.m_handle = ptr;
@@ -308,7 +308,7 @@ STDMETHODIMP Plman::GetRecyclerName(UINT index, BSTR* p)
 STDMETHODIMP Plman::InsertPlaylistItems(UINT playlistIndex, UINT base, IMetadbHandleList* handles, VARIANT_BOOL select)
 {
 	metadb_handle_list* handles_ptr = nullptr;
-	GET_PTR(handles, handles_ptr)
+	GET_PTR(handles, handles_ptr);
 
 	pfc::bit_array_val selection(select != VARIANT_FALSE);
 	playlist_manager::get()->playlist_insert_items(playlistIndex, base, *handles_ptr, selection);
@@ -318,7 +318,7 @@ STDMETHODIMP Plman::InsertPlaylistItems(UINT playlistIndex, UINT base, IMetadbHa
 STDMETHODIMP Plman::InsertPlaylistItemsFilter(UINT playlistIndex, UINT base, IMetadbHandleList* handles, VARIANT_BOOL select)
 {
 	metadb_handle_list* handles_ptr = nullptr;
-	GET_PTR(handles, handles_ptr)
+	GET_PTR(handles, handles_ptr);
 
 	playlist_manager::get()->playlist_insert_items_filter(playlistIndex, base, *handles_ptr, select != VARIANT_FALSE);
 	return S_OK;
@@ -489,7 +489,7 @@ STDMETHODIMP Plman::SetPlaylistFocusItem(UINT playlistIndex, UINT playlistItemIn
 STDMETHODIMP Plman::SetPlaylistFocusItemByHandle(UINT playlistIndex, IMetadbHandle* handle)
 {
 	metadb_handle* ptr = nullptr;
-	GET_PTR(handle, ptr)
+	GET_PTR(handle, ptr);
 
 	playlist_manager::get()->playlist_set_focus_by_handle(playlistIndex, ptr);
 	return S_OK;

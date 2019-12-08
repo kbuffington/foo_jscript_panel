@@ -34,7 +34,7 @@ STDMETHODIMP GdiBitmap::ApplyMask(IGdiBitmap* mask, VARIANT_BOOL* p)
 
 	*p = VARIANT_FALSE;
 	Gdiplus::Bitmap* bitmap_mask = nullptr;
-	GET_PTR(mask, bitmap_mask)
+	GET_PTR(mask, bitmap_mask);
 
 	if (bitmap_mask->GetHeight() != m_ptr->GetHeight() || bitmap_mask->GetWidth() != m_ptr->GetWidth())
 	{
@@ -193,7 +193,7 @@ STDMETHODIMP GdiBitmap::ReleaseGraphics(IGdiGraphics* p)
 	if (p)
 	{
 		Gdiplus::Graphics* g = nullptr;
-		GET_PTR(p, g)
+		GET_PTR(p, g);
 		p->put__ptr(nullptr);
 		if (g) delete g;
 	}

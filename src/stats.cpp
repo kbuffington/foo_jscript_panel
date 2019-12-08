@@ -3,6 +3,15 @@
 
 namespace stats
 {
+	static constexpr std::array<const char*, 5> field_names =
+	{
+		"jsp_playcount",
+		"jsp_loved",
+		"jsp_first_played",
+		"jsp_last_played",
+		"jsp_rating"
+	};
+
 	metadb_index_manager::ptr g_cachedAPI;
 
 	class my_metadb_index_client : public metadb_index_client
@@ -89,19 +98,11 @@ namespace stats
 
 		size_t get_field_count() override
 		{
-			return 5;
+			return field_names.size();
 		}
 
 		void get_field_name(size_t index, pfc::string_base& out) override
 		{
-			static constexpr std::array<const char*, 5> field_names =
-			{
-				"jsp_playcount",
-				"jsp_loved",
-				"jsp_first_played",
-				"jsp_last_played",
-				"jsp_rating"
-			};
 			out.set_string(field_names[index]);
 		}
 	};

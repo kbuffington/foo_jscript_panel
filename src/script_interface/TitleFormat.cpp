@@ -37,7 +37,7 @@ STDMETHODIMP TitleFormat::EvalWithMetadb(IMetadbHandle* handle, BSTR* p)
 	if (m_obj.is_empty() || !p) return E_POINTER;
 
 	metadb_handle* ptr = nullptr;
-	GET_PTR(handle, ptr)
+	GET_PTR(handle, ptr);
 
 	pfc::string8_fast str;
 	ptr->format_title(nullptr, str, m_obj, nullptr);
@@ -50,7 +50,7 @@ STDMETHODIMP TitleFormat::EvalWithMetadbs(IMetadbHandleList* handles, VARIANT* p
 	if (m_obj.is_empty() || !p) return E_POINTER;
 
 	metadb_handle_list* handles_ptr = nullptr;
-	GET_PTR(handles, handles_ptr)
+	GET_PTR(handles, handles_ptr);
 
 	const size_t count = handles_ptr->get_count();
 

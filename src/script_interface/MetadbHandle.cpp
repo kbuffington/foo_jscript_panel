@@ -36,7 +36,7 @@ STDMETHODIMP MetadbHandle::Compare(IMetadbHandle* handle, VARIANT_BOOL* p)
 	if (m_handle.is_empty() || !p) return E_POINTER;
 
 	metadb_handle* ptr = nullptr;
-	GET_PTR(handle, ptr)
+	GET_PTR(handle, ptr);
 
 	*p = TO_VARIANT_BOOL(ptr == m_handle.get_ptr());
 	return S_OK;

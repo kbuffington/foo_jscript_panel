@@ -22,7 +22,7 @@ STDMETHODIMP MetadbHandleList::get__ptr(void** pp)
 STDMETHODIMP MetadbHandleList::Add(IMetadbHandle* handle)
 {
 	metadb_handle* ptr = nullptr;
-	GET_PTR(handle, ptr)
+	GET_PTR(handle, ptr);
 
 	m_handles.add_item(ptr);
 	return S_OK;
@@ -31,7 +31,7 @@ STDMETHODIMP MetadbHandleList::Add(IMetadbHandle* handle)
 STDMETHODIMP MetadbHandleList::AddRange(IMetadbHandleList* handles)
 {
 	metadb_handle_list* handles_ptr = nullptr;
-	GET_PTR(handles, handles_ptr)
+	GET_PTR(handles, handles_ptr);
 
 	m_handles.add_items(*handles_ptr);
 	return S_OK;
@@ -73,7 +73,7 @@ STDMETHODIMP MetadbHandleList::BSearch(IMetadbHandle* handle, int* p)
 	if (!p) return E_POINTER;
 
 	metadb_handle* ptr = nullptr;
-	GET_PTR(handle, ptr)
+	GET_PTR(handle, ptr);
 
 	*p = TO_INT(m_handles.bsearch_by_pointer(ptr));
 	return S_OK;
@@ -128,7 +128,7 @@ STDMETHODIMP MetadbHandleList::Find(IMetadbHandle* handle, int* p)
 	if (!p) return E_POINTER;
 
 	metadb_handle* ptr = nullptr;
-	GET_PTR(handle, ptr)
+	GET_PTR(handle, ptr);
 
 	*p = TO_INT(m_handles.find_item(ptr));
 	return S_OK;
@@ -163,7 +163,7 @@ STDMETHODIMP MetadbHandleList::GetLibraryRelativePaths(VARIANT* p)
 STDMETHODIMP MetadbHandleList::Insert(UINT index, IMetadbHandle* handle)
 {
 	metadb_handle* ptr = nullptr;
-	GET_PTR(handle, ptr)
+	GET_PTR(handle, ptr);
 
 	m_handles.insert_item(ptr, index);
 	return S_OK;
@@ -172,7 +172,7 @@ STDMETHODIMP MetadbHandleList::Insert(UINT index, IMetadbHandle* handle)
 STDMETHODIMP MetadbHandleList::InsertRange(UINT index, IMetadbHandleList* handles)
 {
 	metadb_handle_list* handles_ptr = nullptr;
-	GET_PTR(handles, handles_ptr)
+	GET_PTR(handles, handles_ptr);
 
 	m_handles.insert_items(*handles_ptr, index);
 	return S_OK;
@@ -181,7 +181,7 @@ STDMETHODIMP MetadbHandleList::InsertRange(UINT index, IMetadbHandleList* handle
 STDMETHODIMP MetadbHandleList::MakeDifference(IMetadbHandleList* handles)
 {
 	metadb_handle_list* handles_ptr = nullptr;
-	GET_PTR(handles, handles_ptr)
+	GET_PTR(handles, handles_ptr);
 
 	metadb_handle_list r1, r2;
 	metadb_handle_list_helper::sorted_by_pointer_extract_difference(m_handles, *handles_ptr, r1, r2);
@@ -192,7 +192,7 @@ STDMETHODIMP MetadbHandleList::MakeDifference(IMetadbHandleList* handles)
 STDMETHODIMP MetadbHandleList::MakeIntersection(IMetadbHandleList* handles)
 {
 	metadb_handle_list* handles_ptr = nullptr;
-	GET_PTR(handles, handles_ptr)
+	GET_PTR(handles, handles_ptr);
 
 	const metadb_handle_list_ref handles_ref = *handles_ptr;
 	metadb_handle_list result;
@@ -222,7 +222,7 @@ STDMETHODIMP MetadbHandleList::MakeIntersection(IMetadbHandleList* handles)
 STDMETHODIMP MetadbHandleList::MakeUnion(IMetadbHandleList* handles)
 {
 	metadb_handle_list* handles_ptr = nullptr;
-	GET_PTR(handles, handles_ptr)
+	GET_PTR(handles, handles_ptr);
 
 	m_handles.add_items(*handles_ptr);
 	m_handles.sort_by_pointer_remove_duplicates();
@@ -242,7 +242,7 @@ STDMETHODIMP MetadbHandleList::OptimiseFileLayout(VARIANT_BOOL minimise)
 STDMETHODIMP MetadbHandleList::OrderByFormat(__interface ITitleFormat* script, int direction)
 {
 	titleformat_object* obj = nullptr;
-	GET_PTR(script, obj)
+	GET_PTR(script, obj);
 
 	m_handles.sort_by_format(obj, nullptr, direction);
 	return S_OK;
@@ -305,7 +305,7 @@ STDMETHODIMP MetadbHandleList::RefreshStats()
 STDMETHODIMP MetadbHandleList::Remove(IMetadbHandle* handle)
 {
 	metadb_handle* ptr = nullptr;
-	GET_PTR(handle, ptr)
+	GET_PTR(handle, ptr);
 
 	m_handles.remove_item(ptr);
 	return S_OK;
@@ -450,7 +450,7 @@ STDMETHODIMP MetadbHandleList::put_Item(UINT index, IMetadbHandle* handle)
 	if (index < m_handles.get_count())
 	{
 		metadb_handle* ptr = nullptr;
-		GET_PTR(handle, ptr)
+		GET_PTR(handle, ptr);
 
 		m_handles.replace_item(index, ptr);
 		return S_OK;

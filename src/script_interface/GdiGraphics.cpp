@@ -91,7 +91,7 @@ STDMETHODIMP GdiGraphics::DrawImage(IGdiBitmap* image, float dstX, float dstY, f
 	if (!m_ptr) return E_POINTER;
 
 	Gdiplus::Bitmap* img = nullptr;
-	GET_PTR(image, img)
+	GET_PTR(image, img);
 
 	const Gdiplus::RectF rect(dstX, dstY, dstW, dstH);
 	Gdiplus::Matrix old_m;
@@ -180,7 +180,7 @@ STDMETHODIMP GdiGraphics::DrawString(BSTR str, IGdiFont* font, __int64 colour, f
 	if (!m_ptr) return E_POINTER;
 
 	Gdiplus::Font* fn = nullptr;
-	GET_PTR(font, fn)
+	GET_PTR(font, fn);
 
 	Gdiplus::StringFormat fmt(Gdiplus::StringFormat::GenericTypographic());
 	SetFormat(flags, fmt);
@@ -371,7 +371,7 @@ STDMETHODIMP GdiGraphics::MeasureString(BSTR str, IGdiFont* font, float x, float
 	if (!m_ptr || !pp) return E_POINTER;
 
 	Gdiplus::Font* fn = nullptr;
-	GET_PTR(font, fn)
+	GET_PTR(font, fn);
 
 	Gdiplus::StringFormat fmt(Gdiplus::StringFormat::GenericTypographic());
 	SetFormat(flags, fmt);
