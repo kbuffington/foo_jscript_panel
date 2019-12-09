@@ -56,7 +56,7 @@ private:
 		LRESULT OnKeyDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 
 	private:
-		int m_cmd;
+		int m_cmd = 0;
 	};
 
 	bool m_havefound = false;

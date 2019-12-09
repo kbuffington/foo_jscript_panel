@@ -101,7 +101,7 @@ void CDialogFindReplace::SetMode(mode m)
 	SetFocus();
 }
 
-CDialogFindReplace::KeyHack::KeyHack() : m_cmd(0) {}
+CDialogFindReplace::KeyHack::KeyHack() {}
 
 BOOL CDialogFindReplace::KeyHack::SubclassWindow(HWND hwnd, int cmd)
 {

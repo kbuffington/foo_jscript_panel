@@ -1,18 +1,7 @@
 #include "stdafx.h"
 #include "host_timer_dispatcher.h"
 
-host_timer::host_timer(HWND hwnd, size_t id, size_t delay, bool isRepeated)
-{
-	m_hTimer = 0;
-
-	m_hwnd = hwnd;
-	m_delay = delay;
-	m_is_repeated = isRepeated;
-	m_id = id;
-
-	m_is_stop_requested = false;
-	m_is_stopped = false;
-}
+host_timer::host_timer(HWND hwnd, size_t id, size_t delay, bool is_repeated) : m_hwnd(hwnd), m_id(id), m_delay(delay), m_is_repeated(is_repeated) {}
 
 host_timer::~host_timer() {}
 
@@ -67,12 +56,8 @@ void host_timer::stop()
 	m_is_stop_requested = true;
 }
 
-host_timer_task::host_timer_task(IDispatch* pDisp, size_t timerId)
+host_timer_task::host_timer_task(IDispatch* pDisp, size_t timerId) : m_pDisp(pDisp), m_timerId(timerId)
 {
-	m_pDisp = pDisp;
-	m_timerId = timerId;
-
-	m_refCount = 0;
 	m_pDisp->AddRef();
 }
 
@@ -115,7 +100,6 @@ void host_timer_task::release()
 
 host_timer_dispatcher::host_timer_dispatcher()
 {
-	m_cur_timer_id = 1;
 	m_timer_queue = CreateTimerQueue();
 }
 
