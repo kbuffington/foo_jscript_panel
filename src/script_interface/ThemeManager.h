@@ -9,9 +9,9 @@ protected:
 
 	void FinalRelease() override;
 
-	HTHEME m_theme;
-	int m_partid;
-	int m_stateid;
+	HTHEME m_theme = nullptr;
+	int m_partid = 0;
+	int m_stateid = 0;
 
 public:
 	STDMETHODIMP DrawThemeBackground(IGdiGraphics* gr, int x, int y, int w, int h, int clip_x, int clip_y, int clip_w, int clip_h) override;

@@ -9,8 +9,8 @@ protected:
 
 	void FinalRelease() override;
 
-	HFONT m_hFont;
-	bool m_managed;
+	HFONT m_hFont = nullptr;
+	bool m_managed = true;
 
 public:
 	STDMETHODIMP get__HFont(UINT* p) override;

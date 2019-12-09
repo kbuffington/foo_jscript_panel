@@ -9,11 +9,7 @@ script_host::script_host(panel_base* host)
 	, m_fb(com_object_singleton_t<Fb>::instance())
 	, m_utils(com_object_singleton_t<Utils>::instance())
 	, m_plman(com_object_singleton_t<Plman>::instance())
-	, m_console(com_object_singleton_t<Console>::instance())
-	, m_ref_count(1)
-	, m_engine_inited(false)
-	, m_has_error(false)
-	, m_last_source_context(0) {}
+	, m_console(com_object_singleton_t<Console>::instance()) {}
 
 script_host::~script_host() {}
 

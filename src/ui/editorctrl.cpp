@@ -64,14 +64,7 @@ static const std::vector<std::pair<int, const char*>> js_style_table =
 	{ SCE_C_OPERATOR, "style.operator" }
 };
 
-CScriptEditorCtrl::CScriptEditorCtrl()
-	: BraceCount(0)
-	, CurrentCallTip(0)
-	, StartCalltipWord(0)
-	, LastPosCallTip(0)
-	, DlgFindReplace(nullptr)
-	, WordCharacters("_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
-	, apis(panel_manager::instance().get_apis())
+CScriptEditorCtrl::CScriptEditorCtrl() : apis(panel_manager::instance().get_apis())
 {
 	FlagMap =
 	{

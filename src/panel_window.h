@@ -12,7 +12,7 @@ protected:
 	void on_context_menu(LPARAM lp);
 	void redraw();
 
-	HDC m_hdc;
+	HDC m_hdc = nullptr;
 
 public:
 	panel_window();
@@ -37,11 +37,11 @@ private:
 	void refresh_background(LPRECT lpRect);
 
 	CComPtr<IDropTargetImpl> m_drop_target;
-	HBITMAP m_gr_bmp;
-	HBITMAP m_gr_bmp_bk;
+	HBITMAP m_gr_bmp = nullptr;
+	HBITMAP m_gr_bmp_bk = nullptr;
 	IGdiGraphicsPtr m_gr_wrap;
-	bool m_is_mouse_tracked;
-	bool m_paint_pending;
-	bool m_suppress_drawing;
+	bool m_is_mouse_tracked = false;
+	bool m_paint_pending = false;
+	bool m_suppress_drawing = false;
 	script_host* m_script_host;
 };

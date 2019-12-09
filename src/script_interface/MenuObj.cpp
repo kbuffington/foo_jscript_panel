@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "MenuObj.h"
 
-MenuObj::MenuObj(HWND wnd_parent) : m_wnd_parent(wnd_parent), m_has_detached(false)
+MenuObj::MenuObj(HWND wnd_parent) : m_wnd_parent(wnd_parent)
 {
 	m_hMenu = ::CreatePopupMenu();
 }

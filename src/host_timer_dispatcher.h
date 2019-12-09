@@ -13,11 +13,11 @@ public:
 	void stop();
 
 private:
-	HWND m_hwnd;
+	HWND m_hwnd = nullptr;
 	HANDLE m_hTimer;
 	IDispatch* m_pDisp;
-	bool m_is_repeated;
-	bool m_is_stopped;
+	bool m_is_repeated = false;
+	bool m_is_stopped = false;
 	size_t m_delay;
 	size_t m_id;
 	std::atomic<bool> m_is_stop_requested;

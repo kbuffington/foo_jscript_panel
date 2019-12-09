@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "ThemeManager.h"
 
-ThemeManager::ThemeManager(HWND hwnd, BSTR classlist) : m_theme(nullptr), m_partid(0), m_stateid(0)
+ThemeManager::ThemeManager(HWND hwnd, BSTR classlist)
 {
 	m_theme = OpenThemeData(hwnd, classlist);
 

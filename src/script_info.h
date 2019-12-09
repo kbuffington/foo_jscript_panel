@@ -2,7 +2,7 @@
 
 struct script_info
 {
-	script_info() : id(0) {}
+	script_info() {}
 
 	const std::vector<std::pair<std::string, std::string>> expand_table =
 	{
@@ -58,7 +58,7 @@ struct script_info
 		id = 0;
 	}
 
-	size_t id;
+	size_t id = 0;
 	std::string name;
 	std::string version;
 	std::string author;

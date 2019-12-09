@@ -9,9 +9,9 @@ protected:
 
 	void FinalRelease() override;
 
-	HMENU m_hMenu;
-	HWND m_wnd_parent;
-	bool m_has_detached;
+	HMENU m_hMenu = nullptr;
+	HWND m_wnd_parent = nullptr;
+	bool m_has_detached = false;
 
 public:
 	STDMETHODIMP get__ID(HMENU* p) override;

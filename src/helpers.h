@@ -126,7 +126,7 @@ namespace helpers
 		actions m_action;
 		album_art_data_ptr m_data;
 		metadb_handle_list m_handles;
-		size_t m_art_id;
+		size_t m_art_id = 0;
 	};
 
 	class optimise_layout : public threaded_process_callback
@@ -220,12 +220,12 @@ namespace helpers
 		}
 
 	private:
-		HWND m_hwnd;
-		bool m_need_stub;
-		bool m_no_load;
-		bool m_only_embed;
+		HWND m_hwnd = nullptr;
+		bool m_need_stub = true;
+		bool m_no_load = false;
+		bool m_only_embed = false;
 		metadb_handle_ptr m_handle;
-		size_t m_art_id;
+		size_t m_art_id = 0;
 	};
 
 	class load_image_async : public simple_thread_task
@@ -258,7 +258,7 @@ namespace helpers
 		}
 
 	private:
-		HWND m_hwnd;
+		HWND m_hwnd = nullptr;
 		_bstr_t m_path;
 	};
 
@@ -286,9 +286,9 @@ namespace helpers
 		}
 
 	private:
-		bool m_to_select;
-		size_t m_base;
-		size_t m_playlist;
+		bool m_to_select = true;
+		size_t m_base = 0;
+		size_t m_playlist = 0;
 	};
 
 	class js_file_info_filter : public file_info_filter

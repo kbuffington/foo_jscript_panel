@@ -3,7 +3,7 @@
 class IDropSourceImpl : public ImplementCOMRefCounter<IDropSource>
 {
 public:
-	IDropSourceImpl() : m_effect(DROPEFFECT_NONE) {}
+	IDropSourceImpl() {}
 	virtual ~IDropSourceImpl() {}
 
 	COM_QI_ONE(IDropSource)
@@ -30,7 +30,7 @@ public:
 	}
 
 private:
-	DWORD m_effect;
+	DWORD m_effect = DROPEFFECT_NONE;
 };
 
 _COM_SMARTPTR_TYPEDEF(IDropTargetHelper, IID_IDropTargetHelper);
@@ -155,6 +155,6 @@ public:
 	}
 
 protected:
-	HWND m_hwnd;
+	HWND m_hwnd = nullptr;
 	IDropTargetHelperPtr m_drop_target_helper;
 };

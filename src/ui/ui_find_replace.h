@@ -37,7 +37,7 @@ public:
 	void OnReplaceTextChange(UINT, int, HWND);
 	void SetMode(mode m);
 
-	int m_flags;
+	int m_flags = 0;
 	pfc::string8_fast m_find_text, m_replace_text;
 
 private:
@@ -59,7 +59,7 @@ private:
 		int m_cmd;
 	};
 
-	bool m_havefound;
+	bool m_havefound = false;
 	CScriptEditorCtrl* m_parent;
 	std::map<int, CWindow> m_window;
 	std::vector<KeyHack> m_hacks;

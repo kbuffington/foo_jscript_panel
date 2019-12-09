@@ -97,17 +97,17 @@ private:
 	void StartCallTip();
 	void TrackWidth();
 
-	CDialogFindReplace* DlgFindReplace;
-	Position LastPosCallTip;
-	Position StartCalltipWord;
+	CDialogFindReplace* DlgFindReplace = nullptr;
+	Position LastPosCallTip = 0;
+	Position StartCalltipWord = 0;
 	StyleAndWords BlockEnd;
 	StyleAndWords BlockStart;
 	StyleAndWords StatementEnd;
 	StyleAndWords StatementIndent;
-	int BraceCount;
-	int CurrentCallTip;
+	int BraceCount = 0;
+	int CurrentCallTip = 0;
 	std::string CurrentCallTipWord;
 	std::string FunctionDefinition;
-	std::string WordCharacters;
+	std::string WordCharacters = "_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 	std::vector<panel_manager::api_item> apis;
 };

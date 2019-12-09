@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "DropSourceAction.h"
 
-DropSourceAction::DropSourceAction() : m_base(0), m_effect(DROPEFFECT_NONE), m_playlist_idx(0), m_to_select(true) {}
+DropSourceAction::DropSourceAction() {}
 
 DropSourceAction::~DropSourceAction() {}
 

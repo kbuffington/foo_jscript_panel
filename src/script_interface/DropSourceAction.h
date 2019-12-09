@@ -24,8 +24,8 @@ public:
 	STDMETHODIMP put_Playlist(UINT id) override;
 	STDMETHODIMP put_ToSelect(VARIANT_BOOL to_select) override;
 
-	DWORD m_effect;
-	bool m_to_select;
-	size_t m_base;
-	size_t m_playlist_idx;
+	DWORD m_effect = DROPEFFECT_NONE;
+	bool m_to_select = true;
+	size_t m_base = 0;
+	size_t m_playlist_idx = 0;
 };

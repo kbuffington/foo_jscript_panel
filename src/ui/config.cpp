@@ -24,7 +24,7 @@ static const std::vector<config::simple_key_val> init_table =
 
 config g_config(jsp::guids::config);
 
-config::config(const GUID& p_guid) : cfg_var(p_guid), m_conf_wndpl{}, m_property_wndpl{}
+config::config(const GUID& p_guid) : cfg_var(p_guid)
 {
 	init_data();
 }

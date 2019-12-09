@@ -42,7 +42,7 @@ public:
 	void ProcessScriptInfo(script_info& info);
 
 private:
-	DWORD m_last_source_context;
+	DWORD m_last_source_context = 0;
 	IActiveScriptPtr m_script_engine;
 	IConsolePtr m_console;
 	IDispatchPtr m_script_root;
@@ -51,10 +51,10 @@ private:
 	IPlmanPtr m_plman;
 	IUtilsPtr m_utils;
 	IWindowPtr m_window;
-	bool m_engine_inited;
-	bool m_has_error;
+	bool m_engine_inited = false;
+	bool m_has_error = false;
 	panel_base* m_host;
 	std::unordered_map<DWORD, pfc::string8_fast> m_context_to_path_map;
 	std::unordered_map<callback_id, DISPID> m_callback_map;
-	volatile DWORD m_ref_count;
+	volatile DWORD m_ref_count = 1;
 };

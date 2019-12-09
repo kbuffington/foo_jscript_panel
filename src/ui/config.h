@@ -20,7 +20,7 @@ public:
 	void merge_data(const simple_map& data_map);
 	void set_data_raw(stream_reader* p_stream, size_t p_sizehint, abort_callback& p_abort) override;
 
-	WINDOWPLACEMENT m_conf_wndpl, m_property_wndpl;
+	WINDOWPLACEMENT m_conf_wndpl{}, m_property_wndpl{};
 	std::vector<simple_key_val> m_data;
 };
 

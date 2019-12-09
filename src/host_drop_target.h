@@ -22,6 +22,6 @@ public:
 
 private:
 	DropSourceAction* m_action;
-	DWORD m_allowed_effect;
+	DWORD m_allowed_effect = DROPEFFECT_NONE;
 	panel_window* m_host;
 };

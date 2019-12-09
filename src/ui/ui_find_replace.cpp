@@ -17,7 +17,7 @@ static constexpr std::array<int, 12> ids =
 	IDCANCEL
 };
 
-CDialogFindReplace::CDialogFindReplace(CScriptEditorCtrl* parent) : m_parent(parent), m_flags(0), m_havefound(false)
+CDialogFindReplace::CDialogFindReplace(CScriptEditorCtrl* parent) : m_parent(parent)
 {
 	m_hacks.assign(ids.size(), KeyHack());
 }

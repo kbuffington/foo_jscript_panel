@@ -18,6 +18,6 @@ public:
 
 private:
 	CEdit m_edit;
-	HWND m_parent;
+	HWND m_parent = nullptr;
 	pfc::string8_fast m_text;
 };

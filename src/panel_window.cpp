@@ -5,14 +5,7 @@
 #include "ui_conf.h"
 #include "ui_property.h"
 
-panel_window::panel_window()
-	: m_script_host(new script_host(this))
-	, m_is_mouse_tracked(false)
-	, m_suppress_drawing(false)
-	, m_paint_pending(false)
-	, m_gr_bmp(nullptr)
-	, m_gr_bmp_bk(nullptr)
-	, m_hdc(nullptr) {}
+panel_window::panel_window(): m_script_host(new script_host(this)) {}
 
 panel_window::~panel_window()
 {

@@ -25,8 +25,8 @@ protected:
 	void reset_config();
 	void save_config(stream_writer* writer, abort_callback& abort) const;
 
-	HWND m_hwnd;
-	instance_type m_instance_type;
+	HWND m_hwnd = nullptr;
+	instance_type m_instance_type = instance_type::cui;
 	panel_tooltip_param_ptr m_panel_tooltip_param_ptr;
 	ui_selection_holder::ptr m_selection_holder;
 
@@ -57,13 +57,13 @@ public:
 	bool is_dui();
 	panel_tooltip_param_ptr& panel_tooltip();
 
-	bool m_dragdrop;
-	bool m_grabfocus;
-	bool m_pseudo_transparent;
-	edge_style m_edge_style;
+	bool m_dragdrop = false;
+	bool m_grabfocus = false;
+	bool m_pseudo_transparent = false;
+	edge_style m_edge_style = edge_style::none;
 	pfc::string8_fast m_script_code;
 	pfc::string8_fast m_script_engine_str;
 	panel_properties m_panel_properties;
-	script_info m_script_info;
-	size m_size;
+	script_info m_script_info{};
+	size m_size{};
 };

@@ -249,7 +249,7 @@ FOOGUIDDECL critical_section com_object_singleton_t<T>::_cs;
 class com_array
 {
 public:
-	com_array() : m_psa(nullptr), m_reader(true), m_count(0) {}
+	com_array() {}
 
 	~com_array()
 	{
@@ -409,7 +409,7 @@ public:
 	}
 
 private:
-	LONG m_count;
-	SAFEARRAY* m_psa;
-	bool m_reader;
+	LONG m_count = 0;
+	SAFEARRAY* m_psa = nullptr;
+	bool m_reader = true;
 };

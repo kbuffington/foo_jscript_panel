@@ -1,15 +1,7 @@
 #include "stdafx.h"
 #include "panel_base.h"
 
-panel_base::panel_base()
-	: m_hwnd(nullptr)
-	, m_dragdrop(false)
-	, m_grabfocus(false)
-	, m_pseudo_transparent(false)
-	, m_edge_style(edge_style::none)
-	, m_instance_type(instance_type::cui)
-	, m_script_info()
-	, m_panel_tooltip_param_ptr(new panel_tooltip_param)
+panel_base::panel_base() : m_panel_tooltip_param_ptr(new panel_tooltip_param)
 {
 	reset_config();
 	m_size.min = { 0, 0 };
