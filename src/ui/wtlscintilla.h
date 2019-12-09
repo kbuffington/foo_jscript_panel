@@ -78,11 +78,15 @@ public:
 	Position GetSelectionNCaret(int selection) { return Call(SCI_GETSELECTIONNCARET, selection); }
 	Position GetSelectionNCaretVirtualSpace(int selection) { return Call(SCI_GETSELECTIONNCARETVIRTUALSPACE, selection); }
 	Position GetSelectionNEnd(int selection) { return Call(SCI_GETSELECTIONNEND, selection); }
+	Position GetSelectionNEndVirtualSpace(int selection) { return Call(SCI_GETSELECTIONNENDVIRTUALSPACE, selection); }
 	Position GetSelectionNStart(int selection) { return Call(SCI_GETSELECTIONNSTART, selection); }
+	Position GetSelectionNStartVirtualSpace(int selection) { return Call(SCI_GETSELECTIONNSTARTVIRTUALSPACE, selection); }
 	Position GetSelectionStart() { return Call(SCI_GETSELECTIONSTART); }
 	Position GetStyledText(void* tr) { return Call(SCI_GETSTYLEDTEXT, 0, reinterpret_cast<intptr_t>(tr)); }
 	Position GetTargetEnd() { return Call(SCI_GETTARGETEND); }
+	Position GetTargetEndVirtualSpace() { return Call(SCI_GETTARGETENDVIRTUALSPACE); }
 	Position GetTargetStart() { return Call(SCI_GETTARGETSTART); }
+	Position GetTargetStartVirtualSpace() { return Call(SCI_GETTARGETSTARTVIRTUALSPACE); }
 	Position GetTargetText(char* text) { return Call(SCI_GETTARGETTEXT, 0, reinterpret_cast<intptr_t>(text)); }
 	Position GetText(Position length, char* text) { return Call(SCI_GETTEXT, length, reinterpret_cast<intptr_t>(text)); }
 	Position GetTextLength() { return Call(SCI_GETTEXTLENGTH); }
@@ -643,8 +647,10 @@ public:
 	void SetTabMinimumWidth(int pixels) { Call(SCI_SETTABMINIMUMWIDTH, pixels); }
 	void SetTabWidth(int tabWidth) { Call(SCI_SETTABWIDTH, tabWidth); }
 	void SetTargetEnd(Position end) { Call(SCI_SETTARGETEND, end); }
+	void SetTargetEndVirtualSpace(Position space) { Call(SCI_SETTARGETENDVIRTUALSPACE, space); }
 	void SetTargetRange(Position start, Position end) { Call(SCI_SETTARGETRANGE, start, end); }
 	void SetTargetStart(Position start) { Call(SCI_SETTARGETSTART, start); }
+	void SetTargetStartVirtualSpace(Position space) { Call(SCI_SETTARGETSTARTVIRTUALSPACE, space); }
 	void SetTechnology(int technology) { Call(SCI_SETTECHNOLOGY, technology); }
 	void SetText(const char* text) { Call(SCI_SETTEXT, 0, reinterpret_cast<intptr_t>(text)); }
 	void SetUndoCollection(bool collectUndo) { Call(SCI_SETUNDOCOLLECTION, collectUndo); }
