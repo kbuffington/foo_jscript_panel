@@ -338,23 +338,20 @@ STDMETHODIMP GdiGraphics::GdiDrawText(BSTR str, IGdiFont* font, __int64 colour, 
 
 		if (format & DT_CALCRECT)
 		{
-			RECT rc_calc = { 0 }, rc_old = { 0 };
-
-			memcpy(&rc_calc, &rc, sizeof(RECT));
-			memcpy(&rc_old, &rc, sizeof(RECT));
-
+			RECT rc_calc = rc;
 			DrawText(dc, str, -1, &rc_calc, format);
+			auto nh = RECT_CY(rc_calc);
 
 			format &= ~DT_CALCRECT;
 
 			if (format & DT_VCENTER)
 			{
-				rc.top = rc_old.top + ((RECT_CY(rc_old) - RECT_CY(rc_calc)) >> 1);
-				rc.bottom = rc.top + RECT_CY(rc_calc);
+				rc.top += ((h - nh) >> 1);
+				rc.bottom = rc.top + nh;
 			}
 			else if (format & DT_BOTTOM)
 			{
-				rc.top = rc_old.bottom - RECT_CY(rc_calc);
+				rc.top = rc.bottom - nh;
 			}
 		}
 
