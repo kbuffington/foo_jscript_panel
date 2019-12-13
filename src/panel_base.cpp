@@ -42,12 +42,12 @@ panel_tooltip_param_ptr& panel_base::panel_tooltip()
 	return m_panel_tooltip_param_ptr;
 }
 
-pfc::string8_fast panel_base::get_default_script_code()
+pfc::string8_fast panel_base::g_get_default_script_code()
 {
 	return helpers::get_resource_text(IDR_SCRIPT);
 }
 
-pfc::string8_fast panel_base::get_default_script_engine_str()
+pfc::string8_fast panel_base::g_get_default_script_engine_str()
 {
 	return helpers::supports_chakra() ? "Chakra" : "JScript";
 }
@@ -83,8 +83,8 @@ void panel_base::load_config(stream_reader* reader, size_t size, abort_callback&
 
 void panel_base::reset_config()
 {
-	m_script_engine_str = get_default_script_engine_str();
-	m_script_code = get_default_script_code();
+	m_script_engine_str = g_get_default_script_engine_str();
+	m_script_code = g_get_default_script_code();
 	m_pseudo_transparent = false;
 	m_edge_style = edge_style::none;
 }

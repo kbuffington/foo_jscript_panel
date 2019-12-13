@@ -250,10 +250,10 @@ void CDialogConf::OnLinks(UINT, int nID, HWND)
 
 void CDialogConf::OnReset(UINT, int, HWND)
 {
-	uComboBox_SelectString(m_engine_combo, panel_base::get_default_script_engine_str());
+	uComboBox_SelectString(m_engine_combo, panel_base::g_get_default_script_engine_str());
 	m_edge_combo.SetCurSel(0);
 	m_pseudo_check.SetCheck(false);
-	m_editorctrl.SetContent(panel_base::get_default_script_code());
+	m_editorctrl.SetContent(panel_base::g_get_default_script_code());
 }
 
 void CDialogConf::OnSamples(UINT, int nID, HWND)

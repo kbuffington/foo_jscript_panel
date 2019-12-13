@@ -49,8 +49,8 @@ public:
 		grey,
 	};
 
-	static pfc::string8_fast get_default_script_code();
-	static pfc::string8_fast get_default_script_engine_str();
+	static pfc::string8_fast g_get_default_script_code();
+	static pfc::string8_fast g_get_default_script_engine_str();
 
 	DWORD get_edge_style() const;
 	HWND get_hwnd();
