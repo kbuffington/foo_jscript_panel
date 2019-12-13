@@ -231,7 +231,7 @@ STDMETHODIMP Window::get_IsTransparent(VARIANT_BOOL* p)
 {
 	if (!p) return E_POINTER;
 
-	*p = TO_VARIANT_BOOL(m_host->m_pseudo_transparent);
+	*p = TO_VARIANT_BOOL(m_host->m_panel_config.transparent);
 	return S_OK;
 }
 

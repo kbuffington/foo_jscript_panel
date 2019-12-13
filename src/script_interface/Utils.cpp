@@ -401,6 +401,6 @@ STDMETHODIMP Utils::get_Version(UINT* p)
 {
 	if (!p) return E_POINTER;
 
-	*p = 2340;
+	*p = jsp::version;
 	return S_OK;
 }

@@ -43,7 +43,7 @@ bool panel_window::handle_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 			if (m_suppress_drawing)
 				return false;
 
-			if (m_pseudo_transparent && !m_paint_pending)
+			if (m_panel_config.transparent && !m_paint_pending)
 			{
 				RECT rc;
 				GetUpdateRect(m_hwnd, &rc, FALSE);
@@ -63,7 +63,7 @@ bool panel_window::handle_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 			m_size.width = RECT_CX(rc);
 			m_size.height = RECT_CY(rc);
 			on_size();
-			if (m_pseudo_transparent)
+			if (m_panel_config.transparent)
 				redraw();
 			else
 				repaint();
@@ -458,7 +458,7 @@ void panel_window::create_context()
 
 	m_gr_bmp = CreateCompatibleBitmap(m_hdc, m_size.width, m_size.height);
 
-	if (m_pseudo_transparent)
+	if (m_panel_config.transparent)
 	{
 		m_gr_bmp_bk = CreateCompatibleBitmap(m_hdc, m_size.width, m_size.height);
 	}
@@ -502,7 +502,7 @@ void panel_window::load_script()
 
 	DWORD extstyle = GetWindowLongPtr(m_hwnd, GWL_EXSTYLE);
 	extstyle &= ~WS_EX_CLIENTEDGE & ~WS_EX_STATICEDGE;
-	extstyle |= get_edge_style();
+	extstyle |= m_panel_config.get_edge_style();
 	SetWindowLongPtr(m_hwnd, GWL_EXSTYLE, extstyle);
 	SetWindowPos(m_hwnd, nullptr, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
 
@@ -525,7 +525,7 @@ void panel_window::load_script()
 
 	// HACK: Script update will not call on_size, so invoke it explicitly
 	on_size();
-	if (m_pseudo_transparent)
+	if (m_panel_config.transparent)
 	{
 		redraw();
 	}
@@ -581,7 +581,7 @@ void panel_window::on_paint()
 		}
 		else
 		{
-			if (m_pseudo_transparent)
+			if (m_panel_config.transparent)
 			{
 				HDC bkdc = CreateCompatibleDC(dc);
 
@@ -737,7 +737,7 @@ void panel_window::refresh_background(LPRECT lpRect)
 	DeleteRgn(rgn_child);
 	SetWindowRgn(m_hwnd, nullptr, FALSE);
 	m_suppress_drawing = false;
-	if (m_edge_style != edge_style::none) SendMessage(m_hwnd, WM_NCPAINT, 1, 0);
+	if (m_panel_config.style != panel_config::edge_style::none) SendMessage(m_hwnd, WM_NCPAINT, 1, 0);
 	m_paint_pending = true;
 	RedrawWindow(m_hwnd, nullptr, nullptr, RDW_INVALIDATE | RDW_UPDATENOW);
 }

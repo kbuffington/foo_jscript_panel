@@ -53,7 +53,7 @@ BOOL CDialogConf::OnInitDialog(HWND, LPARAM)
 
 	if (helpers::supports_chakra())
 	{
-		uComboBox_SelectString(m_engine_combo, m_parent->m_script_engine_str);
+		uComboBox_SelectString(m_engine_combo, m_parent->m_panel_config.engine);
 	}
 	else
 	{
@@ -77,15 +77,15 @@ BOOL CDialogConf::OnInitDialog(HWND, LPARAM)
 	}
 	else
 	{
-		m_edge_combo.SetCurSel(static_cast<int>(m_parent->m_edge_style));
+		m_edge_combo.SetCurSel(static_cast<int>(m_parent->m_panel_config.style));
 
-		m_pseudo_check.SetCheck(m_parent->m_pseudo_transparent);
+		m_pseudo_check.SetCheck(m_parent->m_panel_config.transparent);
 	}
 
 	// Edit Control
 	m_editorctrl.SubclassWindow(GetDlgItem(IDC_EDIT));
 	m_editorctrl.SetJScript();
-	m_editorctrl.SetContent(m_parent->m_script_code);
+	m_editorctrl.SetContent(m_parent->m_panel_config.code);
 	m_editorctrl.EmptyUndoBuffer();
 	m_editorctrl.SetSavePoint();
 
@@ -114,15 +114,15 @@ LRESULT CDialogConf::OnNotify(int, LPNMHDR pnmh)
 void CDialogConf::Apply()
 {
 	// Save panel settings
-	uGetWindowText(m_engine_combo, m_parent->m_script_engine_str);
-	m_parent->m_edge_style = static_cast<panel_base::edge_style>(m_edge_combo.GetCurSel());
-	m_parent->m_pseudo_transparent = m_pseudo_check.IsChecked();
+	uGetWindowText(m_engine_combo, m_parent->m_panel_config.engine);
+	m_parent->m_panel_config.style = static_cast<panel_config::edge_style>(m_edge_combo.GetCurSel());
+	m_parent->m_panel_config.transparent = m_pseudo_check.IsChecked();
 
 	// Get script text
 	const int len = m_editorctrl.GetTextLength();
 	std::vector<char> buff(len + 1);
 	m_editorctrl.GetText(buff.size(), buff.data());
-	m_parent->m_script_code = buff.data();
+	m_parent->m_panel_config.code = buff.data();
 	m_parent->update_script();
 
 	// Save point
@@ -250,10 +250,10 @@ void CDialogConf::OnLinks(UINT, int nID, HWND)
 
 void CDialogConf::OnReset(UINT, int, HWND)
 {
-	uComboBox_SelectString(m_engine_combo, panel_base::g_get_default_script_engine_str());
+	uComboBox_SelectString(m_engine_combo, panel_config::g_get_default_engine());
 	m_edge_combo.SetCurSel(0);
 	m_pseudo_check.SetCheck(false);
-	m_editorctrl.SetContent(panel_base::g_get_default_script_code());
+	m_editorctrl.SetContent(panel_config::g_get_default_code());
 }
 
 void CDialogConf::OnSamples(UINT, int nID, HWND)

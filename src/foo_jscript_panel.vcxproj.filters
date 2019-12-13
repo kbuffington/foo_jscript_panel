@@ -82,6 +82,9 @@
     <ClInclude Include="panel_base.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="panel_config.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="panel_manager.h">
       <Filter>Header Files</Filter>
     </ClInclude>

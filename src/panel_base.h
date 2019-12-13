@@ -1,5 +1,6 @@
 #pragma once
 #include "helpers.h"
+#include "panel_config.h"
 #include "panel_properties.h"
 #include "script_info.h"
 
@@ -22,7 +23,6 @@ protected:
 	};
 
 	void load_config(stream_reader* reader, size_t size, abort_callback& abort);
-	void reset_config();
 	void save_config(stream_writer* writer, abort_callback& abort) const;
 
 	HWND m_hwnd = nullptr;
@@ -42,27 +42,13 @@ public:
 	virtual void update_script() = 0;
 
 public:
-	enum class edge_style : char
-	{
-		none,
-		sunken,
-		grey,
-	};
-
-	static pfc::string8_fast g_get_default_script_code();
-	static pfc::string8_fast g_get_default_script_engine_str();
-
-	DWORD get_edge_style() const;
 	HWND get_hwnd();
 	bool is_dui();
 	panel_tooltip_param_ptr& panel_tooltip();
 
 	bool m_dragdrop = false;
 	bool m_grabfocus = false;
-	bool m_pseudo_transparent = false;
-	edge_style m_edge_style = edge_style::none;
-	pfc::string8_fast m_script_code;
-	pfc::string8_fast m_script_engine_str;
+	panel_config m_panel_config;
 	panel_properties m_panel_properties;
 	script_info m_script_info{};
 	size m_size{};

@@ -91,7 +91,7 @@ HRESULT script_host::InitScriptEngine()
 	HRESULT hr = E_FAIL;
 	static constexpr DWORD classContext = CLSCTX_INPROC_SERVER | CLSCTX_INPROC_HANDLER;
 
-	if (helpers::supports_chakra() && _stricmp(m_host->m_script_engine_str, "Chakra") == 0)
+	if (helpers::supports_chakra() && m_host->m_panel_config.engine.equals("Chakra"))
 	{
 		static constexpr CLSID jscript9clsid = { 0x16d51579, 0xa30b, 0x4c8b,{ 0xa2, 0x76, 0x0f, 0xf4, 0xdc, 0x41, 0xe7, 0x55 } };
 		hr = m_script_engine.CreateInstance(jscript9clsid, nullptr, classContext);
@@ -141,7 +141,7 @@ HRESULT script_host::ProcessScripts(IActiveScriptParsePtr& parser)
 		else // main
 		{
 			path = "<main>";
-			code = m_host->m_script_code;
+			code = m_host->m_panel_config.code;
 		}
 
 		const DWORD source_context = GenerateSourceContext(path);
@@ -404,7 +404,7 @@ void script_host::ProcessScriptInfo(script_info& info)
 	info.clear();
 	info.id = reinterpret_cast<size_t>(m_host->get_hwnd());
 
-	std::string source(m_host->m_script_code);
+	std::string source(m_host->m_panel_config.code);
 	const size_t start = source.find("// ==PREPROCESSOR==");
 	const size_t end = source.find("// ==/PREPROCESSOR==");
 	constexpr size_t argh = std::string::npos;

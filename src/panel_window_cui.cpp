@@ -71,7 +71,7 @@ protected:
 		case WM_SETCURSOR:
 			return 1;
 		case WM_ERASEBKGND:
-			if (m_pseudo_transparent) redraw();
+			if (m_panel_config.transparent) redraw();
 			return 1;
 		case WM_CONTEXTMENU:
 			on_context_menu(lp);
@@ -121,7 +121,7 @@ protected:
 
 	class_data& get_class_data() const override
 	{
-		__implement_get_class_data_ex(jsp::class_name, L"", false, 0, WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN, get_edge_style(), CS_DBLCLKS);
+		__implement_get_class_data_ex(jsp::class_name, L"", false, 0, WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN, 0, CS_DBLCLKS);
 	}
 
 	const GUID& get_extension_guid() const override
