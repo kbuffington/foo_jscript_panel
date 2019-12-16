@@ -18,7 +18,7 @@ bool panel_window::handle_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 	{
 	case WM_CREATE:
 		m_hwnd = hwnd;
-		m_hdc = GetDC(m_hwnd);
+		m_hdc = m_hwnd.GetDC();
 		create_context();
 		m_gr_wrap.Attach(new com_object_impl_t<GdiGraphics>(), false);
 		panel_manager::instance().add_window(m_hwnd);
@@ -32,7 +32,7 @@ bool panel_window::handle_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 			m_gr_wrap.Release();
 		}
 		delete_context();
-		ReleaseDC(m_hwnd, m_hdc);
+		m_hwnd.ReleaseDC(m_hdc);
 		return true;
 	case WM_DISPLAYCHANGE:
 	case WM_THEMECHANGED:
@@ -45,9 +45,7 @@ bool panel_window::handle_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 
 			if (m_panel_config.transparent && !m_paint_pending)
 			{
-				RECT rc;
-				GetUpdateRect(m_hwnd, &rc, FALSE);
-				refresh_background(&rc);
+				refresh_background();
 			}
 			else
 			{
@@ -58,15 +56,11 @@ bool panel_window::handle_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 		return true;
 	case WM_SIZE:
 		{
-			RECT rc;
-			GetClientRect(m_hwnd, &rc);
-			m_size.width = RECT_CX(rc);
-			m_size.height = RECT_CY(rc);
+			CRect rc;
+			m_hwnd.GetClientRect(&rc);
+			m_size.width = rc.Width();
+			m_size.height = rc.Height();
 			on_size();
-			if (m_panel_config.transparent)
-				redraw();
-			else
-				repaint();
 		}
 		return true;
 	case WM_GETMINMAXINFO:
@@ -82,10 +76,10 @@ bool panel_window::handle_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 		{
 			if (m_grabfocus)
 			{
-				SetFocus(m_hwnd);
+				m_hwnd.SetFocus();
 			}
 
-			SetCapture(m_hwnd);
+			m_hwnd.SetCapture();
 
 			VARIANTARG args[3];
 			args[0].vt = VT_I4;
@@ -262,6 +256,9 @@ bool panel_window::handle_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 			script_invoke(callback_id::on_focus, args, _countof(args));
 		}
 		return false;
+	case jsp::uwm_refreshbk:
+		redraw();
+		return true;
 	case jsp::uwm_timer:
 		host_timer_dispatcher::instance().invoke_message(wp);
 		return true;
@@ -500,11 +497,15 @@ void panel_window::load_script()
 	pfc::hires_timer timer;
 	timer.start();
 
-	DWORD extstyle = GetWindowLongPtr(m_hwnd, GWL_EXSTYLE);
-	extstyle &= ~WS_EX_CLIENTEDGE & ~WS_EX_STATICEDGE;
-	extstyle |= m_panel_config.get_edge_style();
-	SetWindowLongPtr(m_hwnd, GWL_EXSTYLE, extstyle);
-	SetWindowPos(m_hwnd, nullptr, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
+	if (!is_dui())
+	{
+		DWORD extstyle = m_hwnd.GetWindowLongPtr(GWL_EXSTYLE);
+		extstyle &= ~WS_EX_CLIENTEDGE & ~WS_EX_STATICEDGE;
+		extstyle |= m_panel_config.get_edge_style();
+		m_hwnd.SetWindowLongPtr(GWL_EXSTYLE, extstyle);
+	}
+
+	m_hwnd.SetWindowPos(nullptr, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
 
 	m_size.min = { 0, 0 };
 	m_size.max = { INT_MAX, INT_MAX };
@@ -525,43 +526,33 @@ void panel_window::load_script()
 
 	// HACK: Script update will not call on_size, so invoke it explicitly
 	on_size();
-	if (m_panel_config.transparent)
-	{
-		redraw();
-	}
-	else
-	{
-		repaint();
-	}
 
 	FB2K_console_formatter() << m_script_info.build_info_string() << ": initialised in " << static_cast<int>(timer.query() * 1000) << " ms";
 }
 
 void panel_window::on_context_menu(LPARAM lp)
 {
-	POINT pt = { GET_X_LPARAM(lp), GET_Y_LPARAM(lp) };
+	CPoint pt(lp);
 	if (pt.x == -1 && pt.y == -1)
 	{
 		GetMessagePos(&pt);
 
-		RECT rc;
-		GetWindowRect(m_hwnd, &rc);
+		CRect rc;
+		m_hwnd.GetWindowRect(&rc);
 
-		if (pt.x < rc.left || pt.x > rc.right || pt.y < rc.top || pt.y > rc.bottom)
+		if (!rc.PtInRect(pt))
 		{
-			pt = { 0, 0 };
-			MapWindowPoints(m_hwnd, HWND_DESKTOP, &pt, 1);
-			pt.x += m_size.width / 2;
-			pt.y += m_size.height / 2;
+			pt.SetPoint(0, 0);
+			m_hwnd.MapWindowPoints(nullptr, &pt, 1);
+			pt.Offset(m_size.width / 2, m_size.height / 2);
 		}
 	}
 
-	HMENU menu = CreatePopupMenu();
+	CMenu menu = CreatePopupMenu();
 	constexpr int base_id = 0;
 	build_context_menu(menu, base_id);
-	const int idx = TrackPopupMenu(menu, TPM_RIGHTBUTTON | TPM_NONOTIFY | TPM_RETURNCMD, pt.x, pt.y, 0, m_hwnd, nullptr);
+	const int idx = menu.TrackPopupMenu(TPM_RIGHTBUTTON | TPM_NONOTIFY | TPM_RETURNCMD, pt.x, pt.y, m_hwnd, nullptr);
 	execute_context_menu_command(idx, base_id);
-	DestroyMenu(menu);
 }
 
 void panel_window::on_paint()
@@ -569,7 +560,7 @@ void panel_window::on_paint()
 	if (!m_gr_bmp || !m_gr_wrap) return;
 
 	PAINTSTRUCT ps;
-	HDC dc = BeginPaint(m_hwnd, &ps);
+	HDC dc = m_hwnd.BeginPaint(&ps);
 	HDC memdc = CreateCompatibleDC(dc);
 
 	{
@@ -594,7 +585,7 @@ void panel_window::on_paint()
 			}
 			else
 			{
-				RECT rc = { 0, 0, m_size.width, m_size.height };
+				CRect rc(0, 0, m_size.width, m_size.height);
 				FillRect(memdc, &rc, reinterpret_cast<HBRUSH>(COLOR_WINDOW + 1));
 			}
 
@@ -605,7 +596,7 @@ void panel_window::on_paint()
 	}
 
 	DeleteDC(memdc);
-	EndPaint(m_hwnd, &ps);
+	m_hwnd.EndPaint(&ps);
 }
 
 void panel_window::on_paint_error(HDC memdc)
@@ -627,9 +618,9 @@ void panel_window::on_paint_error(HDC memdc)
 		L"Tahoma");
 
 	{
+		CRect rc(0, 0, m_size.width, m_size.height);
 		LOGBRUSH lbBack = { BS_SOLID, RGB(225, 60, 45), 0 };
 		HBRUSH hBack = CreateBrushIndirect(&lbBack);
-		RECT rc = { 0, 0, m_size.width, m_size.height };
 		SelectObjectScope scope(memdc, hFont);
 
 		FillRect(memdc, &rc, hBack);
@@ -664,23 +655,25 @@ void panel_window::on_size()
 {
 	create_context();
 	script_invoke(callback_id::on_size);
+	if (m_panel_config.transparent) m_hwnd.PostMessage(jsp::uwm_refreshbk, 0, 0);
+	else repaint();
 }
 
 void panel_window::redraw()
 {
 	m_paint_pending = false;
-	RedrawWindow(m_hwnd, nullptr, nullptr, RDW_INVALIDATE | RDW_UPDATENOW);
+	m_hwnd.RedrawWindow(nullptr, nullptr, RDW_INVALIDATE | RDW_UPDATENOW);
 }
 
-void panel_window::refresh_background(LPRECT lpRect)
+void panel_window::refresh_background()
 {
-	HWND wnd_parent = GetAncestor(m_hwnd, GA_PARENT);
+	CWindow wnd_parent = GetAncestor(m_hwnd, GA_PARENT);
 
 	if (!wnd_parent || IsIconic(core_api::get_main_window()) || !IsWindowVisible(m_hwnd))
 		return;
 
 	// HACK: for Tab control
-	HWND hwnd = FindWindowEx(wnd_parent, nullptr, nullptr, nullptr);
+	CWindow hwnd = FindWindowEx(wnd_parent, nullptr, nullptr, nullptr);
 	while (hwnd != nullptr)
 	{
 		pfc::string8_fast name;
@@ -693,66 +686,57 @@ void panel_window::refresh_background(LPRECT lpRect)
 		hwnd = FindWindowEx(wnd_parent, hwnd, nullptr, nullptr);
 	}
 
-	HDC dc_parent = GetDC(wnd_parent);
+	HDC dc_parent = wnd_parent.GetDC();
 	HDC hdc_bk = CreateCompatibleDC(dc_parent);
-	POINT pt = { 0, 0 };
-	RECT rect_child = { 0, 0, m_size.width, m_size.height };
-	RECT rect_parent;
-	HRGN rgn_child = nullptr;
 
-	if (lpRect)
-	{
-		HRGN rgn = CreateRectRgnIndirect(lpRect);
-		rgn_child = CreateRectRgnIndirect(&rect_child);
-		CombineRgn(rgn_child, rgn_child, rgn, RGN_DIFF);
-		DeleteRgn(rgn);
-	}
-	else
-	{
-		rgn_child = CreateRectRgn(0, 0, 0, 0);
-	}
+	CRect rc(0, 0, m_size.width, m_size.height);
+	HRGN rgn = CreateRectRgnIndirect(&rc);
+	HRGN rgn_child = CreateRectRgnIndirect(&rc);
 
-	ClientToScreen(m_hwnd, &pt);
-	ScreenToClient(wnd_parent, &pt);
+	CombineRgn(rgn_child, rgn_child, rgn, RGN_DIFF);
+	DeleteRgn(rgn);
 
-	CopyRect(&rect_parent, &rect_child);
-	ClientToScreen(m_hwnd, reinterpret_cast<LPPOINT>(&rect_parent));
-	ClientToScreen(m_hwnd, reinterpret_cast<LPPOINT>(&rect_parent) + 1);
-	ScreenToClient(wnd_parent, reinterpret_cast<LPPOINT>(&rect_parent));
-	ScreenToClient(wnd_parent, reinterpret_cast<LPPOINT>(&rect_parent) + 1);
+	CPoint pt(0, 0);
+	m_hwnd.ClientToScreen(&pt);
+	wnd_parent.ScreenToClient(&pt);
+
+	CRect rect_parent;
+	rect_parent.CopyRect(&rc);
+	rect_parent.TopLeft().SetPoint(pt.x, pt.y);
+	rect_parent.BottomRight().Offset(pt);
 
 	// Force Repaint
 	m_suppress_drawing = true;
-	SetWindowRgn(m_hwnd, rgn_child, FALSE);
-	RedrawWindow(wnd_parent, &rect_parent, nullptr, RDW_INVALIDATE | RDW_ERASE | RDW_ERASENOW | RDW_UPDATENOW);
+	m_hwnd.SetWindowRgn(rgn_child);
+	wnd_parent.RedrawWindow(&rect_parent, nullptr, RDW_INVALIDATE | RDW_ERASE | RDW_ERASENOW | RDW_UPDATENOW);
 
 	// Background bitmap
 	{
 		SelectObjectScope scope(hdc_bk, m_gr_bmp_bk);
-		BitBlt(hdc_bk, rect_child.left, rect_child.top, RECT_CX(rect_child), RECT_CY(rect_child), dc_parent, pt.x, pt.y, SRCCOPY);
+		BitBlt(hdc_bk, rc.left, rc.top, rc.Width(), rc.Height(), dc_parent, pt.x, pt.y, SRCCOPY);
 	}
 
 	DeleteDC(hdc_bk);
 	ReleaseDC(wnd_parent, dc_parent);
 	DeleteRgn(rgn_child);
-	SetWindowRgn(m_hwnd, nullptr, FALSE);
+	m_hwnd.SetWindowRgn(nullptr);
 	m_suppress_drawing = false;
-	if (m_panel_config.style != panel_config::edge_style::none) SendMessage(m_hwnd, WM_NCPAINT, 1, 0);
+	if (m_panel_config.style != panel_config::edge_style::none) m_hwnd.SendMessage(WM_NCPAINT, 1, 0);
 	m_paint_pending = true;
-	RedrawWindow(m_hwnd, nullptr, nullptr, RDW_INVALIDATE | RDW_UPDATENOW);
+	m_hwnd.RedrawWindow(nullptr, nullptr, RDW_INVALIDATE | RDW_UPDATENOW);
 }
 
 void panel_window::repaint()
 {
 	m_paint_pending = true;
-	InvalidateRect(m_hwnd, nullptr, FALSE);
+	m_hwnd.InvalidateRect(nullptr, FALSE);
 }
 
 void panel_window::repaint_rect(int x, int y, int w, int h)
 {
 	m_paint_pending = true;
-	RECT rc = { x, y, x + w, y + h };
-	InvalidateRect(m_hwnd, &rc, FALSE);
+	CRect rc(x, y, x + w, y + h);
+	m_hwnd.InvalidateRect(&rc, FALSE);
 }
 
 void panel_window::script_invoke(callback_id id, VARIANTARG* argv, size_t argc, VARIANT* ret) const

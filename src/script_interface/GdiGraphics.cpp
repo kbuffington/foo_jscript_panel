@@ -329,7 +329,7 @@ STDMETHODIMP GdiGraphics::GdiDrawText(BSTR str, IGdiFont* font, __int64 colour, 
 	HDC dc = m_ptr->GetHDC();
 
 	{
-		RECT rc = { x, y, x + w, y + h };
+		CRect rc(x, y, x + w, y + h);
 		SelectObjectScope scope(dc, hFont);
 
 		SetTextColor(dc, helpers::convert_argb_to_colorref(TO_UINT(colour)));
@@ -338,9 +338,10 @@ STDMETHODIMP GdiGraphics::GdiDrawText(BSTR str, IGdiFont* font, __int64 colour, 
 
 		if (format & DT_CALCRECT)
 		{
-			RECT rc_calc = rc;
+			CRect rc_calc;
+			rc_calc.CopyRect(&rc);
 			DrawText(dc, str, -1, &rc_calc, format);
-			auto nh = RECT_CY(rc_calc);
+			auto nh = rc_calc.Height();
 
 			format &= ~DT_CALCRECT;
 

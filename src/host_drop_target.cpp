@@ -31,7 +31,7 @@ HRESULT host_drop_target::OnDragEnter(IDataObject* pDataObj, DWORD grfKeyState, 
 
 	m_action->m_effect = *pdwEffect & m_allowed_effect;
 
-	ScreenToClient(m_hwnd, reinterpret_cast<LPPOINT>(&pt));
+	m_hwnd.ScreenToClient(reinterpret_cast<LPPOINT>(&pt));
 	invoke(callback_id::on_drag_enter, grfKeyState, pt, m_action);
 
 	*pdwEffect = m_action->m_effect;
@@ -50,7 +50,7 @@ HRESULT host_drop_target::OnDragOver(DWORD grfKeyState, POINTL pt, DWORD* pdwEff
 
 	m_action->m_effect = *pdwEffect & m_allowed_effect;
 
-	ScreenToClient(m_hwnd, reinterpret_cast<LPPOINT>(&pt));
+	m_hwnd.ScreenToClient(reinterpret_cast<LPPOINT>(&pt));
 	invoke(callback_id::on_drag_over, grfKeyState, pt, m_action);
 
 	*pdwEffect = m_action->m_effect;
@@ -63,7 +63,7 @@ HRESULT host_drop_target::OnDrop(IDataObject* pDataObj, DWORD grfKeyState, POINT
 
 	m_action->m_effect = *pdwEffect & m_allowed_effect;
 
-	ScreenToClient(m_hwnd, reinterpret_cast<LPPOINT>(&pt));
+	m_hwnd.ScreenToClient(reinterpret_cast<LPPOINT>(&pt));
 	invoke(callback_id::on_drag_drop, grfKeyState, pt, m_action);
 
 	if (*pdwEffect == DROPEFFECT_NONE || m_action->m_effect == DROPEFFECT_NONE)

@@ -4,13 +4,13 @@
 class MenuObj : public IDisposableImpl4<IMenuObj>
 {
 protected:
-	MenuObj(HWND wnd_parent);
+	MenuObj(CWindow wnd_parent);
 	~MenuObj();
 
 	void FinalRelease() override;
 
+	CWindow m_wnd_parent = nullptr;
 	HMENU m_hMenu = nullptr;
-	HWND m_wnd_parent = nullptr;
 	bool m_has_detached = false;
 
 public:

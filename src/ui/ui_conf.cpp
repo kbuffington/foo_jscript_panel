@@ -24,7 +24,7 @@ CDialogConf::CDialogConf(panel_window* p_parent) : m_parent(p_parent), m_resizer
 	m_caption << jsp::component_name << " Configuration (id:" << m_parent->m_script_info.id << ")";
 }
 
-BOOL CDialogConf::OnInitDialog(HWND, LPARAM)
+BOOL CDialogConf::OnInitDialog(CWindow, LPARAM)
 {
 	// Init
 	m_edge_combo = GetDlgItem(IDC_COMBO_EDGE);
@@ -135,7 +135,7 @@ void CDialogConf::BuildMenu()
 
 	pfc::string8_fast base = helpers::get_fb2k_component_path();
 
-	HMENU samples = CreateMenu();
+	CMenu samples = CreateMenu();
 
 	pfc::string_list_impl folders;
 	helpers::list_folders(base + "samples\\", folders);
@@ -146,7 +146,7 @@ void CDialogConf::BuildMenu()
 
 	for (i = 0; i < count; ++i)
 	{
-		HMENU sub = CreatePopupMenu();
+		CMenu sub = CreatePopupMenu();
 		pfc::string8_fast folder = folders[i];
 
 		pfc::string_list_impl sub_files;
@@ -160,12 +160,12 @@ void CDialogConf::BuildMenu()
 		}
 
 		str_vec path_split = helpers::split_string(folder.get_ptr(), "\\");
-		uAppendMenu(samples, MF_STRING | MF_POPUP, reinterpret_cast<UINT_PTR>(sub), path_split[path_split.size() - 1].c_str());
+		uAppendMenu(samples, MF_STRING | MF_POPUP, reinterpret_cast<UINT_PTR>(sub.m_hMenu), path_split[path_split.size() - 1].c_str());
 	}
 
-	uAppendMenu(m_menu, MF_STRING | MF_POPUP, reinterpret_cast<UINT_PTR>(samples), "Samples");
+	uAppendMenu(m_menu, MF_STRING | MF_POPUP, reinterpret_cast<UINT_PTR>(samples.m_hMenu), "Samples");
 
-	HMENU docs = CreateMenu();
+	CMenu docs = CreateMenu();
 
 	helpers::list_files(base + "docs\\", false, m_docs);
 	count = m_docs.get_count();
@@ -177,17 +177,17 @@ void CDialogConf::BuildMenu()
 		uAppendMenu(docs, MF_STRING, ID_DOCS_BEGIN + i, display);
 	}
 
-	uAppendMenu(m_menu, MF_STRING | MF_POPUP, reinterpret_cast<UINT_PTR>(docs), "Docs");
+	uAppendMenu(m_menu, MF_STRING | MF_POPUP, reinterpret_cast<UINT_PTR>(docs.m_hMenu), "Docs");
 
-	HMENU links = CreateMenu();
+	CMenu links = CreateMenu();
 	uAppendMenu(links, MF_STRING, ID_LINKS_BEGIN, "Home page");
 	uAppendMenu(links, MF_STRING, ID_LINKS_BEGIN + 1, "Changelog");
 	uAppendMenu(links, MF_STRING, ID_LINKS_BEGIN + 2, "Releases");
 	uAppendMenu(links, MF_STRING, ID_LINKS_BEGIN + 3, "Report an issue");
-	uAppendMenu(m_menu, MF_STRING | MF_POPUP, reinterpret_cast<UINT_PTR>(links), "Links");
+	uAppendMenu(m_menu, MF_STRING | MF_POPUP, reinterpret_cast<UINT_PTR>(links.m_hMenu), "Links");
 }
 
-void CDialogConf::OnCloseCmd(UINT, int nID, HWND)
+void CDialogConf::OnCloseCmd(UINT, int nID, CWindow)
 {
 	GetWindowPlacement(&g_config.m_conf_wndpl);
 
@@ -208,14 +208,14 @@ void CDialogConf::OnCloseCmd(UINT, int nID, HWND)
 	EndDialog(nID);
 }
 
-void CDialogConf::OnDocs(UINT, int nID, HWND)
+void CDialogConf::OnDocs(UINT, int nID, CWindow)
 {
 	pfc::string8_fast tmp = file_path_display(m_docs[nID - ID_DOCS_BEGIN]).get_ptr();
 	string_wide_from_utf8_fast path(tmp);
 	ShellExecute(nullptr, L"open", path, nullptr, nullptr, SW_SHOW);
 }
 
-void CDialogConf::OnFileImport(UINT, int, HWND)
+void CDialogConf::OnFileImport(UINT, int, CWindow)
 {
 	pfc::string8_fast filename;
 	if (uGetOpenFileName(m_hWnd, "Text files|*.txt|JScript files|*.js|All files|*.*", 0, "txt", "Import from", nullptr, filename, FALSE))
@@ -224,7 +224,7 @@ void CDialogConf::OnFileImport(UINT, int, HWND)
 	}
 }
 
-void CDialogConf::OnFileExport(UINT, int, HWND)
+void CDialogConf::OnFileExport(UINT, int, CWindow)
 {
 	pfc::string8_fast filename;
 	if (uGetOpenFileName(m_hWnd, "Text files|*.txt|All files|*.*", 0, "txt", "Save as", nullptr, filename, TRUE))
@@ -236,7 +236,7 @@ void CDialogConf::OnFileExport(UINT, int, HWND)
 	}
 }
 
-void CDialogConf::OnLinks(UINT, int nID, HWND)
+void CDialogConf::OnLinks(UINT, int nID, CWindow)
 {
 	static constexpr std::array<const wchar_t*, 4> links =
 	{
@@ -248,7 +248,7 @@ void CDialogConf::OnLinks(UINT, int nID, HWND)
 	ShellExecute(nullptr, L"open", links[nID - ID_LINKS_BEGIN], nullptr, nullptr, SW_SHOW);
 }
 
-void CDialogConf::OnReset(UINT, int, HWND)
+void CDialogConf::OnReset(UINT, int, CWindow)
 {
 	uComboBox_SelectString(m_engine_combo, panel_config::g_get_default_engine());
 	m_edge_combo.SetCurSel(0);
@@ -256,7 +256,7 @@ void CDialogConf::OnReset(UINT, int, HWND)
 	m_editorctrl.SetContent(panel_config::g_get_default_code());
 }
 
-void CDialogConf::OnSamples(UINT, int nID, HWND)
+void CDialogConf::OnSamples(UINT, int nID, CWindow)
 {
 	m_editorctrl.SetContent(helpers::read_file(file_path_display(m_samples[nID - ID_SAMPLES_BEGIN])));
 }

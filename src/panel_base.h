@@ -18,14 +18,14 @@ protected:
 
 	struct size
 	{
-		POINT min, max;
+		CPoint min, max;
 		int width, height;
 	};
 
 	void load_config(stream_reader* reader, size_t size, abort_callback& abort);
 	void save_config(stream_writer* writer, abort_callback& abort) const;
 
-	HWND m_hwnd = nullptr;
+	CWindow m_hwnd = nullptr;
 	instance_type m_instance_type = instance_type::cui;
 	panel_tooltip_param_ptr m_panel_tooltip_param_ptr;
 	ui_selection_holder::ptr m_selection_holder;
@@ -42,7 +42,7 @@ public:
 	virtual void update_script() = 0;
 
 public:
-	HWND get_hwnd();
+	CWindow get_hwnd();
 	bool is_dui();
 	panel_tooltip_param_ptr& panel_tooltip();
 

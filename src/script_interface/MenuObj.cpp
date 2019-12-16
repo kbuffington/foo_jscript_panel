@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "MenuObj.h"
 
-MenuObj::MenuObj(HWND wnd_parent) : m_wnd_parent(wnd_parent)
+MenuObj::MenuObj(CWindow wnd_parent) : m_wnd_parent(wnd_parent)
 {
 	m_hMenu = ::CreatePopupMenu();
 }
@@ -77,8 +77,8 @@ STDMETHODIMP MenuObj::TrackPopupMenu(int x, int y, UINT flags, UINT* p)
 	flags |= TPM_NONOTIFY | TPM_RETURNCMD | TPM_RIGHTBUTTON;
 	flags &= ~TPM_RECURSE;
 
-	POINT pt = { x, y };
-	ClientToScreen(m_wnd_parent, &pt);
+	CPoint pt(x, y);
+	m_wnd_parent.ClientToScreen(&pt);
 	*p = ::TrackPopupMenu(m_hMenu, flags, pt.x, pt.y, 0, m_wnd_parent, nullptr);
 	return S_OK;
 }

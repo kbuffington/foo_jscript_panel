@@ -38,7 +38,7 @@ _COM_SMARTPTR_TYPEDEF(IDropTargetHelper, IID_IDropTargetHelper);
 class IDropTargetImpl : public IDropTarget
 {
 public:
-	IDropTargetImpl(HWND hwnd = nullptr) : m_hwnd(hwnd)
+	IDropTargetImpl(CWindow hwnd = nullptr) : m_hwnd(hwnd)
 	{
 		m_drop_target_helper.CreateInstance(CLSID_DragDropHelper, nullptr, CLSCTX_INPROC_SERVER);
 	}
@@ -73,7 +73,7 @@ public:
 		{
 			if (m_drop_target_helper)
 			{
-				POINT point = { pt.x, pt.y };
+				CPoint point(pt.x, pt.y);
 				m_drop_target_helper->DragEnter(m_hwnd, pDataObj, &point, *pdwEffect);
 			}
 
@@ -117,7 +117,7 @@ public:
 		{
 			if (m_drop_target_helper)
 			{
-				POINT point = { pt.x, pt.y };
+				CPoint point(pt.x, pt.y);
 				m_drop_target_helper->DragOver(&point, *pdwEffect);
 			}
 
@@ -141,7 +141,7 @@ public:
 		{
 			if (m_drop_target_helper)
 			{
-				POINT point = { pt.x, pt.y };
+				CPoint point(pt.x, pt.y);
 				m_drop_target_helper->Drop(pDataObj, &point, *pdwEffect);
 			}
 
@@ -155,6 +155,6 @@ public:
 	}
 
 protected:
-	HWND m_hwnd = nullptr;
+	CWindow m_hwnd = nullptr;
 	IDropTargetHelperPtr m_drop_target_helper;
 };

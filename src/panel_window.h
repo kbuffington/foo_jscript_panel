@@ -5,15 +5,6 @@
 
 class panel_window : public panel_base
 {
-protected:
-	bool handle_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp);
-	void build_context_menu(HMENU menu, int id_base);
-	void execute_context_menu_command(int id, int id_base);
-	void on_context_menu(LPARAM lp);
-	void redraw();
-
-	HDC m_hdc = nullptr;
-
 public:
 	panel_window();
 	~panel_window();
@@ -26,19 +17,25 @@ public:
 	void unload_script() override;
 	void update_script() override;
 
-private:
+protected:
+	bool handle_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp);
+	void build_context_menu(HMENU menu, int id_base);
 	void create_context();
 	void delete_context();
+	void execute_context_menu_command(int id, int id_base);
 	void load_script();
+	void on_context_menu(LPARAM lp);
 	void on_paint();
 	void on_paint_error(HDC memdc);
 	void on_paint_user(HDC memdc, LPRECT lpRect);
 	void on_size();
-	void refresh_background(LPRECT lpRect);
+	void refresh_background();
+	void redraw();
 
 	CComPtr<IDropTargetImpl> m_drop_target;
 	HBITMAP m_gr_bmp = nullptr;
 	HBITMAP m_gr_bmp_bk = nullptr;
+	HDC m_hdc = nullptr;
 	IGdiGraphicsPtr m_gr_wrap;
 	bool m_is_mouse_tracked = false;
 	bool m_paint_pending = false;

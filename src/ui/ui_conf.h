@@ -25,17 +25,17 @@ public:
 
 	enum { IDD = IDD_DIALOG_CONF };
 
-	BOOL OnInitDialog(HWND, LPARAM);
+	BOOL OnInitDialog(CWindow, LPARAM);
 	LRESULT OnNotify(int, LPNMHDR);
 	void Apply();
 	void BuildMenu();
-	void OnCloseCmd(UINT, int, HWND);
-	void OnDocs(UINT, int, HWND);
-	void OnFileImport(UINT, int, HWND);
-	void OnFileExport(UINT, int, HWND);
-	void OnLinks(UINT, int, HWND);
-	void OnReset(UINT, int, HWND);
-	void OnSamples(UINT, int, HWND);
+	void OnCloseCmd(UINT, int, CWindow);
+	void OnDocs(UINT, int, CWindow);
+	void OnFileImport(UINT, int, CWindow);
+	void OnFileExport(UINT, int, CWindow);
+	void OnLinks(UINT, int, CWindow);
+	void OnReset(UINT, int, CWindow);
+	void OnSamples(UINT, int, CWindow);
 
 private:
 	CCheckBox m_pseudo_check;

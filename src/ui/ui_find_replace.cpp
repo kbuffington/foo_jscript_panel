@@ -22,34 +22,34 @@ CDialogFindReplace::CDialogFindReplace(CScriptEditorCtrl* parent) : m_parent(par
 	m_hacks.assign(ids.size(), KeyHack());
 }
 
-BOOL CDialogFindReplace::OnInitDialog(HWND, LPARAM)
+BOOL CDialogFindReplace::OnInitDialog(CWindow, LPARAM)
 {
 	for (size_t i = 0; i < ids.size(); ++i)
 	{
 		const int id = ids[i];
-		HWND hwnd = GetDlgItem(id);
+		CWindow hwnd = GetDlgItem(id);
 		m_window[id] = hwnd;
 		m_hacks[i].SubclassWindow(hwnd, id >= IDC_EDIT_FIND && id <= IDC_BTN_NEXT ? IDC_BTN_NEXT : id);
 	}
 	return TRUE;
 }
 
-void CDialogFindReplace::OnCancel(UINT, int, HWND)
+void CDialogFindReplace::OnCancel(UINT, int, CWindow)
 {
 	ShowWindow(SW_HIDE);
 }
 
-void CDialogFindReplace::OnFindNext(UINT, int, HWND)
+void CDialogFindReplace::OnFindNext(UINT, int, CWindow)
 {
 	m_havefound = m_parent->FindNext();
 }
 
-void CDialogFindReplace::OnFindPrevious(UINT, int, HWND)
+void CDialogFindReplace::OnFindPrevious(UINT, int, CWindow)
 {
 	m_parent->FindPrevious();
 }
 
-void CDialogFindReplace::OnFindTextChange(UINT , int, HWND)
+void CDialogFindReplace::OnFindTextChange(UINT , int, CWindow)
 {
 	uGetWindowText(m_window.at(IDC_EDIT_FIND), m_find_text);
 	m_window.at(IDC_BTN_NEXT).EnableWindow(m_find_text.get_length());
@@ -58,7 +58,7 @@ void CDialogFindReplace::OnFindTextChange(UINT , int, HWND)
 	m_window.at(IDC_BTN_REPLACE_ALL).EnableWindow(m_find_text.get_length());
 }
 
-void CDialogFindReplace::OnFlagCommand(UINT, int nID, HWND)
+void CDialogFindReplace::OnFlagCommand(UINT, int nID, CWindow)
 {
 	if (uButton_GetCheck(m_hWnd, nID))
 		m_flags |= m_parent->FlagMap.at(nID);
@@ -66,7 +66,7 @@ void CDialogFindReplace::OnFlagCommand(UINT, int nID, HWND)
 		m_flags &= ~m_parent->FlagMap.at(nID);
 }
 
-void CDialogFindReplace::OnReplace(UINT, int, HWND)
+void CDialogFindReplace::OnReplace(UINT, int, CWindow)
 {
 	if (m_havefound)
 	{
@@ -77,12 +77,12 @@ void CDialogFindReplace::OnReplace(UINT, int, HWND)
 	OnFindNext(0, 0, nullptr);
 }
 
-void CDialogFindReplace::OnReplaceAll(UINT, int, HWND)
+void CDialogFindReplace::OnReplaceAll(UINT, int, CWindow)
 {
 	m_parent->ReplaceAll();
 }
 
-void CDialogFindReplace::OnReplaceTextChange(UINT, int, HWND)
+void CDialogFindReplace::OnReplaceTextChange(UINT, int, CWindow)
 {
 	uGetWindowText(m_window.at(IDC_EDIT_REPLACE), m_replace_text);
 }
@@ -103,7 +103,7 @@ void CDialogFindReplace::SetMode(mode m)
 
 CDialogFindReplace::KeyHack::KeyHack() {}
 
-BOOL CDialogFindReplace::KeyHack::SubclassWindow(HWND hwnd, int cmd)
+BOOL CDialogFindReplace::KeyHack::SubclassWindow(CWindow hwnd, int cmd)
 {
 	m_cmd = cmd;
 	return __super::SubclassWindow(hwnd);

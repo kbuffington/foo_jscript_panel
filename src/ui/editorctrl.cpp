@@ -75,7 +75,7 @@ CScriptEditorCtrl::CScriptEditorCtrl() : apis(panel_manager::instance().get_apis
 	};
 }
 
-BOOL CScriptEditorCtrl::SubclassWindow(HWND hwnd)
+BOOL CScriptEditorCtrl::SubclassWindow(CWindow hwnd)
 {
 	const BOOL bRet = CScintillaImpl::SubclassWindow(hwnd);
 
@@ -147,7 +147,7 @@ CScriptEditorCtrl::IndentationStatus CScriptEditorCtrl::GetIndentState(Line line
 	return indentState;
 }
 
-LRESULT CScriptEditorCtrl::OnChange(UINT, int, HWND)
+LRESULT CScriptEditorCtrl::OnChange(UINT, int, CWindow)
 {
 	AutoMarginWidth();
 	return 0;

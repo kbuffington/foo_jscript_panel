@@ -26,15 +26,15 @@ public:
 		replace
 	};
 
-	BOOL OnInitDialog(HWND, LPARAM);
-	void OnCancel(UINT, int, HWND);
-	void OnFindNext(UINT, int, HWND);
-	void OnFindPrevious(UINT, int, HWND);
-	void OnFindTextChange(UINT, int, HWND);
-	void OnFlagCommand(UINT, int, HWND);
-	void OnReplace(UINT, int, HWND);
-	void OnReplaceAll(UINT, int, HWND);
-	void OnReplaceTextChange(UINT, int, HWND);
+	BOOL OnInitDialog(CWindow, LPARAM);
+	void OnCancel(UINT, int, CWindow);
+	void OnFindNext(UINT, int, CWindow);
+	void OnFindPrevious(UINT, int, CWindow);
+	void OnFindTextChange(UINT, int, CWindow);
+	void OnFlagCommand(UINT, int, CWindow);
+	void OnReplace(UINT, int, CWindow);
+	void OnReplaceAll(UINT, int, CWindow);
+	void OnReplaceTextChange(UINT, int, CWindow);
 	void SetMode(mode m);
 
 	int m_flags = 0;
@@ -51,7 +51,7 @@ private:
 			MESSAGE_HANDLER(WM_KEYDOWN, OnKeyDown)
 		END_MSG_MAP()
 
-		BOOL SubclassWindow(HWND hwnd, int cmd);
+		BOOL SubclassWindow(CWindow hwnd, int cmd);
 		LRESULT OnChar(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		LRESULT OnKeyDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 

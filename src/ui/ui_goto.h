@@ -4,7 +4,7 @@
 class CDialogGoto : public CDialogImpl<CDialogGoto>
 {
 public:
-	CDialogGoto(HWND parent, const pfc::string8_fast& text);
+	CDialogGoto(CWindow parent, const pfc::string8_fast& text);
 
 	BEGIN_MSG_MAP(CDialogGoto)
 		MSG_WM_INITDIALOG(OnInitDialog)
@@ -13,11 +13,11 @@ public:
 
 	enum { IDD = IDD_DIALOG_GOTO };
 
-	BOOL OnInitDialog(HWND, LPARAM);
-	void OnCloseCmd(UINT, int, HWND);
+	BOOL OnInitDialog(CWindow, LPARAM);
+	void OnCloseCmd(UINT, int, CWindow);
 
 private:
 	CEdit m_edit;
-	HWND m_parent = nullptr;
+	CWindow m_parent = nullptr;
 	pfc::string8_fast m_text;
 };

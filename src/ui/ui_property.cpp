@@ -20,7 +20,7 @@ CDialogProperty::CDialogProperty(panel_window* p_parent) : m_parent(p_parent), m
 	m_caption << jsp::component_name << " Properties (id:" << m_parent->m_script_info.id << ")";
 }
 
-BOOL CDialogProperty::OnInitDialog(HWND, LPARAM)
+BOOL CDialogProperty::OnInitDialog(CWindow, LPARAM)
 {
 	// Set caption text
 	uSetWindowText(m_hWnd, m_caption);
@@ -145,13 +145,13 @@ void CDialogProperty::LoadProperties(bool reload)
 	m_export_btn.EnableWindow(m_properties.m_data.size());
 }
 
-void CDialogProperty::OnClearBnClicked(UINT, int, HWND)
+void CDialogProperty::OnClearBnClicked(UINT, int, CWindow)
 {
 	m_properties.SelectAll();
 	m_properties.RequestRemoveSelection();
 }
 
-void CDialogProperty::OnCloseCmd(UINT, int nID, HWND)
+void CDialogProperty::OnCloseCmd(UINT, int nID, CWindow)
 {
 	GetWindowPlacement(&g_config.m_property_wndpl);
 
@@ -168,7 +168,7 @@ void CDialogProperty::OnCloseCmd(UINT, int nID, HWND)
 	EndDialog(nID);
 }
 
-void CDialogProperty::OnExportBnClicked(UINT, int, HWND)
+void CDialogProperty::OnExportBnClicked(UINT, int, CWindow)
 {
 	pfc::string8_fast path;
 
@@ -184,7 +184,7 @@ void CDialogProperty::OnExportBnClicked(UINT, int, HWND)
 	}
 }
 
-void CDialogProperty::OnImportBnClicked(UINT, int, HWND)
+void CDialogProperty::OnImportBnClicked(UINT, int, CWindow)
 {
 	pfc::string8_fast path;
 

@@ -165,7 +165,7 @@ namespace helpers
 	class album_art_async : public simple_thread_task
 	{
 	public:
-		album_art_async(HWND p_wnd, const metadb_handle_ptr& handle, size_t art_id, bool need_stub, bool only_embed, bool no_load) : m_hwnd(p_wnd), m_handle(handle), m_art_id(art_id), m_need_stub(need_stub), m_only_embed(only_embed), m_no_load(no_load) {}
+		album_art_async(CWindow p_wnd, const metadb_handle_ptr& handle, size_t art_id, bool need_stub, bool only_embed, bool no_load) : m_hwnd(p_wnd), m_handle(handle), m_art_id(art_id), m_need_stub(need_stub), m_only_embed(only_embed), m_no_load(no_load) {}
 
 		struct t_param
 		{
@@ -216,11 +216,11 @@ namespace helpers
 			}
 
 			t_param param(handle, m_art_id, bitmap, TO_BSTR(image_path));
-			SendMessage(m_hwnd, TO_UINT(callback_id::on_get_album_art_done), reinterpret_cast<WPARAM>(&param), 0);
+			m_hwnd.SendMessage(TO_UINT(callback_id::on_get_album_art_done), reinterpret_cast<WPARAM>(&param), 0);
 		}
 
 	private:
-		HWND m_hwnd = nullptr;
+		CWindow m_hwnd = nullptr;
 		bool m_need_stub = true;
 		bool m_no_load = false;
 		bool m_only_embed = false;
@@ -231,7 +231,7 @@ namespace helpers
 	class load_image_async : public simple_thread_task
 	{
 	public:
-		load_image_async(HWND p_wnd, BSTR path) : m_hwnd(p_wnd), m_path(path) {}
+		load_image_async(CWindow p_wnd, BSTR path) : m_hwnd(p_wnd), m_path(path) {}
 
 		struct t_param
 		{
@@ -253,12 +253,12 @@ namespace helpers
 		void run() override
 		{
 			IGdiBitmap* bitmap = load_image(m_path);
-			t_param param(reinterpret_cast<size_t>(this), bitmap, m_path);
-			SendMessage(m_hwnd, TO_UINT(callback_id::on_load_image_done), reinterpret_cast<WPARAM>(&param), 0);
+			t_param param(reinterpret_cast<UINT_PTR>(this), bitmap, m_path);
+			m_hwnd.SendMessage(TO_UINT(callback_id::on_load_image_done), reinterpret_cast<WPARAM>(&param), 0);
 		}
 
 	private:
-		HWND m_hwnd = nullptr;
+		CWindow m_hwnd = nullptr;
 		_bstr_t m_path;
 	};
 

@@ -17,7 +17,7 @@ public:
 		REFLECTED_COMMAND_CODE_HANDLER_EX(SCEN_CHANGE, OnChange)
 	END_MSG_MAP()
 
-	BOOL SubclassWindow(HWND hwnd);
+	BOOL SubclassWindow(CWindow hwnd);
 	bool FindNext();
 	bool FindPrevious();
 	void Replace();
@@ -63,7 +63,7 @@ private:
 
 	Colour ParseHex(const std::string& hex);
 	IndentationStatus GetIndentState(Line line);
-	LRESULT OnChange(UINT, int, HWND);
+	LRESULT OnChange(UINT, int, CWindow);
 	LRESULT OnCharAdded(LPNMHDR);
 	LRESULT OnKeyDown(UINT, WPARAM, LPARAM, BOOL&);
 	LRESULT OnUpdateUI(LPNMHDR);

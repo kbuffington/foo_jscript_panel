@@ -17,7 +17,7 @@ namespace
 
 		enum { IDD = IDD_DIALOG_PREF };
 
-		BOOL OnInitDialog(HWND, LPARAM)
+		BOOL OnInitDialog(CWindow, LPARAM)
 		{
 			m_props.CreateInDialog(*this, IDC_LIST_PREFERENCES);
 
@@ -49,7 +49,7 @@ namespace
 			m_props.ReloadData();
 		}
 
-		void OnExportBnClicked(UINT, int, HWND)
+		void OnExportBnClicked(UINT, int, CWindow)
 		{
 			pfc::string8_fast filename;
 			if (uGetOpenFileName(m_hWnd, "Configuration files|*.cfg", 0, "cfg", "Save as", nullptr, filename, TRUE))
@@ -64,7 +64,7 @@ namespace
 			}
 		}
 
-		void OnImportBnClicked(UINT, int, HWND)
+		void OnImportBnClicked(UINT, int, CWindow)
 		{
 			pfc::string8_fast filename;
 			if (uGetOpenFileName(m_hWnd, "Configuration files|*.cfg|All files|*.*", 0, "cfg", "Import from", nullptr, filename, FALSE))
@@ -74,7 +74,7 @@ namespace
 			}
 		}
 
-		void OnPresetsBnClicked(UINT, int, HWND)
+		void OnPresetsBnClicked(UINT, int, CWindow)
 		{
 			CMenu menu = CreatePopupMenu();
 
@@ -82,9 +82,9 @@ namespace
 			uAppendMenu(menu, MF_STRING, IDR_DARK, "Dark");
 			uAppendMenu(menu, MF_STRING, IDR_RUBY, "Ruby Blue");
 
-			RECT rc;
+			CRect rc;
 			GetDlgItem(IDC_BTN_PRESETS).GetWindowRect(&rc);
-			const int idx = TrackPopupMenu(menu, TPM_RIGHTBUTTON | TPM_NONOTIFY | TPM_RETURNCMD, rc.left, rc.bottom, 0, m_hWnd, nullptr);
+			const int idx = menu.TrackPopupMenu(TPM_RIGHTBUTTON | TPM_NONOTIFY | TPM_RETURNCMD, rc.left, rc.bottom, m_hWnd, nullptr);
 			if (idx > 0)
 			{
 				g_config.load_preset(idx);

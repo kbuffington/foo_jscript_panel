@@ -3,7 +3,7 @@
 
 CInputBox::CInputBox(const char* p_prompt, const char* p_caption, const char* p_value) : m_prompt(p_prompt), m_caption(p_caption), m_value(p_value) {}
 
-BOOL CInputBox::OnInitDialog(HWND, LPARAM)
+BOOL CInputBox::OnInitDialog(CWindow, LPARAM)
 {
 	m_edit = GetDlgItem(IDC_EDIT_VALUE);
 	m_label = GetDlgItem(IDC_LABEL_PROMPT);
@@ -15,7 +15,7 @@ BOOL CInputBox::OnInitDialog(HWND, LPARAM)
 	return FALSE;
 }
 
-void CInputBox::OnCloseCmd(UINT, int nID, HWND)
+void CInputBox::OnCloseCmd(UINT, int nID, CWindow)
 {
 	uGetWindowText(m_edit, m_value);
 	EndDialog(nID);

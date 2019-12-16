@@ -12,8 +12,8 @@ public:
 
 	enum { IDD = IDD_DIALOG_INPUT };
 
-	BOOL OnInitDialog(HWND, LPARAM);
-	void OnCloseCmd(UINT, int, HWND);
+	BOOL OnInitDialog(CWindow, LPARAM);
+	void OnCloseCmd(UINT, int, CWindow);
 
 	pfc::string8_fast m_value;
 

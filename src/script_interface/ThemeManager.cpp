@@ -26,8 +26,8 @@ STDMETHODIMP ThemeManager::DrawThemeBackground(IGdiGraphics* gr, int x, int y, i
 	Gdiplus::Graphics* graphics = nullptr;
 	GET_PTR(gr, graphics);
 
-	RECT rc = { x, y, x + w, y + h };
-	RECT rc_clip = { clip_x, clip_y, clip_x + clip_w, clip_y + clip_h };
+	CRect rc(x, y, x + w, y + h);
+	CRect rc_clip(clip_x, clip_y, clip_x + clip_w, clip_y + clip_h);
 	LPCRECT rc_pclip = &rc_clip;
 	HDC dc = graphics->GetHDC();
 

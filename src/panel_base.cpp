@@ -12,7 +12,7 @@ panel_base::panel_base() : m_panel_tooltip_param_ptr(new panel_tooltip_param)
 
 panel_base::~panel_base() {}
 
-HWND panel_base::get_hwnd()
+CWindow panel_base::get_hwnd()
 {
 	return m_hwnd;
 }

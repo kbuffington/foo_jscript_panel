@@ -19,12 +19,12 @@ protected:
 	{
 		if (m_hwnd)
 		{
-			ShowWindow(m_hwnd, SW_HIDE);
-			SetParent(m_hwnd, parent);
+			m_hwnd.ShowWindow(SW_HIDE);
+			m_hwnd.SetParent(parent);
 			m_host->relinquish_ownership(m_hwnd);
 			m_host = host;
 
-			SetWindowPos(m_hwnd, nullptr, p_position.x, p_position.y, p_position.cx, p_position.cy, SWP_NOZORDER);
+			m_hwnd.SetWindowPos(nullptr, p_position.x, p_position.y, p_position.cx, p_position.cy, SWP_NOZORDER);
 		}
 		else
 		{
@@ -71,7 +71,7 @@ protected:
 		case WM_SETCURSOR:
 			return 1;
 		case WM_ERASEBKGND:
-			if (m_panel_config.transparent) redraw();
+			if (m_panel_config.transparent) m_hwnd.PostMessage(jsp::uwm_refreshbk, 0, 0);
 			return 1;
 		case WM_CONTEXTMENU:
 			on_context_menu(lp);

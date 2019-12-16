@@ -1,16 +1,16 @@
 #include "stdafx.h"
 #include "ui_goto.h"
 
-CDialogGoto::CDialogGoto(HWND parent, const pfc::string8_fast& text) : m_parent(parent), m_text(text) {}
+CDialogGoto::CDialogGoto(CWindow parent, const pfc::string8_fast& text) : m_parent(parent), m_text(text) {}
 
-BOOL CDialogGoto::OnInitDialog(HWND, LPARAM)
+BOOL CDialogGoto::OnInitDialog(CWindow, LPARAM)
 {
 	m_edit = GetDlgItem(IDC_EDIT_LINENUMBER);
 	uSetWindowText(m_edit, m_text);
 	return TRUE;
 }
 
-void CDialogGoto::OnCloseCmd(UINT, int nID, HWND)
+void CDialogGoto::OnCloseCmd(UINT, int nID, CWindow)
 {
 	if (nID == IDOK)
 	{

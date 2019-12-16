@@ -27,6 +27,7 @@ namespace Gdiplus
 };
 
 #include "resource.h"
+#include <columns_ui-sdk/ui_extension.h>
 #include <foobar2000/helpers/foobar2000+atl.h>
 #include <foobar2000/helpers/atl-misc.h>
 #include <foobar2000/helpers/filetimetools.h>
@@ -34,15 +35,10 @@ namespace Gdiplus
 #include <libPPUI/CListControlOwnerData.h>
 #include <libPPUI/CListControlComplete.h>
 #include <libPPUI/CListControl-Cells.h>
-#include <columns_ui-sdk/ui_extension.h>
 
 #include <ActivScp.h>
 #include <ComDef.h>
 #include <ShlObj.h>
-
-#ifdef _INC_WINDOWSX
-#undef SubclassWindow
-#endif
 
 #include "foo_jscript_panel.h"
 #include "callback_id.h"

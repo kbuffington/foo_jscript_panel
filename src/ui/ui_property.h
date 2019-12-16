@@ -19,13 +19,13 @@ public:
 
 	enum { IDD = IDD_DIALOG_PROPERTY };
 
-	BOOL OnInitDialog(HWND, LPARAM);
+	BOOL OnInitDialog(CWindow, LPARAM);
 	void Apply();
 	void LoadProperties(bool reload = true);
-	void OnClearBnClicked(UINT, int, HWND);
-	void OnCloseCmd(UINT, int, HWND);
-	void OnExportBnClicked(UINT, int, HWND);
-	void OnImportBnClicked(UINT, int, HWND);
+	void OnClearBnClicked(UINT, int, CWindow);
+	void OnCloseCmd(UINT, int, CWindow);
+	void OnExportBnClicked(UINT, int, CWindow);
+	void OnImportBnClicked(UINT, int, CWindow);
 
 private:
 	CButton m_clear_btn, m_export_btn;
