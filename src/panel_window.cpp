@@ -40,9 +40,6 @@ bool panel_window::handle_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 		return true;
 	case WM_PAINT:
 		{
-			if (m_suppress_drawing)
-				return false;
-
 			if (m_panel_config.transparent && !m_paint_pending)
 			{
 				refresh_background();
@@ -659,15 +656,11 @@ void panel_window::refresh_background()
 		hwnd = FindWindowEx(wnd_parent, hwnd, nullptr, nullptr);
 	}
 
-	HDC dc_parent = wnd_parent.GetDC();
-	HDC hdc_bk = CreateCompatibleDC(dc_parent);
-
 	CRect rc(0, 0, m_size.width, m_size.height);
-	HRGN rgn = CreateRectRgnIndirect(&rc);
-	HRGN rgn_child = CreateRectRgnIndirect(&rc);
 
-	CombineRgn(rgn_child, rgn_child, rgn, RGN_DIFF);
-	DeleteRgn(rgn);
+	CRgn rgn = CreateRectRgnIndirect(&rc);
+	CRgn rgn_child = CreateRectRgnIndirect(&rc);
+	rgn_child.CombineRgn(rgn, RGN_DIFF);
 
 	CPoint pt(0, 0);
 	m_hwnd.ClientToScreen(&pt);
@@ -675,25 +668,20 @@ void panel_window::refresh_background()
 
 	CRect rect_parent;
 	rect_parent.CopyRect(&rc);
-	rect_parent.TopLeft().SetPoint(pt.x, pt.y);
-	rect_parent.BottomRight().Offset(pt);
+	rect_parent.OffsetRect(pt);
 
-	// Force Repaint
-	m_suppress_drawing = true;
 	m_hwnd.SetWindowRgn(rgn_child);
-	wnd_parent.RedrawWindow(&rect_parent, nullptr, RDW_INVALIDATE | RDW_ERASE | RDW_ERASENOW | RDW_UPDATENOW);
+	wnd_parent.RedrawWindow(&rect_parent, nullptr, RDW_INVALIDATE | RDW_ERASE | RDW_ERASENOW);
 
 	// Background bitmap
 	{
+		CClientDC dc_parent(wnd_parent);
+		CDC hdc_bk = CreateCompatibleDC(dc_parent);
 		SelectObjectScope scope(hdc_bk, m_gr_bmp_bk);
-		BitBlt(hdc_bk, rc.left, rc.top, rc.Width(), rc.Height(), dc_parent, pt.x, pt.y, SRCCOPY);
+		hdc_bk.BitBlt(rc.left, rc.top, rc.Width(), rc.Height(), dc_parent, pt.x, pt.y, SRCCOPY);
 	}
 
-	DeleteDC(hdc_bk);
-	ReleaseDC(wnd_parent, dc_parent);
-	DeleteRgn(rgn_child);
 	m_hwnd.SetWindowRgn(nullptr);
-	m_suppress_drawing = false;
 	if (m_panel_config.style != panel_config::edge_style::none) m_hwnd.SendMessage(WM_NCPAINT, 1, 0);
 	m_paint_pending = true;
 	m_hwnd.RedrawWindow(nullptr, nullptr, RDW_INVALIDATE | RDW_UPDATENOW);

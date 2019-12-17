@@ -37,6 +37,5 @@ protected:
 	IGdiGraphicsPtr m_gr_wrap;
 	bool m_is_mouse_tracked = false;
 	bool m_paint_pending = false;
-	bool m_suppress_drawing = false;
 	script_host* m_script_host;
 };
