@@ -1,5 +1,8 @@
-## v2.3.4 (unreleased)
+## v2.3.4
 - The size and position of the `Properties Window` is now remembered. In addition, the size and position of the `Configuration Window` is now shared as a global setting rather than per panel instance like it was previously.
+- `on_size` calls are now suppressed when the panel width or height is zero.
+- Improve behaviour of `Pseudo Transparent` mode to be like older versions. Some changes were made during the `2.2.x` series that made panels not configured with the `Panel Stack Splitter` `Forced layout` option glitch more than they should.
+- The project is now [MIT licensed](https://github.com/marc2k3/foo_jscript_panel/blob/master/LICENSE.md).
 
 ## v2.3.3.1
 - Add `utils.ReadUTF8`. It's preferable to use this when you know the file is `UTF8` encoded... such as ones written by `utils.WriteTextFile`. Continue to use `utils.ReadTextFile` if the files are `UCS2-LE`, `ANSI` or unknown.
