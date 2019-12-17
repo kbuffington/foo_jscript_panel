@@ -71,7 +71,7 @@ protected:
 		case WM_SETCURSOR:
 			return 1;
 		case WM_ERASEBKGND:
-			if (m_panel_config.transparent) m_hwnd.PostMessage(jsp::uwm_refreshbk, 0, 0);
+			if (m_panel_config.transparent) m_hwnd.PostMessage(jsp::uwm_refreshbk);
 			return 1;
 		case WM_CONTEXTMENU:
 			on_context_menu(lp);

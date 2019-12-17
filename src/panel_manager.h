@@ -11,17 +11,17 @@ public:
 	static panel_manager& instance();
 
 	std::vector<api_item> get_apis();
-	void add_window(HWND hwnd);
-	void notify_others(HWND hwnd_except, pfc::refcounted_object_root* param);
+	void add_window(CWindow hwnd);
+	void notify_others(CWindow hwnd_except, pfc::refcounted_object_root* param);
 	void post_msg_to_all(callback_id id, WPARAM wp = 0, LPARAM lp = 0);
 	void post_msg_to_all_pointer(callback_id id, pfc::refcounted_object_root* param);
-	void remove_window(HWND hwnd);
+	void remove_window(CWindow hwnd);
 	void unload_all();
 
 private:
 	static panel_manager instance_;
 
-	std::set<HWND> m_hwnds;
+	std::set<CWindow> m_hwnds;
 	std::vector<api_item> m_apis;
 
 	PFC_CLASS_NOT_COPYABLE_EX(panel_manager)

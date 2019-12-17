@@ -303,7 +303,7 @@ STDMETHODIMP script_host::OnScriptError(IActiveScriptError* err)
 
 	const auto& tooltip_param = m_host->panel_tooltip();
 	if (tooltip_param && tooltip_param->tooltip_hwnd)
-		SendMessage(tooltip_param->tooltip_hwnd, TTM_ACTIVATE, FALSE, 0);
+		tooltip_param->tooltip_hwnd.SendMessage(TTM_ACTIVATE, FALSE, 0);
 
 	m_host->repaint();
 	m_host->unload_script();

@@ -586,7 +586,7 @@ void panel_window::on_paint()
 			else
 			{
 				CRect rc(0, 0, m_size.width, m_size.height);
-				FillRect(memdc, &rc, reinterpret_cast<HBRUSH>(COLOR_WINDOW + 1));
+				FillRect(memdc, &rc, reinterpret_cast<HBRUSH>(COLOR_WINDOWFRAME));
 			}
 
 			on_paint_user(memdc, &ps.rcPaint);
@@ -656,7 +656,7 @@ void panel_window::on_size()
 	if (m_size.width == 0 || m_size.height == 0) return;
 	create_context();
 	script_invoke(callback_id::on_size);
-	if (m_panel_config.transparent) m_hwnd.PostMessage(jsp::uwm_refreshbk, 0, 0);
+	if (m_panel_config.transparent) m_hwnd.PostMessage(jsp::uwm_refreshbk);
 	else repaint();
 }
 

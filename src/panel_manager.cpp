@@ -33,12 +33,12 @@ std::vector<panel_manager::api_item> panel_manager::get_apis()
 	return m_apis;
 }
 
-void panel_manager::add_window(HWND hwnd)
+void panel_manager::add_window(CWindow hwnd)
 {
 	m_hwnds.insert(hwnd);
 }
 
-void panel_manager::notify_others(HWND hwnd_except, pfc::refcounted_object_root* param)
+void panel_manager::notify_others(CWindow hwnd_except, pfc::refcounted_object_root* param)
 {
 	const size_t count = m_hwnds.size();
 
@@ -49,20 +49,20 @@ void panel_manager::notify_others(HWND hwnd_except, pfc::refcounted_object_root*
 		param->refcount_add_ref();
 	}
 
-	for (const auto& hwnd : m_hwnds)
+	for (CWindow hwnd : m_hwnds)
 	{
 		if (hwnd != hwnd_except)
 		{
-			SendMessage(hwnd, TO_UINT(callback_id::on_notify_data), reinterpret_cast<WPARAM>(param), 0);
+			hwnd.SendMessage(TO_UINT(callback_id::on_notify_data), reinterpret_cast<WPARAM>(param), 0);
 		}
 	}
 }
 
 void panel_manager::post_msg_to_all(callback_id id, WPARAM wp, LPARAM lp)
 {
-	for (const auto& hwnd : m_hwnds)
+	for (CWindow hwnd : m_hwnds)
 	{
-		PostMessage(hwnd, TO_UINT(id), wp, lp);
+		hwnd.PostMessage(TO_UINT(id), wp, lp);
 	}
 }
 
@@ -77,21 +77,21 @@ void panel_manager::post_msg_to_all_pointer(callback_id id, pfc::refcounted_obje
 		param->refcount_add_ref();
 	}
 
-	for (const auto& hwnd : m_hwnds)
+	for (CWindow hwnd : m_hwnds)
 	{
-		PostMessage(hwnd, TO_UINT(id), reinterpret_cast<WPARAM>(param), 0);
+		hwnd.PostMessage(TO_UINT(id), reinterpret_cast<WPARAM>(param), 0);
 	}
 }
 
-void panel_manager::remove_window(HWND hwnd)
+void panel_manager::remove_window(CWindow hwnd)
 {
 	m_hwnds.erase(hwnd);
 }
 
 void panel_manager::unload_all()
 {
-	for (const auto& hwnd : m_hwnds)
+	for (CWindow hwnd : m_hwnds)
 	{
-		SendMessage(hwnd, jsp::uwm_unload, 0, 0);
+		hwnd.SendMessage(hwnd, jsp::uwm_unload, 0, 0);
 	}
 }
