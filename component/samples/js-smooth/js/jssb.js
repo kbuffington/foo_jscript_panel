@@ -2947,7 +2947,6 @@ on_init();
 function on_size() {
 	ww = window.Width;
 	wh = window.Height;
-	if (!ww || !wh) return;
 
 	g_wallpaperImg = setWallpaperImg();
 

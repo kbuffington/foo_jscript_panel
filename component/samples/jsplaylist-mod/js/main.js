@@ -798,9 +798,6 @@ on_init();
 
 //=================================================// OnSize
 function on_size() {
-	if (!window.Width || !window.Height)
-		return;
-
 	if (g_instancetype == 0) { // CUI
 		window.MinWidth = 360;
 		window.MinHeight = 200;
@@ -852,10 +849,6 @@ function on_size() {
 
 //=================================================// OnPaint
 function on_paint(gr) {
-
-	if (!ww)
-		return true;
-
 	if (!cSettings.visible) {
 
 		// draw background under playlist

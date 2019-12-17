@@ -3166,7 +3166,6 @@ on_init();
 function on_size() {
 	ww = window.Width;
 	wh = window.Height;
-	if (!ww || !wh) return;
 
 	g_wallpaperImg = setWallpaperImg();
 
@@ -3181,9 +3180,6 @@ function on_size() {
 };
 
 function on_paint(gr) {
-	if (!ww)
-		return;
-
 	//gr.FillSolidRect(0, 0, ww, wh, RGBA(210,210,215,255));
 	// draw background under playlist
 	if (fb.IsPlaying && g_wallpaperImg && ppt.showwallpaper) {

@@ -968,7 +968,7 @@ function setWallpaperImg() {
 };
 
 function FormatWallpaper(img) {
-	if (!img || !ww || !wh)
+	if (!img)
 		return img;
 
 	var tmp_img = gdi.CreateImage(ww, wh);
