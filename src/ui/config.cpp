@@ -53,10 +53,9 @@ void config::import(const char* content)
 	{
 		if (line.empty() || line.at(0) == '#' || line.length() <= 3) continue;
 		const size_t pos = line.find('=');
-		if (pos == std::string::npos) continue;
+		if (pos == 0 || pos == std::string::npos) continue;
 		std::string key = line.substr(0, pos);
 		std::string value = line.substr(pos + 1);
-		if (key.empty()) continue;
 		data_map[key.c_str()].set_string(value.c_str());
 	}
 	merge_data(data_map);
