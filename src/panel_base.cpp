@@ -4,10 +4,7 @@
 panel_base::panel_base() : m_panel_tooltip_param_ptr(new panel_tooltip_param)
 {
 	m_panel_config.reset();
-	m_size.min = { 0, 0 };
-	m_size.max = { INT_MAX, INT_MAX };
-	m_size.width = 0;
-	m_size.height = 0;
+	m_size.reset_min_max();
 }
 
 panel_base::~panel_base() {}

@@ -18,8 +18,15 @@ protected:
 
 	struct size
 	{
+		void reset_min_max()
+		{
+			min.SetPoint(0, 0);
+			max.SetPoint(INT_MAX, INT_MAX);
+		}
+
 		CPoint min, max;
-		int width, height;
+		int height = 0;
+		int width = 0;
 	};
 
 	void load_config(stream_reader* reader, size_t size, abort_callback& abort);

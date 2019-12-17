@@ -507,8 +507,7 @@ void panel_window::load_script()
 
 	m_hwnd.SetWindowPos(nullptr, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
 
-	m_size.min = { 0, 0 };
-	m_size.max = { INT_MAX, INT_MAX };
+	m_size.reset_min_max();
 	notify_size_limit_changed();
 	m_dragdrop = false;
 	m_grabfocus = false;
