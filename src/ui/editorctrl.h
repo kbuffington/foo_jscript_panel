@@ -9,7 +9,7 @@ class CScriptEditorCtrl : public CScintillaImpl<CScriptEditorCtrl>
 public:
 	CScriptEditorCtrl();
 
-	BEGIN_MSG_MAP(CScriptEditorCtrl)
+	BEGIN_MSG_MAP_EX(CScriptEditorCtrl)
 		MESSAGE_HANDLER(WM_KEYDOWN, OnKeyDown)
 		REFLECTED_NOTIFY_CODE_HANDLER_EX(SCN_UPDATEUI, OnUpdateUI)
 		REFLECTED_NOTIFY_CODE_HANDLER_EX(SCN_CHARADDED, OnCharAdded)

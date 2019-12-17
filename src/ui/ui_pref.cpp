@@ -8,7 +8,7 @@ namespace
 	public:
 		CDialogPref(preferences_page_callback::ptr callback) : m_callback(callback), m_props(this) {}
 
-		BEGIN_MSG_MAP(CDialogPref)
+		BEGIN_MSG_MAP_EX(CDialogPref)
 			MSG_WM_INITDIALOG(OnInitDialog)
 			COMMAND_HANDLER_EX(IDC_BTN_IMPORT, BN_CLICKED, OnImportBnClicked)
 			COMMAND_HANDLER_EX(IDC_BTN_EXPORT, BN_CLICKED, OnExportBnClicked)

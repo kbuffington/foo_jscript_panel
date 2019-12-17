@@ -8,7 +8,7 @@ class CDialogConf : public CDialogImpl<CDialogConf>
 public:
 	CDialogConf(panel_window* p_parent);
 
-	BEGIN_MSG_MAP(CDialogConf)
+	BEGIN_MSG_MAP_EX(CDialogConf)
 		CHAIN_MSG_MAP_MEMBER(m_resizer)
 		MSG_WM_INITDIALOG(OnInitDialog)
 		MSG_WM_NOTIFY(OnNotify)

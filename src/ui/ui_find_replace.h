@@ -6,7 +6,7 @@ class CDialogFindReplace : public CDialogImpl<CDialogFindReplace>
 public:
 	CDialogFindReplace(CScriptEditorCtrl* parent);
 
-	BEGIN_MSG_MAP(CDialogFindReplace)
+	BEGIN_MSG_MAP_EX(CDialogFindReplace)
 		MSG_WM_INITDIALOG(OnInitDialog)
 		COMMAND_ID_HANDLER_EX(IDC_BTN_NEXT, OnFindNext)
 		COMMAND_ID_HANDLER_EX(IDC_BTN_PREVIOUS, OnFindPrevious)
@@ -46,7 +46,7 @@ private:
 	public:
 		KeyHack();
 
-		BEGIN_MSG_MAP(KeyHack)
+		BEGIN_MSG_MAP_EX(KeyHack)
 			MESSAGE_HANDLER(WM_CHAR, OnChar)
 			MESSAGE_HANDLER(WM_KEYDOWN, OnKeyDown)
 		END_MSG_MAP()

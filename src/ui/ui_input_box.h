@@ -5,7 +5,7 @@ class CInputBox : public CDialogImpl<CInputBox>
 public:
 	CInputBox(const char* p_prompt, const char* p_caption, const char* p_value);
 
-	BEGIN_MSG_MAP(CInputBox)
+	BEGIN_MSG_MAP_EX(CInputBox)
 		MSG_WM_INITDIALOG(OnInitDialog)
 		COMMAND_RANGE_HANDLER_EX(IDOK, IDCANCEL, OnCloseCmd)
 	END_MSG_MAP()

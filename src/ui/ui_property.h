@@ -7,7 +7,7 @@ class CDialogProperty : public CDialogImpl<CDialogProperty>
 public:
 	CDialogProperty(panel_window* p_parent);
 
-	BEGIN_MSG_MAP(CDialogProperty)
+	BEGIN_MSG_MAP_EX(CDialogProperty)
 		CHAIN_MSG_MAP_MEMBER(m_resizer)
 		MSG_WM_INITDIALOG(OnInitDialog)
 		COMMAND_RANGE_HANDLER_EX(IDOK, IDCANCEL, OnCloseCmd)
