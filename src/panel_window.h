@@ -26,8 +26,6 @@ protected:
 	void load_script();
 	void on_context_menu(LPARAM lp);
 	void on_paint();
-	void on_paint_error(HDC memdc);
-	void on_paint_user(HDC memdc, LPRECT lpRect);
 	void on_size();
 	void refresh_background();
 	void redraw();

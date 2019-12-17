@@ -558,96 +558,69 @@ void panel_window::on_paint()
 {
 	if (!m_gr_bmp || !m_gr_wrap) return;
 
-	PAINTSTRUCT ps;
-	HDC dc = m_hwnd.BeginPaint(&ps);
-	HDC memdc = CreateCompatibleDC(dc);
+	CPaintDC paintdc(m_hwnd);
+	CDC memdc = CreateCompatibleDC(paintdc);
+	SelectObjectScope scope_bmp(memdc, m_gr_bmp);
+	CRect rc(0, 0, m_size.width, m_size.height);
 
+	if (m_script_host->HasError())
 	{
-		SelectObjectScope scope_bmp(memdc, m_gr_bmp);
+		CFont font = CreateFont(
+			20,
+			0,
+			0,
+			0,
+			FW_BOLD,
+			FALSE,
+			FALSE,
+			FALSE,
+			DEFAULT_CHARSET,
+			OUT_DEFAULT_PRECIS,
+			CLIP_DEFAULT_PRECIS,
+			DEFAULT_QUALITY,
+			DEFAULT_PITCH | FF_DONTCARE,
+			L"Tahoma");
 
-		if (m_script_host->HasError())
+		LOGBRUSH lbBack = { BS_SOLID, RGB(225, 60, 45), 0 };
+		CBrush hBack = CreateBrushIndirect(&lbBack);
+		SelectObjectScope scope(memdc, font);
+
+		memdc.FillRect(&rc, hBack);
+		memdc.SetBkMode(TRANSPARENT);
+		memdc.SetTextColor(RGB(255, 255, 255));
+		memdc.DrawText(L"Aw, crashed :(", -1, &rc, DT_CENTER | DT_VCENTER | DT_NOPREFIX | DT_SINGLELINE);
+	}
+	else
+	{
+		if (m_panel_config.transparent)
 		{
-			on_paint_error(memdc);
+			CDC bkdc = CreateCompatibleDC(paintdc);
+			SelectObjectScope scope_bk(bkdc, m_gr_bmp_bk);
+			memdc.BitBlt(paintdc.m_ps.rcPaint.left, paintdc.m_ps.rcPaint.top, RECT_CX(paintdc.m_ps.rcPaint), RECT_CY(paintdc.m_ps.rcPaint), bkdc, paintdc.m_ps.rcPaint.left, paintdc.m_ps.rcPaint.top, SRCCOPY);
 		}
 		else
 		{
-			if (m_panel_config.transparent)
-			{
-				HDC bkdc = CreateCompatibleDC(dc);
-
-				{
-					SelectObjectScope scope_bk(bkdc, m_gr_bmp_bk);
-					BitBlt(memdc, ps.rcPaint.left, ps.rcPaint.top, RECT_CX(ps.rcPaint), RECT_CY(ps.rcPaint), bkdc, ps.rcPaint.left, ps.rcPaint.top, SRCCOPY);
-				}
-
-				DeleteDC(bkdc);
-			}
-			else
-			{
-				CRect rc(0, 0, m_size.width, m_size.height);
-				FillRect(memdc, &rc, reinterpret_cast<HBRUSH>(COLOR_WINDOWFRAME));
-			}
-
-			on_paint_user(memdc, &ps.rcPaint);
+			memdc.FillRect(&rc, reinterpret_cast<HBRUSH>(COLOR_WINDOWFRAME));
 		}
-
-		BitBlt(dc, 0, 0, m_size.width, m_size.height, memdc, 0, 0, SRCCOPY);
-	}
-
-	DeleteDC(memdc);
-	m_hwnd.EndPaint(&ps);
-}
-
-void panel_window::on_paint_error(HDC memdc)
-{
-	const HFONT hFont = CreateFont(
-		20,
-		0,
-		0,
-		0,
-		FW_BOLD,
-		FALSE,
-		FALSE,
-		FALSE,
-		DEFAULT_CHARSET,
-		OUT_DEFAULT_PRECIS,
-		CLIP_DEFAULT_PRECIS,
-		DEFAULT_QUALITY,
-		DEFAULT_PITCH | FF_DONTCARE,
-		L"Tahoma");
-
-	{
-		CRect rc(0, 0, m_size.width, m_size.height);
-		LOGBRUSH lbBack = { BS_SOLID, RGB(225, 60, 45), 0 };
-		HBRUSH hBack = CreateBrushIndirect(&lbBack);
-		SelectObjectScope scope(memdc, hFont);
-
-		FillRect(memdc, &rc, hBack);
-		SetBkMode(memdc, TRANSPARENT);
-		SetTextColor(memdc, RGB(255, 255, 255));
-		DrawText(memdc, L"Aw, crashed :(", -1, &rc, DT_CENTER | DT_VCENTER | DT_NOPREFIX | DT_SINGLELINE);
-		DeleteObject(hBack);
-	}
-}
-
-void panel_window::on_paint_user(HDC memdc, LPRECT lpRect)
-{
-	if (m_script_host->Ready())
-	{
-		Gdiplus::Graphics gr(memdc);
-		const Gdiplus::Rect rect(lpRect->left, lpRect->top, lpRect->right - lpRect->left, lpRect->bottom - lpRect->top);
-		gr.SetClip(rect);
-		m_gr_wrap->put__ptr(&gr);
-
+		
+		if (m_script_host->Ready())
 		{
-			VARIANTARG args[1];
-			args[0].vt = VT_DISPATCH;
-			args[0].pdispVal = m_gr_wrap;
-			script_invoke(callback_id::on_paint, args, _countof(args));
-		}
+			Gdiplus::Graphics gr(memdc);
+			const Gdiplus::Rect rect(paintdc.m_ps.rcPaint.left, paintdc.m_ps.rcPaint.top, RECT_CX(paintdc.m_ps.rcPaint), RECT_CY(paintdc.m_ps.rcPaint));
+			gr.SetClip(rect);
+			m_gr_wrap->put__ptr(&gr);
 
-		m_gr_wrap->put__ptr(nullptr);
+			{
+				VARIANTARG args[1];
+				args[0].vt = VT_DISPATCH;
+				args[0].pdispVal = m_gr_wrap;
+				script_invoke(callback_id::on_paint, args, _countof(args));
+			}
+
+			m_gr_wrap->put__ptr(nullptr);
+		}
 	}
+	paintdc.BitBlt(0, 0, m_size.width, m_size.height, memdc, 0, 0, SRCCOPY);
 }
 
 void panel_window::on_size()
