@@ -29,7 +29,7 @@ BOOL CDialogConf::OnInitDialog(CWindow, LPARAM)
 	// Init
 	m_edge_combo = GetDlgItem(IDC_COMBO_EDGE);
 	m_engine_combo = GetDlgItem(IDC_COMBO_ENGINE);
-	m_pseudo_check = GetDlgItem(IDC_CHECK_PSEUDO_TRANSPARENT);
+	m_transparent_check = GetDlgItem(IDC_CHECK_PSEUDO_TRANSPARENT);
 
 	BuildMenu();
 
@@ -53,11 +53,11 @@ BOOL CDialogConf::OnInitDialog(CWindow, LPARAM)
 
 	if (helpers::supports_chakra())
 	{
-		uComboBox_SelectString(m_engine_combo, m_parent->m_panel_config.engine);
+		m_engine_combo.SetCurSel(m_parent->m_panel_config.engine.equals("Chakra") ? 0 : 1);
 	}
 	else
 	{
-		uComboBox_SelectString(m_engine_combo, "JScript");
+		m_engine_combo.SetCurSel(1);
 		m_engine_combo.EnableWindow(false);
 	}
 
@@ -72,14 +72,14 @@ BOOL CDialogConf::OnInitDialog(CWindow, LPARAM)
 		m_edge_combo.SetCurSel(0);
 		m_edge_combo.EnableWindow(false);
 
-		m_pseudo_check.SetCheck(false);
-		m_pseudo_check.EnableWindow(false);
+		m_transparent_check.SetCheck(false);
+		m_transparent_check.EnableWindow(false);
 	}
 	else
 	{
 		m_edge_combo.SetCurSel(static_cast<int>(m_parent->m_panel_config.style));
 
-		m_pseudo_check.SetCheck(m_parent->m_panel_config.transparent);
+		m_transparent_check.SetCheck(m_parent->m_panel_config.transparent);
 	}
 
 	// Edit Control
@@ -116,7 +116,7 @@ void CDialogConf::Apply()
 	// Save panel settings
 	uGetWindowText(m_engine_combo, m_parent->m_panel_config.engine);
 	m_parent->m_panel_config.style = static_cast<panel_config::edge_style>(m_edge_combo.GetCurSel());
-	m_parent->m_panel_config.transparent = m_pseudo_check.IsChecked();
+	m_parent->m_panel_config.transparent = m_transparent_check.IsChecked();
 
 	// Get script text
 	const int len = m_editorctrl.GetTextLength();
@@ -250,10 +250,10 @@ void CDialogConf::OnLinks(UINT, int nID, CWindow)
 
 void CDialogConf::OnReset(UINT, int, CWindow)
 {
-	uComboBox_SelectString(m_engine_combo, panel_config::g_get_default_engine());
+	m_engine_combo.SetCurSel(helpers::supports_chakra() ? 0 : 1);
 	m_edge_combo.SetCurSel(0);
-	m_pseudo_check.SetCheck(false);
-	m_editorctrl.SetContent(panel_config::g_get_default_code());
+	m_transparent_check.SetCheck(false);
+	m_editorctrl.SetContent(helpers::get_resource_text(IDR_SCRIPT));
 }
 
 void CDialogConf::OnSamples(UINT, int nID, CWindow)

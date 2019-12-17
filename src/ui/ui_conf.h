@@ -38,7 +38,7 @@ public:
 	void OnSamples(UINT, int, CWindow);
 
 private:
-	CCheckBox m_pseudo_check;
+	CCheckBox m_transparent_check;
 	CComboBox m_edge_combo;
 	CComboBox m_engine_combo;
 	CDialogResizeHelper m_resizer;
