@@ -3,13 +3,13 @@
 namespace jsp
 {
 	static constexpr const char* component_name = "JScript Panel";
-	static constexpr const char* component_version = "2.3.4";
+	static constexpr const char* component_version = "2.3.5-dev";
 	static constexpr const char* component_dll_name = "foo_jscript_panel.dll";
 	static constexpr const char* component_info = "Copyright (C) 2015-2019 marc2003\nBased on WSH Panel Mod by T.P. Wang\nThanks for the contributions by TheQwertiest and kbuffington\n\nBuild: " __TIME__ ", " __DATE__ "\nColumns UI SDK Version: " UI_EXTENSION_VERSION;
 	static constexpr size_t uwm_refreshbk = WM_USER + 1;
 	static constexpr size_t uwm_timer = WM_USER + 2;
 	static constexpr size_t uwm_unload = WM_USER + 3;
-	static constexpr size_t version = 2340;
+	static constexpr size_t version = 2350;
 	static const wchar_t* class_name = L"jsp_class";
 }
 
