@@ -653,6 +653,7 @@ void panel_window::on_paint_user(HDC memdc, LPRECT lpRect)
 
 void panel_window::on_size()
 {
+	if (m_size.width == 0 || m_size.height == 0) return;
 	create_context();
 	script_invoke(callback_id::on_size);
 	if (m_panel_config.transparent) m_hwnd.PostMessage(jsp::uwm_refreshbk, 0, 0);
