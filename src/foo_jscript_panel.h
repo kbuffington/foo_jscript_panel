@@ -15,7 +15,7 @@ namespace jsp
 
 #define TO_VARIANT_BOOL(v) (v ? VARIANT_TRUE : VARIANT_FALSE)
 #define TO_BSTR(str) SysAllocString(string_wide_from_utf8_fast(str))
-#define TO_INT(num) (num == SIZE_MAX ? -1 : static_cast<int>(num))
+#define TO_INT(num) (num == SIZE_MAX ? -1 : static_cast<int>(num)) /* Only use on fb2k API methods that use SIZE_MAX / pfc_infinite to indicate failure. */
 #define TO_UINT(num) static_cast<unsigned int>(num)
 
 #define GET_PTR(X, Y) \
