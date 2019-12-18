@@ -19,6 +19,11 @@ bool panel_base::is_dui()
 	return m_instance_type == instance_type::dui;
 }
 
+bool panel_base::is_transparent()
+{
+	return m_supports_transparency && m_panel_config.transparent;
+}
+
 panel_tooltip_param_ptr& panel_base::panel_tooltip()
 {
 	return m_panel_tooltip_param_ptr;

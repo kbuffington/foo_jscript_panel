@@ -40,14 +40,13 @@ bool panel_window::handle_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 		return true;
 	case WM_PAINT:
 		{
-			if (m_panel_config.transparent && !m_paint_pending)
+			if (is_transparent() && !m_paint_pending)
 			{
 				refresh_background();
 			}
 			else
 			{
 				on_paint();
-				m_paint_pending = false;
 			}
 		}
 		return true;
@@ -452,7 +451,7 @@ void panel_window::create_context()
 
 	m_gr_bmp = CreateCompatibleBitmap(m_hdc, m_size.width, m_size.height);
 
-	if (m_panel_config.transparent)
+	if (is_transparent())
 	{
 		m_gr_bmp_bk = CreateCompatibleBitmap(m_hdc, m_size.width, m_size.height);
 	}
@@ -589,7 +588,7 @@ void panel_window::on_paint()
 	}
 	else
 	{
-		if (m_panel_config.transparent)
+		if (is_transparent())
 		{
 			CDC bkdc = CreateCompatibleDC(paintdc);
 			SelectObjectScope scope_bk(bkdc, m_gr_bmp_bk);
@@ -618,6 +617,7 @@ void panel_window::on_paint()
 		}
 	}
 	paintdc.BitBlt(0, 0, m_size.width, m_size.height, memdc, 0, 0, SRCCOPY);
+	m_paint_pending = false;
 }
 
 void panel_window::on_size()
@@ -625,7 +625,7 @@ void panel_window::on_size()
 	if (m_size.width == 0 || m_size.height == 0) return;
 	create_context();
 	script_invoke(callback_id::on_size);
-	if (m_panel_config.transparent) m_hwnd.PostMessage(jsp::uwm_refreshbk);
+	if (is_transparent()) m_hwnd.PostMessage(jsp::uwm_refreshbk);
 	else repaint();
 }
 
@@ -642,35 +642,15 @@ void panel_window::refresh_background()
 	if (!wnd_parent || IsIconic(core_api::get_main_window()) || !IsWindowVisible(m_hwnd))
 		return;
 
-	// HACK: for Tab control
-	CWindow hwnd = FindWindowEx(wnd_parent, nullptr, nullptr, nullptr);
-	while (hwnd != nullptr)
-	{
-		pfc::string8_fast name;
-		uGetClassName(hwnd, name);
-		if (name.equals("SysTabControl32"))
-		{
-			wnd_parent = hwnd;
-			break;
-		}
-		hwnd = FindWindowEx(wnd_parent, hwnd, nullptr, nullptr);
-	}
-
-	CRect rc(0, 0, m_size.width, m_size.height);
-
-	CRgn rgn = CreateRectRgnIndirect(&rc);
-	CRgn rgn_child = CreateRectRgnIndirect(&rc);
-	rgn_child.CombineRgn(rgn, RGN_DIFF);
-
 	CPoint pt(0, 0);
 	m_hwnd.ClientToScreen(&pt);
 	wnd_parent.ScreenToClient(&pt);
 
-	CRect rect_parent;
-	rect_parent.CopyRect(&rc);
-	rect_parent.OffsetRect(pt);
+	CRect rc(0, 0, m_size.width, m_size.height);
+	CRect rect_parent(pt, rc.Size());
 
-	m_hwnd.SetWindowRgn(rgn_child);
+	CRgn rgn = CreateRectRgn(0, 0, 0, 0);
+	m_hwnd.SetWindowRgn(rgn);
 	wnd_parent.RedrawWindow(&rect_parent, nullptr, RDW_INVALIDATE | RDW_ERASE | RDW_ERASENOW);
 
 	// Background bitmap

@@ -61,25 +61,30 @@ BOOL CDialogConf::OnInitDialog(CWindow, LPARAM)
 		m_engine_combo.EnableWindow(false);
 	}
 
-	// Edge Style & Pseudo Transparent
+	// Edge Style
 	m_edge_combo.AddString(L"None");
 	m_edge_combo.AddString(L"Sunken");
 	m_edge_combo.AddString(L"Grey");
 
 	if (m_parent->is_dui())
 	{
-		// disable both options in DUI
 		m_edge_combo.SetCurSel(0);
 		m_edge_combo.EnableWindow(false);
-
-		m_transparent_check.SetCheck(false);
-		m_transparent_check.EnableWindow(false);
 	}
 	else
 	{
 		m_edge_combo.SetCurSel(static_cast<int>(m_parent->m_panel_config.style));
+	}
 
+	// Pseudo Transparent
+	if (m_parent->m_supports_transparency)
+	{
 		m_transparent_check.SetCheck(m_parent->m_panel_config.transparent);
+	}
+	else
+	{
+		m_transparent_check.SetCheck(false);
+		m_transparent_check.EnableWindow(false);
 	}
 
 	// Edit Control

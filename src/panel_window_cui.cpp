@@ -31,6 +31,7 @@ protected:
 			m_host = host;
 			create(parent, this, p_position);
 		}
+		m_supports_transparency = supports_transparency();
 		return m_hwnd;
 	}
 
@@ -71,7 +72,7 @@ protected:
 		case WM_SETCURSOR:
 			return 1;
 		case WM_ERASEBKGND:
-			if (m_panel_config.transparent) m_hwnd.PostMessage(jsp::uwm_refreshbk);
+			if (is_transparent()) m_hwnd.PostMessage(jsp::uwm_refreshbk);
 			return 1;
 		case WM_CONTEXTMENU:
 			on_context_menu(lp);
@@ -181,6 +182,15 @@ protected:
 	}
 
 private:
+	bool supports_transparency()
+	{
+		CWindow wnd_parent = GetAncestor(m_hwnd, GA_PARENT);
+		if (!wnd_parent) return false;
+		pfc::string8_fast name;
+		uGetClassName(wnd_parent, name);
+		return name.equals("PSSWindowContainer") || name.equals("ReBarWindow32");
+	}
+
 	uie::window_host_ptr m_host;
 };
 

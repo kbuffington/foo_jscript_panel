@@ -51,10 +51,12 @@ public:
 public:
 	CWindow get_hwnd();
 	bool is_dui();
+	bool is_transparent();
 	panel_tooltip_param_ptr& panel_tooltip();
 
 	bool m_dragdrop = false;
 	bool m_grabfocus = false;
+	bool m_supports_transparency = false;
 	panel_config m_panel_config;
 	panel_properties m_panel_properties;
 	script_info m_script_info{};
