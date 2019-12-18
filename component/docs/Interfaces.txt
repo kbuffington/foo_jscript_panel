@@ -1098,7 +1098,7 @@ interface IUtils {
 		3: icon
 		4: artist
 
-		need stub: boolean, default true.
+		need_stub: boolean, default true.
 		See samples\basic\GetAlbumArtV2.txt
 		*/
 
@@ -1264,7 +1264,8 @@ interface IWindow {
 		window.IsTransparent; (boolean) (read)
 		/*
 		Depends on setting inside JScript Panel Configuration window. You generally use it to determine
-		whether or not to draw a background. Only useful within Panel Stack Splitter (Columns UI component)
+		whether or not to draw a background. Only useful when panel is contained within
+		Panel Stack Splitter (Columns UI component).
 		*/
 
 		window.IsVisible; (boolean) (read)
