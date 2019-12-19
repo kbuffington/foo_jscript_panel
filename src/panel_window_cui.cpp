@@ -31,7 +31,11 @@ protected:
 			m_host = host;
 			create(parent, this, p_position);
 		}
-		m_supports_transparency = supports_transparency();
+
+		pfc::string8_fast name;
+		uGetClassName(parent, name);
+		m_supports_transparency = name.equals("PSSWindowContainer") || name.equals("ReBarWindow32");
+
 		return m_hwnd;
 	}
 
@@ -182,15 +186,6 @@ protected:
 	}
 
 private:
-	bool supports_transparency()
-	{
-		CWindow wnd_parent = GetAncestor(m_hwnd, GA_PARENT);
-		if (!wnd_parent) return false;
-		pfc::string8_fast name;
-		uGetClassName(wnd_parent, name);
-		return name.equals("PSSWindowContainer") || name.equals("ReBarWindow32");
-	}
-
 	uie::window_host_ptr m_host;
 };
 
