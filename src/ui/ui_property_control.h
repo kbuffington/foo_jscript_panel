@@ -15,8 +15,8 @@ public:
 		AddColumnAutoWidth("Value");
 
 		m_data.resize(100); // scrollbar hack
-		m_parent_clear_btn = ::GetDlgItem(GetParent(), IDC_BTN_CLEAR);
-		m_parent_export_btn = ::GetDlgItem(GetParent(), IDC_BTN_EXPORT);
+		m_parent_clear_btn = GetParent().GetDlgItem(IDC_BTN_CLEAR);
+		m_parent_export_btn = GetParent().GetDlgItem(IDC_BTN_EXPORT);
 		return 0;
 	}
 
