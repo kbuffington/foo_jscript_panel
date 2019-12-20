@@ -14,7 +14,6 @@ public:
 		AddColumn("Name", MulDiv(360, m_dpi.cx, 96));
 		AddColumnAutoWidth("Value");
 
-		m_data.resize(100); // scrollbar hack
 		m_parent_clear_btn = GetParent().GetDlgItem(IDC_BTN_CLEAR);
 		m_parent_export_btn = GetParent().GetDlgItem(IDC_BTN_EXPORT);
 		return 0;
