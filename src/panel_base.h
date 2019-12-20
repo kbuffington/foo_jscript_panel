@@ -35,7 +35,6 @@ protected:
 	CWindow m_hwnd = nullptr;
 	instance_type m_instance_type = instance_type::cui;
 	panel_tooltip_param_ptr m_panel_tooltip_param_ptr;
-	ui_selection_holder::ptr m_selection_holder;
 
 public:
 	virtual COLORREF get_colour_ui(size_t type) = 0;

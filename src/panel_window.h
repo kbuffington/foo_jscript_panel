@@ -38,4 +38,5 @@ protected:
 	bool m_is_mouse_tracked = false;
 	bool m_paint_pending = false;
 	script_host* m_script_host;
+	ui_selection_holder::ptr m_selection_holder;
 };
