@@ -56,5 +56,5 @@ private:
 	panel_base* m_host;
 	std::unordered_map<DWORD, pfc::string8_fast> m_context_to_path_map;
 	std::unordered_map<callback_id, DISPID> m_callback_map;
-	volatile DWORD m_ref_count = 1;
+	volatile LONG m_ref_count = 1;
 };

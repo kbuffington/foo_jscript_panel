@@ -118,9 +118,9 @@ HRESULT script_host::InitScriptEngine()
 HRESULT script_host::ProcessScripts(IActiveScriptParsePtr& parser)
 {
 	HRESULT hr = S_OK;
-	bool import_error = false;
 	pfc::string8_fast path, code;
 	const size_t count = m_host->m_script_info.imports.size();
+	size_t import_errors = 0;
 
 	for (size_t i = 0; i <= count; ++i)
 	{
@@ -130,10 +130,10 @@ HRESULT script_host::ProcessScripts(IActiveScriptParsePtr& parser)
 			code = helpers::read_file(path);
 			if (code.is_empty())
 			{
-				if (!import_error)
+				if (import_errors == 0)
 				{
-					import_error = true;
 					FB2K_console_formatter() << m_host->m_script_info.build_info_string();
+					import_errors++;
 				}
 				FB2K_console_formatter() << "Error: Failed to load " << path;
 			}
