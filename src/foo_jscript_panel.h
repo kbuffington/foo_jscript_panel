@@ -10,7 +10,8 @@ namespace jsp
 	static constexpr size_t uwm_timer = WM_USER + 2;
 	static constexpr size_t uwm_unload = WM_USER + 3;
 	static constexpr size_t version = 2350;
-	static const wchar_t* class_name = L"jsp_class";
+	static const wchar_t* class_name_dui = L"jsp_class_dui";
+	static const wchar_t* class_name_cui = L"jsp_class_cui";
 }
 
 #define TO_VARIANT_BOOL(v) (v ? VARIANT_TRUE : VARIANT_FALSE)

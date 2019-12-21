@@ -6,7 +6,7 @@ namespace
 	class panel_window_dui : public panel_window, public ui_element_instance, public CWindowImpl<panel_window_dui>
 	{
 	public:
-		DECLARE_WND_CLASS_EX(jsp::class_name, CS_VREDRAW | CS_HREDRAW | CS_DBLCLKS, -1);
+		DECLARE_WND_CLASS_EX(jsp::class_name_dui, CS_VREDRAW | CS_HREDRAW | CS_DBLCLKS, -1);
 
 		panel_window_dui(ui_element_config::ptr cfg, ui_element_instance_callback::ptr callback) : m_callback(callback)
 		{

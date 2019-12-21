@@ -132,7 +132,7 @@ namespace
 
 		class_data& get_class_data() const override
 		{
-			__implement_get_class_data_ex(jsp::class_name, L"", false, 0, WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN, 0, CS_DBLCLKS);
+			__implement_get_class_data_ex(jsp::class_name_cui, L"", false, 0, WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN, 0, CS_DBLCLKS);
 		}
 
 		const GUID& get_extension_guid() const override
