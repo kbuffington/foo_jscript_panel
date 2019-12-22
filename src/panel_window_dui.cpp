@@ -121,7 +121,7 @@ namespace
 		ui_element_config::ptr get_configuration() override
 		{
 			ui_element_config_builder builder;
-			save_config(&builder.m_stream, fb2k::noAbort);
+			m_panel_config.get(&builder.m_stream, fb2k::noAbort);
 			return builder.finish(g_get_guid());
 		}
 
@@ -161,7 +161,7 @@ namespace
 		{
 			ui_element_config_parser parser(data);
 
-			load_config(&parser.m_stream, parser.get_remaining(), fb2k::noAbort);
+			m_panel_config.set(&parser.m_stream, parser.get_remaining(), fb2k::noAbort);
 
 			// FIX: If window already created, DUI won't destroy it and create it again.
 			if (m_hwnd)

@@ -248,9 +248,6 @@
     <ClCompile Include="mainmenu.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="panel_base.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="panel_manager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

@@ -81,7 +81,7 @@ void CDialogProperty::Apply()
 		}
 	}
 
-	m_parent->m_panel_properties.m_map = m_dup_prop_map;
+	m_parent->m_panel_config.properties.m_map = m_dup_prop_map;
 	m_parent->update_script();
 	LoadProperties();
 }
@@ -92,7 +92,7 @@ void CDialogProperty::LoadProperties(bool reload)
 
 	if (reload)
 	{
-		m_dup_prop_map = m_parent->m_panel_properties.m_map;
+		m_dup_prop_map = m_parent->m_panel_config.properties.m_map;
 	}
 
 	for (const auto& [key, value] : m_dup_prop_map)

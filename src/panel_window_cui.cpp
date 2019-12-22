@@ -158,7 +158,7 @@ namespace
 
 		void get_config(stream_writer* writer, abort_callback& abort) const override
 		{
-			save_config(writer, abort);
+			m_panel_config.get(writer, abort);
 		}
 
 		void get_name(pfc::string_base& out) const override
@@ -180,7 +180,7 @@ namespace
 
 		void set_config(stream_reader* reader, size_t size, abort_callback& abort) override
 		{
-			load_config(reader, size, abort);
+			m_panel_config.set(reader, size, abort);
 		}
 
 		void notify_size_limit_changed() override
