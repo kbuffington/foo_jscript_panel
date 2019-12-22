@@ -1,7 +1,5 @@
 #pragma once
-#include "drop_impl.h"
-
-class panel_window;
+#include "panel_window.h"
 
 class host_drop_target : public IDropTargetImpl
 {

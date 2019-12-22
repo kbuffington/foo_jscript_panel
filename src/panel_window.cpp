@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "host_drop_target.h"
 #include "host_timer_dispatcher.h"
 #include "panel_manager.h"
 #include "panel_window.h"

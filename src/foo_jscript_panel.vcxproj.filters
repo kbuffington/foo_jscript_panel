@@ -58,7 +58,10 @@
     <ClInclude Include="callback_id.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="drop_impl.h">
+    <ClInclude Include="drop_source_impl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="drop_target_impl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="foo_jscript_panel.h">

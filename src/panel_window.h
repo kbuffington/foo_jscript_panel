@@ -1,6 +1,6 @@
 #pragma once
+#include "drop_target_impl.h"
 #include "helpers.h"
-#include "host_drop_target.h"
 #include "panel_config.h"
 #include "script_info.h"
 #include "script_host.h"

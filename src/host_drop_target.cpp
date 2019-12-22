@@ -1,7 +1,5 @@
 #include "stdafx.h"
-#include "panel_base.h"
 #include "host_drop_target.h"
-#include "panel_window.h"
 
 host_drop_target::host_drop_target(panel_window* host) : IDropTargetImpl(host->m_hwnd), m_host(host), m_action(new com_object_impl_t<DropSourceAction, true>()) {}
 
