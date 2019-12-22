@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "panel_properties.h"
 
-bool panel_properties::get_config_item(const char* p_key, VARIANT& p_out)
+bool panel_properties::get_property(const char* p_key, VARIANT& p_out)
 {
 	if (m_map.count(p_key))
 	{
@@ -123,7 +123,7 @@ void panel_properties::save(stream_writer* writer, abort_callback& abort) const 
 	g_save(m_map, writer, abort);
 }
 
-void panel_properties::set_config_item(const char* p_key, const VARIANT& p_val)
+void panel_properties::set_property(const char* p_key, const VARIANT& p_val)
 {
 	if (g_get_sizeof(p_val.vt) != 0)
 	{

@@ -10,10 +10,10 @@ public:
 	static void g_load(property_map& data, stream_reader* reader, abort_callback& abort) throw();
 	static void g_save(const property_map& data, stream_writer* writer, abort_callback& abort) throw();
 
-	bool get_config_item(const char* p_key, VARIANT& p_out);
+	bool get_property(const char* p_key, VARIANT& p_out);
 	void load(stream_reader* reader, abort_callback& abort) throw();
 	void save(stream_writer* writer, abort_callback& abort) const throw();
-	void set_config_item(const char* p_key, const VARIANT& p_val);
+	void set_property(const char* p_key, const VARIANT& p_val);
 
 	property_map m_map;
 };

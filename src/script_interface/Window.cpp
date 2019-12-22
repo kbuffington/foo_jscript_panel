@@ -107,13 +107,13 @@ STDMETHODIMP Window::GetProperty(BSTR name, VARIANT defaultval, VARIANT* p)
 	_variant_t var;
 	auto uname = string_utf8_from_wide(name);
 
-	if (m_host->m_panel_config.properties.get_config_item(uname, var))
+	if (m_host->m_panel_config.properties.get_property(uname, var))
 	{
 		hr = VariantCopy(p, &var);
 	}
 	else
 	{
-		m_host->m_panel_config.properties.set_config_item(uname, defaultval);
+		m_host->m_panel_config.properties.set_property(uname, defaultval);
 		hr = VariantCopy(p, &defaultval);
 	}
 
@@ -173,7 +173,7 @@ STDMETHODIMP Window::SetInterval(IDispatch* func, int delay, UINT* p)
 
 STDMETHODIMP Window::SetProperty(BSTR name, VARIANT val)
 {
-	m_host->m_panel_config.properties.set_config_item(string_utf8_from_wide(name), val);
+	m_host->m_panel_config.properties.set_property(string_utf8_from_wide(name), val);
 	return S_OK;
 }
 
