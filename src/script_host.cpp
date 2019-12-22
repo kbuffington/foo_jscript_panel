@@ -217,7 +217,7 @@ STDMETHODIMP script_host::GetLCID(LCID* plcid)
 
 STDMETHODIMP script_host::GetWindow(HWND* phwnd)
 {
-	*phwnd = m_host->get_hwnd();
+	*phwnd = m_host->m_hwnd;
 	return S_OK;
 }
 
@@ -402,7 +402,7 @@ void script_host::InvokeCallback(callback_id id, VARIANTARG* argv, size_t argc, 
 void script_host::ProcessScriptInfo(script_info& info)
 {
 	info.clear();
-	info.id = reinterpret_cast<UINT_PTR>(m_host->get_hwnd().m_hWnd);
+	info.id = reinterpret_cast<UINT_PTR>(m_host->m_hwnd.m_hWnd);
 
 	std::string source(m_host->m_panel_config.code);
 	const size_t start = source.find("// ==PREPROCESSOR==");

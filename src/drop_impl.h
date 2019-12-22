@@ -3,9 +3,6 @@
 class IDropSourceImpl : public ImplementCOMRefCounter<IDropSource>
 {
 public:
-	IDropSourceImpl() {}
-	virtual ~IDropSourceImpl() {}
-
 	COM_QI_ONE(IDropSource)
 
 	STDMETHODIMP GiveFeedback(DWORD dwEffect) override

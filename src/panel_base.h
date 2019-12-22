@@ -36,11 +36,6 @@ public:
 		int width = 0;
 	};
 
-	CWindow get_hwnd()
-	{
-		return m_hwnd;
-	}
-
 	bool is_dui()
 	{
 		return m_instance_type == instance_type::dui;
@@ -56,6 +51,7 @@ public:
 		return m_panel_tooltip_param_ptr;
 	}
 
+	CWindow m_hwnd = nullptr;
 	bool m_dragdrop = false;
 	bool m_grabfocus = false;
 	bool m_supports_transparency = false;
@@ -72,7 +68,6 @@ protected:
 
 	virtual ~panel_base() {}
 
-	CWindow m_hwnd = nullptr;
 	instance_type m_instance_type = instance_type::cui;
 	panel_tooltip_param_ptr m_panel_tooltip_param_ptr;
 };

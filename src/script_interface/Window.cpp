@@ -1,8 +1,8 @@
 #include "stdafx.h"
+#include "Window.h"
 #include "host_timer_dispatcher.h"
 #include "panel_base.h"
 #include "panel_manager.h"
-#include "window.h"
 
 Window::Window(panel_base* p) : m_host(p) {}
 Window::~Window() {}
@@ -23,7 +23,7 @@ STDMETHODIMP Window::CreatePopupMenu(IMenuObj** pp)
 {
 	if (!pp) return E_POINTER;
 
-	*pp = new com_object_impl_t<MenuObj>(m_host->get_hwnd());
+	*pp = new com_object_impl_t<MenuObj>(m_host->m_hwnd);
 	return S_OK;
 }
 
@@ -35,7 +35,7 @@ STDMETHODIMP Window::CreateThemeManager(BSTR classid, IThemeManager** pp)
 
 	try
 	{
-		ptheme = new com_object_impl_t<ThemeManager>(m_host->get_hwnd(), classid);
+		ptheme = new com_object_impl_t<ThemeManager>(m_host->m_hwnd, classid);
 	}
 	catch (...)
 	{
@@ -59,7 +59,7 @@ STDMETHODIMP Window::CreateTooltip(BSTR name, float pxSize, int style, ITooltip*
 	tooltip_param->font_name = name;
 	tooltip_param->font_size = pxSize;
 	tooltip_param->font_style = style;
-	*pp = new com_object_impl_t<Tooltip>(m_host->get_hwnd(), tooltip_param);
+	*pp = new com_object_impl_t<Tooltip>(m_host->m_hwnd, tooltip_param);
 	return S_OK;
 }
 
@@ -135,7 +135,7 @@ STDMETHODIMP Window::NotifyOthers(BSTR name, VARIANT info)
 
 	auto data = new callback_data<_bstr_t, _variant_t>(name, 0);
 	data->m_item2.Attach(d);
-	panel_manager::instance().notify_others(m_host->get_hwnd(), data);
+	panel_manager::instance().notify_others(m_host->m_hwnd, data);
 	return S_OK;
 }
 
@@ -167,7 +167,7 @@ STDMETHODIMP Window::SetInterval(IDispatch* func, int delay, UINT* p)
 {
 	if (!p) return E_POINTER;
 
-	*p = host_timer_dispatcher::instance().set_interval(m_host->get_hwnd(), delay, func);
+	*p = host_timer_dispatcher::instance().set_interval(m_host->m_hwnd, delay, func);
 	return S_OK;
 }
 
@@ -181,7 +181,7 @@ STDMETHODIMP Window::SetTimeout(IDispatch* func, int delay, UINT* p)
 {
 	if (!p) return E_POINTER;
 
-	*p = host_timer_dispatcher::instance().set_timeout(m_host->get_hwnd(), delay, func);
+	*p = host_timer_dispatcher::instance().set_timeout(m_host->m_hwnd, delay, func);
 	return S_OK;
 }
 
@@ -189,7 +189,7 @@ STDMETHODIMP Window::ShowConfigure()
 {
 	fb2k::inMainThread([&]()
 		{
-			m_host->show_configure_popup(m_host->get_hwnd());
+			m_host->show_configure_popup(m_host->m_hwnd);
 		});
 	return S_OK;
 }
@@ -198,7 +198,7 @@ STDMETHODIMP Window::ShowProperties()
 {
 	fb2k::inMainThread([&]()
 		{
-			m_host->show_property_popup(m_host->get_hwnd());
+			m_host->show_property_popup(m_host->m_hwnd);
 		});
 	return S_OK;
 }
@@ -239,7 +239,7 @@ STDMETHODIMP Window::get_IsVisible(VARIANT_BOOL* p)
 {
 	if (!p) return E_POINTER;
 
-	*p = TO_VARIANT_BOOL(IsWindowVisible(m_host->get_hwnd()));
+	*p = TO_VARIANT_BOOL(IsWindowVisible(m_host->m_hwnd));
 	return S_OK;
 }
 

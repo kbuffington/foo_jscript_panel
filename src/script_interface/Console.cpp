@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "console.h"
+#include "Console.h"
 
 Console::Console() {}
 Console::~Console() {}

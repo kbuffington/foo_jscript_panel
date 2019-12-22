@@ -1,7 +1,7 @@
 #include "stdafx.h"
+#include "Utils.h"
 #include "helpers.h"
 #include "ui_input_box.h"
-#include "utils.h"
 
 Utils::Utils() : m_colours(16, 0) {}
 Utils::~Utils() {}

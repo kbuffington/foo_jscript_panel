@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "gdi.h"
+#include "Gdi.h"
 #include "helpers.h"
 
 Gdi::Gdi() {}
