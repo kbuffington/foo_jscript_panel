@@ -35,66 +35,24 @@ public:
 		if (pDataObj == nullptr) return E_FAIL;
 		if (pdwEffect == nullptr) return E_POINTER;
 
-		HRESULT hr = S_OK;
-		try
-		{
-			if (m_drop_target_helper)
-			{
-				CPoint point(pt.x, pt.y);
-				m_drop_target_helper->DragEnter(m_hwnd, pDataObj, &point, *pdwEffect);
-			}
-
-			hr = OnDragEnter(pDataObj, grfKeyState, pt, pdwEffect);
-		}
-		catch (...)
-		{
-			return E_FAIL;
-		}
-		return hr;
+		CPoint point(pt.x, pt.y);
+		m_drop_target_helper->DragEnter(m_hwnd, pDataObj, &point, *pdwEffect);
+		return OnDragEnter(pDataObj, grfKeyState, pt, pdwEffect);
 	}
 
 	STDMETHODIMP DragLeave() override
 	{
-		HRESULT hr = S_OK;
-
-		try
-		{
-			if (m_drop_target_helper)
-			{
-				m_drop_target_helper->DragLeave();
-			}
-
-			hr = OnDragLeave();
-		}
-		catch (...)
-		{
-			return E_FAIL;
-		}
-		return hr;
+		m_drop_target_helper->DragLeave();
+		return OnDragLeave();
 	}
-
 
 	STDMETHODIMP DragOver(DWORD grfKeyState, POINTL pt, DWORD* pdwEffect) override
 	{
 		if (pdwEffect == nullptr) return E_POINTER;
 
-		HRESULT hr = S_OK;
-
-		try
-		{
-			if (m_drop_target_helper)
-			{
-				CPoint point(pt.x, pt.y);
-				m_drop_target_helper->DragOver(&point, *pdwEffect);
-			}
-
-			hr = OnDragOver(grfKeyState, pt, pdwEffect);
-		}
-		catch (...)
-		{
-			return E_FAIL;
-		}
-		return hr;
+		CPoint point(pt.x, pt.y);
+		m_drop_target_helper->DragOver(&point, *pdwEffect);
+		return OnDragOver(grfKeyState, pt, pdwEffect);
 	}
 
 	STDMETHODIMP Drop(IDataObject* pDataObj, DWORD grfKeyState, POINTL pt, DWORD* pdwEffect) override
@@ -102,23 +60,9 @@ public:
 		if (pDataObj == nullptr) return E_FAIL;
 		if (pdwEffect == nullptr) return E_POINTER;
 
-		HRESULT hr = S_OK;
-
-		try
-		{
-			if (m_drop_target_helper)
-			{
-				CPoint point(pt.x, pt.y);
-				m_drop_target_helper->Drop(pDataObj, &point, *pdwEffect);
-			}
-
-			hr = OnDrop(pDataObj, grfKeyState, pt, pdwEffect);
-		}
-		catch (...)
-		{
-			return E_FAIL;
-		}
-		return hr;
+		CPoint point(pt.x, pt.y);
+		m_drop_target_helper->Drop(pDataObj, &point, *pdwEffect);
+		return OnDrop(pDataObj, grfKeyState, pt, pdwEffect);
 	}
 
 protected:

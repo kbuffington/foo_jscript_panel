@@ -618,7 +618,7 @@ void panel_window::on_paint()
 		{
 			memdc.FillRect(&rc, reinterpret_cast<HBRUSH>(COLOR_WINDOWFRAME));
 		}
-		
+
 		if (m_script_host->Ready())
 		{
 			Gdiplus::Graphics gr(memdc);
