@@ -5,7 +5,11 @@
 #include "ui_conf.h"
 #include "ui_property.h"
 
-panel_window::panel_window(): m_script_host(new script_host(this)) {}
+panel_window::panel_window() : m_script_host(new script_host(this)), m_panel_tooltip_param_ptr(new panel_tooltip_param)
+{
+	m_panel_config.reset();
+	m_size.reset_min_max();
+}
 
 panel_window::~panel_window()
 {
@@ -435,6 +439,21 @@ bool panel_window::handle_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 		return true;
 	}
 	return false;
+}
+
+bool panel_window::is_dui()
+{
+	return m_instance_type == instance_type::dui;
+}
+
+bool panel_window::is_transparent()
+{
+	return m_supports_transparency && m_panel_config.transparent;
+}
+
+panel_tooltip_param_ptr& panel_window::panel_tooltip()
+{
+	return m_panel_tooltip_param_ptr;
 }
 
 void panel_window::build_context_menu(HMENU menu, int id_base)

@@ -1,10 +1,10 @@
 #include "stdafx.h"
 #include "Window.h"
 #include "host_timer_dispatcher.h"
-#include "panel_base.h"
 #include "panel_manager.h"
+#include "panel_window.h"
 
-Window::Window(panel_base* p) : m_host(p) {}
+Window::Window(panel_window* p) : m_host(p) {}
 Window::~Window() {}
 
 STDMETHODIMP Window::ClearInterval(UINT intervalID)
