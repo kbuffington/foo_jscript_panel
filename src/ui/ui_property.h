@@ -23,7 +23,7 @@ public:
 	void Apply();
 	void LoadProperties(bool reload = true);
 	void OnClearBnClicked(UINT, int, CWindow);
-	void OnCloseCmd(UINT, int, CWindow);
+	void OnCloseCmd(UINT, int nid, CWindow);
 	void OnExportBnClicked(UINT, int, CWindow);
 	void OnImportBnClicked(UINT, int, CWindow);
 

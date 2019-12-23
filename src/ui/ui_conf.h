@@ -26,16 +26,16 @@ public:
 	enum { IDD = IDD_DIALOG_CONF };
 
 	BOOL OnInitDialog(CWindow, LPARAM);
-	LRESULT OnNotify(int, LPNMHDR);
+	LRESULT OnNotify(int, LPNMHDR pnmh);
 	void Apply();
 	void BuildMenu();
-	void OnCloseCmd(UINT, int, CWindow);
-	void OnDocs(UINT, int, CWindow);
+	void OnCloseCmd(UINT, int nID, CWindow);
+	void OnDocs(UINT, int nID, CWindow);
 	void OnFileImport(UINT, int, CWindow);
 	void OnFileExport(UINT, int, CWindow);
-	void OnLinks(UINT, int, CWindow);
+	void OnLinks(UINT, int nID, CWindow);
 	void OnReset(UINT, int, CWindow);
-	void OnSamples(UINT, int, CWindow);
+	void OnSamples(UINT, int nID, CWindow);
 
 private:
 	CCheckBox m_transparent_check;

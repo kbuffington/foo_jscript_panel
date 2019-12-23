@@ -626,12 +626,10 @@ void panel_window::on_paint()
 			gr.SetClip(rect);
 			m_gr_wrap->put__ptr(&gr);
 
-			{
-				VARIANTARG args[1];
-				args[0].vt = VT_DISPATCH;
-				args[0].pdispVal = m_gr_wrap;
-				script_invoke(callback_id::on_paint, args, _countof(args));
-			}
+			VARIANTARG args[1];
+			args[0].vt = VT_DISPATCH;
+			args[0].pdispVal = m_gr_wrap;
+			script_invoke(callback_id::on_paint, args, _countof(args));
 
 			m_gr_wrap->put__ptr(nullptr);
 		}

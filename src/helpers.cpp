@@ -73,9 +73,9 @@ namespace helpers
 		return RGB(argb >> RED_SHIFT, argb >> GREEN_SHIFT, argb >> BLUE_SHIFT);
 	}
 
-	DWORD convert_colorref_to_argb(COLORREF color)
+	DWORD convert_colorref_to_argb(COLORREF colour)
 	{
-		return GetRValue(color) << RED_SHIFT | GetGValue(color) << GREEN_SHIFT | GetBValue(color) << BLUE_SHIFT | 0xff000000;
+		return GetRValue(colour) << RED_SHIFT | GetGValue(colour) << GREEN_SHIFT | GetBValue(colour) << BLUE_SHIFT | 0xff000000;
 	}
 
 	GUID convert_artid_to_guid(size_t art_id)

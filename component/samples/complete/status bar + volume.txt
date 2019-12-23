@@ -47,6 +47,10 @@ function on_paint(gr) {
 	gr.GdiDrawText(fb.Volume.toFixed(2) + ' dB', font, properties.text.value, 0, -1, ww - 5, font.Height, RIGHT);
 }
 
+function on_playback_new_track() {
+	window.Repaint();
+}
+
 function on_playback_time() {
 	window.Repaint();
 }

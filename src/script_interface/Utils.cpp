@@ -66,9 +66,9 @@ STDMETHODIMP Utils::ColourPicker(UINT window_id, int default_colour, int* p)
 {
 	if (!p) return E_POINTER;
 
-	COLORREF COLOR = helpers::convert_argb_to_colorref(default_colour);
-	uChooseColor(&COLOR, reinterpret_cast<HWND>(window_id), &m_colours[0]);
-	*p = helpers::convert_colorref_to_argb(COLOR);
+	COLORREF colour = helpers::convert_argb_to_colorref(default_colour);
+	uChooseColor(&colour, reinterpret_cast<HWND>(window_id), &m_colours[0]);
+	*p = helpers::convert_colorref_to_argb(colour);
 	return S_OK;
 }
 

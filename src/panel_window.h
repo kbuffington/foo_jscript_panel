@@ -41,7 +41,7 @@ public:
 	bool m_dragdrop = false;
 	bool m_grabfocus = false;
 	bool m_supports_transparency = false;
-	panel_config m_panel_config;
+	panel_config m_panel_config{};
 	script_info m_script_info{};
 	size m_size{};
 

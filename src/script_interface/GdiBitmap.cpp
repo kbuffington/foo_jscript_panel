@@ -128,7 +128,7 @@ STDMETHODIMP GdiBitmap::GetColourSchemeJSON(UINT count, BSTR* p)
 		BYTE g = (colours[i] >> 8) & UCHAR_MAX;
 		BYTE b = (colours[i] & UCHAR_MAX);
 
-		// We're reducing total colors from 2^24 to 2^15 by rounding each color component value to multiples of 8.
+		// We're reducing total colors from 2^24 to 2^15 by rounding each colour component value to multiples of 8.
 		// First we need to check if the byte will overflow, and if so pin to 0xff, otherwise add 4 and round down.
 		r = (r > 251) ? UCHAR_MAX : (r + 4) & 0xf8;
 		g = (g > 251) ? UCHAR_MAX : (g + 4) & 0xf8;

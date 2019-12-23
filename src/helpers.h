@@ -30,7 +30,7 @@ namespace helpers
 
 	BSTR read_file_wide(const wchar_t* path, size_t codepage);
 	COLORREF convert_argb_to_colorref(DWORD argb);
-	DWORD convert_colorref_to_argb(COLORREF color);
+	DWORD convert_colorref_to_argb(COLORREF colour);
 	GUID convert_artid_to_guid(size_t art_id);
 	IGdiBitmap* get_album_art(const metadb_handle_ptr& handle, size_t art_id, bool need_stub, bool no_load, pfc::string_base& image_path);
 	IGdiBitmap* get_album_art_embedded(const pfc::string8_fast& path, size_t art_id);

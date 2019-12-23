@@ -14,7 +14,7 @@ public:
 	enum { IDD = IDD_DIALOG_GOTO };
 
 	BOOL OnInitDialog(CWindow, LPARAM);
-	void OnCloseCmd(UINT, int, CWindow);
+	void OnCloseCmd(UINT, int nID, CWindow);
 
 private:
 	CEdit m_edit;

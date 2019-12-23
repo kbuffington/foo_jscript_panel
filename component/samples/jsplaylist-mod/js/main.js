@@ -2799,6 +2799,7 @@ function on_drag_leave() {
 	p.list.buttonclicked = false;
 	cScrollBar.timerID1 && window.ClearInterval(cScrollBar.timerID1);
 	cScrollBar.timerID1 = false;
+	window.Repaint();
 };
 
 function on_drag_over(action, x, y, mask) {

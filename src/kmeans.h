@@ -5,9 +5,11 @@ static constexpr int kMaxIterations = 12;
 
 struct KPoint
 {
-	KPoint(int p_point_id, const std::vector<unsigned int>& p_values, int p_pixel_count) : m_point_id(p_point_id), m_values(p_values), m_pixel_count(p_pixel_count), m_cluster_id(-1) {}
+	KPoint(int p_point_id, const std::vector<unsigned int>& p_values, int p_pixel_count) : m_point_id(p_point_id), m_values(p_values), m_pixel_count(p_pixel_count) {}
 
-	int m_cluster_id, m_point_id, m_pixel_count;
+	int m_cluster_id = -1; 
+	int m_pixel_count = 0;
+	int m_point_id = 0;
 	std::vector<unsigned int> m_values;
 };
 

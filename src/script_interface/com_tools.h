@@ -29,8 +29,6 @@ struct IGdiObj;
 
 struct type_info_cache
 {
-	type_info_cache() : m_type_info(nullptr) {}
-
 	bool query(ULONG key, DISPID& value)
 	{
 		if (m_cache.count(key))
@@ -41,7 +39,7 @@ struct type_info_cache
 		return false;
 	}
 
-	ITypeInfoPtr m_type_info;
+	ITypeInfoPtr m_type_info = nullptr;
 	std::unordered_map<ULONG, DISPID> m_cache;
 };
 
@@ -123,7 +121,7 @@ class IDisposableImpl4 : public MyIDispatchImpl<T>
 {
 protected:
 	IDisposableImpl4<T>() {}
-	~IDisposableImpl4() {}
+	~IDisposableImpl4<T>() {}
 
 public:
 	COM_QI_THREE(IDispatch, IDisposable, T)

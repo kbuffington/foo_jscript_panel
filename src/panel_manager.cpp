@@ -41,8 +41,7 @@ void panel_manager::add_window(CWindow hwnd)
 void panel_manager::notify_others(CWindow hwnd_except, pfc::refcounted_object_root* param)
 {
 	const size_t count = m_hwnds.size();
-
-	if (count < 2 || !param) return;
+	if (count < 2) return;
 
 	for (size_t i = 0; i < count - 1; ++i)
 	{
@@ -69,8 +68,7 @@ void panel_manager::post_msg_to_all(callback_id id, WPARAM wp, LPARAM lp)
 void panel_manager::post_msg_to_all_pointer(callback_id id, pfc::refcounted_object_root* param)
 {
 	const size_t count = m_hwnds.size();
-
-	if (count == 0 || !param) return;
+	if (count == 0) return;
 
 	for (size_t i = 0; i < count; ++i)
 	{

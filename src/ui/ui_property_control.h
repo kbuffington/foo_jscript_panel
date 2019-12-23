@@ -170,7 +170,9 @@ public:
 	struct data_t
 	{
 		pfc::string8 key, value;
-		bool is_string, is_bool, bool_value;
+		bool bool_value = false;
+		bool is_bool = false;
+		bool is_string = false;
 	};
 
 	CButton m_parent_clear_btn, m_parent_export_btn;

@@ -1481,6 +1481,13 @@ interface IWindow {
 		Returns null on failure.
 		*/
 
+		window.GetProperty(name[, defaultval]); (VARIANT)
+		/*
+		name: string
+		defaultval: string, number, boolean
+		Get value of name from properties. If no value is present, defaultval will be stored and returned
+		*/
+
 		window.NotifyOthers(name, info); (void)
 		/*
 		name: string
@@ -1508,19 +1515,12 @@ interface IWindow {
 		This would usually be used inside the on_mouse_move callback. Use -1 if you want to hide the cursor.
 		*/
 
-		window.GetProperty(name[, defaultval]); (VARIANT)
-		/*
-		name: string
-		defaultval: string, number, boolean
-		Get value of name from properties. If no value is present, defaultval will be stored and returned
-		*/
-
 		window.SetProperty(name, val); (void)
 		/*
 		name: string
 		val: string, number, boolean
-		Set property value, if val is invalid/null, it is removed. Property values will be saved per panel instance and are
-		remembered between foobar2000 restarts.
+		Set property value. To remove an existing property, you can supply "null" as the "val".
+		Property values will be saved per panel instance and are remembered between foobar2000 restarts.
 		*/
 
 		window.ShowConfigure(); (void)
