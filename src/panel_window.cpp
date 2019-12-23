@@ -45,7 +45,7 @@ bool panel_window::handle_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 		return true;
 	case WM_PAINT:
 		{
-			if (is_transparent() && !m_paint_pending)
+			if (is_transparent() && m_refreshbk)
 			{
 				refresh_background();
 			}
@@ -635,7 +635,7 @@ void panel_window::on_paint()
 		}
 	}
 	paintdc.BitBlt(0, 0, m_size.width, m_size.height, memdc, 0, 0, SRCCOPY);
-	m_paint_pending = false;
+	m_refreshbk = true;
 }
 
 void panel_window::on_size()
@@ -649,7 +649,7 @@ void panel_window::on_size()
 
 void panel_window::redraw()
 {
-	m_paint_pending = false;
+	m_refreshbk = true;
 	m_hwnd.RedrawWindow(nullptr, nullptr, RDW_INVALIDATE | RDW_UPDATENOW);
 }
 
@@ -681,19 +681,19 @@ void panel_window::refresh_background()
 
 	m_hwnd.SetWindowRgn(nullptr);
 	if (m_panel_config.style != panel_config::edge_style::none) m_hwnd.SendMessage(WM_NCPAINT, 1, 0);
-	m_paint_pending = true;
+	m_refreshbk = false;
 	m_hwnd.RedrawWindow(nullptr, nullptr, RDW_INVALIDATE | RDW_UPDATENOW);
 }
 
 void panel_window::repaint()
 {
-	m_paint_pending = true;
+	m_refreshbk = false;
 	m_hwnd.InvalidateRect(nullptr, FALSE);
 }
 
 void panel_window::repaint_rect(int x, int y, int w, int h)
 {
-	m_paint_pending = true;
+	m_refreshbk = false;
 	CRect rc(x, y, x + w, y + h);
 	m_hwnd.InvalidateRect(&rc, FALSE);
 }

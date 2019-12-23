@@ -77,7 +77,7 @@ private:
 	HBITMAP m_gr_bmp_bk = nullptr;
 	IGdiGraphicsPtr m_gr_wrap;
 	bool m_is_mouse_tracked = false;
-	bool m_paint_pending = false;
+	bool m_refreshbk = true;
 	panel_tooltip_param_ptr m_panel_tooltip_param_ptr;
 	script_host* m_script_host;
 	ui_selection_holder::ptr m_selection_holder;
