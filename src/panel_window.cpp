@@ -258,7 +258,7 @@ bool panel_window::handle_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 		}
 		return false;
 	case jsp::uwm_refreshbk:
-		redraw();
+		redraw(true);
 		return true;
 	case jsp::uwm_timer:
 		host_timer_dispatcher::instance().invoke_message(wp);
@@ -647,9 +647,9 @@ void panel_window::on_size()
 	else repaint();
 }
 
-void panel_window::redraw()
+void panel_window::redraw(bool refreshbk)
 {
-	m_refreshbk = true;
+	m_refreshbk = refreshbk;
 	m_hwnd.RedrawWindow(nullptr, nullptr, RDW_INVALIDATE | RDW_UPDATENOW);
 }
 
@@ -681,8 +681,7 @@ void panel_window::refresh_background()
 
 	m_hwnd.SetWindowRgn(nullptr);
 	if (m_panel_config.style != panel_config::edge_style::none) m_hwnd.SendMessage(WM_NCPAINT, 1, 0);
-	m_refreshbk = false;
-	m_hwnd.RedrawWindow(nullptr, nullptr, RDW_INVALIDATE | RDW_UPDATENOW);
+	redraw(false);
 }
 
 void panel_window::repaint()

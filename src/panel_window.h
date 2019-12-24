@@ -69,7 +69,7 @@ private:
 	void on_paint();
 	void on_size();
 	void refresh_background();
-	void redraw();
+	void redraw(bool refreshbk);
 
 	CComPtr<IDropTargetImpl> m_drop_target;
 	HBITMAP m_gr_bmp = nullptr;
