@@ -178,7 +178,7 @@ void CDialogProperty::OnExportBnClicked(UINT, int, CWindow)
 		{
 			file_ptr io;
 			filesystem::g_open_write_new(io, path, fb2k::noAbort);
-			panel_properties::g_save(m_dup_prop_map, io.get_ptr(), fb2k::noAbort);
+			panel_properties::g_get(m_dup_prop_map, io.get_ptr(), fb2k::noAbort);
 		}
 		catch (...) {}
 	}
@@ -194,7 +194,7 @@ void CDialogProperty::OnImportBnClicked(UINT, int, CWindow)
 		{
 			file_ptr io;
 			filesystem::g_open_read(io, path, fb2k::noAbort);
-			panel_properties::g_load(m_dup_prop_map, io.get_ptr(), fb2k::noAbort);
+			panel_properties::g_set(m_dup_prop_map, io.get_ptr(), fb2k::noAbort);
 			LoadProperties(false);
 		}
 		catch (...) {}

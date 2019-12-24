@@ -6,7 +6,7 @@ bool panel_properties::get_property(const char* p_key, VARIANT& p_out)
 	if (m_map.count(p_key))
 	{
 		_variant_t val = m_map.at(p_key);
-		if (g_get_sizeof(val.vt) != 0 && SUCCEEDED(VariantCopy(&p_out, &val)))
+		if (g_sizeof(val.vt) != 0 && SUCCEEDED(VariantCopy(&p_out, &val)))
 		{
 			return true;
 		}
@@ -19,7 +19,7 @@ bool panel_properties::get_property(const char* p_key, VARIANT& p_out)
 	return false;
 }
 
-int panel_properties::g_get_sizeof(VARTYPE p_vt)
+int panel_properties::g_sizeof(VARTYPE p_vt)
 {
 	switch (p_vt)
 	{
@@ -50,7 +50,7 @@ int panel_properties::g_get_sizeof(VARTYPE p_vt)
 	}
 }
 
-void panel_properties::g_load(property_map& data, stream_reader* reader, abort_callback& abort) throw()
+void panel_properties::g_set(property_map& data, stream_reader* reader, abort_callback& abort) throw()
 {
 	size_t count;
 	data.clear();
@@ -66,7 +66,7 @@ void panel_properties::g_load(property_map& data, stream_reader* reader, abort_c
 			reader->read_string(key, abort);
 			reader->read_lendian_t(vt, abort);
 
-			const int cbRead = g_get_sizeof(vt);
+			const int cbRead = g_sizeof(vt);
 
 			_variant_t val;
 			val.vt = vt;
@@ -88,7 +88,7 @@ void panel_properties::g_load(property_map& data, stream_reader* reader, abort_c
 	catch (...) {}
 }
 
-void panel_properties::g_save(const property_map& data, stream_writer* writer, abort_callback& abort) throw()
+void panel_properties::g_get(const property_map& data, stream_writer* writer, abort_callback& abort) throw()
 {
 	try
 	{
@@ -98,7 +98,7 @@ void panel_properties::g_save(const property_map& data, stream_writer* writer, a
 		{
 			writer->write_string(key, abort);
 			writer->write_lendian_t(value.vt, abort);
-			const int cbWrite = g_get_sizeof(value.vt);
+			const int cbWrite = g_sizeof(value.vt);
 
 			if (cbWrite > 0)
 			{
@@ -113,19 +113,19 @@ void panel_properties::g_save(const property_map& data, stream_writer* writer, a
 	catch (...) {}
 }
 
-void panel_properties::load(stream_reader* reader, abort_callback& abort) throw()
+void panel_properties::set(stream_reader* reader, abort_callback& abort) throw()
 {
-	g_load(m_map, reader, abort);
+	g_set(m_map, reader, abort);
 }
 
-void panel_properties::save(stream_writer* writer, abort_callback& abort) const throw()
+void panel_properties::get(stream_writer* writer, abort_callback& abort) const throw()
 {
-	g_save(m_map, writer, abort);
+	g_get(m_map, writer, abort);
 }
 
 void panel_properties::set_property(const char* p_key, const VARIANT& p_val)
 {
-	if (g_get_sizeof(p_val.vt) != 0)
+	if (g_sizeof(p_val.vt) != 0)
 	{
 		m_map[p_key] = p_val;
 	}

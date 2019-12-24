@@ -33,7 +33,7 @@ struct panel_config
 				reader->skip_object(sizeof(bool), abort); // HACK: skip over "delay load"
 				reader->skip_object(sizeof(GUID), abort); // HACK: skip over "GUID"
 				reader->read_object(&style, sizeof(char), abort);
-				properties.load(reader, abort);
+				properties.set(reader, abort);
 				reader->skip_object(sizeof(bool), abort); // HACK: skip over "disable before"
 				reader->skip_object(sizeof(bool), abort); // HACK: skip over "grab focus"
 				reader->skip_object(sizeof(WINDOWPLACEMENT), abort); // HACK: skip over window placement
@@ -66,7 +66,7 @@ struct panel_config
 			writer->write_object_t(false, abort); // HACK: write this in place of "delay load"
 			writer->write_object_t(pfc::guid_null, abort); // HACK: write this in place of "GUID"
 			writer->write_object(&style, sizeof(char), abort);
-			properties.save(writer, abort);
+			properties.get(writer, abort);
 			writer->write_object_t(false, abort); // HACK: write this in place of "disable before"
 			writer->write_object_t(true, abort); // HACK: write this in place of "grab focus"
 			writer->write_object(&wndpl, sizeof(WINDOWPLACEMENT), abort); // HACK: write this in place of window placement
