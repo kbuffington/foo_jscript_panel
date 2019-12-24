@@ -104,12 +104,12 @@ const create_body = (lines) =>
 			if (typeTwo.length) main += `${typeTwo} ${nameTwo}`
 			main += ') { '
 
+			if (ret != 'void') main += 'return '
+
 			let cast = false
 			if (ret == 'void*') {
 				cast = true
-				main += 'return reinterpret_cast<void*>('
-			} else if (ret != 'void') {
-				main += 'return '
+				main += 'reinterpret_cast<void*>('
 			}
 
 			main += `Call(SCI_${name.toUpperCase()}`
