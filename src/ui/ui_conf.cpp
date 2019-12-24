@@ -116,6 +116,14 @@ LRESULT CDialogConf::OnNotify(int, LPNMHDR pnmh)
 	return 0;
 }
 
+pfc::string8_fast CDialogConf::GetText()
+{
+	const int len = m_editorctrl.GetTextLength();
+	std::string value(len, '\0');
+	m_editorctrl.GetText(len, value.data());
+	return value.c_str();
+}
+
 void CDialogConf::Apply()
 {
 	// Save panel settings
@@ -124,10 +132,7 @@ void CDialogConf::Apply()
 	m_parent->m_panel_config.transparent = m_transparent_check.IsChecked();
 
 	// Get script text
-	const int len = m_editorctrl.GetTextLength();
-	std::vector<char> buff(len + 1);
-	m_editorctrl.GetText(buff.size(), buff.data());
-	m_parent->m_panel_config.code = buff.data();
+	m_parent->m_panel_config.code = GetText();
 	m_parent->update_script();
 
 	// Save point
@@ -234,10 +239,7 @@ void CDialogConf::OnFileExport(UINT, int, CWindow)
 	pfc::string8_fast filename;
 	if (uGetOpenFileName(m_hWnd, "Text files|*.txt|All files|*.*", 0, "txt", "Save as", nullptr, filename, TRUE))
 	{
-		const int len = m_editorctrl.GetTextLength();
-		std::vector<char> buff(len + 1);
-		m_editorctrl.GetText(buff.size(), buff.data());
-		helpers::write_file(filename, buff.data());
+		helpers::write_file(filename, GetText());
 	}
 }
 

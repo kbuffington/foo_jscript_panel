@@ -27,6 +27,7 @@ public:
 
 	BOOL OnInitDialog(CWindow, LPARAM);
 	LRESULT OnNotify(int, LPNMHDR pnmh);
+	pfc::string8_fast GetText();
 	void Apply();
 	void BuildMenu();
 	void OnCloseCmd(UINT, int nID, CWindow);
