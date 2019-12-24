@@ -542,7 +542,7 @@ void panel_window::load_script()
 	// HACK: Script update will not call on_size, so invoke it explicitly
 	on_size();
 
-	FB2K_console_formatter() << m_script_info.build_info_string() << ": initialised in " << static_cast<int>(timer.query() * 1000) << " ms";
+	FB2K_console_formatter() << m_script_host->m_info.build_info_string() << ": initialised in " << static_cast<int>(timer.query() * 1000) << " ms";
 }
 
 void panel_window::on_context_menu(LPARAM lp)

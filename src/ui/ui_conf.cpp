@@ -21,7 +21,7 @@ static const CRect resize_min_max(620, 381, 0, 0);
 
 CDialogConf::CDialogConf(panel_window* p_parent) : m_parent(p_parent), m_resizer(resize_data, resize_min_max)
 {
-	m_caption << jsp::component_name << " Configuration (id:" << m_parent->m_script_info.id << ")";
+	m_caption << jsp::component_name << " Configuration (id:" << m_parent->m_script_host->m_info.id << ")";
 }
 
 BOOL CDialogConf::OnInitDialog(CWindow, LPARAM)

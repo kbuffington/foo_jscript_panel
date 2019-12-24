@@ -215,7 +215,7 @@ STDMETHODIMP Window::get_ID(UINT* p)
 {
 	if (!p) return E_POINTER;
 
-	*p = m_host->m_script_info.id;
+	*p = m_host->m_script_host->m_info.id;
 	return S_OK;
 }
 
@@ -279,10 +279,10 @@ STDMETHODIMP Window::get_Name(BSTR* p)
 {
 	if (!p) return E_POINTER;
 
-	pfc::string8_fast name = m_host->m_script_info.name.c_str();
+	pfc::string8_fast name = m_host->m_script_host->m_info.name.c_str();
 	if (name.is_empty())
 	{
-		name << "id:" << m_host->m_script_info.id;
+		name << "id:" << m_host->m_script_host->m_info.id;
 	}
 	*p = TO_BSTR(name);
 	return S_OK;

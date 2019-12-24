@@ -1,4 +1,5 @@
 #pragma once
+#include "script_info.h"
 
 _COM_SMARTPTR_TYPEDEF(IActiveScriptParse, IID_IActiveScriptParse);
 _COM_SMARTPTR_TYPEDEF(IConsole, __uuidof(IConsole));
@@ -39,7 +40,9 @@ public:
 	std::string ExtractValue(const std::string& source);
 	void Finalise();
 	void InvokeCallback(callback_id id, VARIANTARG* argv = nullptr, size_t argc = 0, VARIANT* ret = nullptr);
-	void ProcessScriptInfo(script_info& info);
+	void ProcessScriptInfo();
+
+	script_info m_info{};
 
 private:
 	DWORD m_last_source_context = 0;

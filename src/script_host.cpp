@@ -22,7 +22,7 @@ DWORD script_host::GenerateSourceContext(const pfc::string8_fast& path)
 HRESULT script_host::Initialise()
 {
 	IActiveScriptParsePtr parser;
-	ProcessScriptInfo(m_host->m_script_info);
+	ProcessScriptInfo();
 
 	HRESULT hr = InitScriptEngine();
 	if (SUCCEEDED(hr)) hr = m_script_engine->SetScriptSite(this);
@@ -119,20 +119,20 @@ HRESULT script_host::ProcessScripts(IActiveScriptParsePtr& parser)
 {
 	HRESULT hr = S_OK;
 	pfc::string8_fast path, code;
-	const size_t count = m_host->m_script_info.imports.size();
+	const size_t count = m_info.imports.size();
 	size_t import_errors = 0;
 
 	for (size_t i = 0; i <= count; ++i)
 	{
 		if (i < count) // import
 		{
-			path = m_host->m_script_info.expand_import(i).c_str();
+			path = m_info.expand_import(i).c_str();
 			code = helpers::read_file(path);
 			if (code.is_empty())
 			{
 				if (import_errors == 0)
 				{
-					FB2K_console_formatter() << m_host->m_script_info.build_info_string();
+					FB2K_console_formatter() << m_info.build_info_string();
 					import_errors++;
 				}
 				FB2K_console_formatter() << "Error: Failed to load " << path;
@@ -245,7 +245,7 @@ STDMETHODIMP script_host::OnScriptError(IActiveScriptError* err)
 	_bstr_t sourceline;
 	pfc::string_formatter formatter;
 
-	formatter << m_host->m_script_info.build_info_string() << "\n";
+	formatter << m_info.build_info_string() << "\n";
 
 	if (SUCCEEDED(err->GetExceptionInfo(&excep)))
 	{
@@ -399,10 +399,10 @@ void script_host::InvokeCallback(callback_id id, VARIANTARG* argv, size_t argc, 
 	}
 }
 
-void script_host::ProcessScriptInfo(script_info& info)
+void script_host::ProcessScriptInfo()
 {
-	info.clear();
-	info.id = reinterpret_cast<UINT_PTR>(m_host->m_hwnd.m_hWnd);
+	m_info.clear();
+	m_info.id = reinterpret_cast<UINT_PTR>(m_host->m_hwnd.m_hWnd);
 
 	std::string source(m_host->m_panel_config.code);
 	const size_t start = source.find("// ==PREPROCESSOR==");
@@ -421,19 +421,19 @@ void script_host::ProcessScriptInfo(script_info& info)
 	{
 		if (line.find("@name") < argh)
 		{
-			info.name = ExtractValue(line);
+			m_info.name = ExtractValue(line);
 		}
 		else if (line.find("@author") < argh)
 		{
-			info.author = ExtractValue(line);
+			m_info.author = ExtractValue(line);
 		}
 		else if (line.find("@version") < argh)
 		{
-			info.version = ExtractValue(line);
+			m_info.version = ExtractValue(line);
 		}
 		else if (line.find("@import") < argh)
 		{
-			info.imports.emplace_back(ExtractValue(line));
+			m_info.imports.emplace_back(ExtractValue(line));
 		}
 	}
 }

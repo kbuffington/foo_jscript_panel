@@ -2,7 +2,6 @@
 #include "drop_target_impl.h"
 #include "helpers.h"
 #include "panel_config.h"
-#include "script_info.h"
 #include "script_host.h"
 
 class panel_window
@@ -42,7 +41,7 @@ public:
 	bool m_grabfocus = false;
 	bool m_supports_transparency = false;
 	panel_config m_panel_config{};
-	script_info m_script_info{};
+	script_host* m_script_host;
 	size m_size{};
 
 protected:
@@ -79,6 +78,5 @@ private:
 	bool m_is_mouse_tracked = false;
 	bool m_refreshbk = true;
 	panel_tooltip_param_ptr m_panel_tooltip_param_ptr;
-	script_host* m_script_host;
 	ui_selection_holder::ptr m_selection_holder;
 };
