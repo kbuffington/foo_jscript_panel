@@ -418,9 +418,8 @@ bool CScriptEditorCtrl::GetPropertyEx(const std::string& key, std::string& out)
 	const auto len = GetPropertyExpanded(key.c_str(), nullptr);
 	if (len == 0) return false;
 
-	std::vector<char> buff(len + 1);
-	GetPropertyExpanded(key.c_str(), buff.data());
-	out = buff.data();
+	out.assign(len, '\0');
+	GetPropertyExpanded(key.c_str(), out.data());
 	return true;
 }
 
@@ -607,9 +606,9 @@ int CScriptEditorCtrl::IndentOfBlock(Line line)
 std::string CScriptEditorCtrl::GetCurrentLine()
 {
 	const auto len = GetCurLine(0, nullptr);
-	std::vector<char> buff(len + 1);
-	GetCurLine(buff.size(), buff.data());
-	return buff.data();
+	std::string value(len, '\0');
+	GetCurLine(len, value.data());
+	return value;
 }
 
 std::string CScriptEditorCtrl::GetNearestWord(const char* wordStart, size_t searchLen, int wordIndex)
@@ -715,24 +714,21 @@ void CScriptEditorCtrl::AutomaticIndentation(int ch)
 {
 	const auto selStart = GetSelectionStart();
 	const auto curLine = LineFromPosition(GetCurrentPos());
+	const auto prevLine = curLine - 1;
 	const auto thisLineStart = PositionFromLine(curLine);
 	const auto indentSize = GetIndent();
-	auto indentBlock = IndentOfBlock(curLine - 1);
+	auto indentBlock = IndentOfBlock(prevLine);
 
 	if (curLine > 0)
 	{
 		bool foundBrace = false;
-		const auto prevLineLength = LineLength(curLine - 1);
-		int slen = 0;
+		std::string value(LineLength(prevLine) + 2, '\0');
+		GetLine(prevLine, value.data());
+		int slen = strlen(value.data());
 
-		std::vector<char> linebuf(prevLineLength + 2);
-		GetLine(curLine - 1, linebuf.data());
-		linebuf[prevLineLength] = 0;
-		slen = strlen(linebuf.data());
-
-		for (int pos = slen - 1; pos >= 0 && linebuf[pos]; --pos)
+		for (int pos = slen - 1; pos >= 0 && value[pos]; --pos)
 		{
-			const auto c = linebuf[pos];
+			const auto c = value[pos];
 
 			if (c == '\t' || c == ' ' || c == '\r' || c == '\n')
 			{
