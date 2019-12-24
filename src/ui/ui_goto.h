@@ -1,5 +1,5 @@
 #pragma once
-#include "editorctrl.h"
+#include "editor_ctrl.h"
 
 class CDialogGoto : public CDialogImpl<CDialogGoto>
 {

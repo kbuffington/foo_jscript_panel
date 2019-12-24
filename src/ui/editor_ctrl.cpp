@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "config.h"
-#include "editorctrl.h"
+#include "editor_ctrl.h"
 #include "ui_find_replace.h"
 #include "ui_goto.h"
 

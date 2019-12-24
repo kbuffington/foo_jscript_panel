@@ -45,6 +45,7 @@
     <None Include="resource\foo_jscript_panel.tlb">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="cpp.hint" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resource\foo_jscript_panel.rc">
@@ -202,7 +203,10 @@
     <ClInclude Include="ui\config.h">
       <Filter>Header Files\ui</Filter>
     </ClInclude>
-    <ClInclude Include="ui\editorctrl.h">
+    <ClInclude Include="ui\editor_ctrl.h">
+      <Filter>Header Files\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\property_ctrl.h">
       <Filter>Header Files\ui</Filter>
     </ClInclude>
     <ClInclude Include="ui\ui_conf.h">
@@ -218,9 +222,6 @@
       <Filter>Header Files\ui</Filter>
     </ClInclude>
     <ClInclude Include="ui\ui_property.h">
-      <Filter>Header Files\ui</Filter>
-    </ClInclude>
-    <ClInclude Include="ui\ui_property_control.h">
       <Filter>Header Files\ui</Filter>
     </ClInclude>
     <ClInclude Include="ui\wtlscintilla.h">
@@ -356,7 +357,7 @@
     <ClCompile Include="ui\config.cpp">
       <Filter>Source Files\ui</Filter>
     </ClCompile>
-    <ClCompile Include="ui\editorctrl.cpp">
+    <ClCompile Include="ui\editor_ctrl.cpp">
       <Filter>Source Files\ui</Filter>
     </ClCompile>
     <ClCompile Include="ui\ui_conf.cpp">

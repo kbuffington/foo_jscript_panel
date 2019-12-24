@@ -1,6 +1,6 @@
 #pragma once
 #include "panel_window.h"
-#include "ui_property_control.h"
+#include "property_ctrl.h"
 
 class CDialogProperty : public CDialogImpl<CDialogProperty>
 {
