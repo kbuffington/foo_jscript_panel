@@ -830,9 +830,9 @@ interface IPlman {
 
 		plman.IsPlaylistLocked(playlistIndex) (boolean)
 		/*
-		NOTE: This always returns true if the playlist is an autoplaylist.
+		NOTE: This always returns true if the playlist is an autoplaylist. Also, you must always check if the playlistIndex is valid before using.
 
-		As of v2.3.5, it's more advisable to use plman.GetPlaylistLockFilterMask as this will let you determine what kind
+		As of v2.3.5, it's advisable to use plman.GetPlaylistLockFilterMask as this will let you determine what kind
 		of locks are applied to a playlist. For example, if a playlist only has a lock preventing you from deleting it, you can still
 		add/remove files which you wouldn't be able determine from using plman.IsPlaylistLocked alone.
 		*/
