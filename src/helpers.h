@@ -311,7 +311,7 @@ namespace helpers
 			return true;
 		}
 
-		static str_vec get_values(json j)
+		static str_vec g_get_values(json j)
 		{
 			str_vec values;
 			if (j.is_array())

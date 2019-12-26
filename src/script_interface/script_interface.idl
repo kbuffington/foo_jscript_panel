@@ -291,7 +291,7 @@ library foo_jscript_panel
 		HRESULT AcquireUiSelectionHolder([out, retval] IUiSelectionHolder** pp);
 		HRESULT AddDirectory();
 		HRESULT AddFiles();
-		HRESULT CheckClipboardContents(UINT window_id, [out, retval] VARIANT_BOOL* p);
+		HRESULT CheckClipboardContents([defaultvalue(0)] UINT window_id, [out, retval] VARIANT_BOOL* p);
 		HRESULT ClearPlaylist();
 		HRESULT CopyHandleListToClipboard(IMetadbHandleList* handles, [out, retval] VARIANT_BOOL* p);
 		HRESULT CreateContextMenuManager([out, retval] IContextMenuManager** pp);
@@ -300,7 +300,7 @@ library foo_jscript_panel
 		HRESULT CreateProfiler([defaultvalue("")] BSTR name, [out, retval] IProfiler** pp);
 		HRESULT DoDragDrop(IMetadbHandleList* handles, UINT okEffects, [out, retval] UINT* p);
 		HRESULT Exit();
-		HRESULT GetClipboardContents(UINT window_id, [out, retval] IMetadbHandleList** pp);
+		HRESULT GetClipboardContents([defaultvalue(0)] UINT window_id, [out, retval] IMetadbHandleList** pp);
 		HRESULT GetDSPPresets([out, retval] BSTR* p);
 		HRESULT GetFocusItem([out, retval] IMetadbHandle** pp);
 		HRESULT GetLibraryItems([out, retval] IMetadbHandleList** pp);

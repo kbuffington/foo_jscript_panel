@@ -306,10 +306,7 @@ LRESULT CScriptEditorCtrl::OnZoom(LPNMHDR)
 
 CScriptEditorCtrl::Position CScriptEditorCtrl::GetCaretInLine()
 {
-	const auto caret = GetCurrentPos();
-	const auto line = LineFromPosition(caret);
-	const auto lineStart = PositionFromLine(line);
-	return caret - lineStart;
+	return GetCurrentPos() - PositionFromLine(GetCurrentLineNumber());
 }
 
 CScriptEditorCtrl::Range CScriptEditorCtrl::GetSelection()
@@ -332,7 +329,7 @@ bool CScriptEditorCtrl::FindBraceMatchPos(Position& braceAtCaret, Position& brac
 		return ch == '[' || ch == ']' || ch == '(' || ch == ')' || ch == '{' || ch == '}';
 	};
 
-	auto caretPos = GetCurrentPos();
+	const auto pos = GetCurrentPos();
 	bool isInside = false;
 
 	braceAtCaret = -1;
@@ -341,11 +338,11 @@ bool CScriptEditorCtrl::FindBraceMatchPos(Position& braceAtCaret, Position& brac
 	char charBefore = 0;
 	const auto lengthDoc = GetLength();
 
-	if (lengthDoc > 0 && caretPos > 0)
+	if (lengthDoc > 0 && pos > 0)
 	{
-		const auto posBefore = PositionBefore(caretPos);
+		const auto posBefore = PositionBefore(pos);
 
-		if (posBefore == caretPos - 1)
+		if (posBefore == pos - 1)
 		{
 			charBefore = GetCharAt(posBefore);
 		}
@@ -353,18 +350,18 @@ bool CScriptEditorCtrl::FindBraceMatchPos(Position& braceAtCaret, Position& brac
 
 	if (charBefore && IsBraceChar(charBefore))
 	{
-		braceAtCaret = caretPos - 1;
+		braceAtCaret = pos - 1;
 	}
 
 	bool isAfter = true;
 
-	if (lengthDoc > 0 && braceAtCaret < 0 && caretPos < lengthDoc)
+	if (lengthDoc > 0 && braceAtCaret < 0 && pos < lengthDoc)
 	{
-		const char charAfter = GetCharAt(caretPos);
+		const char charAfter = GetCharAt(pos);
 
 		if (charAfter && IsBraceChar(charAfter))
 		{
-			braceAtCaret = caretPos;
+			braceAtCaret = pos;
 			isAfter = false;
 		}
 	}
@@ -603,6 +600,11 @@ int CScriptEditorCtrl::IndentOfBlock(Line line)
 	return indentBlock;
 }
 
+CScriptEditorCtrl::Line CScriptEditorCtrl::GetCurrentLineNumber()
+{
+	return LineFromPosition(GetCurrentPos());
+}
+
 std::string CScriptEditorCtrl::GetCurrentLine()
 {
 	const auto len = GetCurLine(0, nullptr);
@@ -713,7 +715,7 @@ void CScriptEditorCtrl::AutoMarginWidth()
 void CScriptEditorCtrl::AutomaticIndentation(int ch)
 {
 	const auto selStart = GetSelectionStart();
-	const auto curLine = LineFromPosition(GetCurrentPos());
+	const auto curLine = GetCurrentLineNumber();
 	const auto prevLine = curLine - 1;
 	const auto thisLineStart = PositionFromLine(curLine);
 	const auto indentSize = GetIndent();
@@ -722,9 +724,9 @@ void CScriptEditorCtrl::AutomaticIndentation(int ch)
 	if (curLine > 0)
 	{
 		bool foundBrace = false;
-		std::string value(LineLength(prevLine) + 2, '\0');
+		int slen = LineLength(prevLine);
+		std::string value(slen, '\0');
 		GetLine(prevLine, value.data());
-		int slen = strlen(value.data());
 
 		for (int pos = slen - 1; pos >= 0 && value[pos]; --pos)
 		{
@@ -755,7 +757,7 @@ void CScriptEditorCtrl::AutomaticIndentation(int ch)
 	}
 	else if (ch == '{')
 	{
-		if ((GetIndentState(curLine - 1) == IndentationStatus::isKeyWordStart))
+		if (GetIndentState(prevLine) == IndentationStatus::isKeyWordStart)
 		{
 			if (RangeIsAllWhitespace(thisLineStart, selStart - 1))
 			{
@@ -763,13 +765,13 @@ void CScriptEditorCtrl::AutomaticIndentation(int ch)
 			}
 		}
 	}
-	else if ((ch == '\r' || ch == '\n') && (selStart == thisLineStart))
+	else if ((ch == '\r' || ch == '\n') && selStart == thisLineStart)
 	{
-		const auto controlWords = GetLinePartsInStyle(curLine - 1, BlockEnd);
+		const auto controlWords = GetLinePartsInStyle(prevLine, BlockEnd);
 		if (controlWords.size() && Includes(BlockEnd, controlWords[0]))
 		{
-			SetIndentation(curLine - 1, IndentOfBlock(curLine - 2) - indentSize);
-			indentBlock = IndentOfBlock(curLine - 1);
+			SetIndentation(prevLine, IndentOfBlock(prevLine - 1) - indentSize);
+			indentBlock = IndentOfBlock(prevLine);
 		}
 		SetIndentation(curLine, indentBlock);
 	}
@@ -908,11 +910,8 @@ void CScriptEditorCtrl::OpenFindDialog()
 
 void CScriptEditorCtrl::OpenGotoDialog()
 {
-	const auto cur_pos = GetCurrentPos();
-	const auto cur_line = LineFromPosition(cur_pos) + 1;
-
 	modal_dialog_scope scope(m_hWnd);
-	CDialogGoto dlg(m_hWnd, std::to_string(cur_line).c_str());
+	CDialogGoto dlg(m_hWnd, std::to_string(GetCurrentLineNumber() + 1).c_str());
 	dlg.DoModal(m_hWnd);
 }
 

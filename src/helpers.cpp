@@ -503,7 +503,7 @@ namespace helpers
 	{
 		str_vec output;
 		size_t first = 0;
-		while (first < str.size())
+		while (first < str.length())
 		{
 			const auto second = str.find_first_of(delims, first);
 			if (first != second)

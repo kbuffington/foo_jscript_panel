@@ -380,7 +380,7 @@ STDMETHODIMP MetadbHandleList::UpdateFileInfoFromJSON(BSTR str)
 
 				info[i].meta_remove_field(name.c_str());
 
-				for (const auto& v : helpers::js_file_info_filter::get_values(value))
+				for (const auto& v : helpers::js_file_info_filter::g_get_values(value))
 				{
 					info[i].meta_add(name.c_str(), v.c_str());
 				}
@@ -406,7 +406,7 @@ STDMETHODIMP MetadbHandleList::UpdateFileInfoFromJSON(BSTR str)
 
 			helpers::js_file_info_filter::tag t;
 			t.first = name;
-			t.second = helpers::js_file_info_filter::get_values(value);
+			t.second = helpers::js_file_info_filter::g_get_values(value);
 			tags.emplace_back(t);
 		}
 

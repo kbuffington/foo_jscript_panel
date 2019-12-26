@@ -120,7 +120,7 @@ pfc::string8_fast CDialogConf::GetText()
 {
 	const int len = m_editorctrl.GetTextLength();
 	std::string value(len + 1, '\0');
-	m_editorctrl.GetText(value.size(), value.data());
+	m_editorctrl.GetText(value.length(), value.data());
 	return value.c_str();
 }
 

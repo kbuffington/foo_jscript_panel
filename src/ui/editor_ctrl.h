@@ -78,6 +78,7 @@ private:
 	bool ParseStyle(const std::string& definition, EditorStyle& style);
 	bool RangeIsAllWhitespace(Position start, Position end);
 	int IndentOfBlock(Line line);
+	Line GetCurrentLineNumber();
 	std::string GetCurrentLine();
 	std::string GetNearestWord(const char* wordStart, size_t searchLen, int wordIndex);
 	std::string GetNearestWords(const char* wordStart, size_t searchLen);

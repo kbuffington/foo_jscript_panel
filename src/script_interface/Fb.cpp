@@ -27,7 +27,7 @@ STDMETHODIMP Fb::AddFiles()
 	return S_OK;
 }
 
-STDMETHODIMP Fb::CheckClipboardContents(UINT window_id, VARIANT_BOOL* p)
+STDMETHODIMP Fb::CheckClipboardContents(UINT /* FFS */, VARIANT_BOOL* p)
 {
 	if (!p) return E_POINTER;
 
@@ -133,7 +133,7 @@ STDMETHODIMP Fb::Exit()
 	return S_OK;
 }
 
-STDMETHODIMP Fb::GetClipboardContents(UINT window_id, IMetadbHandleList** pp)
+STDMETHODIMP Fb::GetClipboardContents(UINT /* FFS */, IMetadbHandleList** pp)
 {
 	if (!pp) return E_POINTER;
 
@@ -150,7 +150,7 @@ STDMETHODIMP Fb::GetClipboardContents(UINT window_id, IMetadbHandleList** pp)
 			dropped_files_data_impl data;
 			if (SUCCEEDED(api->parse_dataobject(pDO, data)))
 			{
-				data.to_handles(items, native, reinterpret_cast<HWND>(window_id));
+				data.to_handles(items, native, core_api::get_main_window());
 			}
 		}
 	}

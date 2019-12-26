@@ -11,7 +11,7 @@ public:
 	STDMETHODIMP AcquireUiSelectionHolder(IUiSelectionHolder** pp) override;
 	STDMETHODIMP AddDirectory() override;
 	STDMETHODIMP AddFiles() override;
-	STDMETHODIMP CheckClipboardContents(UINT window_id, VARIANT_BOOL* p) override;
+	STDMETHODIMP CheckClipboardContents(UINT /* FFS */, VARIANT_BOOL* p) override;
 	STDMETHODIMP ClearPlaylist() override;
 	STDMETHODIMP CopyHandleListToClipboard(IMetadbHandleList* handles, VARIANT_BOOL* p) override;
 	STDMETHODIMP CreateContextMenuManager(IContextMenuManager** pp) override;
@@ -20,7 +20,7 @@ public:
 	STDMETHODIMP CreateProfiler(BSTR name, IProfiler** pp) override;
 	STDMETHODIMP DoDragDrop(IMetadbHandleList* handles, UINT okEffects, UINT* p) override;
 	STDMETHODIMP Exit() override;
-	STDMETHODIMP GetClipboardContents(UINT window_id, IMetadbHandleList** pp) override;
+	STDMETHODIMP GetClipboardContents(UINT /* FFS */, IMetadbHandleList** pp) override;
 	STDMETHODIMP GetDSPPresets(BSTR* p) override;
 	STDMETHODIMP GetFocusItem(IMetadbHandle** pp) override;
 	STDMETHODIMP GetLibraryItems(IMetadbHandleList** pp) override;
