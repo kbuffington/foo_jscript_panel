@@ -141,7 +141,7 @@ interface IFb {
 
 		fb.AddFiles(); (void)
 
-		fb.CheckClipboardContents(window_id); (boolean)
+		fb.CheckClipboardContents(); (boolean)
 		/*
 		Checks Clipboard contents are handles or a file selection from Windows Explorer. Use in conjunction
 		with fb.GetClipboardContents().
@@ -241,7 +241,7 @@ interface IFb {
 
 		fb.Exit(); (void)
 
-		fb.GetClipboardContents(window_id); (IMetadbHandleList)
+		fb.GetClipboardContents(); (IMetadbHandleList)
 		/*
 		Clipboard contents can be handles copied to the clipboard in other components, from fb.CopyHandleListToClipboard or a file selection
 		from Windows Explorer etc.
@@ -250,10 +250,10 @@ interface IFb {
 		function on_mouse_rbtn_up(x, y) {
 			var ap = plman.ActivePlaylist;
 			var menu = window.CreatePopupMenu();
-			menu.AppendMenuItem(!plman.IsPlaylistLocked(ap) && fb.CheckClipboardContents(window.ID) ? MF_STRING : MF_GRAYED, 1, "Paste"); // see Flags.txt for MF_* definitions
+			menu.AppendMenuItem(!plman.IsPlaylistLocked(ap) && fb.CheckClipboardContents() ? MF_STRING : MF_GRAYED, 1, "Paste"); // see Flags.txt for MF_* definitions
 			var idx = menu.TrackPopupMenu(x, y);
 			if (idx == 1) {
-				var handle_list = fb.GetClipboardContents(window.ID);
+				var handle_list = fb.GetClipboardContents();
 				plman.InsertPlaylistItems(ap, plman.PlaylistItemCount(ap), handle_list);
 				handle_list.Dispose();
 			}
@@ -1251,8 +1251,7 @@ interface IWindow {
 	Properties:
 		window.ID; (uint) (read)
 		/*
-		Required in fb.CheckClipboardContents, fb.GetClipboardContents, utils.ColourPicker, utils.GetAlbumArtAsync,
-		utils.InputBox, utils.LoadImageAsync, etc.
+		Required in utils.ColourPicker, utils.GetAlbumArtAsync, utils.InputBox, utils.LoadImageAsync, etc.
 		*/
 
 		window.InstanceType; (uint) (read)

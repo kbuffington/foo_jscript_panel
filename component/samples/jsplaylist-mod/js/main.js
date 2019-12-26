@@ -2200,8 +2200,8 @@ function on_key_down(vkey) {
 						items.Dispose();
 					};
 					if (vkey == 86) { // CTRL+V
-						if (!plman.IsPlaylistLocked(act_pls) && fb.CheckClipboardContents(window.ID)) {
-							var items = fb.GetClipboardContents(window.ID);
+						if (!plman.IsPlaylistLocked(act_pls) && fb.CheckClipboardContents()) {
+							var items = fb.GetClipboardContents();
 							plman.UndoBackup(act_pls);
 							plman.InsertPlaylistItems(act_pls, p.list.focusedTrackId + 1, items, false);
 							items.Dispose();

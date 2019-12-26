@@ -342,7 +342,14 @@ _.mixin({
 		return Date.parse(fso.Getfile(file).DateLastModified);
 	},
 	lineWrap : function (value, font, width) {
-		return _.filter(_gr.EstimateLineWrap(value, font, width).toArray(), function (item, i) { return i % 2 == 0; });
+		return _(_gr.EstimateLineWrap(value, font, width).toArray())
+			.filter(function (item, i) { return i % 2 == 0; })
+			.map(function (line) {
+				// only trim if line begins with single space.
+				if (_.startsWith(line, ' ') && !_.startsWith(line, '  ')) return _.trim(line);
+				else return line;
+			})
+			.value();
 	},
 	lockSize : function (w, h) {
 		window.MinWidth = window.MaxWidth = w;
