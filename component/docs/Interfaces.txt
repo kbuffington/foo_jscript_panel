@@ -781,6 +781,12 @@ interface IPlman {
 		}
 		*/
 
+		plman.GetPlaylistLockName(playlistIndex) (string)
+		/*
+		Returns the name of the component that implemented the playlist lock or an empty string if the playlist is not locked/the supplied
+		playlistIndex is invalid.
+		*/
+
 		plman.GetPlaylistName(playlistIndex) (string)
 		/*
 		Example:

@@ -265,6 +265,16 @@ STDMETHODIMP Plman::GetPlaylistLockFilterMask(UINT playlistIndex, int* p)
 	return S_OK;
 }
 
+STDMETHODIMP Plman::GetPlaylistLockName(UINT playlistIndex, BSTR* p)
+{
+	if (!p) return E_POINTER;
+
+	pfc::string8_fast str;
+	playlist_manager::get()->playlist_lock_query_name(playlistIndex, str);
+	*p = TO_BSTR(str);
+	return S_OK;
+}
+
 STDMETHODIMP Plman::GetPlaylistName(UINT playlistIndex, BSTR* p)
 {
 	if (!p) return E_POINTER;

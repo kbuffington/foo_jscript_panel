@@ -1,4 +1,6 @@
 ## v2.3.5 (unreleased)
+- Add `plman.GetPlaylistLockFilterMask`.
+- Add 'plman.GetPlaylistLockName`.
 - Restore compatibility with `foo_popup_panels` when used from within default UI. This was broken in `v2.3.4`.
 - `fb.CheckClipboardContents` and `fb.GetClipboardContents` no longer require a `window_id` parameter. If supplied, it will be silently ignored.
 - Minor sample fixes.

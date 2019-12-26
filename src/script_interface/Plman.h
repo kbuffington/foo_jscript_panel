@@ -28,6 +28,7 @@ public:
 	STDMETHODIMP GetPlaylistFocusItemIndex(UINT playlistIndex, int* p) override;
 	STDMETHODIMP GetPlaylistItems(UINT playlistIndex, IMetadbHandleList** pp) override;
 	STDMETHODIMP GetPlaylistLockFilterMask(UINT playlistIndex, int* p) override;
+	STDMETHODIMP GetPlaylistLockName(UINT playlistIndex, BSTR* p) override;
 	STDMETHODIMP GetPlaylistName(UINT playlistIndex, BSTR* p) override;
 	STDMETHODIMP GetPlaylistSelectedItems(UINT playlistIndex, IMetadbHandleList** pp) override;
 	STDMETHODIMP GetRecyclerItems(UINT index, IMetadbHandleList** pp) override;
