@@ -171,14 +171,16 @@ template <typename _Base, bool _AddRef = true>
 class com_object_impl_t : public _Base
 {
 public:
+	TEMPLATE_CONSTRUCTOR_FORWARD_FLOOD(com_object_impl_t, _Base)
+
 	ULONG STDMETHODCALLTYPE AddRef() override
 	{
-		return AddRef_();
+		return ++m_counter;
 	}
 
 	ULONG STDMETHODCALLTYPE Release() override
 	{
-		const ULONG n = Release_();
+		const auto n = --m_counter;
 		if (n == 0)
 		{
 			this->FinalRelease();
@@ -187,29 +189,10 @@ public:
 		return n;
 	}
 
-	TEMPLATE_CONSTRUCTOR_FORWARD_FLOOD_WITH_INITIALIZER(com_object_impl_t, _Base, { Construct_(); })
-
 private:
 	~com_object_impl_t() {}
 
-	ULONG AddRef_()
-	{
-		return InterlockedIncrement(&m_dwRef);
-	}
-
-	ULONG Release_()
-	{
-		return InterlockedDecrement(&m_dwRef);
-	}
-
-	void Construct_()
-	{
-		m_dwRef = 0;
-		if (_AddRef)
-			AddRef_();
-	}
-
-	volatile LONG m_dwRef;
+	pfc::refcounter m_counter = _AddRef ? 1 : 0;
 };
 
 template <class T>
