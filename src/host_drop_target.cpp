@@ -77,7 +77,7 @@ HRESULT host_drop_target::OnDrop(IDataObject* pDataObj, DWORD grfKeyState, POINT
 		droppedData.to_handles_async_ex(
 			playlist_incoming_item_filter_v2::op_flag_delay_ui,
 			core_api::get_main_window(),
-			fb2k::service_new<helpers::js_process_locations>(m_action->m_to_select, m_action->m_base, m_action->m_playlist_idx)
+			fb2k::service_new<helpers::js_process_locations>(m_action->m_playlist_idx, m_action->m_base, m_action->m_to_select)
 		);
 	}
 

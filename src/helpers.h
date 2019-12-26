@@ -265,7 +265,7 @@ namespace helpers
 	class js_process_locations : public process_locations_notify
 	{
 	public:
-		js_process_locations(bool to_select, size_t base, size_t playlist) : m_to_select(to_select), m_base(base), m_playlist(playlist) {}
+		js_process_locations(size_t playlist, size_t base, bool to_select) : m_playlist(playlist), m_base(base), m_to_select(to_select) {}
 
 		void on_aborted() override {}
 
