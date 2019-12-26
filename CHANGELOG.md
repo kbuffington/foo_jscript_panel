@@ -1,3 +1,8 @@
+## v2.3.5 (unreleased)
+- Restore compatibility with `foo_popup_panels` when used from within default UI. This was broken in `v2.3.4`.
+- `fb.CheckClipboardContents` and `fb.GetClipboardContents` no longer require a `window_id` parameter. If supplied, it will be silently ignored.
+- Minor sample fixes.
+
 ## v2.3.4
 - The size and position of the `Properties Window` is now remembered. In addition, the size and position of the `Configuration Window` is now shared as a global setting rather than per panel instance like it was previously.
 - `on_size` calls are now suppressed when the panel width or height is zero.
