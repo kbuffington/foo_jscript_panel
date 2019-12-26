@@ -322,12 +322,12 @@ STDMETHODIMP script_host::OnStateChange(SCRIPTSTATE state)
 
 ULONG STDMETHODCALLTYPE script_host::AddRef()
 {
-	return InterlockedIncrement(&m_ref_count);
+	return ++m_counter;
 }
 
 ULONG STDMETHODCALLTYPE script_host::Release()
 {
-	const ULONG n = InterlockedDecrement(&m_ref_count);
+	const auto n = --m_counter;
 	if (n == 0)
 	{
 		delete this;

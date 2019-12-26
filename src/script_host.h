@@ -57,7 +57,7 @@ private:
 	bool m_engine_inited = false;
 	bool m_has_error = false;
 	panel_window* m_host;
+	pfc::refcounter m_counter = 1;
 	std::unordered_map<DWORD, pfc::string8_fast> m_context_to_path_map;
 	std::unordered_map<callback_id, DISPID> m_callback_map;
-	volatile LONG m_ref_count = 1;
 };
