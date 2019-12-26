@@ -17,7 +17,9 @@ STDMETHODIMP Plman::AddItemToPlaybackQueue(IMetadbHandle* handle)
 STDMETHODIMP Plman::AddLocations(UINT playlistIndex, VARIANT locations, VARIANT_BOOL select)
 {
 	auto api = playlist_manager::get();
-	if (playlistIndex < api->get_playlist_count() && !api->playlist_lock_is_present(playlistIndex))
+	auto mask = api->playlist_lock_get_filter_mask(playlistIndex);
+
+	if (playlistIndex < api->get_playlist_count() && !(mask & playlist_lock::filter_add))
 	{
 		pfc::string_list_impl list;
 		com_array helper;
@@ -252,6 +254,14 @@ STDMETHODIMP Plman::GetPlaylistItems(UINT playlistIndex, IMetadbHandleList** pp)
 	metadb_handle_list items;
 	playlist_manager::get()->playlist_get_all_items(playlistIndex, items);
 	*pp = new com_object_impl_t<MetadbHandleList>(items);
+	return S_OK;
+}
+
+STDMETHODIMP Plman::GetPlaylistLockFilterMask(UINT playlistIndex, int* p)
+{
+	if (!p) return E_POINTER;
+
+	*p = TO_INT(playlist_manager::get()->playlist_lock_get_filter_mask(playlistIndex));
 	return S_OK;
 }
 

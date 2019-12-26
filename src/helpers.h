@@ -273,8 +273,9 @@ namespace helpers
 		{
 			pfc::bit_array_val selection(m_to_select);
 			auto api = playlist_manager::get();
+			auto mask = api->playlist_lock_get_filter_mask(m_playlist);
 
-			if (m_playlist < api->get_playlist_count() && !api->playlist_lock_is_present(m_playlist))
+			if (m_playlist < api->get_playlist_count() && !(mask & playlist_lock::filter_add))
 			{
 				api->playlist_insert_items(m_playlist, m_base, p_items, selection);
 				if (m_to_select)

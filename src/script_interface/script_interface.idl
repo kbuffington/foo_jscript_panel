@@ -387,6 +387,7 @@ library foo_jscript_panel
 		HRESULT GetPlayingItemLocation([out, retval] IPlayingItemLocation** pp);
 		HRESULT GetPlaylistFocusItemIndex(UINT playlistIndex, [out, retval] int* p);
 		HRESULT GetPlaylistItems(UINT playlistIndex, [out, retval] IMetadbHandleList** pp);
+		HRESULT GetPlaylistLockFilterMask(UINT playlistIndex, [out, retval] int* p);
 		HRESULT GetPlaylistName(UINT playlistIndex, [out, retval] BSTR* p);
 		HRESULT GetPlaylistSelectedItems(UINT playlistIndex, [out, retval] IMetadbHandleList** pp);
 		HRESULT GetRecyclerItems(UINT index, [out, retval] IMetadbHandleList** pp);

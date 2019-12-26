@@ -6,31 +6,31 @@ optional and may be omitted.
 
 interface IFb {
 	Properties:
-		fb.AlwaysOnTop; (boolean) (read, write)
+		fb.AlwaysOnTop (boolean) (read, write)
 		/*
 		Example:
 		fb.AlwaysOnTop = !fb.AlwaysOnTop;
 		Toggles the current value.
 		*/
 
-		fb.ComponentPath; (string) (read)
+		fb.ComponentPath (string) (read)
 		/*
 		Example:
 		console.log(fb.ComponentPath);
 		>> C:\Users\User\AppData\Roaming\foobar2000\user-components\foo_jscript_panel\
 		*/
 
-		fb.CursorFollowPlayback; (boolean) (read, write)
+		fb.CursorFollowPlayback (boolean) (read, write)
 
-		fb.FoobarPath; (string) (read)
+		fb.FoobarPath (string) (read)
 
-		fb.IsPaused; (boolean) (read)
+		fb.IsPaused (boolean) (read)
 
-		fb.IsPlaying; (boolean) (read)
+		fb.IsPlaying (boolean) (read)
 
-		fb.PlaybackFollowCursor; (boolean) (read, write)
+		fb.PlaybackFollowCursor (boolean) (read, write)
 
-		fb.PlaybackLength; (double) (read)
+		fb.PlaybackLength (double) (read)
 		/*
 		Example1:
 		console.log(fb.PlaybackLength);
@@ -41,16 +41,16 @@ interface IFb {
 		>> 323
 		*/
 
-		fb.PlaybackTime; (double) (read, write)
+		fb.PlaybackTime (double) (read, write)
 		/*
 		Example:
 		fb.PlaybackTime = 60;
 		Jumps to the 1 minute mark.
 		*/
 
-		fb.ProfilePath; (string) (read)
+		fb.ProfilePath (string) (read)
 
-		fb.ReplaygainMode; (uint) (read, write)
+		fb.ReplaygainMode (uint) (read, write)
 		/*
 		0 None
 		1 Track
@@ -58,14 +58,14 @@ interface IFb {
 		3 Track/Album by Playback Order
 		*/
 
-		fb.StopAfterCurrent; (boolean) (read, write)
+		fb.StopAfterCurrent (boolean) (read, write)
 		/*
 		Example:
 		fb.StopAfterCurrent = !fb.StopAfterCurrent;
 		Toggles the current value.
 		*/
 
-		fb.Volume; (float) (read, write);
+		fb.Volume (float) (read, write);
 		/*
 		Example:
 		fb.Volume = 0;
@@ -73,15 +73,15 @@ interface IFb {
 		*/
 
 	Methods:
-		fb.AcquireUiSelectionHolder(); (IUiSelectionHolder)
+		fb.AcquireUiSelectionHolder() (IUiSelectionHolder)
 
 			interface IUiSelectionHolder {
 				Methods:
-					Dispose(); (void)
-					SetSelection(handle_list); (void)
+					Dispose() (void)
+					SetSelection(handle_list) (void)
 					// sets the selected items.
 
-					SetPlaylistSelectionTracking(); (void)
+					SetPlaylistSelectionTracking() (void)
 					/*
 					Sets selected items to playlist selection and enables tracking.
 					When the playlist selection changes, the stored selection is automatically
@@ -89,7 +89,7 @@ interface IFb {
 					or when the last reference to this ui_selection_holder is released.
 					*/
 
-					SetPlaylistTracking(); (void)
+					SetPlaylistTracking() (void)
 					/*
 					Sets selected items to playlist contents and enables tracking.
 					When the playlist selection changes, the stored selection is automatically
@@ -137,20 +137,20 @@ interface IFb {
 			}
 			*/
 
-		fb.AddDirectory(); (void)
+		fb.AddDirectory() (void)
 
-		fb.AddFiles(); (void)
+		fb.AddFiles() (void)
 
-		fb.CheckClipboardContents(); (boolean)
+		fb.CheckClipboardContents() (boolean)
 		/*
 		Checks Clipboard contents are handles or a file selection from Windows Explorer. Use in conjunction
 		with fb.GetClipboardContents().
 		*/
 
-		fb.ClearPlaylist(); (void)
+		fb.ClearPlaylist() (void)
 		// Clears active playlist. If you wish to clear a specific playlist, use plman.ClearPlaylist(playlistIndex).
 
-		fb.CopyHandleListToClipboard(handle_list); (boolean)
+		fb.CopyHandleListToClipboard(handle_list) (boolean)
 		/*
 		Items can then be pasted in other playlist viewers or in Windows Explorer as files.
 
@@ -160,8 +160,23 @@ interface IFb {
 		handle_list.Dispose();
 
 		Example2: (cut playlist items)
+
+		// To "cut" playlist items, we need to check there are no locks in place preventing removal.
+
+		var PlaylistLockFilterMask = {
+			filter_add : 1,
+			filter_remove: 2,
+			filter_reorder: 4,
+			filter_replace: 8,
+			filter_rename: 16,
+			filter_remove_playlist: 32,
+			filter_default_action: 64
+		};
+
 		var ap = plman.ActivePlaylist;
-		if (!plman.IsPlaylistLocked(ap)) {
+		var mask = plman.GetPlaylistLockFilterMask(ap);
+
+		if (!(mask & PlaylistLockFilterMask.filter_remove)) {
 			var handle_list = plman.GetPlaylistSelectedItems(ap);
 			if (fb.CopyHandleListToClipboard(handle_list)) {
 				plman.UndoBackup(ap);
@@ -171,26 +186,26 @@ interface IFb {
 		}
 		*/
 
-		fb.CreateContextMenuManager(); (IContextMenuManager)
+		fb.CreateContextMenuManager() (IContextMenuManager)
 		// See samples\basic\MainMenuManager All-In-One, samples\basic\Menu Sample.txt
 
 			interface IContextMenuManager {
 				Methods:
-					BuildMenu(IMenuObj, base_id); (void)
+					BuildMenu(IMenuObj, base_id) (void)
 					// The previously optional "max_id" parameter was removed in v2.3.0.
 					
-					Dispose(); (void)
-					ExecuteByID(id); (boolean)
-					InitContext(handle_list); (void)
-					InitContextPlaylist(); (void)
+					Dispose() (void)
+					ExecuteByID(id) (boolean)
+					InitContext(handle_list) (void)
+					InitContextPlaylist() (void)
 					/*
 					Shows playlist specific options that aren't available when passing a
 					handle list to InitContext.
 					*/
-					InitNowPlaying(); (void)
+					InitNowPlaying() (void)
 			}
 
-		fb.CreateHandleList([handle]); (IMetadbHandleList)
+		fb.CreateHandleList([handle]) (IMetadbHandleList)
 		/*
 		Returns an empty handle list or a list containing a single item if you pass the optional
 		handle argument.
@@ -201,29 +216,29 @@ interface IFb {
 		items.Dispose();
 		*/
 
-		fb.CreateMainMenuManager(); (IMainMenuManager)
+		fb.CreateMainMenuManager() (IMainMenuManager)
 		// See samples\basic\MainMenuManager All-In-One, samples\basic\Menu Sample.txt
 
 			interface IMainMenuManager {
 				Methods:
-					BuildMenu(IMenuObj, base_id); (void)
+					BuildMenu(IMenuObj, base_id) (void)
 					// The previously optional "count" parameter was removed in v2.3.0.
 
-					Dispose(); (void)
-					ExecuteByID(id); (boolean)
-					Init(root_name); (void)
+					Dispose() (void)
+					ExecuteByID(id) (boolean)
+					Init(root_name) (void)
 			}
 
-		fb.CreateProfiler([name]); (IProfiler)
+		fb.CreateProfiler([name]) (IProfiler)
 		// name: optional, will be shown in console when used with Print() method below.
 
 			interface IProfiler {
 				Properties:
-					Time; (int) // milliseconds
+					Time (int) // milliseconds
 
 				Methods:
-					Reset(); (void)
-					Print(); (void)
+					Reset() (void)
+					Print() (void)
 				}
 
 				/*
@@ -236,12 +251,12 @@ interface IFb {
 				>> FbProfiler (test): 789 ms
 				*/
 
-		fb.DoDragDrop(handle_list, effect); (uint);
+		fb.DoDragDrop(handle_list, effect) (uint);
 		// See https://marc2k3.github.io/foo_jscript_panel/Drag-and-Drop.html
 
-		fb.Exit(); (void)
+		fb.Exit() (void)
 
-		fb.GetClipboardContents(); (IMetadbHandleList)
+		fb.GetClipboardContents() (IMetadbHandleList)
 		/*
 		Clipboard contents can be handles copied to the clipboard in other components, from fb.CopyHandleListToClipboard or a file selection
 		from Windows Explorer etc.
@@ -250,7 +265,9 @@ interface IFb {
 		function on_mouse_rbtn_up(x, y) {
 			var ap = plman.ActivePlaylist;
 			var menu = window.CreatePopupMenu();
-			menu.AppendMenuItem(!plman.IsPlaylistLocked(ap) && fb.CheckClipboardContents() ? MF_STRING : MF_GRAYED, 1, "Paste"); // see Flags.txt for MF_* definitions
+
+			// You may consider using plman.GetPlaylistLockFilterMask for more advanced checks to see if the playlist will accept the files being added.
+			menu.AppendMenuItem(fb.CheckClipboardContents() ? MF_STRING : MF_GRAYED, 1, "Paste"); // see Flags.txt for MF_* definitions
 			var idx = menu.TrackPopupMenu(x, y);
 			if (idx == 1) {
 				var handle_list = fb.GetClipboardContents();
@@ -300,7 +317,7 @@ interface IFb {
 		fb.SetDSPPreset(1); // changes to the 2nd entry in the example above
 		*/
 
-		fb.GetFocusItem(); (IMetadbHandle)
+		fb.GetFocusItem() (IMetadbHandle)
 		/*
 		Returns the handle of the currently selected item or null on failure.
 
@@ -309,13 +326,13 @@ interface IFb {
 		changes to how it worked before.
 		*/
 
-		fb.GetLibraryItems(); (IMetadbHandleList)
+		fb.GetLibraryItems() (IMetadbHandleList)
 		// Returns all Media Library items as a handle list.
 
-		fb.GetNowPlaying(); (IMetadbHandle)
+		fb.GetNowPlaying() (IMetadbHandle)
 		// Get handle of now playing item. Returns null on failure.
 
-		fb.GetOutputDevices(); (string)
+		fb.GetOutputDevices() (string)
 		/*
 		Returns a JSON array in string form so you need to use JSON.parse() on the result.
 
@@ -372,7 +389,7 @@ interface IFb {
 		fb.SetOutputDevice(arr[4].output_id, arr[4].device_id);
 		*/
 
-		fb.GetQueryItems(handle_list, query); (IMetadbHandleList)
+		fb.GetQueryItems(handle_list, query) (IMetadbHandleList)
 		/*
 		Example1:
 		var a = fb.GetQueryItems(plman.GetPlaylistItems(plman.ActivePlaylist), "rating IS 5");
@@ -385,21 +402,21 @@ interface IFb {
 		is valid but there are no results.
 		*/
 
-		fb.GetSelection(); (IMetadbHandle)
+		fb.GetSelection() (IMetadbHandle)
 		/*
 		Gets now playing or selected item. What you get will depend on
 		"File>Preferences>Display>Selection viewers".
 		The return value may be null.
 		*/
 
-		fb.GetSelections([flags]); (IMetadbHandleList)
+		fb.GetSelections([flags]) (IMetadbHandleList)
 		/*
 		flags: 0 default, 1 no now playing
 		Works like GetSelection(), but returns a handle list.
 		Always returns a valid handle list instance instead of null.
 		*/
 
-		fb.GetSelectionType(); (uint)
+		fb.GetSelectionType() (uint)
 		/*
 		Retrieve what the selection is
 		0 undefined (no item)
@@ -411,32 +428,32 @@ interface IFb {
 		6 media_library_viewer
 		*/
 
-		fb.IsLibraryEnabled(); (boolean)
+		fb.IsLibraryEnabled() (boolean)
 
-		fb.IsMetadbInMediaLibrary(handle); (boolean)
+		fb.IsMetadbInMediaLibrary(handle) (boolean)
 		/*
 		Example:
 		var np = fb.GetNowplaying();
 		console.log(fb.IsMetadbInMediaLibrary(np)); // If false, playing track is not in Media Library.
 		*/
 
-		fb.LoadPlaylist(); (void)
+		fb.LoadPlaylist() (void)
 
-		fb.Next(); (void)
+		fb.Next() (void)
 
-		fb.Pause(); (void)
+		fb.Pause() (void)
 
-		fb.Play(); (void)
+		fb.Play() (void)
 
-		fb.PlayOrPause(); (void)
+		fb.PlayOrPause() (void)
 
-		fb.Prev(); (void)
+		fb.Prev() (void)
 
-		fb.Random(); (void)
+		fb.Random() (void)
 
 		// IMPORTANT: As of v2.2.0, the following menu methods all require the full paths to their commands.
 
-		fb.RunContextCommand(command); (boolean)
+		fb.RunContextCommand(command) (boolean)
 		/*
 		The previously optional "flags" parameter was removed in v2.3.0. All commands are ran if they exist.
 		It no longer matters if they are hidden or not.
@@ -447,7 +464,7 @@ interface IFb {
 		fb.RunContextCommand("Properties");
 		*/
 
-		fb.RunContextCommandWithMetadb(command, handle_or_handle_list); (boolean)
+		fb.RunContextCommandWithMetadb(command, handle_or_handle_list) (boolean)
 		/* 
 		The previously optional "flags" parameter was removed in v2.3.0. All commands are ran if they exist.
 		It no longer matters if they are hidden or not.
@@ -456,33 +473,33 @@ interface IFb {
 		plman.GetPlaylistItems(plman.ActivePlaylist)
 		*/
 
-		fb.RunMainMenuCommand(command); (boolean)
+		fb.RunMainMenuCommand(command) (boolean)
 		/*
 		Example:
 		fb.RunMainMenuCommand("File/Add Location...");
 		*/
 
-		fb.SavePlaylist(); (void)
+		fb.SavePlaylist() (void)
 
-		fb.SetDSPPreset(idx); (void)
+		fb.SetDSPPreset(idx) (void)
 		// See fb.GetDSPPresets()
 
-		fb.SetOutputDevice(output, device); (void)
+		fb.SetOutputDevice(output, device) (void)
 		// See fb.GetOutputDevices()
 
-		fb.ShowConsole(); (void)
+		fb.ShowConsole() (void)
 
-		fb.ShowLibrarySearchUI(query); (void)
+		fb.ShowLibrarySearchUI(query) (void)
 		// Opens the Library>Search window populated with the query you set.
 
-		fb.ShowPopupMessage(message[, title]); (void)
+		fb.ShowPopupMessage(message[, title]) (void)
 		// title: default "JScript Panel"
 
-		fb.ShowPreferences(); (void)
+		fb.ShowPreferences() (void)
 
-		fb.Stop(); (void)
+		fb.Stop() (void)
 
-		fb.TitleFormat(pattern); (ITitleFormat)
+		fb.TitleFormat(pattern) (ITitleFormat)
 
 			interface ITitleFormat {
 				/*
@@ -491,9 +508,9 @@ interface IFb {
 				*/
 
 				Methods:
-					Dispose(); (void)
+					Dispose() (void)
 
-					Eval(); (string)
+					Eval() (string)
 					/*
 					The previously optional "force" parameter was removed in v2.3.0.
 
@@ -505,7 +522,7 @@ interface IFb {
 					Returns an empty string if foobar2000 is not playing.
 					*/
 
-					EvalWithMetadb(handle); (string)
+					EvalWithMetadb(handle) (string)
 					/*
 					Example:
 					var artist = tfo.EvalWithMetadb(fb.GetFocusItem());
@@ -513,7 +530,7 @@ interface IFb {
 					should be much faster.
 					*/
 
-					EvalWithMetadbs(handle_list); (VBArray)
+					EvalWithMetadbs(handle_list) (VBArray)
 					/*
 					Returns a VBArray so you need to use .toArray() on the result.
 
@@ -525,18 +542,18 @@ interface IFb {
 					*/
 			}
 
-		fb.VolumeDown(); (void)
+		fb.VolumeDown() (void)
 
-		fb.VolumeMute(); (void)
+		fb.VolumeMute() (void)
 
-		fb.VolumeUp(); (void)
+		fb.VolumeUp() (void)
 }
 
 interface IGdi {
 	Methods:
-		gdi.CreateImage(w, h); (IGdiBitmap)
+		gdi.CreateImage(w, h) (IGdiBitmap)
 
-		gdi.Font(name, size_px[, style]); (IGdiFont)
+		gdi.Font(name, size_px[, style]) (IGdiFont)
 		/*
 		size_px: See Helpers.txt > Point2Pixel function for conversions.
 		style: default 0, can be combined.
@@ -551,14 +568,14 @@ interface IGdi {
 		Returns null if font not present. Avoid using inside on_paint.
 		*/
 
-		gdi.Image(path); (IGdiBitmap)
+		gdi.Image(path) (IGdiBitmap)
 		/*
 		Example:
 		var img = gdi.Image("e:\\images folder\\my_image.png");
 		Returns null if path doesn't exist/image fails to load.
 		*/
 
-		gdi.LoadImageAsync(window_id, path); (uint)
+		gdi.LoadImageAsync(window_id, path) (uint)
 		/*
 		window_id: window.ID
 		Returns a unique id which is the first argument on the on_load_image_done callback. See callbacks.txt.
@@ -567,7 +584,7 @@ interface IGdi {
 
 interface IPlman {
 	Properties:
-		plman.ActivePlaylist; (int) (read, write)
+		plman.ActivePlaylist (int) (read, write)
 		/*
 		Example1: (read)
 		var ap = plman.ActivePlaylist;
@@ -578,7 +595,7 @@ interface IPlman {
 		plman.ActivePlaylist = 1;
 		*/
 
-		plman.PlaybackOrder; (uint) (read, write)
+		plman.PlaybackOrder (uint) (read, write)
 		/*
 		0 Default
 		1 Repeat (Playlist)
@@ -589,7 +606,7 @@ interface IPlman {
 		6 Shuffle (folders)
 		*/
 
-		plman.PlayingPlaylist; (int) (read)
+		plman.PlayingPlaylist (int) (read)
 		/*
 		Example:
 		var pp = plman.PlayingPlaylist;
@@ -597,9 +614,9 @@ interface IPlman {
 		Returns -1 if there is no playing playlist.
 		*/
 
-		plman.PlaylistCount; (uint) (read)
+		plman.PlaylistCount (uint) (read)
 
-		plman.RecyclerCount; (uint) (read)
+		plman.RecyclerCount (uint) (read)
 		/*
 		This provides a way of accessing the history of deleted playlists like other
 		playlist managers/tabs.
@@ -628,7 +645,7 @@ interface IPlman {
 	Methods:
 		// In all these methods, playlistIndex is the target playlist
 
-		plman.AddLocations(playlistIndex, paths[, select]); (void)
+		plman.AddLocations(playlistIndex, paths[, select]) (void)
 		/*
 		paths: An array of files/URLs.
 		select: boolean, default false.
@@ -644,19 +661,19 @@ interface IPlman {
 		be selected and focus will be set to the first new item.
 		*/
 
-		plman.ClearPlaylist(playlistIndex); (void)
+		plman.ClearPlaylist(playlistIndex) (void)
 		/*
 		Example:
 		plman.ClearPlaylist(plman.PlayingPlaylist);
 		*/
 
-		plman.ClearPlaylistSelection(playlistIndex); (void)
+		plman.ClearPlaylistSelection(playlistIndex) (void)
 		/*
 		Example:
 		plman.ClearPlaylistSelection(plman.ActivePlaylist);
 		*/
 
-		plman.CreateAutoPlaylist(playlistIndex, name, query[, sort, flags]); (int)
+		plman.CreateAutoPlaylist(playlistIndex, name, query[, sort, flags]) (int)
 		/*
 		name: a name for the new Autplaylist
 		query: a valid query
@@ -667,7 +684,7 @@ interface IPlman {
 		failure - usually caused by supplying an invalid query.
 		*/
 
-		plman.CreatePlaylist(playlistIndex, name); (uint)
+		plman.CreatePlaylist(playlistIndex, name) (uint)
 		/*
 		Example1:
 		plman.CreatePlaylist(0, "");
@@ -681,7 +698,7 @@ interface IPlman {
 		Returns playlistIndex of newly created playlist.
 		*/
 
-		plman.DuplicatePlaylist(playlistIndex, name); (uint)
+		plman.DuplicatePlaylist(playlistIndex, name) (uint)
 		/*
 		name: a name for the new playlist. If name is "", the name of the source playlist is used.
 		The duplicate playlist gets inserted directly after the source playlistIndex.
@@ -690,28 +707,28 @@ interface IPlman {
 		Returns playlistIndex of newly created playlist.
 		*/
 
-		plman.EnsurePlaylistItemVisible(playlistIndex, playlistItemIndex); (void)
+		plman.EnsurePlaylistItemVisible(playlistIndex, playlistItemIndex) (void)
 
-		plman.ExecutePlaylistDefaultAction(playlistIndex, playlistItemIndex); (boolean)
+		plman.ExecutePlaylistDefaultAction(playlistIndex, playlistItemIndex) (boolean)
 		// Starts playback by executing default doubleclick/enter action unless overridden by a lock to do something else.
 
-		plman.FindOrCreatePlaylist(name, unlocked); (uint)
+		plman.FindOrCreatePlaylist(name, unlocked) (uint)
 		/*
 		Returns playlistIndex of named playlist or that of a newly created one if not found.
 		unlocked: boolean. If true, locked playlists are ignored when looking for existing playlists.
 		*/
 
-		plman.FindPlaylist(name); (int)
+		plman.FindPlaylist(name) (int)
 		// Case insensitive. Returns playlistIndex or -1 on failure.
 
-		plman.GetPlayingItemLocation(); (IPlayingItemLocation)
+		plman.GetPlayingItemLocation() (IPlayingItemLocation)
 		// Retrieves playlist/playlistIndex of the currently playing item.
 
 			interface IPlayingItemLocation {
 				Properties:
-					IsValid; (boolean) (read)
-					PlaylistIndex; (int) (read)
-					PlaylistItemIndex; (int) (read)
+					IsValid (boolean) (read)
+					PlaylistIndex (int) (read)
+					PlaylistItemIndex (int) (read)
 			}
 
 			/*
@@ -728,7 +745,7 @@ interface IPlman {
 			}
 			*/
 
-		plman.GetPlaylistFocusItemIndex(playlistIndex); (int)
+		plman.GetPlaylistFocusItemIndex(playlistIndex) (int)
 		/*
 		Example:
 		var focus_item_index = plman.GetPlaylistFocusItemIndex(plman.ActivePlaylist);
@@ -736,30 +753,52 @@ interface IPlman {
 		Returns -1 if nothing is selected.
 		*/
 
-		plman.GetPlaylistItems(playlistIndex); (IMetadbHandleList)
+		plman.GetPlaylistItems(playlistIndex) (IMetadbHandleList)
 		/*
 		Example:
 		var handle_list = plman.GetPlaylistItems(plman.PlayingPlaylist);
 		*/
 
-		plman.GetPlaylistName(playlistIndex); (string)
+		plman.GetPlaylistLockFilterMask(playlistIndex) (int)
+		/*
+		Use to determine the type(s) of locks applied to the specified playlist. Returns -1 when supplied with invalid playlistIndex.
+
+		Example:
+
+		var PlaylistLockFilterMask = {
+			filter_add : 1,
+			filter_remove: 2,
+			filter_reorder: 4,
+			filter_replace: 8,
+			filter_rename: 16,
+			filter_remove_playlist: 32,
+			filter_default_action: 64
+		};
+
+		var mask = plman.GetPlaylistLockFilterMask(plman.ActivePlaylist)
+		if (mask & PlaylistLockFilterMask.filter_add) {
+			console.log("Can't add files to this playlist");
+		}
+		*/
+
+		plman.GetPlaylistName(playlistIndex) (string)
 		/*
 		Example:
 		console.log(plman.GetPlaylistName(plman.ActivePlaylist));
 		>> My favourites
 		*/
 
-		plman.GetPlaylistSelectedItems(playlistIndex); (IMetadbHandleList)
+		plman.GetPlaylistSelectedItems(playlistIndex) (IMetadbHandleList)
 		/*
 		Example:
 		var selected_items = plman.GetPlaylistSelectedItems(plman.ActivePlaylist);
 		*/
 
-		plman.GetRecyclerItems(index); (IMetadbHandleList)
+		plman.GetRecyclerItems(index) (IMetadbHandleList)
 
-		plman.GetRecyclerName(index); (string)
+		plman.GetRecyclerName(index) (string)
 
-		plman.InsertPlaylistItems(playlistIndex, base, handle_list[, select]); (void)
+		plman.InsertPlaylistItems(playlistIndex, base, handle_list[, select]) (void)
 		/*
 		base: position in playlist
 		handle_list: items to insert
@@ -776,52 +815,51 @@ interface IPlman {
 		Adds all library tracks to end of playlist.
 		*/
 
-		plman.InsertPlaylistItemsFilter(playlistIndex, base, handle_list[, select]); (void)
+		plman.InsertPlaylistItemsFilter(playlistIndex, base, handle_list[, select]) (void)
 		// Same as above except any duplicates contained in handle_list are removed.
 
-		plman.IsAutoPlaylist(playlistIndex); (boolean)
+		plman.IsAutoPlaylist(playlistIndex) (boolean)
 
-		plman.IsPlaylistItemSelected(playlistIndex, playlistItemIndex); (boolean)
+		plman.IsPlaylistItemSelected(playlistIndex, playlistItemIndex) (boolean)
 
-		plman.IsPlaylistLocked(playlistIndex); (boolean)
+		plman.IsPlaylistLocked(playlistIndex) (boolean)
 		/*
-		NOTE: This returns true if the playlist is an autoplaylist. To determine if a playlist is not an autoplaylist
-		but locked with something like foo_utils or foo_playlist_attributes, do something like...
+		NOTE: This always returns true if the playlist is an autoplaylist.
 
-		if (!plman.IsAutoPlaylist(plman.ActivePlaylist) && plman.IsPlaylistLocked(plman.ActivePlaylist)) {
-			blah();
-		}
+		As of v2.3.5, it's more advisable to use plman.GetPlaylistLockFilterMask as this will let you determine what kind
+		of locks are applied to a playlist. For example, if a playlist only has a lock preventing you from deleting it, you can still
+		add/remove files which you wouldn't be able determine from using plman.IsPlaylistLocked alone.
 		*/
 
-		plman.MovePlaylist(from, to); (boolean)
+		plman.MovePlaylist(from, to) (boolean)
 
-		plman.MovePlaylistSelection(playlistIndex, delta); (boolean)
+		plman.MovePlaylistSelection(playlistIndex, delta) (boolean)
 		/*
 		Example:
 		plman.MovePlaylistSelection(plman.ActivePlaylist, plman.PlaylistItemCount(plman.ActivePlaylist));
 		Moves selected items to end of playlist.
 		*/
 
-		plman.PlaylistItemCount(playlistIndex); (uint)
+		plman.PlaylistItemCount(playlistIndex) (uint)
 		/*
 		Example:
 		console.log(plman.PlaylistItemCount(plman.PlayingPlaylist));
 		>> 12
 		*/
 
-		plman.RecyclerPurge(affectedItems); (void)
+		plman.RecyclerPurge(affectedItems) (void)
 		// affectedItems: An array like [1, 3, 5]
 
-		plman.RecyclerRestore(index); (void)
+		plman.RecyclerRestore(index) (void)
 
-		plman.RemovePlaylist(playlistIndex); (boolean)
+		plman.RemovePlaylist(playlistIndex) (boolean)
 		/*
 		Removes the specified playlist.
 		NOTE: If removing the active playlist, no playlist will be active after using this. You'll
 		need to set it manually or use plman.RemovePlaylistSwitch instead.
 		*/
 
-		plman.RemovePlaylistSelection(playlistIndex[, crop]); (void)
+		plman.RemovePlaylistSelection(playlistIndex[, crop]) (void)
 		/*
 		crop: boolean, default false.
 
@@ -834,15 +872,15 @@ interface IPlman {
 		Removes items that are NOT selected.
 		*/
 
-		plman.RemovePlaylistSwitch(playlistIndex); (boolean)
+		plman.RemovePlaylistSwitch(playlistIndex) (boolean)
 		/*
 		Removes the specified playlist.
 		This automatically sets another playlist as active if removing the active playlist.
 		*/
 
-		plman.RenamePlaylist(playlistIndex, name); (boolean)
+		plman.RenamePlaylist(playlistIndex, name) (boolean)
 
-		plman.SetActivePlaylistContext(); (void)
+		plman.SetActivePlaylistContext() (void)
 		/*
 		Workaround so you can use the Edit menu or run fb.RunMainMenuCommand("Edit/Something...")
 		when your panel has focus and a dedicated playlist viewer doesn't.
@@ -857,13 +895,13 @@ interface IPlman {
 		}
 		*/
 
-		plman.SetPlaylistFocusItem(playlistIndex, playlistItemIndex); (void)
+		plman.SetPlaylistFocusItem(playlistIndex, playlistItemIndex) (void)
 		/*
 		Example:
 		plman.SetPlaylistFocusItem(plman.ActivePlaylist, 0);
 		*/
 
-		plman.SetPlaylistFocusItemByHandle(playlistIndex, handle); (void)
+		plman.SetPlaylistFocusItemByHandle(playlistIndex, handle) (void)
 		/*
 		Example:
 		var ap = plman.ActivePlaylist;
@@ -871,7 +909,7 @@ interface IPlman {
 		plman.SetPlaylistFocusItemByHandle(ap, handle);
 		*/
 
-		plman.SetPlaylistSelection(playlistIndex, affectedItems, state); (void)
+		plman.SetPlaylistSelection(playlistIndex, affectedItems, state) (void)
 		/*
 		affectedItems: An array of item indexes.
 		state: boolean.
@@ -882,7 +920,7 @@ interface IPlman {
 		Selects first, third and fifth tracks in playlist. This does not affect other selected items.
 		*/
 
-		plman.SetPlaylistSelectionSingle(playlistIndex, playlistItemIndex, state); (void)
+		plman.SetPlaylistSelectionSingle(playlistIndex, playlistItemIndex, state) (void)
 		/*
 		state: boolean
 
@@ -896,7 +934,7 @@ interface IPlman {
 		Selects last item in playlist. This does not affect other selected items.
 		*/
 
-		plman.ShowAutoPlaylistUI(playlistIndex); (boolean)
+		plman.ShowAutoPlaylistUI(playlistIndex) (boolean)
 		/*
 		Shows popup window letting you edit certain Autoplaylist properties.
 
@@ -905,7 +943,7 @@ interface IPlman {
 		Before using, check if your playlist is an Autoplaylist by using plman.IsAutoPlaylist(...);
 		*/
 
-		plman.SortByFormat(playlistIndex, pattern[, selected_items_only]); (boolean)
+		plman.SortByFormat(playlistIndex, pattern[, selected_items_only]) (boolean)
 		/*
 		playlistIndex: index of playlist to alter.
 		pattern: title formatting pattern to sort by. Set to "" to randomise the order of items.
@@ -913,7 +951,7 @@ interface IPlman {
 		Returns true on success, false on failure (playlist locked etc).
 		*/
 
-		plman.SortByFormatV2(playlistIndex, pattern[, direction]); (boolean)
+		plman.SortByFormatV2(playlistIndex, pattern[, direction]) (boolean)
 		/*
 		playlistIndex: index of playlist to alter.
 		pattern: title formatting pattern to sort by.
@@ -923,20 +961,20 @@ interface IPlman {
 		plman.SortPlaylistsByName([direction]) (void)
 		// direction: default 1 (ascending), -1 (descending).
 
-		plman.UndoBackup(playlistIndex); (void)
+		plman.UndoBackup(playlistIndex) (void)
 		// Call before using other plman methods that add/remove/reorder playlist items so a history will be available from the Edit menu.
 
 	Queue Methods:
-		plman.AddItemToPlaybackQueue(handle); (void)
+		plman.AddItemToPlaybackQueue(handle) (void)
 
-		plman.AddPlaylistItemToPlaybackQueue(playlistIndex, playlistItemIndex); (void)
+		plman.AddPlaylistItemToPlaybackQueue(playlistIndex, playlistItemIndex) (void)
 
-		plman.FindPlaybackQueueItemIndex(handle, playlistIndex, playlistItemIndex); (int)
+		plman.FindPlaybackQueueItemIndex(handle, playlistIndex, playlistItemIndex) (int)
 		// Returns -1 on failure.
 
-		plman.FlushPlaybackQueue(); (void)
+		plman.FlushPlaybackQueue() (void)
 
-		plman.GetPlaybackQueueContents(); (VBArray)
+		plman.GetPlaybackQueueContents() (VBArray)
 		/*
 		Returns a VBArray so you need to use .toArray() on the result.
 		Each item of the array is an instance of IPlaybackQueueItem.
@@ -951,16 +989,16 @@ interface IPlman {
 
 			interface IPlaybackQueueItem {
 				Properties:
-					Handle; (IMetadbHandle) (read)
-					PlaylistIndex; (int) (read)
-					PlaylistItemIndex; (int) (read)
+					Handle (IMetadbHandle) (read)
+					PlaylistIndex (int) (read)
+					PlaylistItemIndex (int) (read)
 					// indexes will be -1 for items not added from a playlist.
 
 				Methods:
-					Dispose(); (void)
+					Dispose() (void)
 			}
 
-		plman.GetPlaybackQueueHandles(); ((IMetadbHandleList))
+		plman.GetPlaybackQueueHandles() ((IMetadbHandleList))
 		/*
 		Example:
 		var handles = plman.GetPlaybackQueueHandles();
@@ -969,15 +1007,15 @@ interface IPlman {
 		}
 		*/
 
-		plman.RemoveItemFromPlaybackQueue(index); (void)
+		plman.RemoveItemFromPlaybackQueue(index) (void)
 
-		plman.RemoveItemsFromPlaybackQueue(affectedItems); (void)
+		plman.RemoveItemsFromPlaybackQueue(affectedItems) (void)
 		// affectedItems: array like [1, 3, 5]
 }
 
 interface IConsole {
 	Methods:
-		console.log(message); (void)
+		console.log(message) (void)
 }
 
 interface IUtils {
@@ -994,10 +1032,10 @@ interface IUtils {
 		*/
 
 	Methods:
-		utils.Chardet(filename); (uint)
+		utils.Chardet(filename) (uint)
 		// Guess the charset of a file and return the codepage. It may not be accurate and returns 0 if an error occurred.
 
-		utils.CheckComponent(name); (boolean)
+		utils.CheckComponent(name) (boolean)
 		/*
 		The previously optional "is_dll" parameter was removed in v2.3.0.
 		The filename is now always checked (equivalent to "is_dll" being true).
@@ -1006,14 +1044,14 @@ interface IUtils {
 		console.log(utils.CheckComponent("foo_playcount"));
 		*/
 
-		utils.CheckFont(name); (boolean)
+		utils.CheckFont(name) (boolean)
 		/*
 		name: Can be either in English or the localised name in your OS.
 		This only checks for fonts that are actually installed. It cannot detect fonts
 		loaded by foo_ui_hacks and always returns false. However, gdi.Font can use those fonts.
 		*/
 
-		utils.ColourPicker(window_id, default_colour); (int)
+		utils.ColourPicker(window_id, default_colour) (int)
 		/*
 		Spawns a windows popup dialog to let you choose a colour.
 		window_id: window.ID
@@ -1074,7 +1112,7 @@ interface IUtils {
 		See samples\basic\GetAlbumArtAsync.txt
 		*/
 
-		utils.GetAlbumArtEmbedded(rawpath[, art_id]); (IGdiBitmap)
+		utils.GetAlbumArtEmbedded(rawpath[, art_id]) (IGdiBitmap)
 		/*
 		art_id: default 0.
 
@@ -1088,7 +1126,7 @@ interface IUtils {
 		var img = utils.GetAlbumArtEmbedded(fb.GetNowPlaying().RawPath, 0);
 		*/
 
-		utils.GetAlbumArtV2(handle[, art_id, need_stub]); (IGdiBitmap)
+		utils.GetAlbumArtV2(handle[, art_id, need_stub]) (IGdiBitmap)
 		/*
 		art_id: default 0.
 
@@ -1105,7 +1143,7 @@ interface IUtils {
 		utils.GetFileSize(filename) (int64)
 		// Retrieve file size in bytes. Requires Chakra script engine to work properly.
 
-		utils.GetSysColour(index); (uint)
+		utils.GetSysColour(index) (uint)
 		/*
 		index: http://msdn.microsoft.com/en-us/library/ms724371%28VS.85%29.aspx
 
@@ -1114,13 +1152,13 @@ interface IUtils {
 		Returns 0 if failed.
 		*/
 
-		utils.GetSystemMetrics(index); (int)
+		utils.GetSystemMetrics(index) (int)
 		/*
 		index: http://msdn.microsoft.com/en-us/library/ms724385%28VS.85%29.aspx
 		Returns 0 if failed.
 		*/
 
-		utils.Glob(pattern[, exc_mask, inc_mask]); (VBArray)
+		utils.Glob(pattern[, exc_mask, inc_mask]) (VBArray)
 		/*
 		exc_mask: default FILE_ATTRIBUTE_DIRECTORY
 		See Flags.txt > Used with utils.Glob()
@@ -1157,10 +1195,10 @@ interface IUtils {
 		}
 		*/
 
-		utils.IsFile(filename); (boolean)
-		utils.IsFolder(folder); (boolean)
+		utils.IsFile(filename) (boolean)
+		utils.IsFolder(folder) (boolean)
 
-		utils.IsKeyPressed(vkey); (boolean)
+		utils.IsKeyPressed(vkey) (boolean)
 		/*
 		vkey: http://msdn.microsoft.com/en-us/library/ms927178.aspx
 		Some are defined in Flags.txt > Used with utils.IsKeyPressed()
@@ -1181,12 +1219,12 @@ interface IUtils {
 		folder: string, path to a folder.
 		*/
 
-		utils.MapString(text, lcid, flags); (string)
+		utils.MapString(text, lcid, flags) (string)
 
-		utils.PathWildcardMatch(pattern, str); (boolean)
+		utils.PathWildcardMatch(pattern, str) (boolean)
 		// Using Microsoft MS-DOS wildcards match type. eg "*.txt", "abc?.tx?"
 
-		utils.ReadINI(filename, section, key[, defaultval]); (string)
+		utils.ReadINI(filename, section, key[, defaultval]) (string)
 		/*
 		An INI file should like this:
 
@@ -1199,7 +1237,7 @@ interface IUtils {
 		var username = utils.ReadINI("e:\\my_file.ini", "Last.fm", "username");
 		*/
 
-		utils.ReadTextFile(filename[, codepage]); (string)
+		utils.ReadTextFile(filename[, codepage]) (string)
 		/*
 		codepage: default 0. See Codepages.txt
 		Only supply a codepage as a last resort if the file content
@@ -1213,14 +1251,14 @@ interface IUtils {
 		var text = utils.ReadTextFile("E:\\some text file.txt");
 		*/
 
-		utils.ReadUTF8(filename); (string)
+		utils.ReadUTF8(filename) (string)
 		/*
 		It's preferable to use this when you know the file is "UTF8" encoded... such as
 		ones written by "utils.WriteTextFile". Continue to use "utils.ReadTextFile"
 		if the files are "UCS2-LE", "ANSI" or unknown.
 		*/
 
-		utils.TimestampToDateString(ts); (string)
+		utils.TimestampToDateString(ts) (string)
 		/*
 		The timestamp should be the number of seconds since 00:00:00 Thursday, 1 January 1970 UTC.
 
@@ -1233,13 +1271,13 @@ interface IUtils {
 		>> 2019-08-30 17:30:15
 		*/
 
-		utils.WriteINI(filename, section, key, val); (boolean)
+		utils.WriteINI(filename, section, key, val) (boolean)
 		/*
 		Example:
 		utils.WriteINI("e:\\my_file.ini", "Last.fm", "username", "Bob");
 		*/
 
-		utils.WriteTextFile(filename, content); (boolean)
+		utils.WriteTextFile(filename, content) (boolean)
 		/*
 		The parent folder must already exist.
 
@@ -1249,76 +1287,76 @@ interface IUtils {
 
 interface IWindow {
 	Properties:
-		window.ID; (uint) (read)
+		window.ID (uint) (read)
 		/*
 		Required in utils.ColourPicker, utils.GetAlbumArtAsync, utils.InputBox, utils.LoadImageAsync, etc.
 		*/
 
-		window.InstanceType; (uint) (read)
+		window.InstanceType (uint) (read)
 		/*
 		Returns 0 if using Columns UI, 1 if using default UI.
 		You need this to determine which GetFontXXX and GetColourXXX methods to use, assuming you want to support both interfaces.
 		*/
 
-		window.IsTransparent; (boolean) (read)
+		window.IsTransparent (boolean) (read)
 		/*
 		Depends on setting inside JScript Panel Configuration window. You generally use it to determine
 		whether or not to draw a background. Only useful when panel is contained within
 		Panel Stack Splitter (Columns UI component).
 		*/
 
-		window.IsVisible; (boolean) (read)
+		window.IsVisible (boolean) (read)
 
-		window.Height; (int) (read)
+		window.Height (int) (read)
 
-		window.MaxHeight; (uint) (read, write)
-		window.MaxWidth; (uint) (read, write)
-		window.MinHeight; (uint) (read, write)
-		window.MinWidth; (uint) (read, write)
+		window.MaxHeight (uint) (read, write)
+		window.MaxWidth (uint) (read, write)
+		window.MinHeight (uint) (read, write)
+		window.MinWidth (uint) (read, write)
 		// The previous 4 methods can be used to lock the panel size. Do not use if panels are contained within Panel Stack Splitter (Columns UI component).
 
-		window.Name; (string) (read)
+		window.Name (string) (read)
 		/*
 		Returns the @name set in the preprocessor section. See Preprocessors.txt
 		If that isn't present, the window.ID of the panel is returned prefixed with "id:".
 		*/
 
-		window.Width; (int) (read)
+		window.Width (int) (read)
 
 	Methods:
-		window.ClearInterval(timerID); (void)
-		window.ClearTimeout(timerID); (void)
-		window.SetInterval(func, delay); (uint)
-		window.SetTimeout(func, delay); (uint)
+		window.ClearInterval(timerID) (void)
+		window.ClearTimeout(timerID) (void)
+		window.SetInterval(func, delay) (uint)
+		window.SetTimeout(func, delay) (uint)
 		// See samples\basic\Timer.txt
 
-		window.CreatePopupMenu(); (IMenuObj)
+		window.CreatePopupMenu() (IMenuObj)
 		// See samples\basic\MainMenuManager All-In-One, samples\basic\Menu Sample.txt
 
 			interface IMenuObj {
 				Methods:
-					AppendMenuItem(flags, item_id, text); (void)
+					AppendMenuItem(flags, item_id, text) (void)
 					/*
 					flags: See Flags.txt > Used with AppendMenuItem()
 					item_id: integer greater than 0. Each menu item needs a unique id.
 					*/
 
-					AppendMenuSeparator(); (void)
+					AppendMenuSeparator() (void)
 
-					AppendTo(parentMenu, flags, text); (void)
+					AppendTo(parentMenu, flags, text) (void)
 
-					CheckMenuItem(item_id, check); (void)
+					CheckMenuItem(item_id, check) (void)
 					// check: boolean.
 
-					CheckMenuRadioItem(first_item_id, last_item_id, selected_item_id); (void)
+					CheckMenuRadioItem(first_item_id, last_item_id, selected_item_id) (void)
 
-					Dispose(); (void)
+					Dispose() (void)
 
-					TrackPopupMenu(x, y[, flags]); (int)
+					TrackPopupMenu(x, y[, flags]) (int)
 					// flags: default 0. See Flags.txt > Used with TrackPopupMenu()
 			}
 
-		window.CreateThemeManager(class_list); (IThemeManager)
+		window.CreateThemeManager(class_list) (IThemeManager)
 		/*
 		class_list: http://msdn.microsoft.com/en-us/library/bb773210%28VS.85%29.aspx
 		See samples\basic\SimpleThemedButton.txt
@@ -1326,11 +1364,11 @@ interface IWindow {
 
 			interface IThemeManager {
 				Methods:
-					DrawThemeBackground(IGdiGraphics, x, y, w, h[, clip_x, clip_y, clip_w, clip_h]); (void)
+					DrawThemeBackground(IGdiGraphics, x, y, w, h[, clip_x, clip_y, clip_w, clip_h]) (void)
 					// clip_x, clip_y, clip_w, clip_h: defaults to 0 if omitted
 
-					IsThemePartDefined(partid); (boolean)
-					SetPartAndStateID(partid[, stateid]); (void)
+					IsThemePartDefined(partid) (boolean)
+					SetPartAndStateID(partid[, stateid]) (void)
 					/*
 					partid
 					stateid: default 0
@@ -1338,7 +1376,7 @@ interface IWindow {
 					*/
 			}
 
-		window.CreateTooltip([font_name, font_size_px, font_style]); (ITooltip)
+		window.CreateTooltip([font_name, font_size_px, font_style]) (ITooltip)
 		/*
 		font_name: default "Segoe UI"
 		font_size_px: default 12
@@ -1359,16 +1397,16 @@ interface IWindow {
 				*/
 
 				Properties:
-					Text; (string) (read, write)
+					Text (string) (read, write)
 					/*
 					Example:
 					tooltip.Text = "Whoop";
 					*/
 
-					TrackActivate; (boolean) (write)
+					TrackActivate (boolean) (write)
 
 				Methods:
-					Activate(); (void)
+					Activate() (void)
 					/*
 					Only do this when text has changed otherwise it will flicker
 
@@ -1380,15 +1418,15 @@ interface IWindow {
 					}
 					*/
 
-					Deactivate(); (void)
+					Deactivate() (void)
 
-					Dispose(); (void)
+					Dispose() (void)
 
-					GetDelayTime(type); (int)
-					SetDelayTime(type, time); (void)
+					GetDelayTime(type) (int)
+					SetDelayTime(type, time) (void)
 					// type. See Flags.txt > Used with ITooltip.GetDelayTime() and ITooltip.SetDelayTime()
 
-					SetMaxWidth(width); (void)
+					SetMaxWidth(width) (void)
 					/*
 					Use if you want multi-line tooltips.
 
@@ -1398,7 +1436,7 @@ interface IWindow {
 					Use \n as a new line separator.
 					*/
 
-					TrackPosition(x, y); (void)
+					TrackPosition(x, y) (void)
 					/*
 					Check x, y positions have changed from last time otherwise it will flicker
 					If making the tooltip text relative to the mouse position, it's recommended to add offsets
@@ -1433,7 +1471,7 @@ interface IWindow {
 					*/
 			}
 
-		window.GetColourCUI(type); (int)
+		window.GetColourCUI(type) (int)
 		/*
 		type:
 
@@ -1446,7 +1484,7 @@ interface IWindow {
 		6: active_item_frame
 		*/
 
-		window.GetColourDUI(type); (int)
+		window.GetColourDUI(type) (int)
 		/*
 		type:
 
@@ -1456,7 +1494,7 @@ interface IWindow {
 		3: selection
 		*/
 
-		window.GetFontCUI(type); (IGdiFont)
+		window.GetFontCUI(type) (IGdiFont)
 		/*
 		type:
 
@@ -1466,7 +1504,7 @@ interface IWindow {
 		Returns null on failure.
 		*/
 
-		window.GetFontDUI(type); (IGdiFont)
+		window.GetFontDUI(type) (IGdiFont)
 		/*
 		type:
 
@@ -1480,27 +1518,27 @@ interface IWindow {
 		Returns null on failure.
 		*/
 
-		window.GetProperty(name[, defaultval]); (VARIANT)
+		window.GetProperty(name[, defaultval]) (VARIANT)
 		/*
 		name: string
 		defaultval: string, number, boolean
 		Get value of name from properties. If no value is present, defaultval will be stored and returned
 		*/
 
-		window.NotifyOthers(name, info); (void)
+		window.NotifyOthers(name, info) (void)
 		/*
 		name: string
 		info: all variable/array/object types should be supported
 		Listen for notifications in other panels using on_notify_data(name, info) {}
 		*/
 
-		window.Reload(); (void)
+		window.Reload() (void)
 		// Reloads panel.
 
-		window.Repaint(); (void)
+		window.Repaint() (void)
 		// The previously optional "force" parameter was removed in v2.3.0.
 
-		window.RepaintRect(x, y, w, h); (void)
+		window.RepaintRect(x, y, w, h) (void)
 		/*
 		The previously optional "force" parameter was removed in v2.3.0.
 
@@ -1508,13 +1546,13 @@ interface IWindow {
 		such as time, bitrate, seekbar, etc.
 		*/
 
-		window.SetCursor(id); (void)
+		window.SetCursor(id) (void)
 		/*
 		id: See Flags.txt > Used with window.SetCursor()
 		This would usually be used inside the on_mouse_move callback. Use -1 if you want to hide the cursor.
 		*/
 
-		window.SetProperty(name, val); (void)
+		window.SetProperty(name, val) (void)
 		/*
 		name: string
 		val: string, number, boolean
@@ -1522,10 +1560,10 @@ interface IWindow {
 		Property values will be saved per panel instance and are remembered between foobar2000 restarts.
 		*/
 
-		window.ShowConfigure(); (void)
+		window.ShowConfigure() (void)
 		// Show configuration window of current panel.
 
-		window.ShowProperties(); (void)
+		window.ShowProperties() (void)
 		// Show properties window of current panel.
 }
 
@@ -1572,7 +1610,7 @@ interface IGdiFont {
 		*/
 
 	Methods:
-		Dispose(); (void)
+		Dispose() (void)
 		/*
 		Example:
 		my_font.Dispose();
@@ -1585,29 +1623,29 @@ interface IGdiBitmap {
 		Width (uint) (read)
 
 	Methods:
-		ApplyAlpha(alpha); (IGdiBitmap)
+		ApplyAlpha(alpha) (IGdiBitmap)
 		// alpha: Valid values 0-255.
 
-		ApplyMask(img); (boolean)
+		ApplyMask(img) (boolean)
 		// Changes will be saved in the current bitmap. See samples\basic\Apply Mask.txt
 
-		Clone(x, y, w, h); (IGdiBitmap)
+		Clone(x, y, w, h) (IGdiBitmap)
 
-		CreateRawBitmap(); (IGdiRawBitmap)
+		CreateRawBitmap() (IGdiRawBitmap)
 		// Create a DDB bitmap from IGdiBitmap, which is used in GdiDrawBitmap()
 
 			interface IGdiRawBitmap {
 				Properties:
-					Width; (uint) (read)
-					Height; (uint) (read)
+					Width (uint) (read)
+					Height (uint) (read)
 
 				Methods:
-					Dispose(); (void)
+					Dispose() (void)
 			}
 
-		Dispose(); (void)
+		Dispose() (void)
 
-		GetColourSchemeJSON(max_count); (string)
+		GetColourSchemeJSON(max_count) (string)
 		/*
 		Returns a JSON array in string form so you need to use JSON.parse() on the result.
 		Each entry in the array is an object which contains colour and frequency values.
@@ -1625,12 +1663,12 @@ interface IGdiBitmap {
 		See Helpers.txt for "toRGB" function.
 		*/
 
-		GetGraphics(); (IGdiGraphics)
+		GetGraphics() (IGdiGraphics)
 		// Don't forget to use ReleaseGraphics() after operations on IGdiGraphics interface is done.
 
-		ReleaseGraphics(IGdiGraphics); (void)
+		ReleaseGraphics(IGdiGraphics) (void)
 
-		Resize(w, h[, interpolation_mode]); (IGdiBitmap)
+		Resize(w, h[, interpolation_mode]) (IGdiBitmap)
 		/*
 		interpolation_mode: default 0.
 
@@ -1645,10 +1683,10 @@ interface IGdiBitmap {
 		7: HighQualityBicubic
 		*/
 
-		RotateFlip(mode); (void)
+		RotateFlip(mode) (void)
 		// mode: See Flags.txt > Used with RotateFlip()
 
-		SaveAs(path[, format]); (boolean)
+		SaveAs(path[, format]) (boolean)
 		/*
 		path: Full path including file extension. The parent folder must already exist.
 		format:
@@ -1664,7 +1702,7 @@ interface IGdiBitmap {
 			img.SaveAs("D:\\export.jpg", "image/jpeg");
 		*/
 
-		StackBlur(radius); (void)
+		StackBlur(radius) (void)
 		// radius: Valid values 2-254. See samples\basic\StackBlur (image).txt, samples\basic\StackBlur (text).txt
 }
 
@@ -1678,32 +1716,32 @@ interface IGdiGraphics {
 	*/
 
 	Methods:
-		gr.CalcTextHeight(str, IGdiFont); (uint)
+		gr.CalcTextHeight(str, IGdiFont) (uint)
 		// This will only calulate the text height of one line.
 
-		gr.CalcTextWidth(str, IGdiFont); (uint)
+		gr.CalcTextWidth(str, IGdiFont) (uint)
 
-		gr.DrawEllipse(x, y, w, h, line_width, colour); (void)
+		gr.DrawEllipse(x, y, w, h, line_width, colour) (void)
 
-		gr.DrawImage(IGdiBitmap, dstX, dstY, dstW, dstH, srcX, srcY, srcW, srcH[, angle, alpha]); (void)
+		gr.DrawImage(IGdiBitmap, dstX, dstY, dstW, dstH, srcX, srcY, srcW, srcH[, angle, alpha]) (void)
 		/*
 		angle: default 0
 		alpha: default 255. Valid values 0-255.
 		*/
 
-		gr.DrawLine(x1, y1, x2, y2, line_width, colour); (void)
+		gr.DrawLine(x1, y1, x2, y2, line_width, colour) (void)
 
-		gr.DrawPolygon(colour, line_width, points); (void)
+		gr.DrawPolygon(colour, line_width, points) (void)
 		// points: An array of x, y co-ordinate pairs. Must be an even number in length.
 
-		gr.DrawRect(x, y, w, h, line_width, colour); (void)
+		gr.DrawRect(x, y, w, h, line_width, colour) (void)
 
-		gr.DrawRoundRect(x, y, w, h, arc_width, arc_height, line_width, colour); (void)
+		gr.DrawRoundRect(x, y, w, h, arc_width, arc_height, line_width, colour) (void)
 
-		gr.DrawString(str, IGdiFont, colour, x, y, w, h[, flags]); (void)
+		gr.DrawString(str, IGdiFont, colour, x, y, w, h[, flags]) (void)
 		// flags: default 0. See Flags.txt > StringFormatFlags
 
-		gr.EstimateLineWrap(str, IGdiFont, max_width); (VBArray)
+		gr.EstimateLineWrap(str, IGdiFont, max_width) (VBArray)
 		/*
 		Returns a VBArray so you need to use .toArray() on the result.
 		index | meaning
@@ -1716,9 +1754,9 @@ interface IGdiGraphics {
 		[2n + 3] width of text line n (px)
 		*/
 
-		gr.FillEllipse(x, y, w, h, colour); (void)
+		gr.FillEllipse(x, y, w, h, colour) (void)
 
-		gr.FillGradRect(x, y, w, h, angle, colour1, colour2[, focus]); (void)
+		gr.FillGradRect(x, y, w, h, angle, colour1, colour2[, focus]) (void)
 		/*
 		focus: default 1. Valid values between 0 and 1.
 		Specify where the centred colour will be at its highest intensity.
@@ -1727,34 +1765,34 @@ interface IGdiGraphics {
 		to adjust the "angle" by a degree or two.
 		*/
 
-		gr.FillPolygon(colour, fillmode, points); (void)
+		gr.FillPolygon(colour, fillmode, points) (void)
 		// fillmode: 0 alternate, 1 winding.
 		// points: An array of x, y co-ordinate pairs. Must be an even number in length.
 
-		gr.FillRoundRect(x, y, w, h, arc_width, arc_height, colour); (void)
+		gr.FillRoundRect(x, y, w, h, arc_width, arc_height, colour) (void)
 
-		gr.FillSolidRect(x, y, w, h, colour); (void)
+		gr.FillSolidRect(x, y, w, h, colour) (void)
 
-		gr.GdiAlphaBlend(IGdiRawBitmap, dstX, dstY, dstW, dstH, srcX, srcY, srcW, srcH[, alpha]); (void)
+		gr.GdiAlphaBlend(IGdiRawBitmap, dstX, dstY, dstW, dstH, srcX, srcY, srcW, srcH[, alpha]) (void)
 		// alpha: default 255. Valid values 0-255.
 
-		gr.GdiDrawBitmap(IGdiRawBitmap, dstX, dstY, dstW, dstH, srcX, srcY, srcW, srcH); (void)
+		gr.GdiDrawBitmap(IGdiRawBitmap, dstX, dstY, dstW, dstH, srcX, srcY, srcW, srcH) (void)
 		// Always faster than DrawImage, does not support alpha channel.
 
-		gr.GdiDrawText(str, IGdiFont, colour, x, y, w, h[, format]); (void)
+		gr.GdiDrawText(str, IGdiFont, colour, x, y, w, h[, format]) (void)
 		// format: default 0. See Flags.txt > Used with GdiDrawText()
 
-		gr.MeasureString(str, IGdiFont, x, y, w, h[, flags]); (IMeasureStringInfo)
+		gr.MeasureString(str, IGdiFont, x, y, w, h[, flags]) (IMeasureStringInfo)
 		// flags: default 0. See Flags.txt > StringFormatFlags
 
 			interface IMeasureStringInfo {
 				Properties:
-					chars; (int) (read)
-					Height; (float) (read)
-					lines; (int) (read)
-					x; (float) (read)
-					y; (float) (read)
-					Width; (float) (read)
+					chars (int) (read)
+					Height (float) (read)
+					lines (int) (read)
+					x (float) (read)
+					y (float) (read)
+					Width (float) (read)
 
 					/*
 					Example:
@@ -1781,7 +1819,7 @@ interface IGdiGraphics {
 					*/
 			}
 
-		gr.SetInterpolationMode(mode); (void)
+		gr.SetInterpolationMode(mode) (void)
 		/*
 		mode:
 
@@ -1796,7 +1834,7 @@ interface IGdiGraphics {
 		7: HighQualityBicubic
 		*/
 
-		gr.SetSmoothingMode(mode); (void)
+		gr.SetSmoothingMode(mode) (void)
 		/*
 		mode:
 
@@ -1808,7 +1846,7 @@ interface IGdiGraphics {
 		4: AntiAlias
 		*/
 
-		gr.SetTextRenderingHint(mode); (void)
+		gr.SetTextRenderingHint(mode) (void)
 		/*
 		mode:
 
@@ -1828,38 +1866,38 @@ interface IMetadbHandle {
 	*/
 
 	Properties:
-		Path; (string) (read)
+		Path (string) (read)
 		/*
 		Example:
 		console.log(handle.Path);
 		>> D:\SomeSong.flac
 		*/
 
-		RawPath; (string) (read)
+		RawPath (string) (read)
 		/*
 		Example:
 		console.log(handle.RawPath);
 		>> file://D:\SomeSong.flac
 		*/
 
-		SubSong; (uint) (read)
+		SubSong (uint) (read)
 
-		FileSize; (int64) (read)
+		FileSize (int64) (read)
 		// Requires Chakra script engine to work properly.
 
-		Length; (double) (read)
+		Length (double) (read)
 
 	Methods:
-		SetPlayCount(playcount); (void)
-		SetLoved(loved); (void)
-		SetFirstPlayed(first_played); (void)
-		SetLastPlayed(last_played); (void)
-		SetRating(rating); (void)
-		ClearStats(); (void)
-		RefreshStats(); (void)
+		SetPlayCount(playcount) (void)
+		SetLoved(loved) (void)
+		SetFirstPlayed(first_played) (void)
+		SetLastPlayed(last_played) (void)
+		SetRating(rating) (void)
+		ClearStats() (void)
+		RefreshStats() (void)
 		// See https://marc2k3.github.io/foo_jscript_panel/Playback-Stats.html
 
-		Compare(handle); (boolean)
+		Compare(handle) (boolean)
 		/*
 		Compare two IMetadbHandle instances, pointer only.
 
@@ -1868,13 +1906,13 @@ interface IMetadbHandle {
 		If you want to compare them physically, use the "RawPath" property.
 		*/
 
-		Dispose(); (void)
+		Dispose() (void)
 		/*
 		Example:
 		handle.Dispose();
 		*/
 
-		GetAlbumArt([art_id, need_stub]); (VBArray)
+		GetAlbumArt([art_id, need_stub]) (VBArray)
 		/*
 		art_id: default 0.
 
@@ -1900,7 +1938,7 @@ interface IMetadbHandle {
 		}
 		*/
 
-		GetFileInfo(); (IFileInfo)
+		GetFileInfo() (IFileInfo)
 
 			interface IFileInfo {
 				/*
@@ -1910,14 +1948,14 @@ interface IMetadbHandle {
 				*/
 
 				Properties:
-					MetaCount; (uint) (read)
+					MetaCount (uint) (read)
 					/*
 					Example:
 					console.log(f.MetaCount);
 					>> 11
 					*/
 
-					InfoCount; (uint) (read)
+					InfoCount (uint) (read)
 					/*
 					Example:
 					console.log(f.InfoCount);
@@ -1925,23 +1963,23 @@ interface IMetadbHandle {
 					*/
 
 				Methods:
-					Dispose(); (void)
+					Dispose() (void)
 					/*
 					Example:
 					f.Dispose();
 					*/
 
-					InfoFind(name); (int)
+					InfoFind(name) (int)
 					// Returns -1 on failure.
 
-					InfoName(idx); (string)
+					InfoName(idx) (string)
 
-					InfoValue(idx); (string)
+					InfoValue(idx) (string)
 
-					MetaFind(name); (int)
+					MetaFind(name) (int)
 					// Returns -1 on failure.
 
-					MetaName(idx); (string)
+					MetaName(idx) (string)
 					/*
 					The case of the tag name returned can be different depending on tag type
 					so using toLowerCase() or toUpperCase() on the result is recommended
@@ -1954,9 +1992,9 @@ interface IMetadbHandle {
 					}
 					*/
 
-					MetaValue(idx, vidx); (string)
+					MetaValue(idx, vidx) (string)
 
-					MetaValueCount(idx); (uint)
+					MetaValueCount(idx) (uint)
 			}
 }
 
@@ -1969,27 +2007,27 @@ interface IMetadbHandleList {
 	*/
 
 	Properties:
-		Count; (uint) (read)
+		Count (uint) (read)
 		/*
 		Example:
 		console.log(handle_list.Count);
 		>> 11
 		*/
 
-		Item(idx); (IMetadbHandle) (read, write)
+		Item(idx) (IMetadbHandle) (read, write)
 		/*
 		Example:
 		var path = handle_list.Item(0).Path;
 		*/
 
 	Methods:
-		Add(handle); (void)
+		Add(handle) (void)
 		/*
 		Example:
 		handle_list.Add(fb.GetNowPlaying());
 		*/
 
-		AddRange(handle_list); (void)
+		AddRange(handle_list) (void)
 		/*
 		Example:
 		handle_list.Add(fb.GetLibraryItems());
@@ -2027,28 +2065,28 @@ interface IMetadbHandleList {
 		handle_list.Dispose();
 		*/
 
-		BSearch(handle); (int)
+		BSearch(handle) (int)
 		/*
 		Must be sorted with Sort() first, faster than Find().
 		Returns -1 on failure.
 		*/
 
-		CalcTotalDuration(); (double)
+		CalcTotalDuration() (double)
 		// Returns total in seconds. For display purposes, consider using utils.FormatDuration() on the result.
 
-		CalcTotalSize(); (int64)
+		CalcTotalSize() (int64)
 		/*
 		Requires Chakra script engine to work properly.
 		Returns total in bytes. For display purposes, consider using utils.FormatFileSize() on the result.
 		*/
 
-		Clone(); (IMetadbHandleList)
+		Clone() (IMetadbHandleList)
 		/*
 		Example:
 		var handle_list2 = handle_list.Clone();
 		*/
 
-		Convert(); (VBArray)
+		Convert() (VBArray)
 		/*
 		Returns a VBArray so you need to use .toArray() on the result.
 
@@ -2062,20 +2100,20 @@ interface IMetadbHandleList {
 		}
 		*/
 
-		Dispose(); (void)
+		Dispose() (void)
 		/*
 		Example:
 		handle_list.Dispose();
 		*/
 
-		Find(handle); (int)
+		Find(handle) (int)
 		/*
 		If sorted, use BSearch instead.
 
 		Returns -1 on failure.
 		*/
 
-		GetLibraryRelativePaths(); (VBArray)
+		GetLibraryRelativePaths() (VBArray)
 		/*
 		Returns a VBArray so you need to use .toArray() on the result.
 
@@ -2095,16 +2133,16 @@ interface IMetadbHandleList {
 		>> Albums\Artist\Some Album\Some Song.flac
 		*/
 
-		Insert(index, handle); (void)
+		Insert(index, handle) (void)
 		/*
 		Example:
 		handle_list.Insert(handle_list.Count, fb.GetNowPlaying());
 		This inserts at the end of the handle list.
 		*/
 
-		InsertRange(index, handle_list); (void)
+		InsertRange(index, handle_list) (void)
 
-		MakeDifference(handle_list); (void)
+		MakeDifference(handle_list) (void)
 		/*
 		Must be sorted with Sort() first.
 
@@ -2119,7 +2157,7 @@ interface IMetadbHandleList {
 		// "one" now only contains handles that were unique to "one". Anything that also existed in "two" will have been removed.
 		*/
 
-		MakeIntersection(handle_list); (void)
+		MakeIntersection(handle_list) (void)
 		/*
 		Must be sorted with Sort() first.
 
@@ -2134,7 +2172,7 @@ interface IMetadbHandleList {
 		// "one" now only contains handles that were in BOTH "one" AND "two"
 		*/
 
-		MakeUnion(handle_list); (void)
+		MakeUnion(handle_list) (void)
 		/*
 		Example:
 		var one = plman.GetPlaylistItems(0);
@@ -2154,7 +2192,7 @@ interface IMetadbHandleList {
 		context menu versions, there is no prompt.
 		*/
 
-		OrderByFormat(tfo, direction); (void)
+		OrderByFormat(tfo, direction) (void)
 		/*
 		tfo: an instance of ITitleFormat.
 		direction: integer, ascending while > 0.
@@ -2165,19 +2203,19 @@ interface IMetadbHandleList {
 		handle_list.OrderByFormat(tfo, 1);
 		*/
 
-		OrderByPath(); (void)
+		OrderByPath() (void)
 
-		OrderByRelativePath(); (void)
+		OrderByRelativePath() (void)
 		// This method should only be used on a handle list containing items that are monitored as part of the Media Library.
 
-		RefreshStats(); (void)
+		RefreshStats() (void)
 		// See https://marc2k3.github.io/foo_jscript_panel/Playback-Stats.html
 
-		Remove(handle); (void)
+		Remove(handle) (void)
 
-		RemoveAll(); (void)
+		RemoveAll() (void)
 
-		RemoveAttachedImage([art_id]); (void)
+		RemoveAttachedImage([art_id]) (void)
 		/*
 		art_id: default 0.
 
@@ -2188,24 +2226,24 @@ interface IMetadbHandleList {
 		4: artist
 		*/
 
-		RemoveAttachedImages(); (void)
+		RemoveAttachedImages() (void)
 		// Removes all attached images.
 
-		RemoveById(idx); (void)
+		RemoveById(idx) (void)
 		/*
 		Example:
 		handle_list.RemoveById(0);
 		*/
 
-		RemoveRange(from, num); (void)
+		RemoveRange(from, num) (void)
 		/*
 		Example:
 		handle_list.RemoveRange(10, 20);
 		*/
 
-		Sort(); (void)
+		Sort() (void)
 		// Remove duplicates and optimise for other handle list operations.
 
-		UpdateFileInfoFromJSON(str); (void)
+		UpdateFileInfoFromJSON(str) (void)
 		// See https://marc2k3.github.io/foo_jscript_panel/Breaking-Changes.html#v130
 }
