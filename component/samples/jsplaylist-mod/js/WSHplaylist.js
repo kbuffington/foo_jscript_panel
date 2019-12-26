@@ -2522,7 +2522,7 @@ oList = function (object_name, playlist) {
 
 	this.contextMenu = function (x, y, id, row_id) {
 		var items = plman.GetPlaylistSelectedItems(this.playlist);
-		var flag = plman.IsPlaylistLocked(this.playlist) ? MF_GRAYED : MF_STRING;
+		var flag = playlist_can_remove(this.playlist) ? MF_STRING : MF_GRAYED;
 		
 		var _menu = window.CreatePopupMenu();
 		var _context = fb.CreateContextMenuManager();
@@ -2535,7 +2535,7 @@ oList = function (object_name, playlist) {
 		_menu.AppendMenuSeparator();
 		_menu.AppendMenuItem(flag, 1003, "Cut");
 		_menu.AppendMenuItem(MF_STRING, 1004, "Copy");
-		_menu.AppendMenuItem(!plman.IsPlaylistLocked(this.playlist) && fb.CheckClipboardContents() ? MF_STRING : MF_GRAYED, 1005, "Paste");
+		_menu.AppendMenuItem(playlist_can_add(this.playlist) && fb.CheckClipboardContents() ? MF_STRING : MF_GRAYED, 1005, "Paste");
 		_menu.AppendMenuSeparator();
 		_context.BuildMenu(_menu, 1);
 		var idx = _menu.TrackPopupMenu(x, y);

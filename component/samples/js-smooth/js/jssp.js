@@ -4531,16 +4531,9 @@ function save_image_to_cache(metadb, albumIndex) {
 on_load();
 
 //=================================================// Drag'n'Drop Callbacks
-function on_drag_enter() {
-
-}
-
-function on_drag_leave() {
-
-}
 
 function on_drag_over(action, x, y, mask) {
-	if (y < brw.y || (plman.ActivePlaylist > -1 && plman.IsPlaylistLocked(plman.Activeplaylist))) {
+	if (y < brw.y || !playlist_can_add(plman.ActivePlaylist)) {
 		action.Effect = 0;
 	} else {
 		action.Effect = 1;
@@ -4548,19 +4541,12 @@ function on_drag_over(action, x, y, mask) {
 };
 
 function on_drag_drop(action, x, y, mask) {
-	if (y < brw.y || (plman.ActivePlaylist > -1 && plman.IsPlaylistLocked(plman.Activeplaylist))) {
+	if (y < brw.y || !playlist_can_add(plman.ActivePlaylist)) {
 		action.Effect = 0;
 	} else {
-		var count = plman.PlaylistCount;
-		if (count == 0 || plman.ActivePlaylist == -1) {
-			plman.CreatePlaylist(count, "Dropped Items");
-			action.Playlist = count;
-			action.Base = 0;
-		} else {
-			plman.ClearPlaylistSelection(plman.ActivePlaylist);
-			action.Playlist = plman.ActivePlaylist;
-			action.Base = plman.PlaylistItemCount(plman.ActivePlaylist);
-		}
+		plman.ClearPlaylistSelection(plman.ActivePlaylist);
+		action.Playlist = plman.ActivePlaylist;
+		action.Base = plman.PlaylistItemCount(plman.ActivePlaylist);
 		action.ToSelect = true;
 		action.Effect = 1;
 	}

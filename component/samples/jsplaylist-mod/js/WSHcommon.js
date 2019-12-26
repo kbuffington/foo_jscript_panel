@@ -789,3 +789,22 @@ function gdi_font(name, size, style) {
 function fb2k_length(h) {
 	return Math.max(h.Length, 0);
 }
+
+// Used with plman.GetPlaylistLockFilterMask()
+var PlaylistLockFilterMask = {
+	filter_add : 1,
+	filter_remove: 2,
+	filter_reorder: 4,
+	filter_replace: 8,
+	filter_rename: 16,
+	filter_remove_playlist: 32,
+	filter_default_action: 64
+};
+
+function playlist_can_add(playlistIndex) {
+	return !(plman.GetPlaylistLockFilterMask(playlistIndex) & PlaylistLockFilterMask.filter_add);
+}
+
+function playlist_can_remove(playlistIndex) {
+	return !(plman.GetPlaylistLockFilterMask(playlistIndex) & PlaylistLockFilterMask.filter_remove);
+}

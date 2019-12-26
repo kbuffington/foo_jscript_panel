@@ -2534,7 +2534,7 @@ function on_drag_over(action, x, y, mask) {
 			// blank area, drop to new playlist
 			action.Effect = 1;
 		} else {
-			action.Effect = plman.IsPlaylistLocked(g_dragndrop_targetPlaylistId) ? 0 : 1;
+			action.Effect = playlist_can_add(g_dragndrop_targetPlaylistId) ? 1 : 0;
 		}
 	}
 	brw.repaint();
@@ -2554,17 +2554,18 @@ function on_drag_drop(action, x, y, mask) {
 			action.Base = plman.PlaylistItemCount(total_pl);
 			action.ToSelect = plman.PlaylistCount == 1; // switch to and set focus if only playlist
 			action.Effect = 1;
-		} else if (plman.IsPlaylistLocked(g_dragndrop_targetPlaylistId)) {
-			// mouse over an existing playlist but can't drop there
-			action.Effect = 0;
-		} else {
+		} else if (playlist_can_add(g_dragndrop_targetPlaylistId)) {
 			// drop to an existing playlist
 			drop_done = true;
 			action.Playlist = g_dragndrop_targetPlaylistId;
 			action.Base = plman.PlaylistItemCount(g_dragndrop_targetPlaylistId);
 			action.ToSelect = false;
 			action.Effect = 1;
+		} else {
+			// mouse over an existing playlist but can't drop there
+			action.Effect = 0;
 		}
+
 		if (drop_done) {
 			if (!blink.timer) {
 				blink.x = x;
