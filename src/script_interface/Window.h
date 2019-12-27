@@ -21,7 +21,7 @@ public:
 	STDMETHODIMP GetFontDUI(UINT type, IGdiFont** pp) override;
 	STDMETHODIMP GetProperty(BSTR name, VARIANT defaultval, VARIANT* p) override;
 	STDMETHODIMP NotifyOthers(BSTR name, VARIANT info) override;
-	STDMETHODIMP Reload() override;
+	STDMETHODIMP Reload(VARIANT_BOOL clear_properties) override;
 	STDMETHODIMP Repaint() override;
 	STDMETHODIMP RepaintRect(int x, int y, int w, int h) override;
 	STDMETHODIMP SetCursor(UINT id) override;

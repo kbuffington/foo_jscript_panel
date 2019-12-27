@@ -139,8 +139,12 @@ STDMETHODIMP Window::NotifyOthers(BSTR name, VARIANT info)
 	return S_OK;
 }
 
-STDMETHODIMP Window::Reload()
+STDMETHODIMP Window::Reload(VARIANT_BOOL clear_properties)
 {
+	if (clear_properties != VARIANT_FALSE)
+	{
+		m_host->m_panel_config.properties.m_map.clear();
+	}
 	m_host->update_script();
 	return S_OK;
 }

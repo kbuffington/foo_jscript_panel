@@ -476,7 +476,7 @@ library foo_jscript_panel
 		HRESULT GetFontDUI(UINT type, [out, retval] IGdiFont** pp);
 		HRESULT GetProperty(BSTR name, [optional] VARIANT defaultval, [out, retval] VARIANT* p);
 		HRESULT NotifyOthers(BSTR name, VARIANT info);
-		HRESULT Reload();
+		HRESULT Reload([defaultvalue(0)] VARIANT_BOOL clear_properties);
 		HRESULT Repaint();
 		HRESULT RepaintRect(int x, int y, int w, int h);
 		HRESULT SetCursor(UINT id);

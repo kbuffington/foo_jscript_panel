@@ -1538,8 +1538,10 @@ interface IWindow {
 		Listen for notifications in other panels using on_notify_data(name, info) {}
 		*/
 
-		window.Reload() (void)
-		// Reloads panel.
+		window.Reload([clear_properties]) (void)
+		/*
+		clear_properties: boolean, default false. If true, all existing properties set with window.SetProperty are cleared.
+		*/
 
 		window.Repaint() (void)
 		// The previously optional "force" parameter was removed in v2.3.0.
