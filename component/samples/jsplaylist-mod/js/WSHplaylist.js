@@ -2522,7 +2522,7 @@ oList = function (object_name, playlist) {
 
 	this.contextMenu = function (x, y, id, row_id) {
 		var items = plman.GetPlaylistSelectedItems(this.playlist);
-		var flag = playlist_can_remove(this.playlist) ? MF_STRING : MF_GRAYED;
+		var flag = playlist_can_remove_items(this.playlist) ? MF_STRING : MF_GRAYED;
 		
 		var _menu = window.CreatePopupMenu();
 		var _context = fb.CreateContextMenuManager();

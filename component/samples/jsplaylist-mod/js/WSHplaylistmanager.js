@@ -771,7 +771,7 @@ oPlaylistManager = function (obj_name) {
 			_menu.AppendMenuItem(MF_STRING, 5, "Duplicate this playlist");
 			if (id > 0 || !cPlaylistManager.mediaLibraryPlaylist) {
 				_menu.AppendMenuItem(playlist_can_rename(id) ? MF_STRING : MF_GRAYED, 3, "Rename this playlist");
-				_menu.AppendMenuItem(!(plman.GetPlaylistLockFilterMask(id) & PlaylistLockFilterMask.filter_remove_playlist) ? MF_STRING : MF_GRAYED, 8, "Remove this playlist");
+				_menu.AppendMenuItem(playlist_can_remove(id) ? MF_STRING : MF_GRAYED, 8, "Remove this playlist");
 			};
 			if (id > 0 || !cPlaylistManager.mediaLibraryPlaylist) {
 				if (plman.IsAutoPlaylist(id)) {

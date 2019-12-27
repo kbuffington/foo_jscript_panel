@@ -1050,8 +1050,6 @@ function process_string(str) {
 	return str_;
 };
 
-
-
 // Used with plman.GetPlaylistLockFilterMask()
 var PlaylistLockFilterMask = {
 	filter_add : 1,
@@ -1063,10 +1061,18 @@ var PlaylistLockFilterMask = {
 	filter_default_action: 64
 };
 
-function playlist_can_add(playlistIndex) {
+function playlist_can_add_items(playlistIndex) {
 	return !(plman.GetPlaylistLockFilterMask(playlistIndex) & PlaylistLockFilterMask.filter_add);
 }
 
-function playlist_can_remove(playlistIndex) {
+function playlist_can_remove_items(playlistIndex) {
 	return !(plman.GetPlaylistLockFilterMask(playlistIndex) & PlaylistLockFilterMask.filter_remove);
+}
+
+function playlist_can_rename(playlistIndex) {
+	return !(plman.GetPlaylistLockFilterMask(playlistIndex) & PlaylistLockFilterMask.filter_rename);
+}
+
+function playlist_can_remove(playlistIndex) {
+	return !(plman.GetPlaylistLockFilterMask(playlistIndex) & PlaylistLockFilterMask.filter_remove_playlist);
 }

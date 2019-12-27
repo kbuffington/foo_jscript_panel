@@ -1395,8 +1395,8 @@ oBrowser = function (name) {
 		if (!add_mode) {
 			_menu.AppendMenuItem(MF_STRING, 5, "Duplicate this playlist");
 
-			_menu.AppendMenuItem(MF_STRING, 3, "Rename this playlist");
-			_menu.AppendMenuItem(MF_STRING, 8, "Remove this playlist");
+			_menu.AppendMenuItem(playlist_can_rename(id) ? MF_STRING : MF_GRAYED, 3, "Rename this playlist");
+			_menu.AppendMenuItem(playlist_can_remove(id) ? MF_STRING : MF_GRAYED, 8, "Remove this playlist");
 
 			if (plman.IsAutoPlaylist(id)) {
 				_menu.AppendMenuItem(MF_SEPARATOR, 0, "");
@@ -2234,7 +2234,7 @@ function on_key_down(vkey) {
 				case VK_F2:
 					// set rename it
 					var rowId = brw.selectedRow;
-					if (rowId > -1) {
+					if (rowId > -1 && playlist_can_rename(rowId)) {
 						var rh = ppt.rowHeight - 10;
 						var tw = brw.w - rh - 10;
 						brw.inputbox = new oInputbox(tw, rh, plman.GetPlaylistName(brw.rows[rowId].idx), "", g_color_normal_txt, g_color_normal_bg, RGB(0, 0, 0), g_color_selected_bg & 0xd0ffffff, "renamePlaylist()", "brw");
@@ -2534,7 +2534,7 @@ function on_drag_over(action, x, y, mask) {
 			// blank area, drop to new playlist
 			action.Effect = 1;
 		} else {
-			action.Effect = playlist_can_add(g_dragndrop_targetPlaylistId) ? 1 : 0;
+			action.Effect = playlist_can_add_items(g_dragndrop_targetPlaylistId) ? 1 : 0;
 		}
 	}
 	brw.repaint();
@@ -2554,7 +2554,7 @@ function on_drag_drop(action, x, y, mask) {
 			action.Base = plman.PlaylistItemCount(total_pl);
 			action.ToSelect = plman.PlaylistCount == 1; // switch to and set focus if only playlist
 			action.Effect = 1;
-		} else if (playlist_can_add(g_dragndrop_targetPlaylistId)) {
+		} else if (playlist_can_add_items(g_dragndrop_targetPlaylistId)) {
 			// drop to an existing playlist
 			drop_done = true;
 			action.Playlist = g_dragndrop_targetPlaylistId;

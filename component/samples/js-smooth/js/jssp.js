@@ -4533,7 +4533,7 @@ on_load();
 //=================================================// Drag'n'Drop Callbacks
 
 function on_drag_over(action, x, y, mask) {
-	if (y < brw.y || !playlist_can_add(plman.ActivePlaylist)) {
+	if (y < brw.y || !playlist_can_add_items(plman.ActivePlaylist)) {
 		action.Effect = 0;
 	} else {
 		action.Effect = 1;
@@ -4541,7 +4541,7 @@ function on_drag_over(action, x, y, mask) {
 };
 
 function on_drag_drop(action, x, y, mask) {
-	if (y < brw.y || !playlist_can_add(plman.ActivePlaylist)) {
+	if (y < brw.y || !playlist_can_add_items(plman.ActivePlaylist)) {
 		action.Effect = 0;
 	} else {
 		plman.ClearPlaylistSelection(plman.ActivePlaylist);

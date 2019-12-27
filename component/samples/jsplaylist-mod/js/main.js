@@ -2185,7 +2185,7 @@ function on_key_down(vkey) {
 						full_repaint();
 					};
 					if (vkey == 88) { // CTRL+X
-						if (playlist_can_remove(act_pls)) {
+						if (playlist_can_remove_items(act_pls)) {
 							var items = plman.GetPlaylistSelectedItems(act_pls);
 							if (fb.CopyHandleListToClipboard(items)) {
 								plman.UndoBackup(act_pls);
@@ -2200,7 +2200,7 @@ function on_key_down(vkey) {
 						items.Dispose();
 					};
 					if (vkey == 86) { // CTRL+V
-						if (playlist_can_add(act_pls) && fb.CheckClipboardContents()) {
+						if (playlist_can_add_items(act_pls) && fb.CheckClipboardContents()) {
 							var items = fb.GetClipboardContents();
 							plman.UndoBackup(act_pls);
 							plman.InsertPlaylistItems(act_pls, p.list.focusedTrackId + 1, items, false);
@@ -2811,12 +2811,12 @@ function on_drag_over(action, x, y, mask) {
 		p.playlistManager.check("drag_over", x, y);
 		if (g_dragndrop_targetPlaylistId == -1) {
 			action.Effect = p.playlistManager.ishoverHeader ? 1 : 0;
-		} else if (playlist_can_add(g_dragndrop_targetPlaylistId)) {
+		} else if (playlist_can_add_items(g_dragndrop_targetPlaylistId)) {
 			action.Effect = 1;
 		} else {
 			action.Effect = 0;
 		}
-	} else if (playlist_can_add(plman.ActivePlaylist)) {
+	} else if (playlist_can_add_items(plman.ActivePlaylist)) {
 		g_dragndrop_trackId = -1;
 		g_dragndrop_rowId = -1;
 		g_dragndrop_bottom = false;
@@ -2843,7 +2843,7 @@ function on_drag_drop(action, x, y, mask) {
 			} else {
 				action.Effect = 0;
 			}
-		} else if (playlist_can_add(g_dragndrop_targetPlaylistId)) {
+		} else if (playlist_can_add_items(g_dragndrop_targetPlaylistId)) {
 			plman.ClearPlaylistSelection(g_dragndrop_targetPlaylistId);
 			plman.UndoBackup(g_dragndrop_targetPlaylistId);
 			action.Playlist = g_dragndrop_targetPlaylistId;
@@ -2854,7 +2854,7 @@ function on_drag_drop(action, x, y, mask) {
 			action.Effect = 0;
 		}
 	} else {
-		if (playlist_can_add(plman.ActivePlaylist)) {
+		if (playlist_can_add_items(plman.ActivePlaylist)) {
 			plman.ClearPlaylistSelection(plman.ActivePlaylist);
 			plman.UndoBackup(plman.ActivePlaylist);
 			action.Playlist = plman.ActivePlaylist;
