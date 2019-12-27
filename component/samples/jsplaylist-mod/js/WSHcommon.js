@@ -808,3 +808,7 @@ function playlist_can_add(playlistIndex) {
 function playlist_can_remove(playlistIndex) {
 	return !(plman.GetPlaylistLockFilterMask(playlistIndex) & PlaylistLockFilterMask.filter_remove);
 }
+
+function playlist_can_rename(playlistIndex) {
+	return !(plman.GetPlaylistLockFilterMask(playlistIndex) & PlaylistLockFilterMask.filter_rename);
+}

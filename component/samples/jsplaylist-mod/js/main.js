@@ -1842,7 +1842,7 @@ function on_key_down(vkey) {
 				switch (vkey) {
 				case VK_F2:
 					// rename playlist (playlist manager panel visible)
-					if (cPlaylistManager.visible) {
+					if (cPlaylistManager.visible && playlist_can_rename(act_pls)) {
 						p.playlistManager.inputbox = new oInputbox(p.playlistManager.w - p.playlistManager.border - p.playlistManager.scrollbarWidth - 40, cPlaylistManager.rowHeight - 10, plman.GetPlaylistName(act_pls), "", g_color_normal_txt, g_color_normal_bg, RGB(0, 0, 0), g_color_selected_bg & 0xccffffff, "renamePlaylist()", "p.playlistManager", 0, g_fsize, 225);
 						p.playlistManager.inputboxID = act_pls;
 						// activate box content + selection activated
