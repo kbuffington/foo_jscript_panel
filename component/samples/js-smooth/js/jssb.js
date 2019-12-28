@@ -2590,7 +2590,7 @@ oBrowser = function (name) {
 
 		var pl_count = plman.PlaylistCount;
 		if (pl_count > 1) {
-			_child02.AppendMenuItem(MF_SEPARATOR, 0, "");
+			_child02.AppendMenuSeparator();
 		};
 		for (var i = 0; i < pl_count; i++) {
 			if (i != this.playlist && !plman.IsAutoPlaylist(i)) {
@@ -2656,7 +2656,7 @@ oBrowser = function (name) {
 		_menu0.AppendTo(_menu, MF_STRING, "Source");
 		_menu.AppendMenuSeparator();
 
-		_menu.AppendMenuItem((ppt.sourceMode == 1 ? MF_STRING : MF_GRAYED | MF_DISABLED), 60, "Cursor follows Focus");
+		_menu.AppendMenuItem((ppt.sourceMode == 1 ? MF_STRING : MF_GRAYED), 60, "Cursor follows Focus");
 		_menu.CheckMenuItem(60, ppt.followFocusChange);
 		_menu.AppendMenuSeparator();
 

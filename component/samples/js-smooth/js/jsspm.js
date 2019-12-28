@@ -1354,8 +1354,6 @@ oBrowser = function (name) {
 		}, ppt.refreshRate);
 
 	this.context_menu = function (x, y, id) {
-		var MF_SEPARATOR = 0x00000800;
-		var MF_STRING = 0x00000000;
 		var _menu = window.CreatePopupMenu();
 		var _newplaylist = window.CreatePopupMenu();
 		var _autoplaylist = window.CreatePopupMenu();
@@ -1369,11 +1367,11 @@ oBrowser = function (name) {
 
 		if (!add_mode) {
 			var pl_idx = this.rows[id].idx;
-			_newplaylist.AppendTo(_menu, (g_filterbox.inputbox.text.length > 0 ? MF_GRAYED | MF_DISABLED : MF_STRING), "Insert ...");
+			_newplaylist.AppendTo(_menu, (g_filterbox.inputbox.text.length > 0 ? MF_GRAYED : MF_STRING), "Insert ...");
 		} else {
 			id = this.rowsCount;
 			var pl_idx = total;
-			_newplaylist.AppendTo(_menu, (g_filterbox.inputbox.text.length > 0 ? MF_GRAYED | MF_DISABLED : MF_STRING), "Add ...");
+			_newplaylist.AppendTo(_menu, (g_filterbox.inputbox.text.length > 0 ? MF_GRAYED : MF_STRING), "Add ...");
 		};
 		_newplaylist.AppendMenuItem(MF_STRING, 100, "New Playlist");
 		_newplaylist.AppendMenuItem(MF_STRING, 101, "New Autoplaylist");
@@ -1381,16 +1379,16 @@ oBrowser = function (name) {
 		_autoplaylist.AppendMenuItem(MF_STRING, 200, "Media Library (full)");
 		_autoplaylist.AppendMenuItem(MF_STRING, 205, "Tracks never played");
 		_autoplaylist.AppendMenuItem(MF_STRING, 206, "Tracks played in the last 5 days");
-		_autoplaylist.AppendMenuItem(MF_SEPARATOR, 0, "");
+		_autoplaylist.AppendMenuSeparator();
 		_autoplaylist.AppendMenuItem(MF_STRING, 210, "Tracks unrated");
 		_autoplaylist.AppendMenuItem(MF_STRING, 211, "Tracks rated 1");
 		_autoplaylist.AppendMenuItem(MF_STRING, 212, "Tracks rated 2");
 		_autoplaylist.AppendMenuItem(MF_STRING, 213, "Tracks rated 3");
 		_autoplaylist.AppendMenuItem(MF_STRING, 214, "Tracks rated 4");
 		_autoplaylist.AppendMenuItem(MF_STRING, 215, "Tracks rated 5");
-		_autoplaylist.AppendMenuItem(MF_SEPARATOR, 0, "");
+		_autoplaylist.AppendMenuSeparator();
 		_autoplaylist.AppendMenuItem(MF_STRING, 250, "Loved Tracks");
-		_menu.AppendMenuItem(MF_SEPARATOR, 0, "");
+		_menu.AppendMenuSeparator();
 		_menu.AppendMenuItem(MF_STRING, 2, "Load a Playlist");
 		if (!add_mode) {
 			_menu.AppendMenuItem(MF_STRING, 5, "Duplicate this playlist");
@@ -1399,8 +1397,8 @@ oBrowser = function (name) {
 			_menu.AppendMenuItem(playlist_can_remove(id) ? MF_STRING : MF_GRAYED, 8, "Remove this playlist");
 
 			if (plman.IsAutoPlaylist(id)) {
-				_menu.AppendMenuItem(MF_SEPARATOR, 0, "");
-				_menu.AppendMenuItem(MF_STRING, 6, "Autoplaylist properties...");
+				_menu.AppendMenuSeparator();
+				_menu.AppendMenuItem(MF_STRING, 6, plman.GetPlaylistLockName(id) + " properties");
 				_menu.AppendMenuItem(MF_STRING, 7, "Convert to a normal playlist");
 			};
 

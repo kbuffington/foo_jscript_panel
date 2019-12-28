@@ -778,7 +778,7 @@ oHeaderBar = function () {
 			var groupByMenuIdx = 20;
 			var totalGroupBy = p.list.groupby.length;
 			for (var i = 0; i < totalGroupBy; i++) {
-				_patterns.AppendMenuItem(((!found && default_pattern_index < 0) ? MF_STRING : MF_GRAYED | MF_DISABLED), groupByMenuIdx + i, p.list.groupby[i].label);
+				_patterns.AppendMenuItem(((!found && default_pattern_index < 0) ? MF_STRING : MF_GRAYED), groupByMenuIdx + i, p.list.groupby[i].label);
 			};
 			if (!found && default_pattern_index < 0) {
 				_patterns.CheckMenuRadioItem(groupByMenuIdx, groupByMenuIdx + totalGroupBy - 1, cGroup.pattern_idx + groupByMenuIdx);
@@ -789,11 +789,11 @@ oHeaderBar = function () {
 			_sorts.AppendTo(_groups, MF_STRING, "Apply Group Sorting");
 			var sortByMenuIdx = 50;
 			for (var i = 0; i < totalGroupBy; i++) {
-				_sorts.AppendMenuItem((p.list.groupby[i].sortOrder != "null" && ((!found && default_pattern_index < 0) || playlist_pattern_index == i) ? MF_STRING : MF_GRAYED | MF_DISABLED), sortByMenuIdx + i, p.list.groupby[i].label);
+				_sorts.AppendMenuItem((p.list.groupby[i].sortOrder != "null" && ((!found && default_pattern_index < 0) || playlist_pattern_index == i) ? MF_STRING : MF_GRAYED), sortByMenuIdx + i, p.list.groupby[i].label);
 			};
 			_groups.AppendMenuSeparator();
-			_groups.AppendMenuItem(p.list.totalRows > 0 && !properties.autocollapse && cGroup.expanded_height > 0 && cGroup.collapsed_height > 0 ? MF_STRING : MF_GRAYED | MF_DISABLED, 80, "Collapse All");
-			_groups.AppendMenuItem(p.list.totalRows > 0 && !properties.autocollapse && cGroup.expanded_height > 0 && cGroup.collapsed_height > 0 ? MF_STRING : MF_GRAYED | MF_DISABLED, 90, "Expand All");
+			_groups.AppendMenuItem(p.list.totalRows > 0 && !properties.autocollapse && cGroup.expanded_height > 0 && cGroup.collapsed_height > 0 ? MF_STRING : MF_GRAYED, 80, "Collapse All");
+			_groups.AppendMenuItem(p.list.totalRows > 0 && !properties.autocollapse && cGroup.expanded_height > 0 && cGroup.collapsed_height > 0 ? MF_STRING : MF_GRAYED, 90, "Expand All");
 
 		};
 

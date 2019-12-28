@@ -309,10 +309,10 @@ oInputbox = function (w, h, default_text, empty_text, textcolor, backcolor, bord
 		var idx;
 		var _menu = window.CreatePopupMenu();
 		cInputbox.clipboard = cInputbox.doc.parentWindow.clipboardData.getData("Text");
-		_menu.AppendMenuItem(this.select ? MF_STRING : MF_GRAYED | MF_DISABLED, 1, "Copy");
-		_menu.AppendMenuItem(this.select ? MF_STRING : MF_GRAYED | MF_DISABLED, 2, "Cut");
+		_menu.AppendMenuItem(this.select ? MF_STRING : MF_GRAYED, 1, "Copy");
+		_menu.AppendMenuItem(this.select ? MF_STRING : MF_GRAYED, 2, "Cut");
 		_menu.AppendMenuSeparator();
-		_menu.AppendMenuItem(cInputbox.clipboard ? MF_STRING : MF_GRAYED | MF_DISABLED, 3, "Paste");
+		_menu.AppendMenuItem(cInputbox.clipboard ? MF_STRING : MF_GRAYED, 3, "Paste");
 		if (utils.IsKeyPressed(VK_SHIFT)) {
 			_menu.AppendMenuSeparator();
 			_menu.AppendMenuItem(MF_STRING, 20, "Properties");

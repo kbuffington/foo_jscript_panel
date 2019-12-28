@@ -735,8 +735,6 @@ oPlaylistManager = function (obj_name) {
 	};
 
 	this.contextMenu = function (x, y, id) {
-		var MF_SEPARATOR = 0x00000800;
-		var MF_STRING = 0x00000000;
 		var _menu = window.CreatePopupMenu();
 		var _newplaylist = window.CreatePopupMenu();
 		var _autoplaylist = window.CreatePopupMenu();
@@ -759,13 +757,13 @@ oPlaylistManager = function (obj_name) {
 		_autoplaylist.AppendTo(_newplaylist, MF_STRING, "Pre-defined AutoPlaylist");
 		_autoplaylist.AppendMenuItem(MF_STRING, 200, "Tracks never played");
 		_autoplaylist.AppendMenuItem(MF_STRING, 201, "Tracks played in the last 5 days");
-		_autoplaylist.AppendMenuItem(MF_SEPARATOR, 0, "");
+		_autoplaylist.AppendMenuSeparator();
 		_autoplaylist.AppendMenuItem(MF_STRING, 210, "Tracks unrated");
 		_autoplaylist.AppendMenuItem(MF_STRING, 211, "Tracks rated 3 to 5");
 		_autoplaylist.AppendMenuItem(MF_STRING, 212, "Tracks rated 4");
 		_autoplaylist.AppendMenuItem(MF_STRING, 213, "Tracks rated 5");
 		_autoplaylist.AppendMenuItem(MF_STRING, 214, "Loved Tracks");
-		_menu.AppendMenuItem(MF_SEPARATOR, 0, "");
+		_menu.AppendMenuSeparator();
 		_menu.AppendMenuItem(MF_STRING, 2, "Load a Playlist");
 		if (!add_mode) {
 			_menu.AppendMenuItem(MF_STRING, 5, "Duplicate this playlist");
@@ -775,19 +773,19 @@ oPlaylistManager = function (obj_name) {
 			};
 			if (id > 0 || !cPlaylistManager.mediaLibraryPlaylist) {
 				if (plman.IsAutoPlaylist(id)) {
-					_menu.AppendMenuItem(MF_SEPARATOR, 0, "");
-					_menu.AppendMenuItem(MF_STRING, 6, "Autoplaylist properties...");
+					_menu.AppendMenuSeparator();
+					_menu.AppendMenuItem(MF_STRING, 6, plman.GetPlaylistLockName(id) + " properties");
 					_menu.AppendMenuItem(MF_STRING, 7, "Convert to a normal playlist");
 				};
 			};
 		};
 		if (!add_mode) {
 			if (properties.enablePlaylistFilter) {
-				_menu.AppendMenuItem(MF_SEPARATOR, 0, "");
+				_menu.AppendMenuSeparator();
 				if (this.playlists[id].filter_type == 1) {
 					_filters.AppendTo(_menu, MF_STRING, "Change Group Playlist Filter");
 					_filters.AppendMenuItem(MF_STRING, 799, "Remove Playlist Filter");
-					_filters.AppendMenuItem(MF_SEPARATOR, 0, "");
+					_filters.AppendMenuSeparator();
 				} else {
 					_filters.AppendTo(_menu, MF_STRING, "Set Group Playlist Filter");
 				};

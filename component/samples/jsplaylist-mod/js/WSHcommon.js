@@ -22,10 +22,7 @@ DLGC_BUTTON = 0x2000; /* Button item: can be checked      */
 // Use with MenuManager()
 // {{
 MF_STRING = 0x00000000;
-MF_SEPARATOR = 0x00000800;
 MF_GRAYED = 0x00000001;
-MF_DISABLED = 0x00000002;
-MF_POPUP = 0x00000010;
 // }}
 // Used in get_colors()
 // {{

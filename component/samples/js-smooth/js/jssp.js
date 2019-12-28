@@ -2730,14 +2730,14 @@ oBrowser = function (name) {
 				_child01.AppendMenuItem(MF_STRING, 1010, "Reset Image Cache");
 			};
 		};
-		_child01.AppendMenuItem((showInAlbumView ? MF_STRING : MF_GRAYED | MF_DISABLED), 1011, "Highlight in JS Smooth Browser");
+		_child01.AppendMenuItem((showInAlbumView ? MF_STRING : MF_GRAYED), 1011, "Highlight in JS Smooth Browser");
 		_child01.AppendMenuItem(plman.IsAutoPlaylist(g_active_playlist) ? MF_DISABLED | MF_GRAYED : MF_STRING, 1020, "Remove");
 		_child02.AppendTo(_child01, MF_STRING, "Send to...");
 		_child02.AppendMenuItem(MF_STRING, 2000, "a New playlist...");
 
 		var pl_count = plman.PlaylistCount;
 		if (pl_count > 1) {
-			_child02.AppendMenuItem(MF_SEPARATOR, 0, "");
+			_child02.AppendMenuSeparator();
 		};
 		for (var i = 0; i < pl_count; i++) {
 			if (i != this.playlist && !plman.IsAutoPlaylist(i)) {
@@ -2802,7 +2802,7 @@ oBrowser = function (name) {
 		var _menu3 = window.CreatePopupMenu();
 		var idx;
 
-		_menu.AppendMenuItem((fb.IsPlaying ? MF_STRING : MF_GRAYED | MF_DISABLED), 900, "Show Now Playing");
+		_menu.AppendMenuItem((fb.IsPlaying ? MF_STRING : MF_GRAYED), 900, "Show Now Playing");
 		_menu.AppendMenuSeparator();
 		_menu.AppendMenuItem(MF_STRING, 910, "Header Bar");
 		_menu.CheckMenuItem(910, ppt.showHeaderBar);
@@ -2810,7 +2810,7 @@ oBrowser = function (name) {
 		_menu.CheckMenuItem(912, ppt.doubleRowText);
 
 		_menu.AppendMenuSeparator();
-		_menu1.AppendMenuItem((!ppt.doubleRowText ? (!ppt.showgroupheaders ? MF_GRAYED | MF_DISABLED : MF_STRING) : MF_GRAYED | MF_DISABLED), 111, "Artist");
+		_menu1.AppendMenuItem((!ppt.doubleRowText ? (!ppt.showgroupheaders ? MF_GRAYED : MF_STRING) : MF_GRAYED), 111, "Artist");
 		_menu1.CheckMenuItem(111, ppt.showArtistAlways);
 		//_menu1.AppendMenuItem(MF_STRING, 112, "Mood");
 		//_menu1.CheckMenuItem(112, ppt.showMood);
@@ -2829,13 +2829,13 @@ oBrowser = function (name) {
 
 		_menu2.AppendTo(_menu, MF_STRING, "Background Wallpaper");
 
-		_menu3.AppendMenuItem((!ppt.autocollapse ? MF_STRING : MF_GRAYED | MF_DISABLED), 300, "Enable");
+		_menu3.AppendMenuItem((!ppt.autocollapse ? MF_STRING : MF_GRAYED), 300, "Enable");
 		_menu3.CheckMenuItem(300, ppt.showgroupheaders);
-		_menu3.AppendMenuItem((ppt.showgroupheaders ? MF_STRING : MF_GRAYED | MF_DISABLED), 310, "Autocollapse");
+		_menu3.AppendMenuItem((ppt.showgroupheaders ? MF_STRING : MF_GRAYED), 310, "Autocollapse");
 		_menu3.CheckMenuItem(310, ppt.autocollapse);
 		_menu3.AppendMenuSeparator();
-		_menu3.AppendMenuItem((ppt.showgroupheaders && !ppt.autocollapse ? MF_STRING : MF_GRAYED | MF_DISABLED), 320, "Collapse All");
-		_menu3.AppendMenuItem((ppt.showgroupheaders && !ppt.autocollapse ? MF_STRING : MF_GRAYED | MF_DISABLED), 330, "Expand All");
+		_menu3.AppendMenuItem((ppt.showgroupheaders && !ppt.autocollapse ? MF_STRING : MF_GRAYED), 320, "Collapse All");
+		_menu3.AppendMenuItem((ppt.showgroupheaders && !ppt.autocollapse ? MF_STRING : MF_GRAYED), 330, "Expand All");
 
 		_menu3.AppendTo(_menu, MF_STRING, "Group Headers");
 
