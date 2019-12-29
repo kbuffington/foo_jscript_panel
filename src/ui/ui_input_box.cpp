@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "ui_input_box.h"
 
-CInputBox::CInputBox(const char* p_prompt, const char* p_caption, const char* p_value) : m_prompt(p_prompt), m_caption(p_caption), m_value(p_value) {}
+CInputBox::CInputBox(pfc::stringp prompt, pfc::stringp caption, pfc::stringp value) : m_prompt(prompt), m_caption(caption), m_value(value) {}
 
 BOOL CInputBox::OnInitDialog(CWindow, LPARAM)
 {

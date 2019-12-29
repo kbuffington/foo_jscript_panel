@@ -6,9 +6,9 @@ namespace
 	class my_mainmenu_commands : public mainmenu_commands
 	{
 	public:
-		GUID get_command(size_t p_index) override
+		GUID get_command(size_t index) override
 		{
-			return jsp::guids::mainmenu_items[p_index];
+			return jsp::guids::mainmenu_items[index];
 		}
 
 		GUID get_parent() override
@@ -16,16 +16,16 @@ namespace
 			return jsp::guids::mainmenu_group_id;
 		}
 
-		bool get_description(size_t p_index, pfc::string_base& p_out) override
+		bool get_description(size_t index, pfc::string_base& out) override
 		{
-			p_out = PFC_string_formatter() << "Invoke on_main_menu(" << (p_index + 1) << ")";
+			out = PFC_string_formatter() << "Invoke on_main_menu(" << (index + 1) << ")";
 			return true;
 		}
 
-		bool get_display(size_t p_index, pfc::string_base& p_out, size_t& p_flags) override
+		bool get_display(size_t index, pfc::string_base& out, size_t& flags) override
 		{
-			get_name(p_index, p_out);
-			p_flags = mainmenu_commands::flag_defaulthidden;
+			get_name(index, out);
+			flags = mainmenu_commands::flag_defaulthidden;
 			return true;
 		}
 
@@ -34,14 +34,14 @@ namespace
 			return jsp::guids::mainmenu_items.size();
 		}
 
-		void execute(size_t p_index, service_ptr_t<service_base> p_callback) override
+		void execute(size_t index, service_ptr_t<service_base> callback) override
 		{
-			panel_manager::instance().post_msg_to_all(callback_id::on_main_menu, p_index + 1);
+			panel_manager::instance().post_msg_to_all(callback_id::on_main_menu, index + 1);
 		}
 
-		void get_name(size_t p_index, pfc::string_base& p_out) override
+		void get_name(size_t index, pfc::string_base& out) override
 		{
-			p_out = std::to_string(p_index + 1).c_str();
+			out = std::to_string(index + 1).c_str();
 		}
 	};
 

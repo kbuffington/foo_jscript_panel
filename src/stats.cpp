@@ -110,7 +110,7 @@ namespace stats
 	class my_track_property_provider_v4 : public track_property_provider_v4
 	{
 	public:
-		bool is_our_tech_info(const char* p_name) override
+		bool is_our_tech_info(const char* name) override
 		{
 			return false;
 		}

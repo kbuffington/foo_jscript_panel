@@ -113,7 +113,7 @@ namespace
 			return ret;
 		}
 
-		bool edit_mode_context_menu_test(const POINT& p_point, bool p_fromkeyboard) override
+		bool edit_mode_context_menu_test(const POINT& point, bool fromkeyboard) override
 		{
 			return true;
 		}
@@ -125,14 +125,14 @@ namespace
 			return builder.finish(g_get_guid());
 		}
 
-		void edit_mode_context_menu_build(const POINT& p_point, bool p_fromkeyboard, HMENU p_menu, size_t p_id_base) override
+		void edit_mode_context_menu_build(const POINT& point, bool fromkeyboard, HMENU menu, size_t id_base) override
 		{
-			build_context_menu(p_menu, p_id_base);
+			build_context_menu(menu, id_base);
 		}
 
-		void edit_mode_context_menu_command(const POINT& p_point, bool p_fromkeyboard, size_t p_id, size_t p_id_base) override
+		void edit_mode_context_menu_command(const POINT& point, bool fromkeyboard, size_t id, size_t id_base) override
 		{
-			execute_context_menu_command(p_id, p_id_base);
+			execute_context_menu_command(id, id_base);
 		}
 
 		void initialize_window(HWND parent)
@@ -140,13 +140,13 @@ namespace
 			Create(parent);
 		}
 
-		void notify(const GUID& p_what, size_t p_param1, const void* p_param2, size_t p_param2size) override
+		void notify(const GUID& what, size_t param1, const void* param2, size_t param2size) override
 		{
-			if (p_what == ui_element_notify_colors_changed)
+			if (what == ui_element_notify_colors_changed)
 			{
 				script_invoke(callback_id::on_colours_changed);
 			}
-			else if (p_what == ui_element_notify_font_changed)
+			else if (what == ui_element_notify_font_changed)
 			{
 				script_invoke(callback_id::on_font_changed);
 			}

@@ -4,7 +4,7 @@
 class GdiRawBitmap : public IDisposableImpl4<IGdiRawBitmap>
 {
 protected:
-	GdiRawBitmap(Gdiplus::Bitmap* p_bmp);
+	GdiRawBitmap(Gdiplus::Bitmap* bmp);
 	~GdiRawBitmap();
 
 	HBITMAP CreateHBITMAP(Gdiplus::Bitmap* bitmap_ptr);

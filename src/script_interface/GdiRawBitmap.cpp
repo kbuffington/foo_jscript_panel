@@ -1,14 +1,14 @@
 #include "stdafx.h"
 #include "GdiRawBitmap.h"
 
-GdiRawBitmap::GdiRawBitmap(Gdiplus::Bitmap* p_bmp)
+GdiRawBitmap::GdiRawBitmap(Gdiplus::Bitmap* bmp)
 {
-	PFC_ASSERT(p_bmp != nullptr);
-	m_width = p_bmp->GetWidth();
-	m_height = p_bmp->GetHeight();
+	PFC_ASSERT(bmp != nullptr);
+	m_width = bmp->GetWidth();
+	m_height = bmp->GetHeight();
 
 	m_hdc = CreateCompatibleDC(nullptr);
-	m_hbmp = CreateHBITMAP(p_bmp);
+	m_hbmp = CreateHBITMAP(bmp);
 	m_hbmpold = static_cast<HBITMAP>(SelectObject(m_hdc, m_hbmp));
 }
 

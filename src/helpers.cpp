@@ -125,7 +125,7 @@ namespace helpers
 		return ret;
 	}
 
-	IGdiBitmap* get_album_art_embedded(const pfc::string8_fast& path, size_t art_id)
+	IGdiBitmap* get_album_art_embedded(pfc::stringp path, size_t art_id)
 	{
 		IGdiBitmap* ret = nullptr;
 		const GUID what = convert_artid_to_guid(art_id);
@@ -194,34 +194,34 @@ namespace helpers
 		return ret;
 	}
 
-	bool execute_context_command_by_name(const char* p_command, metadb_handle_list_cref p_handles)
+	bool execute_context_command_by_name(pfc::stringp command, metadb_handle_list_cref handles)
 	{
 		contextmenu_manager::ptr cm;
 		contextmenu_manager::g_create(cm);
-		cm->init_context(p_handles, contextmenu_manager::flag_view_full);
+		cm->init_context(handles, contextmenu_manager::flag_view_full);
 		pfc::string8_fast path;
-		return execute_context_command_recur(p_command, path, cm->get_root());
+		return execute_context_command_recur(command, path, cm->get_root());
 	}
 
-	bool execute_context_command_recur(const char* p_command, const pfc::string_base& p_path, contextmenu_node* p_parent)
+	bool execute_context_command_recur(pfc::stringp command, pfc::stringp cpath, contextmenu_node* parent)
 	{
-		for (size_t i = 0; i < p_parent->get_num_children(); ++i)
+		for (size_t i = 0; i < parent->get_num_children(); ++i)
 		{
-			contextmenu_node* child = p_parent->get_child(i);
-			pfc::string8_fast path = p_path;
-			path << child->get_name();
+			contextmenu_node* child = parent->get_child(i);
+			pfc::string8_fast path = cpath.get_ptr();
+			path.add_string(child->get_name());
 
 			switch (child->get_type())
 			{
 			case contextmenu_item_node::type_group:
 				path.add_char('/');
-				if (execute_context_command_recur(p_command, path, child))
+				if (execute_context_command_recur(command, path, child))
 				{
 					return true;
 				}
 				break;
 			case contextmenu_item_node::type_command:
-				if (_stricmp(p_command, path) == 0)
+				if (_stricmp(command, path) == 0)
 				{
 					child->execute();
 					return true;
@@ -232,7 +232,7 @@ namespace helpers
 		return false;
 	}
 
-	bool execute_mainmenu_command_by_name(const char* p_command)
+	bool execute_mainmenu_command_by_name(pfc::stringp command)
 	{
 		auto hash = [](const GUID& g)
 		{
@@ -278,17 +278,17 @@ namespace helpers
 				if (ptr->cast(v2_ptr) && v2_ptr->is_command_dynamic(i))
 				{
 					mainmenu_node::ptr node = v2_ptr->dynamic_instantiate(i);
-					if (execute_mainmenu_command_recur(p_command, path, node))
+					if (execute_mainmenu_command_recur(command, path, node))
 					{
 						return true;
 					}
 				}
 				else
 				{
-					pfc::string8_fast command;
-					ptr->get_name(i, command);
-					path.add_string(command);
-					if (_stricmp(p_command, path) == 0)
+					pfc::string8_fast name;
+					ptr->get_name(i, name);
+					path.add_string(name);
+					if (_stricmp(command, path) == 0)
 					{
 						ptr->execute(i, nullptr);
 						return true;
@@ -299,31 +299,28 @@ namespace helpers
 		return false;
 	}
 
-	bool execute_mainmenu_command_recur(const char* p_command, pfc::string8_fast path, mainmenu_node::ptr node)
+	bool execute_mainmenu_command_recur(pfc::stringp command, pfc::string_base& path, mainmenu_node::ptr node)
 	{
 		pfc::string8_fast text;
 		size_t flags;
 		node->get_display(text, flags);
-		path += text;
+		path.add_string(text);
 
 		switch (node->get_type())
 		{
 		case mainmenu_node::type_group:
-			if (text.get_length())
-			{
-				path.add_char('/');
-			}
+			if (text.get_length()) path.add_char('/');
 			for (size_t i = 0; i < node->get_children_count(); ++i)
 			{
 				mainmenu_node::ptr child = node->get_child(i);
-				if (execute_mainmenu_command_recur(p_command, path, child))
+				if (execute_mainmenu_command_recur(command, path, child))
 				{
 					return true;
 				}
 			}
 			break;
 		case mainmenu_node::type_command:
-			if (_stricmp(p_command, path) == 0)
+			if (_stricmp(command, path) == 0)
 			{
 				node->execute(nullptr);
 				return true;
@@ -389,12 +386,12 @@ namespace helpers
 		return RegOpenKeyExW(HKEY_CLASSES_ROOT, L"CLSID\\{16d51579-a30b-4c8b-a276-0ff4dc41e755}", 0, KEY_READ, &hKey) == ERROR_SUCCESS;
 	}
 
-	bool write_file(const char* path, const pfc::string8_fast& content)
+	bool write_file(pfc::stringp path, pfc::stringp content)
 	{
-		std::ofstream f(fs::u8path(path), std::ios::binary);
+		std::ofstream f(fs::u8path(path.get_ptr()), std::ios::binary);
 		if (f.is_open())
 		{
-			f << content.get_ptr();
+			f << content;
 			f.close();
 			return true;
 		}
@@ -447,10 +444,10 @@ namespace helpers
 		return content;
 	}
 
-	pfc::string8_fast read_file(const char* path)
+	pfc::string8_fast read_file(pfc::stringp path)
 	{
 		pfc::string8_fast content;
-		std::ifstream f(fs::u8path(path));
+		std::ifstream f(fs::u8path(path.get_ptr()));
 		if (f.is_open())
 		{
 			std::string line;
@@ -463,9 +460,9 @@ namespace helpers
 		return content;
 	}
 
-	size_t guess_codepage(const pfc::string8_fast& content)
+	size_t guess_codepage(pfc::stringp content)
 	{
-		int size = static_cast<int>(content.get_length());
+		int size = static_cast<int>(content.length());
 		if (size == 0) return 0;
 
 		constexpr int maxEncodings = 2;
@@ -591,7 +588,7 @@ namespace helpers
 		}
 	}
 
-	void list_files(const char* path, bool recur, pfc::string_list_impl& out)
+	void list_files(pfc::stringp path, bool recur, pfc::string_list_impl& out)
 	{
 		pfc::string8_fast cpath;
 		filesystem::g_get_canonical_path(path, cpath);
@@ -610,7 +607,7 @@ namespace helpers
 		catch (...) {}
 	}
 
-	void list_folders(const char* path, pfc::string_list_impl& out)
+	void list_folders(pfc::stringp path, pfc::string_list_impl& out)
 	{
 		pfc::string8_fast cpath;
 		filesystem::g_get_canonical_path(path, cpath);
@@ -622,7 +619,7 @@ namespace helpers
 		catch (...) {}
 	}
 
-	wchar_t* make_sort_string(const char* in)
+	wchar_t* make_sort_string(pfc::stringp in)
 	{
 		auto out = new wchar_t[estimate_utf8_to_wide(in) + 1];
 		out[0] = ' '; // StrCmpLogicalW bug workaround.

@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "Profiler.h"
 
-Profiler::Profiler(const char* p_name) : m_name(p_name)
+Profiler::Profiler(pfc::stringp name) : m_name(name)
 {
 	m_timer.start();
 }

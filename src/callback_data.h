@@ -3,9 +3,9 @@
 template <typename T1, typename T2 = char, typename T3 = char>
 struct callback_data : public pfc::refcounted_object_root
 {
-	callback_data(const T1& p_item1) : m_item1(p_item1) {}
-	callback_data(const T1& p_item1, const T2& p_item2) : m_item1(p_item1), m_item2(p_item2) {}
-	callback_data(const T1& p_item1, const T2& p_item2, const T3& p_item3) : m_item1(p_item1), m_item2(p_item2), m_item3(p_item3) {}
+	callback_data(const T1& item1) : m_item1(item1) {}
+	callback_data(const T1& item1, const T2& item2) : m_item1(item1), m_item2(item2) {}
+	callback_data(const T1& item1, const T2& item2, const T3& item3) : m_item1(item1), m_item2(item2), m_item3(item3) {}
 
 	T1 m_item1;
 	T2 m_item2;
@@ -14,7 +14,7 @@ struct callback_data : public pfc::refcounted_object_root
 
 struct metadb_callback_data : public pfc::refcounted_object_root
 {
-	metadb_callback_data(metadb_handle_list_cref p_items) : m_items(p_items) {}
+	metadb_callback_data(metadb_handle_list_cref items) : m_items(items) {}
 
 	metadb_handle_list m_items;
 };
@@ -24,9 +24,9 @@ class callback_data_scope_releaser
 {
 public:
 	template <class TParam>
-	callback_data_scope_releaser(TParam p_data)
+	callback_data_scope_releaser(TParam data)
 	{
-		m_data = reinterpret_cast<T*>(p_data);
+		m_data = reinterpret_cast<T*>(data);
 	}
 
 	~callback_data_scope_releaser()

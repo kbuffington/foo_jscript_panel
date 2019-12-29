@@ -4,7 +4,7 @@
 class CDialogGoto : public CDialogImpl<CDialogGoto>
 {
 public:
-	CDialogGoto(CWindow parent, const pfc::string8_fast& text);
+	CDialogGoto(CWindow parent, pfc::stringp text);
 
 	BEGIN_MSG_MAP_EX(CDialogGoto)
 		MSG_WM_INITDIALOG(OnInitDialog)

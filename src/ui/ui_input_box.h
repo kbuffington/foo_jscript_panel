@@ -3,7 +3,7 @@
 class CInputBox : public CDialogImpl<CInputBox>
 {
 public:
-	CInputBox(const char* p_prompt, const char* p_caption, const char* p_value);
+	CInputBox(pfc::stringp prompt, pfc::stringp caption, pfc::stringp value);
 
 	BEGIN_MSG_MAP_EX(CInputBox)
 		MSG_WM_INITDIALOG(OnInitDialog)

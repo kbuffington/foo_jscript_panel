@@ -33,31 +33,31 @@ namespace helpers
 	DWORD convert_colorref_to_argb(COLORREF colour);
 	GUID convert_artid_to_guid(size_t art_id);
 	IGdiBitmap* get_album_art(const metadb_handle_ptr& handle, size_t art_id, bool need_stub, bool no_load, pfc::string_base& image_path);
-	IGdiBitmap* get_album_art_embedded(const pfc::string8_fast& path, size_t art_id);
+	IGdiBitmap* get_album_art_embedded(pfc::stringp path, size_t art_id);
 	IGdiBitmap* load_image(BSTR path);
 	IGdiBitmap* read_album_art_into_bitmap(const album_art_data_ptr& data);
-	bool execute_context_command_by_name(const char* p_command, metadb_handle_list_cref p_handles);
-	bool execute_context_command_recur(const char* p_command, const pfc::string_base& p_path, contextmenu_node* p_parent);
-	bool execute_mainmenu_command_by_name(const char* p_command);
-	bool execute_mainmenu_command_recur(const char* p_command, pfc::string8_fast path, mainmenu_node::ptr node);
+	bool execute_context_command_by_name(pfc::stringp command, metadb_handle_list_cref handles);
+	bool execute_context_command_recur(pfc::stringp command, pfc::stringp cpath, contextmenu_node* parent);
+	bool execute_mainmenu_command_by_name(pfc::stringp command);
+	bool execute_mainmenu_command_recur(pfc::stringp command, pfc::string_base& path, mainmenu_node::ptr node);
 	bool get_encoder_clsid(const wchar_t* format, CLSID* pClsid);
 	bool is_wrap_char(wchar_t current, wchar_t next);
 	bool supports_chakra();
-	bool write_file(const char* path, const pfc::string8_fast& content);
+	bool write_file(pfc::stringp path, pfc::stringp content);
 	int get_text_height(HDC hdc, const wchar_t* text, int len);
 	int get_text_width(HDC hdc, const wchar_t* text, int len);
 	pfc::string8_fast get_fb2k_component_path();
 	pfc::string8_fast get_fb2k_path();
 	pfc::string8_fast get_profile_path();
 	pfc::string8_fast get_resource_text(int id);
-	pfc::string8_fast read_file(const char* path);
-	size_t guess_codepage(const pfc::string8_fast& content);
+	pfc::string8_fast read_file(pfc::stringp path);
+	size_t guess_codepage(pfc::stringp content);
 	str_vec split_string(const std::string& str, const std::string& delims);
 	void estimate_line_wrap(HDC hdc, const wchar_t* text, int max_width, wrapped_item_vec& out);
 	void estimate_line_wrap_recur(HDC hdc, const wchar_t* text, int len, int max_width, wrapped_item_vec& out);
-	void list_files(const char* path, bool recur, pfc::string_list_impl& out);
-	void list_folders(const char* path, pfc::string_list_impl& out);
-	wchar_t* make_sort_string(const char* in);
+	void list_files(pfc::stringp path, bool recur, pfc::string_list_impl& out);
+	void list_folders(pfc::stringp path, pfc::string_list_impl& out);
+	wchar_t* make_sort_string(pfc::stringp in);
 
 	template <class T>
 	bool ensure_gdiplus_object(T* obj)
@@ -85,7 +85,7 @@ namespace helpers
 
 		embed(actions action, album_art_data_ptr data, metadb_handle_list_cref handles, size_t art_id) : m_action(action), m_data(data), m_handles(handles), m_art_id(art_id) {}
 
-		void run(threaded_process_status& p_status, abort_callback& p_abort) override
+		void run(threaded_process_status& status, abort_callback& abort) override
 		{
 			const GUID what = convert_artid_to_guid(m_art_id);
 			auto api = file_lock_manager::get();
@@ -94,19 +94,19 @@ namespace helpers
 			for (size_t i = 0; i < count; ++i)
 			{
 				pfc::string8_fast path = m_handles[i]->get_path();
-				p_status.set_progress(i, count);
-				p_status.set_item_path(path);
+				status.set_progress(i, count);
+				status.set_item_path(path);
 				album_art_editor::ptr ptr;
 				if (album_art_editor::g_get_interface(ptr, path))
 				{
-					auto lock = api->acquire_write(path, p_abort);
+					auto lock = api->acquire_write(path, abort);
 					try
 					{
-						album_art_editor_instance_ptr aaep = ptr->open(nullptr, path, p_abort);
+						album_art_editor_instance_ptr aaep = ptr->open(nullptr, path, abort);
 						switch (m_action)
 						{
 						case actions::attach:
-							aaep->set(what, m_data, p_abort);
+							aaep->set(what, m_data, abort);
 							break;
 						case actions::remove:
 							aaep->remove(what);
@@ -115,7 +115,7 @@ namespace helpers
 							aaep->remove_all_();
 							break;
 						}
-						aaep->commit(p_abort);
+						aaep->commit(abort);
 					}
 					catch (...) {}
 				}
@@ -134,7 +134,7 @@ namespace helpers
 	public:
 		optimise_layout(metadb_handle_list_cref handles, bool minimise) : m_handles(handles), m_minimise(minimise) {}
 
-		void run(threaded_process_status& p_status, abort_callback& p_abort) override
+		void run(threaded_process_status& status, abort_callback& abort) override
 		{
 			auto api = file_lock_manager::get();
 			const size_t count = m_handles.get_count();
@@ -142,15 +142,15 @@ namespace helpers
 			for (size_t i = 0; i < count; ++i)
 			{
 				auto path = m_handles[i]->get_path();
-				p_status.set_progress(i, count);
-				p_status.set_item_path(path);
+				status.set_progress(i, count);
+				status.set_item_path(path);
 
 				try
 				{
-					auto lock = api->acquire_write(path, p_abort);
+					auto lock = api->acquire_write(path, abort);
 					for (auto e = service_enum_t<file_format_sanitizer>(); !e.finished(); ++e)
 					{
-						if (e.get()->sanitize_file(path, m_minimise, p_abort)) break;
+						if (e.get()->sanitize_file(path, m_minimise, abort)) break;
 					}
 				}
 				catch (...) {}
@@ -165,29 +165,29 @@ namespace helpers
 	class album_art_async : public simple_thread_task
 	{
 	public:
-		album_art_async(CWindow p_wnd, const metadb_handle_ptr& handle, size_t art_id, bool need_stub, bool only_embed, bool no_load) : m_hwnd(p_wnd), m_handle(handle), m_art_id(art_id), m_need_stub(need_stub), m_only_embed(only_embed), m_no_load(no_load) {}
+		album_art_async(CWindow hwnd, const metadb_handle_ptr& handle, size_t art_id, bool need_stub, bool only_embed, bool no_load) : m_hwnd(hwnd), m_handle(handle), m_art_id(art_id), m_need_stub(need_stub), m_only_embed(only_embed), m_no_load(no_load) {}
 
 		struct t_param
 		{
-			t_param(IMetadbHandle* p_handle, size_t p_art_id, IGdiBitmap* p_bitmap, BSTR p_path) : handle(p_handle), art_id(p_art_id), bitmap(p_bitmap), path(p_path) {}
+			t_param(IMetadbHandle* handle, size_t art_id, IGdiBitmap* bitmap, BSTR path) : m_handle(handle), m_art_id(art_id), m_bitmap(bitmap), m_path(path) {}
 
 			~t_param()
 			{
-				if (handle)
+				if (m_handle)
 				{
-					handle->Release();
+					m_handle->Release();
 				}
 
-				if (bitmap)
+				if (m_bitmap)
 				{
-					bitmap->Release();
+					m_bitmap->Release();
 				}
 			}
 
-			IGdiBitmap* bitmap;
-			IMetadbHandle* handle;
-			_bstr_t path;
-			size_t art_id;
+			IGdiBitmap* m_bitmap;
+			IMetadbHandle* m_handle;
+			_bstr_t m_path;
+			size_t m_art_id;
 		};
 
 		void run() override
@@ -231,23 +231,23 @@ namespace helpers
 	class load_image_async : public simple_thread_task
 	{
 	public:
-		load_image_async(CWindow p_wnd, BSTR path) : m_hwnd(p_wnd), m_path(path) {}
+		load_image_async(CWindow hwnd, BSTR path) : m_hwnd(hwnd), m_path(path) {}
 
 		struct t_param
 		{
-			t_param(size_t p_cookie, IGdiBitmap* p_bitmap, BSTR p_path) : cookie(p_cookie), bitmap(p_bitmap), path(p_path) {}
+			t_param(size_t cookie, IGdiBitmap* bitmap, BSTR path) : m_cookie(cookie), m_bitmap(bitmap), m_path(path) {}
 
 			~t_param()
 			{
-				if (bitmap)
+				if (m_bitmap)
 				{
-					bitmap->Release();
+					m_bitmap->Release();
 				}
 			}
 
-			IGdiBitmap* bitmap;
-			_bstr_t path;
-			size_t cookie;
+			IGdiBitmap* m_bitmap;
+			_bstr_t m_path;
+			size_t m_cookie;
 		};
 
 		void run() override
@@ -269,7 +269,7 @@ namespace helpers
 
 		void on_aborted() override {}
 
-		void on_completion(metadb_handle_list_cref p_items) override
+		void on_completion(metadb_handle_list_cref items) override
 		{
 			pfc::bit_array_val selection(m_to_select);
 			auto api = playlist_manager::get();
@@ -277,7 +277,7 @@ namespace helpers
 
 			if (m_playlist < api->get_playlist_count() && !(mask & playlist_lock::filter_add))
 			{
-				api->playlist_insert_items(m_playlist, m_base, p_items, selection);
+				api->playlist_insert_items(m_playlist, m_base, items, selection);
 				if (m_to_select)
 				{
 					api->set_active_playlist(m_playlist);
@@ -299,14 +299,14 @@ namespace helpers
 
 		js_file_info_filter(const std::vector<tag>& tags) : m_tags(tags) {}
 
-		bool apply_filter(metadb_handle_ptr p_location, t_filestats p_stats, file_info& p_info) override
+		bool apply_filter(metadb_handle_ptr location, t_filestats stats, file_info& info) override
 		{
 			for (const auto& [name, value] : m_tags)
 			{
-				p_info.meta_remove_field(name.c_str());
+				info.meta_remove_field(name.c_str());
 				for (const auto& part : value)
 				{
-					p_info.meta_add(name.c_str(), part.c_str());
+					info.meta_add(name.c_str(), part.c_str());
 				}
 			}
 			return true;

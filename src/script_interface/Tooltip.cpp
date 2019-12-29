@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "Tooltip.h"
 
-Tooltip::Tooltip(CWindow p_wndparent, const panel_tooltip_param_ptr& p_param_ptr) : m_wndparent(p_wndparent), m_panel_tooltip_param_ptr(p_param_ptr), m_tip_buffer(TO_BSTR(jsp::component_name))
+Tooltip::Tooltip(CWindow wndparent, const panel_tooltip_param_ptr& param_ptr) : m_wndparent(wndparent), m_panel_tooltip_param_ptr(param_ptr), m_tip_buffer(TO_BSTR(jsp::component_name))
 {
 	m_wndtooltip = CreateWindowEx(
 		WS_EX_TOPMOST,
@@ -12,7 +12,7 @@ Tooltip::Tooltip(CWindow p_wndparent, const panel_tooltip_param_ptr& p_param_ptr
 		CW_USEDEFAULT,
 		CW_USEDEFAULT,
 		CW_USEDEFAULT,
-		p_wndparent,
+		m_wndparent,
 		nullptr,
 		core_api::get_my_instance(),
 		nullptr);
@@ -22,8 +22,8 @@ Tooltip::Tooltip(CWindow p_wndparent, const panel_tooltip_param_ptr& p_param_ptr
 	m_ti.cbSize = sizeof(m_ti);
 	m_ti.uFlags = TTF_IDISHWND | TTF_SUBCLASS | TTF_TRANSPARENT;
 	m_ti.hinst = core_api::get_my_instance();
-	m_ti.hwnd = p_wndparent;
-	m_ti.uId = reinterpret_cast<UINT_PTR>(p_wndparent.m_hWnd);
+	m_ti.hwnd = m_wndparent;
+	m_ti.uId = reinterpret_cast<UINT_PTR>(m_wndparent.m_hWnd);
 	m_ti.lpszText = m_tip_buffer;
 
 	const HFONT hFont = CreateFont(

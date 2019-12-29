@@ -13,7 +13,7 @@ script_host::script_host(panel_window* host)
 
 script_host::~script_host() {}
 
-DWORD script_host::GenerateSourceContext(const pfc::string8_fast& path)
+DWORD script_host::GenerateSourceContext(pfc::stringp path)
 {
 	m_context_to_path_map[++m_last_source_context] = path;
 	return m_last_source_context;

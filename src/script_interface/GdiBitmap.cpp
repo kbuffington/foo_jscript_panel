@@ -28,13 +28,13 @@ STDMETHODIMP GdiBitmap::ApplyAlpha(BYTE alpha, IGdiBitmap** pp)
 	return S_OK;
 }
 
-STDMETHODIMP GdiBitmap::ApplyMask(IGdiBitmap* mask, VARIANT_BOOL* p)
+STDMETHODIMP GdiBitmap::ApplyMask(IGdiBitmap* image, VARIANT_BOOL* p)
 {
 	if (!m_ptr || !p) return E_POINTER;
 
 	*p = VARIANT_FALSE;
 	Gdiplus::Bitmap* bitmap_mask = nullptr;
-	GET_PTR(mask, bitmap_mask);
+	GET_PTR(image, bitmap_mask);
 
 	if (bitmap_mask->GetHeight() != m_ptr->GetHeight() || bitmap_mask->GetWidth() != m_ptr->GetWidth())
 	{
@@ -42,37 +42,33 @@ STDMETHODIMP GdiBitmap::ApplyMask(IGdiBitmap* mask, VARIANT_BOOL* p)
 	}
 
 	const Gdiplus::Rect rect(0, 0, m_ptr->GetWidth(), m_ptr->GetHeight());
-
 	Gdiplus::BitmapData bmpdata_mask = { 0 };
-	if (bitmap_mask->LockBits(&rect, Gdiplus::ImageLockModeRead, PixelFormat32bppARGB, &bmpdata_mask) != Gdiplus::Ok)
-	{
-		return S_OK;
-	}
-
 	Gdiplus::BitmapData bmpdata_dst = { 0 };
-	if (m_ptr->LockBits(&rect, Gdiplus::ImageLockModeRead | Gdiplus::ImageLockModeWrite, PixelFormat32bppARGB, &bmpdata_dst) != Gdiplus::Ok)
+
+	auto status = bitmap_mask->LockBits(&rect, Gdiplus::ImageLockModeRead, PixelFormat32bppARGB, &bmpdata_mask);
+	if (status == Gdiplus::Ok)
 	{
+		status = m_ptr->LockBits(&rect, Gdiplus::ImageLockModeRead | Gdiplus::ImageLockModeWrite, PixelFormat32bppARGB, &bmpdata_dst);
+		if (status == Gdiplus::Ok)
+		{
+			size_t* mask = reinterpret_cast<size_t*>(bmpdata_mask.Scan0);
+			size_t* dst = reinterpret_cast<size_t*>(bmpdata_dst.Scan0);
+			const size_t* mask_end = mask + (rect.Width * rect.Height);
+			size_t alpha;
+
+			while (mask < mask_end)
+			{
+				alpha = (((~*mask & UCHAR_MAX) * (*dst >> 24)) << 16) & 0xff000000;
+				*dst = alpha | (*dst & 0xffffff);
+				++mask;
+				++dst;
+			}
+
+			m_ptr->UnlockBits(&bmpdata_dst);
+			*p = VARIANT_TRUE;
+		}
 		bitmap_mask->UnlockBits(&bmpdata_mask);
-		return S_OK;
 	}
-
-	size_t* p_mask = reinterpret_cast<size_t*>(bmpdata_mask.Scan0);
-	size_t* p_dst = reinterpret_cast<size_t*>(bmpdata_dst.Scan0);
-	const size_t* p_mask_end = p_mask + (rect.Width * rect.Height);
-	size_t alpha;
-
-	while (p_mask < p_mask_end)
-	{
-		alpha = (((~*p_mask & UCHAR_MAX) * (*p_dst >> 24)) << 16) & 0xff000000;
-		*p_dst = alpha | (*p_dst & 0xffffff);
-		++p_mask;
-		++p_dst;
-	}
-
-	m_ptr->UnlockBits(&bmpdata_dst);
-	bitmap_mask->UnlockBits(&bmpdata_mask);
-
-	*p = VARIANT_TRUE;
 	return S_OK;
 }
 

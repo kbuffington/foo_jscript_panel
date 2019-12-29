@@ -8,7 +8,7 @@ protected:
 
 public:
 	STDMETHODIMP ApplyAlpha(BYTE alpha, IGdiBitmap** pp) override;
-	STDMETHODIMP ApplyMask(IGdiBitmap* mask, VARIANT_BOOL* p) override;
+	STDMETHODIMP ApplyMask(IGdiBitmap* image, VARIANT_BOOL* p) override;
 	STDMETHODIMP Clone(float x, float y, float w, float h, IGdiBitmap** pp) override;
 	STDMETHODIMP CreateRawBitmap(IGdiRawBitmap** pp) override;
 	STDMETHODIMP GetColourSchemeJSON(UINT count, BSTR* p) override;

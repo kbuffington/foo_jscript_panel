@@ -52,9 +52,9 @@ struct script_info
 	void clear()
 	{
 		imports.clear();
-		name = "";
-		version = "";
-		author = "";
+		name.clear();
+		version.clear();
+		author.clear();
 		id = 0;
 	}
 

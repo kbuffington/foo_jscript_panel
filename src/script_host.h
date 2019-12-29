@@ -18,7 +18,7 @@ public:
 
 	COM_QI_TWO(IActiveScriptSite, IActiveScriptSiteWindow)
 
-	DWORD GenerateSourceContext(const pfc::string8_fast& path);
+	DWORD GenerateSourceContext(pfc::stringp path);
 	HRESULT Initialise();
 	HRESULT InitCallbackMap();
 	HRESULT InitScriptEngine();

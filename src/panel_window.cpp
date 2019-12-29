@@ -368,13 +368,13 @@ bool panel_window::handle_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 
 			VARIANTARG args[4];
 			args[0].vt = VT_BSTR;
-			args[0].bstrVal = param->path;
+			args[0].bstrVal = param->m_path;
 			args[1].vt = VT_DISPATCH;
-			args[1].pdispVal = param->bitmap;
+			args[1].pdispVal = param->m_bitmap;
 			args[2].vt = VT_UI4;
-			args[2].ulVal = param->art_id;
+			args[2].ulVal = param->m_art_id;
 			args[3].vt = VT_DISPATCH;
-			args[3].pdispVal = param->handle;
+			args[3].pdispVal = param->m_handle;
 			script_invoke(id, args, _countof(args));
 		}
 		return true;
@@ -398,11 +398,11 @@ bool panel_window::handle_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 
 			VARIANTARG args[3];
 			args[0].vt = VT_BSTR;
-			args[0].bstrVal = param->path;
+			args[0].bstrVal = param->m_path;
 			args[1].vt = VT_DISPATCH;
-			args[1].pdispVal = param->bitmap;
+			args[1].pdispVal = param->m_bitmap;
 			args[2].vt = VT_UI4;
-			args[2].ulVal = param->cookie;
+			args[2].ulVal = param->m_cookie;
 			script_invoke(id, args, _countof(args));
 		}
 		return true;

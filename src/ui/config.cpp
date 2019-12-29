@@ -24,30 +24,30 @@ static const std::vector<config::simple_key_val> init_table =
 
 config g_config(jsp::guids::config);
 
-config::config(const GUID& p_guid) : cfg_var(p_guid)
+config::config(const GUID& guid) : cfg_var(guid)
 {
 	init_data();
 }
 
-void config::get_data_raw(stream_writer* p_stream, abort_callback& p_abort)
+void config::get_data_raw(stream_writer* writer, abort_callback& abort)
 {
 	try
 	{
-		p_stream->write_lendian_t(m_data.size(), p_abort);
+		writer->write_lendian_t(m_data.size(), abort);
 		for (const auto& [key, value] : m_data)
 		{
-			p_stream->write_string(key, p_abort);
-			p_stream->write_string(value, p_abort);
+			writer->write_string(key, abort);
+			writer->write_string(value, abort);
 		}
-		p_stream->write_object(&m_conf_wndpl, sizeof(WINDOWPLACEMENT), p_abort);
-		p_stream->write_object(&m_property_wndpl, sizeof(WINDOWPLACEMENT), p_abort);
+		writer->write_object(&m_conf_wndpl, sizeof(WINDOWPLACEMENT), abort);
+		writer->write_object(&m_property_wndpl, sizeof(WINDOWPLACEMENT), abort);
 	}
 	catch (...) {}
 }
 
-void config::import(const char* content)
+void config::import(pfc::stringp content)
 {
-	str_vec lines = helpers::split_string(content, "\r\n");
+	str_vec lines = helpers::split_string(content.get_ptr(), "\r\n");
 	simple_map data_map;
 	for (const auto& line : lines)
 	{
@@ -82,7 +82,7 @@ void config::merge_data(const simple_map& data_map)
 	}
 }
 
-void config::set_data_raw(stream_reader* p_stream, size_t p_sizehint, abort_callback& p_abort)
+void config::set_data_raw(stream_reader* reader, size_t sizehint, abort_callback& abort)
 {
 	simple_map data_map;
 	pfc::string8_fast key, value;
@@ -90,19 +90,19 @@ void config::set_data_raw(stream_reader* p_stream, size_t p_sizehint, abort_call
 
 	try
 	{
-		p_stream->read_lendian_t(count, p_abort);
+		reader->read_lendian_t(count, abort);
 		for (size_t i = 0; i < count; ++i)
 		{
-			p_stream->read_string(key, p_abort);
-			p_stream->read_string(value, p_abort);
+			reader->read_string(key, abort);
+			reader->read_string(value, abort);
 			data_map.emplace(key, value);
 		}
 
 		try
 		{
 			// this can fail silently on first run upgrading from old version which doesn't have it set yet
-			p_stream->read_object(&m_conf_wndpl, sizeof(WINDOWPLACEMENT), p_abort);
-			p_stream->read_object(&m_property_wndpl, sizeof(WINDOWPLACEMENT), p_abort);
+			reader->read_object(&m_conf_wndpl, sizeof(WINDOWPLACEMENT), abort);
+			reader->read_object(&m_property_wndpl, sizeof(WINDOWPLACEMENT), abort);
 		}
 		catch (...) {}
 	}

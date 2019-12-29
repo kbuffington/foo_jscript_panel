@@ -37,7 +37,7 @@ namespace
 			return 0;
 		}
 
-		HWND create_or_transfer_window(HWND parent, const uie::window_host_ptr& host, const ui_helpers::window_position_t& p_position) override
+		HWND create_or_transfer_window(HWND parent, const uie::window_host_ptr& host, const ui_helpers::window_position_t& position) override
 		{
 			if (m_hwnd)
 			{
@@ -46,12 +46,12 @@ namespace
 				m_host->relinquish_ownership(m_hwnd);
 				m_host = host;
 
-				m_hwnd.SetWindowPos(nullptr, p_position.x, p_position.y, p_position.cx, p_position.cy, SWP_NOZORDER);
+				m_hwnd.SetWindowPos(nullptr, position.x, position.y, position.cx, position.cy, SWP_NOZORDER);
 			}
 			else
 			{
 				m_host = host;
-				create(parent, this, p_position);
+				create(parent, this, position);
 			}
 
 			pfc::string8_fast name;

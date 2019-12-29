@@ -4,11 +4,11 @@
 class Profiler : public IDispatchImpl3<IProfiler>
 {
 protected:
-	Profiler(const char* p_name);
+	Profiler(pfc::stringp name);
 	~Profiler();
 
 	pfc::hires_timer m_timer;
-	pfc::string_simple m_name;
+	pfc::string8_fast m_name;
 
 public:
 	STDMETHODIMP Print() override;

@@ -22,7 +22,7 @@ public:
 	bool FindPrevious();
 	void Replace();
 	void ReplaceAll();
-	void SetContent(const char* text);
+	void SetContent(pfc::stringp text);
 	void SetJScript();
 
 	std::map<int, int> FlagMap;
@@ -80,8 +80,8 @@ private:
 	int IndentOfBlock(Line line);
 	Line GetCurrentLineNumber();
 	std::string GetCurrentLine();
-	std::string GetNearestWord(const char* wordStart, size_t searchLen, int wordIndex);
-	std::string GetNearestWords(const char* wordStart, size_t searchLen);
+	std::string GetNearestWord(const std::string& wordStart, size_t searchLen, int wordIndex);
+	std::string GetNearestWords(const std::string& wordStart, size_t searchLen);
 	str_vec GetLinePartsInStyle(Line line, const StyleAndWords& saw);
 	void AutoMarginWidth();
 	void AutomaticIndentation(int ch);

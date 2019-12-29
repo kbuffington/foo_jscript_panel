@@ -16,7 +16,7 @@ using panel_tooltip_param_ptr = std::shared_ptr<panel_tooltip_param>;
 class Tooltip : public IDisposableImpl4<ITooltip>
 {
 protected:
-	Tooltip(CWindow p_wndparent, const panel_tooltip_param_ptr& p_param_ptr);
+	Tooltip(CWindow wndparent, const panel_tooltip_param_ptr& param_ptr);
 	~Tooltip();
 
 	void FinalRelease() override;

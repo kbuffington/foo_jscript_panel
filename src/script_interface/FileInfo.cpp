@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "FileInfo.h"
 
-FileInfo::FileInfo(file_info_impl* p_info_ptr) : m_info_ptr(p_info_ptr) {}
+FileInfo::FileInfo(file_info_impl* info_ptr) : m_info_ptr(info_ptr) {}
 FileInfo::~FileInfo() {}
 
 void FileInfo::FinalRelease()

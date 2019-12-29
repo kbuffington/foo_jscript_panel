@@ -23,17 +23,17 @@ enum
 
 struct StringComparePartialNC
 {
-	StringComparePartialNC(size_t p_len) : len(p_len) {}
+	StringComparePartialNC(size_t len) : m_len(len) {}
 
 	int operator()(const std::string& s1, const std::string& s2) const
 	{
-		const size_t len1 = pfc::strlen_max_t(s1.c_str(), len);
-		const size_t len2 = pfc::strlen_max_t(s2.c_str(), len);
+		const size_t len1 = pfc::strlen_max_t(s1.c_str(), m_len);
+		const size_t len2 = pfc::strlen_max_t(s2.c_str(), m_len);
 
 		return pfc::stricmp_ascii_ex(s1.c_str(), len1, s2.c_str(), len2);
 	}
 
-	size_t len;
+	size_t m_len;
 };
 
 const char js_keywords[] = "abstract boolean break byte case catch char class const continue"
@@ -613,7 +613,7 @@ std::string CScriptEditorCtrl::GetCurrentLine()
 	return value;
 }
 
-std::string CScriptEditorCtrl::GetNearestWord(const char* wordStart, size_t searchLen, int wordIndex)
+std::string CScriptEditorCtrl::GetNearestWord(const std::string& wordStart, size_t searchLen, int wordIndex)
 {
 	auto it = std::find_if(apis.begin(), apis.end(), [=](const panel_manager::api_item& item)
 		{
@@ -634,7 +634,7 @@ std::string CScriptEditorCtrl::GetNearestWord(const char* wordStart, size_t sear
 	return std::string();
 }
 
-std::string CScriptEditorCtrl::GetNearestWords(const char* wordStart, size_t searchLen)
+std::string CScriptEditorCtrl::GetNearestWords(const std::string& wordStart, size_t searchLen)
 {
 	std::string words;
 	auto it = std::find_if(apis.begin(), apis.end(), [=](const panel_manager::api_item& item)
@@ -1027,7 +1027,7 @@ void CScriptEditorCtrl::SetAllStylesFromTable()
 	}
 }
 
-void CScriptEditorCtrl::SetContent(const char* text)
+void CScriptEditorCtrl::SetContent(pfc::stringp text)
 {
 	SetText(text);
 	ConvertEOLs(SC_EOL_CRLF);

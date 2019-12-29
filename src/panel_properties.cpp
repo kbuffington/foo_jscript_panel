@@ -1,27 +1,27 @@
 #include "stdafx.h"
 #include "panel_properties.h"
 
-bool panel_properties::get_property(const char* p_key, VARIANT& p_out)
+bool panel_properties::get_property(const char* key, VARIANT& out)
 {
-	if (m_map.count(p_key))
+	if (m_map.count(key))
 	{
-		_variant_t val = m_map.at(p_key);
-		if (g_sizeof(val.vt) != 0 && SUCCEEDED(VariantCopy(&p_out, &val)))
+		_variant_t val = m_map.at(key);
+		if (g_sizeof(val.vt) != 0 && SUCCEEDED(VariantCopy(&out, &val)))
 		{
 			return true;
 		}
 		else
 		{
-			m_map.erase(p_key);
+			m_map.erase(key);
 		}
 	}
 
 	return false;
 }
 
-int panel_properties::g_sizeof(VARTYPE p_vt)
+int panel_properties::g_sizeof(VARTYPE vt)
 {
-	switch (p_vt)
+	switch (vt)
 	{
 	case VT_BSTR:
 		return -1;
@@ -123,14 +123,14 @@ void panel_properties::get(stream_writer* writer, abort_callback& abort) const t
 	g_get(m_map, writer, abort);
 }
 
-void panel_properties::set_property(const char* p_key, const VARIANT& p_val)
+void panel_properties::set_property(const char* key, const VARIANT& val)
 {
-	if (g_sizeof(p_val.vt) != 0)
+	if (g_sizeof(val.vt) != 0)
 	{
-		m_map[p_key] = p_val;
+		m_map[key] = val;
 	}
 	else
 	{
-		m_map.erase(p_key);
+		m_map.erase(key);
 	}
 }

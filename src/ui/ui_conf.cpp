@@ -19,7 +19,7 @@ static const CDialogResizeHelper::Param resize_data[] =
 
 static const CRect resize_min_max(620, 381, 0, 0);
 
-CDialogConf::CDialogConf(panel_window* p_parent) : m_parent(p_parent), m_resizer(resize_data, resize_min_max)
+CDialogConf::CDialogConf(panel_window* parent) : m_parent(parent), m_resizer(resize_data, resize_min_max)
 {
 	m_caption << jsp::component_name << " Configuration (id:" << m_parent->m_script_host->m_info.id << ")";
 }
@@ -103,11 +103,11 @@ LRESULT CDialogConf::OnNotify(int, LPNMHDR pnmh)
 
 	switch (pnmh->code)
 	{
-	case SCN_SAVEPOINTLEFT: // dirty
-		caption += " *";
+	case SCN_SAVEPOINTLEFT:
+		caption.add_string(" *");
 		uSetWindowText(m_hWnd, caption);
 		break;
-	case SCN_SAVEPOINTREACHED: // not dirty
+	case SCN_SAVEPOINTREACHED:
 		uSetWindowText(m_hWnd, caption);
 		break;
 	}
@@ -141,14 +141,18 @@ void CDialogConf::Apply()
 
 void CDialogConf::BuildMenu()
 {
+	auto append_folder = [](pfc::stringp sub)
+	{
+		pfc::string8_fast folder = helpers::get_fb2k_component_path();
+		folder.add_string(sub);
+		return folder;
+	};
+
 	m_menu = GetMenu();
 
-	pfc::string8_fast base = helpers::get_fb2k_component_path();
-
 	CMenu samples = CreateMenu();
-
 	pfc::string_list_impl folders;
-	helpers::list_folders(base + "samples\\", folders);
+	helpers::list_folders(append_folder("samples\\"), folders);
 
 	size_t i, j, count;
 
@@ -176,8 +180,7 @@ void CDialogConf::BuildMenu()
 	uAppendMenu(m_menu, MF_STRING | MF_POPUP, reinterpret_cast<UINT_PTR>(samples.m_hMenu), "Samples");
 
 	CMenu docs = CreateMenu();
-
-	helpers::list_files(base + "docs\\", false, m_docs);
+	helpers::list_files(append_folder("docs\\"), false, m_docs);
 	count = m_docs.get_count();
 
 	for (i = 0; i < count; ++i)
@@ -265,5 +268,5 @@ void CDialogConf::OnReset(UINT, int, CWindow)
 
 void CDialogConf::OnSamples(UINT, int nID, CWindow)
 {
-	m_editorctrl.SetContent(helpers::read_file(file_path_display(m_samples[nID - ID_SAMPLES_BEGIN])));
+	m_editorctrl.SetContent(helpers::read_file(file_path_display(m_samples[nID - ID_SAMPLES_BEGIN]).get_ptr()));
 }

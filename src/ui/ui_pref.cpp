@@ -163,9 +163,9 @@ namespace
 			return preferences_page::guid_tools;
 		}
 
-		bool get_help_url(pfc::string_base& p_out) override
+		bool get_help_url(pfc::string_base& out) override
 		{
-			p_out = "https://marc2k3.github.io/foo_jscript_panel.html";
+			out.set_string("https://marc2k3.github.io/foo_jscript_panel.html");
 			return true;
 		}
 

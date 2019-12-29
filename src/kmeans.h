@@ -5,7 +5,7 @@ static constexpr int kMaxIterations = 12;
 
 struct KPoint
 {
-	KPoint(int p_point_id, const std::vector<unsigned int>& p_values, int p_pixel_count) : m_point_id(p_point_id), m_values(p_values), m_pixel_count(p_pixel_count) {}
+	KPoint(int point_id, const std::vector<unsigned int>& values, int pixel_count) : m_point_id(point_id), m_values(values), m_pixel_count(pixel_count) {}
 
 	int m_cluster_id = -1;
 	int m_pixel_count = 0;
@@ -62,16 +62,16 @@ public:
 class KMeans
 {
 public:
-	KMeans(int p_count, int p_total_points) : count(std::min(std::max(p_count, 14), p_total_points)), total_points(p_total_points) {}
+	KMeans(int count, int total_points) : m_count(std::min(std::max(count, 14), total_points)), m_total_points(total_points) {}
 
 	std::vector<Cluster> run(std::vector<KPoint>& points)
 	{
-		for (int i = 0; i < count; ++i)
+		for (int i = 0; i < m_count; ++i)
 		{
-			const int index_point = static_cast<int>(i * total_points / count);
+			const int index_point = static_cast<int>(i * m_total_points / m_count);
 			points[index_point].m_cluster_id = i;
 			Cluster cluster(points[index_point]);
-			clusters.emplace_back(cluster);
+			m_clusters.emplace_back(cluster);
 		}
 
 		int iter = 1;
@@ -80,7 +80,7 @@ public:
 		{
 			bool done = true;
 
-			for (int i = 0; i < total_points; ++i)
+			for (int i = 0; i < m_total_points; ++i)
 			{
 				int old_cluster_id = points[i].m_cluster_id;
 				int nearest_centre_id = get_nearest_centre_id(points[i]);
@@ -89,16 +89,16 @@ public:
 				{
 					if (old_cluster_id != -1)
 					{
-						clusters[old_cluster_id].remove_point(points[i].m_point_id);
+						m_clusters[old_cluster_id].remove_point(points[i].m_point_id);
 					}
 
 					points[i].m_cluster_id = nearest_centre_id;
-					clusters[nearest_centre_id].points.emplace_back(points[i]);
+					m_clusters[nearest_centre_id].points.emplace_back(points[i]);
 					done = false;
 				}
 			}
 
-			for (Cluster& cluster : clusters)
+			for (Cluster& cluster : m_clusters)
 			{
 				for (int i = 0; i < kNumColourComponents; ++i)
 				{
@@ -122,7 +122,7 @@ public:
 			iter++;
 		}
 
-		return clusters;
+		return m_clusters;
 	}
 
 private:
@@ -131,7 +131,7 @@ private:
 		double min_dist = 0.0;
 		int cluster_centre_id = 0, it = 0;
 
-		for (const Cluster& cluster : clusters)
+		for (const Cluster& cluster : m_clusters)
 		{
 			const double dist = cluster.calc_dist(point);
 
@@ -146,6 +146,6 @@ private:
 		return cluster_centre_id;
 	}
 
-	int count, total_points;
-	std::vector<Cluster> clusters;
+	int m_count, m_total_points;
+	std::vector<Cluster> m_clusters;
 };

@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "ui_goto.h"
 
-CDialogGoto::CDialogGoto(CWindow parent, const pfc::string8_fast& text) : m_parent(parent), m_text(text) {}
+CDialogGoto::CDialogGoto(CWindow parent, pfc::stringp text) : m_parent(parent), m_text(text) {}
 
 BOOL CDialogGoto::OnInitDialog(CWindow, LPARAM)
 {

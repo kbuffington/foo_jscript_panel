@@ -4,7 +4,7 @@
 class FileInfo : public IDisposableImpl4<IFileInfo>
 {
 protected:
-	FileInfo(file_info_impl* p_info_ptr);
+	FileInfo(file_info_impl* info_ptr);
 	~FileInfo();
 
 	void FinalRelease() override;
