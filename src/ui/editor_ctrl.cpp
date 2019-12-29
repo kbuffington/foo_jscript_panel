@@ -615,11 +615,7 @@ std::string CScriptEditorCtrl::GetCurrentLine()
 
 std::string CScriptEditorCtrl::GetNearestWord(const std::string& wordStart, size_t searchLen, int wordIndex)
 {
-	auto it = std::find_if(apis.begin(), apis.end(), [=](const panel_manager::api_item& item)
-		{
-			return StringComparePartialNC(searchLen)(wordStart, item.first) == 0;
-		});
-
+	auto it = FIND_IF(apis, [=](const panel_manager::api_item& item) { return StringComparePartialNC(searchLen)(wordStart, item.first) == 0; });
 	for (; it < apis.end(); ++it)
 	{
 		if (searchLen >= it->first.length() || !Contains(WordCharacters, it->first.at(searchLen)))
@@ -637,11 +633,7 @@ std::string CScriptEditorCtrl::GetNearestWord(const std::string& wordStart, size
 std::string CScriptEditorCtrl::GetNearestWords(const std::string& wordStart, size_t searchLen)
 {
 	std::string words;
-	auto it = std::find_if(apis.begin(), apis.end(), [=](const panel_manager::api_item& item)
-		{
-			return StringComparePartialNC(searchLen)(wordStart, item.first) == 0;
-		});
-
+	auto it = FIND_IF(apis, [=](const panel_manager::api_item& item) { return StringComparePartialNC(searchLen)(wordStart, item.first) == 0; });
 	for (; it < apis.end(); ++it)
 	{
 		if (StringComparePartialNC(searchLen)(wordStart, it->first) != 0)

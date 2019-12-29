@@ -28,10 +28,7 @@ namespace
 		void on_watched_object_changed(const config_object::ptr& object) override
 		{
 			const GUID g = object->get_guid();
-			const auto it = std::find_if(watched_objects.begin(), watched_objects.end(), [=](const auto& item)
-				{
-					return g == *item.first;
-				});
+			const auto it = FIND_IF(watched_objects, [=](const auto& item) { return g == *item.first; });
 			if (it != watched_objects.end())
 			{
 				bool b;

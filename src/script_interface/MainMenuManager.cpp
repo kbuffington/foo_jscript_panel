@@ -48,7 +48,7 @@ STDMETHODIMP MainMenuManager::Init(BSTR root_name)
 		{ L"help", &mainmenu_groups::help }
 	};
 
-	const auto it = std::find_if(valid_root_names.begin(), valid_root_names.end(), [&](const t_valid_root_name& item) { return _wcsicmp(root_name, item.first) == 0; });
+	const auto it = FIND_IF(valid_root_names, [&](const t_valid_root_name& item) { return _wcsicmp(root_name, item.first) == 0; });
 	if (it != valid_root_names.end())
 	{
 		m_mm = standard_api_create_t<mainmenu_manager>();

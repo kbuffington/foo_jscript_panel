@@ -22,3 +22,5 @@ namespace jsp
 #define GET_PTR(X, Y) \
 	X->get__ptr(reinterpret_cast<void**>(&Y)); \
 	if (!Y) return E_INVALIDARG;
+
+#define FIND_IF(blah, func) std::find_if(blah.begin(), blah.end(), func);

@@ -40,7 +40,7 @@ public:
 
 	int get_total_points() const
 	{
-		return std::accumulate(points.begin(), points.end(), 0U, [](int t, const KPoint& point)
+		return std::accumulate(points.begin(), points.end(), 0, [](int t, const KPoint& point)
 			{
 				return t + point.m_pixel_count;
 			});
