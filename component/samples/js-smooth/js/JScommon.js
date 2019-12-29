@@ -945,12 +945,13 @@ function process_cachekey(str) {
 
 // ===================================================== // Wallpaper
 function setWallpaperImg() {
-	if (!fb.IsPlaying || !ppt.showwallpaper) return null;
+	var metadb = fb.GetNowPlaying();
+	if (!metadb || !ppt.showwallpaper) return null;
 
 	var tmp = null
 
 	if (ppt.wallpapermode == 0) {
-		tmp = utils.GetAlbumArtV2(fb.GetNowPlaying(), 0);
+		tmp = utils.GetAlbumArtV2(metadb, 0);
 	} else {
 		var arr = utils.Glob(fb.TitleFormat(ppt.wallpaperpath).Eval()).toArray();
 		if (arr.length) {

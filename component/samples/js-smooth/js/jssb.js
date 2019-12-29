@@ -2751,7 +2751,9 @@ oBrowser = function (name) {
 		case (idx == 904):
 			ppt.autoFill = !ppt.autoFill;
 			window.SetProperty("_DISPLAY: Auto-fill", ppt.autoFill);
-			window.Reload();
+			window.SetTimeout(function () {
+				window.Reload();
+			}, 50);
 			break;
 		case (idx == 910):
 			ppt.showHeaderBar = !ppt.showHeaderBar;
