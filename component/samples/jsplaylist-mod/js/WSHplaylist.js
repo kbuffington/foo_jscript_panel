@@ -2412,7 +2412,7 @@ oList = function (object_name, playlist) {
 
 		// exit if no search string in cache
 		if (cList.search_string.length <= 0)
-			return true;
+			return;
 
 		// 1st char of the search string
 		var first_chr = cList.search_string.substring(0, 1);

@@ -2944,7 +2944,7 @@ oBrowser = function (name) {
 
 		// exit if no search string in cache
 		if (cList.search_string.length <= 0)
-			return true;
+			return;
 
 		// 1st char of the search string
 		var first_chr = cList.search_string.substring(0, 1);
@@ -4224,7 +4224,7 @@ function on_char(code) {
 				brw.tt_w = ((cList.search_string.length * 13) + (10 * 2));
 				brw.tt_h = 60;
 				if (code == 32 && cList.search_string.length == 0)
-					return true; // SPACE Char not allowed on 1st char
+					return; // SPACE Char not allowed on 1st char
 				if (cList.search_string.length <= 20 && brw.tt_w <= brw.w - 20) {
 					if (code > 31) {
 						cList.search_string = cList.search_string + String.fromCharCode(code).toUpperCase();

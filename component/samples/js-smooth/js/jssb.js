@@ -2797,7 +2797,7 @@ oBrowser = function (name) {
 
 		// exit if no search string in cache
 		if (cList.search_string.length <= 0)
-			return true;
+			return;
 
 		var total = this.groups.length;
 
@@ -3493,8 +3493,6 @@ function on_key_down(vkey) {
 	var mask = GetKeyboardMask();
 
 	if (cSettings.visible) {} else {
-		//if(dragndrop.drag_in) return true;
-
 		// inputBox
 		if (ppt.showHeaderBar && cFilterBox.enabled && g_filterbox.inputbox.visible) {
 			g_filterbox.on_key("down", vkey);

@@ -1267,7 +1267,7 @@ function on_mouse_rbtn_up(x, y) {
 function on_mouse_move(x, y) {
 
 	if (x == mouse_x && y == mouse_y)
-		return true;
+		return;
 
 	if (x >= 0 && x < ww && y >= 0 && y < wh)
 		g_leave = false;
@@ -1821,20 +1821,16 @@ function on_key_down(vkey) {
 		};
 	} else {
 		if (dragndrop.drag_in)
-			return true;
+			return;
 
 		if (p.playlistManager.inputboxID >= 0) {
-			if (mask == KMask.none) {
-				switch (vkey) {
-				case VK_ESCAPE:
-				case 222:
-					p.playlistManager.inputboxID = -1;
-					full_repaint();
-					break;
-				default:
-					p.playlistManager.inputbox.on_key_down(vkey);
-				};
-			} else {
+			switch (vkey) {
+			case VK_ESCAPE:
+			case 222:
+				p.playlistManager.inputboxID = -1;
+				full_repaint();
+				break;
+			default:
 				p.playlistManager.inputbox.on_key_down(vkey);
 			};
 		} else {
@@ -2272,7 +2268,7 @@ function on_char(code) {
 				p.list.tt_w = ((cList.search_string.length * zoom(13, g_dpi)) + (zoom(10, g_dpi) * 2));
 				p.list.tt_h = zoom(60, g_dpi);
 				if (code == 32 && cList.search_string.length == 0)
-					return true; // SPACE Char not allowed on 1st char
+					return; // SPACE Char not allowed on 1st char
 				if (cList.search_string.length <= 20 && p.list.tt_w <= p.list.w - 20) {
 					if (code > 31) {
 						cList.search_string = cList.search_string + String.fromCharCode(code).toUpperCase();
