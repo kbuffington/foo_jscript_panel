@@ -36,7 +36,6 @@ namespace helpers
 	IGdiBitmap* get_album_art_embedded(pfc::stringp path, size_t art_id);
 	IGdiBitmap* load_image(BSTR path);
 	IGdiBitmap* read_album_art_into_bitmap(const album_art_data_ptr& data);
-	bool execute_context_command_by_name(pfc::stringp command, metadb_handle_list_cref handles);
 	bool execute_context_command_recur(pfc::stringp command, pfc::stringp cpath, contextmenu_node* parent);
 	bool execute_mainmenu_command_by_name(pfc::stringp command);
 	bool execute_mainmenu_command_recur(pfc::stringp command, pfc::string_base& path, mainmenu_node::ptr node);
@@ -269,7 +268,7 @@ namespace helpers
 
 		void on_aborted() override {}
 
-		void on_completion(metadb_handle_list_cref items) override
+		void on_completion(metadb_handle_list_cref handles) override
 		{
 			pfc::bit_array_val selection(m_to_select);
 			auto api = playlist_manager::get();
@@ -277,7 +276,7 @@ namespace helpers
 
 			if (m_playlist < api->get_playlist_count() && !(mask & playlist_lock::filter_add))
 			{
-				api->playlist_insert_items(m_playlist, m_base, items, selection);
+				api->playlist_insert_items(m_playlist, m_base, handles, selection);
 				if (m_to_select)
 				{
 					api->set_active_playlist(m_playlist);

@@ -316,7 +316,7 @@ bool panel_window::handle_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 	case callback_id::on_metadb_changed:
 		{
 			callback_data_scope_releaser<metadb_callback_data> data(wp);
-			auto handles = new com_object_impl_t<MetadbHandleList>(data->m_items);
+			auto handles = new com_object_impl_t<MetadbHandleList>(data->m_handles);
 
 			VARIANTARG args[1];
 			args[0].vt = VT_DISPATCH;

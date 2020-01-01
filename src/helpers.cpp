@@ -80,7 +80,8 @@ namespace helpers
 
 	GUID convert_artid_to_guid(size_t art_id)
 	{
-		return *jsp::guids::art[art_id < jsp::guids::art.size() ? art_id : 0];
+		if (art_id >= jsp::guids::art.size()) art_id = 0;
+		return *jsp::guids::art[art_id];
 	}
 
 	IGdiBitmap* get_album_art(const metadb_handle_ptr& handle, size_t art_id, bool need_stub, bool no_load, pfc::string_base& image_path)
@@ -194,15 +195,6 @@ namespace helpers
 		return ret;
 	}
 
-	bool execute_context_command_by_name(pfc::stringp command, metadb_handle_list_cref handles)
-	{
-		contextmenu_manager::ptr cm;
-		contextmenu_manager::g_create(cm);
-		cm->init_context(handles, contextmenu_manager::flag_view_full);
-		pfc::string8_fast path;
-		return execute_context_command_recur(command, path, cm->get_root());
-	}
-
 	bool execute_context_command_recur(pfc::stringp command, pfc::stringp cpath, contextmenu_node* parent)
 	{
 		for (size_t i = 0; i < parent->get_num_children(); ++i)
@@ -239,7 +231,7 @@ namespace helpers
 			return hasher_md5::get()->process_single_string(pfc::print_guid(g).get_ptr()).xorHalve();
 		};
 
-		std::unordered_map<t_uint64, mainmenu_group::ptr> group_guid_map;
+		std::unordered_map<uint64_t, mainmenu_group::ptr> group_guid_map;
 
 		for (auto e = service_enum_t<mainmenu_group>(); !e.finished(); ++e)
 		{
@@ -334,15 +326,14 @@ namespace helpers
 	{
 		using namespace Gdiplus;
 
-		bool ret = false;
 		size_t num = 0;
 		size_t size = 0;
 
 		GetImageEncodersSize(&num, &size);
-		if (size == 0) return ret;
+		if (size == 0) return false;
 
 		pfc::ptrholder_t<ImageCodecInfo> pImageCodecInfo = new ImageCodecInfo[size];
-		if (pImageCodecInfo.is_empty()) return ret;
+		if (pImageCodecInfo.is_empty()) return false;
 
 		GetImageEncoders(num, size, pImageCodecInfo.get_ptr());
 
@@ -351,11 +342,10 @@ namespace helpers
 			if (wcscmp(pImageCodecInfo.get_ptr()[i].MimeType, format) == 0)
 			{
 				*pClsid = pImageCodecInfo.get_ptr()[i].Clsid;
-				ret = true;
-				break;
+				return true;
 			}
 		}
-		return ret;
+		return false;
 	}
 
 	bool is_wrap_char(wchar_t current, wchar_t next)

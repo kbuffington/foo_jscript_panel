@@ -98,25 +98,25 @@ STDMETHODIMP Plman::CreatePlaylist(UINT playlistIndex, BSTR name, UINT* p)
 	return S_OK;
 }
 
-STDMETHODIMP Plman::DuplicatePlaylist(UINT from, BSTR name, UINT* p)
+STDMETHODIMP Plman::DuplicatePlaylist(UINT playlistIndex, BSTR name, UINT* p)
 {
 	if (!p) return E_POINTER;
 
 	auto api = playlist_manager_v4::get();
 
-	if (from < api->get_playlist_count())
+	if (playlistIndex < api->get_playlist_count())
 	{
-		metadb_handle_list contents;
-		api->playlist_get_all_items(from, contents);
+		metadb_handle_list items;
+		api->playlist_get_all_items(playlistIndex, items);
 
 		pfc::string8_fast uname = string_utf8_from_wide(name).get_ptr();
 		if (uname.is_empty())
 		{
-			api->playlist_get_name(from, uname);
+			api->playlist_get_name(playlistIndex, uname);
 		}
 
 		stream_reader_dummy dummy_reader;
-		*p = api->create_playlist_ex(uname.get_ptr(), uname.get_length(), from + 1, contents, &dummy_reader, fb2k::noAbort);
+		*p = api->create_playlist_ex(uname.get_ptr(), uname.get_length(), playlistIndex + 1, items, &dummy_reader, fb2k::noAbort);
 		return S_OK;
 	}
 	return E_INVALIDARG;
@@ -302,9 +302,9 @@ STDMETHODIMP Plman::GetRecyclerItems(UINT index, IMetadbHandleList** pp)
 	auto api = playlist_manager_v3::get();
 	if (index < api->recycler_get_count())
 	{
-		metadb_handle_list handles;
-		api->recycler_get_content(index, handles);
-		*pp = new com_object_impl_t<MetadbHandleList>(handles);
+		metadb_handle_list items;
+		api->recycler_get_content(index, items);
+		*pp = new com_object_impl_t<MetadbHandleList>(items);
 		return S_OK;
 	}
 	return E_INVALIDARG;
@@ -570,16 +570,16 @@ STDMETHODIMP Plman::SortByFormatV2(UINT playlistIndex, BSTR pattern, int directi
 
 	auto api = playlist_manager::get();
 
-	metadb_handle_list handles;
-	api->playlist_get_all_items(playlistIndex, handles);
-	const size_t count = handles.get_count();
+	metadb_handle_list items;
+	api->playlist_get_all_items(playlistIndex, items);
+	const size_t count = items.get_count();
 
 	std::vector<size_t> order(count);
 
 	titleformat_object::ptr obj;
 	titleformat_compiler::get()->compile_safe(obj, string_utf8_from_wide(pattern));
 
-	metadb_handle_list_helper::sort_by_format_get_order_v2(handles, order.data(), obj, nullptr, direction, fb2k::noAbort);
+	metadb_handle_list_helper::sort_by_format_get_order_v2(items, order.data(), obj, nullptr, direction, fb2k::noAbort);
 
 	*p = TO_VARIANT_BOOL(api->playlist_reorder_items(playlistIndex, order.data(), count));
 	return S_OK;

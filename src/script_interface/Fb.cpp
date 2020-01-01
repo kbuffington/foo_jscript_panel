@@ -365,8 +365,7 @@ STDMETHODIMP Fb::RunContextCommand(BSTR command, VARIANT_BOOL* p)
 		contextmenu_manager::ptr cm;
 		contextmenu_manager::g_create(cm);
 		cm->init_context_now_playing(contextmenu_manager::flag_view_full);
-		pfc::string8_fast path;
-		*p = TO_VARIANT_BOOL(helpers::execute_context_command_recur(string_utf8_from_wide(command), path, cm->get_root()));
+		*p = TO_VARIANT_BOOL(helpers::execute_context_command_recur(string_utf8_from_wide(command), "", cm->get_root()));
 	}
 	return S_OK;
 }
@@ -376,7 +375,7 @@ STDMETHODIMP Fb::RunContextCommandWithMetadb(BSTR command, VARIANT handle, VARIA
 	if (!p) return E_POINTER;
 	if (handle.vt != VT_DISPATCH || !handle.pdispVal) return E_INVALIDARG;
 
-	metadb_handle_list handle_list;
+	metadb_handle_list items;
 	IDispatch* temp = nullptr;
 	IDispatchPtr handle_s = nullptr;
 	void* ptr = nullptr;
@@ -386,21 +385,28 @@ STDMETHODIMP Fb::RunContextCommandWithMetadb(BSTR command, VARIANT handle, VARIA
 		handle_s = temp;
 		reinterpret_cast<IMetadbHandle*>(handle_s.GetInterfacePtr())->get__ptr(&ptr);
 		if (!ptr) return E_INVALIDARG;
-		handle_list = pfc::list_single_ref_t<metadb_handle_ptr>(reinterpret_cast<metadb_handle*>(ptr));
+		items = pfc::list_single_ref_t<metadb_handle_ptr>(reinterpret_cast<metadb_handle*>(ptr));
 	}
 	else if (SUCCEEDED(handle.pdispVal->QueryInterface(__uuidof(IMetadbHandleList), reinterpret_cast<void**>(&temp))))
 	{
 		handle_s = temp;
 		reinterpret_cast<IMetadbHandleList*>(handle_s.GetInterfacePtr())->get__ptr(&ptr);
 		if (!ptr) return E_INVALIDARG;
-		handle_list = *reinterpret_cast<metadb_handle_list*>(ptr);
+		items = *reinterpret_cast<metadb_handle_list*>(ptr);
 	}
 	else
 	{
 		return E_INVALIDARG;
 	}
 
-	*p = handle_list.get_count() ? TO_VARIANT_BOOL(helpers::execute_context_command_by_name(string_utf8_from_wide(command), handle_list)) : VARIANT_FALSE;
+	*p = VARIANT_FALSE;
+	if (items.get_count())
+	{
+		contextmenu_manager::ptr cm;
+		contextmenu_manager::g_create(cm);
+		cm->init_context(items, contextmenu_manager::flag_view_full);
+		*p = TO_VARIANT_BOOL(helpers::execute_context_command_recur(string_utf8_from_wide(command), "", cm->get_root()));
+	}
 	return S_OK;
 }
 

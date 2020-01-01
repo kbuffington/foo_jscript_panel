@@ -85,21 +85,21 @@ namespace
 	class my_library_callback : public library_callback
 	{
 	public:
-		void on_items_added(metadb_handle_list_cref items) override
+		void on_items_added(metadb_handle_list_cref handles) override
 		{
-			auto data = new metadb_callback_data(items);
+			auto data = new metadb_callback_data(handles);
 			panel_manager::instance().post_msg_to_all_pointer(callback_id::on_library_items_added, data);
 		}
 
-		void on_items_modified(metadb_handle_list_cref items) override
+		void on_items_modified(metadb_handle_list_cref handles) override
 		{
-			auto data = new metadb_callback_data(items);
+			auto data = new metadb_callback_data(handles);
 			panel_manager::instance().post_msg_to_all_pointer(callback_id::on_library_items_changed, data);
 		}
 
-		void on_items_removed(metadb_handle_list_cref items) override
+		void on_items_removed(metadb_handle_list_cref handles) override
 		{
-			auto data = new metadb_callback_data(items);
+			auto data = new metadb_callback_data(handles);
 			panel_manager::instance().post_msg_to_all_pointer(callback_id::on_library_items_removed, data);
 		}
 	};
@@ -107,9 +107,9 @@ namespace
 	class my_metadb_io_callback : public metadb_io_callback
 	{
 	public:
-		void on_changed_sorted(metadb_handle_list_cref items_sorted, bool fromhook) override
+		void on_changed_sorted(metadb_handle_list_cref handles, bool fromhook) override
 		{
-			auto data = new metadb_callback_data(items_sorted);
+			auto data = new metadb_callback_data(handles);
 			panel_manager::instance().post_msg_to_all_pointer(callback_id::on_metadb_changed, data);
 		}
 	};
@@ -117,7 +117,7 @@ namespace
 	class my_play_callback_static : public play_callback_static
 	{
 	public:
-		size_t get_flags() override
+		uint32_t get_flags() override
 		{
 			return flag_on_playback_all | flag_on_volume_change;
 		}
@@ -207,11 +207,11 @@ namespace
 		void on_items_replaced(size_t, const pfc::bit_array&, const pfc::list_base_const_t<t_on_items_replaced_entry>&) override {}
 		void on_playlists_removing(const pfc::bit_array&, size_t, size_t) override {}
 
-		size_t get_flags() override
+		uint32_t get_flags() override
 		{
 			return flag_on_item_ensure_visible | flag_on_item_focus_change | flag_on_items_added | flag_on_items_removed | flag_on_items_reordered |
 				flag_on_items_selection_change | flag_on_playback_order_changed | flag_on_playlist_activate | flag_on_playlist_created |
-				flag_on_playlist_locked | flag_on_playlists_removed | flag_on_playlist_renamed | flag_on_playlists_reorder;
+				flag_on_playlist_locked | flag_on_playlist_renamed | flag_on_playlists_removed | flag_on_playlists_reorder;
 		}
 
 		void on_item_ensure_visible(size_t playlist, size_t idx) override
@@ -225,7 +225,7 @@ namespace
 			panel_manager::instance().post_msg_to_all_pointer(callback_id::on_item_focus_change, data);
 		}
 
-		void on_items_added(size_t playlist, size_t start, metadb_handle_list_cref items, const pfc::bit_array& selection) override
+		void on_items_added(size_t playlist, size_t start, metadb_handle_list_cref handles, const pfc::bit_array& selection) override
 		{
 			panel_manager::instance().post_msg_to_all(callback_id::on_playlist_items_added, playlist);
 		}

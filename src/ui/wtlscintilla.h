@@ -742,9 +742,9 @@ public:
 	void* PrivateLexerCall(int operation, void* pointer) { return reinterpret_cast<void*>(Call(SCI_PRIVATELEXERCALL, operation, reinterpret_cast<intptr_t>(pointer))); }
 
 private:
-	using FunctionDirect = intptr_t(*)(intptr_t ptr, unsigned int msg, uintptr_t wParam, intptr_t lParam);
+	using FunctionDirect = intptr_t(*)(intptr_t ptr, uint32_t msg, uintptr_t wParam, intptr_t lParam);
 
-	intptr_t Call(unsigned int msg, uintptr_t wParam = 0, intptr_t lParam = 0)
+	intptr_t Call(uint32_t msg, uintptr_t wParam = 0, intptr_t lParam = 0)
 	{
 		return fn(ptr, msg, wParam, lParam);
 	}

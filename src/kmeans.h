@@ -5,12 +5,12 @@ static constexpr int kMaxIterations = 12;
 
 struct KPoint
 {
-	KPoint(int point_id, const std::vector<unsigned int>& values, int pixel_count) : m_point_id(point_id), m_values(values), m_pixel_count(pixel_count) {}
+	KPoint(int point_id, const std::vector<uint32_t>& values, int pixel_count) : m_point_id(point_id), m_values(values), m_pixel_count(pixel_count) {}
 
 	int m_cluster_id = -1;
 	int m_pixel_count = 0;
 	int m_point_id = 0;
-	std::vector<unsigned int> m_values;
+	std::vector<uint32_t> m_values;
 };
 
 class Cluster
@@ -18,7 +18,7 @@ class Cluster
 public:
 	Cluster(KPoint point)
 	{
-		std::transform(point.m_values.begin(), point.m_values.end(), std::back_inserter(central_values), [](const unsigned int value)
+		std::transform(point.m_values.begin(), point.m_values.end(), std::back_inserter(central_values), [](const uint32_t value)
 			{
 				return static_cast<double>(value);
 			});

@@ -14,9 +14,9 @@ struct callback_data : public pfc::refcounted_object_root
 
 struct metadb_callback_data : public pfc::refcounted_object_root
 {
-	metadb_callback_data(metadb_handle_list_cref items) : m_items(items) {}
+	metadb_callback_data(metadb_handle_list_cref handles) : m_handles(handles) {}
 
-	metadb_handle_list m_items;
+	metadb_handle_list m_handles;
 };
 
 template <class T>

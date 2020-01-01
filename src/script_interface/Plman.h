@@ -15,7 +15,7 @@ public:
 	STDMETHODIMP ClearPlaylistSelection(UINT playlistIndex) override;
 	STDMETHODIMP CreateAutoPlaylist(UINT playlistIndex, BSTR name, BSTR query, BSTR sort, UINT flags, int* p) override;
 	STDMETHODIMP CreatePlaylist(UINT playlistIndex, BSTR name, UINT* p) override;
-	STDMETHODIMP DuplicatePlaylist(UINT from, BSTR name, UINT* p) override;
+	STDMETHODIMP DuplicatePlaylist(UINT playlistIndex, BSTR name, UINT* p) override;
 	STDMETHODIMP EnsurePlaylistItemVisible(UINT playlistIndex, UINT playlistItemIndex) override;
 	STDMETHODIMP ExecutePlaylistDefaultAction(UINT playlistIndex, UINT playlistItemIndex, VARIANT_BOOL* p) override;
 	STDMETHODIMP FindOrCreatePlaylist(BSTR name, VARIANT_BOOL unlocked, UINT* p) override;

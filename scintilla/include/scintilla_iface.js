@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2019 marc2003
+Copyright (C) 2020 marc2003
 Usage: node scintilla_iface.js
 */
 
@@ -135,9 +135,9 @@ const create_footer = () => {
 	let tmp = []
 	tmp.push('')
 	tmp.push('private:')
-	tmp.push('\tusing FunctionDirect = intptr_t(*)(intptr_t ptr, unsigned int msg, uintptr_t wParam, intptr_t lParam);')
+	tmp.push('\tusing FunctionDirect = intptr_t(*)(intptr_t ptr, uint32_t msg, uintptr_t wParam, intptr_t lParam);')
 	tmp.push('')
-	tmp.push('\tintptr_t Call(unsigned int msg, uintptr_t wParam = 0, intptr_t lParam = 0)')
+	tmp.push('\tintptr_t Call(uint32_t msg, uintptr_t wParam = 0, intptr_t lParam = 0)')
 	tmp.push('\t{')
 	tmp.push('\t\treturn fn(ptr, msg, wParam, lParam);')
 	tmp.push('\t}')

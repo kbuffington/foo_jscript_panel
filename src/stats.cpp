@@ -115,15 +115,15 @@ namespace stats
 			return false;
 		}
 
-		void enumerate_properties_helper(metadb_handle_list_cref items, track_property_provider_v3_info_source& info, track_property_callback_v2& callback, abort_callback& abort)
+		void enumerate_properties_helper(metadb_handle_list_cref handles, track_property_provider_v3_info_source& info, track_property_callback_v2& callback, abort_callback& abort)
 		{
 			if (callback.is_group_wanted(jsp::component_name))
 			{
-				const size_t count = items.get_count();
+				const size_t count = handles.get_count();
 				if (count == 1)
 				{
 					metadb_index_hash hash;
-					if (hashHandle(items[0], hash))
+					if (hashHandle(handles[0], hash))
 					{
 						const fields tmp = get(hash);
 						callback.set_property(jsp::component_name, 0, "Playcount", std::to_string(tmp.playcount).c_str());
@@ -136,7 +136,7 @@ namespace stats
 				else
 				{
 					hash_set hashes;
-					get_hashes(items, hashes);
+					get_hashes(handles, hashes);
 
 					size_t total = std::accumulate(hashes.begin(), hashes.end(), 0U, [](size_t t, const metadb_index_hash hash)
 						{
@@ -151,9 +151,9 @@ namespace stats
 			}
 		}
 
-		void enumerate_properties_v4(metadb_handle_list_cref items, track_property_provider_v3_info_source& info, track_property_callback_v2& callback, abort_callback& abort) override
+		void enumerate_properties_v4(metadb_handle_list_cref handles, track_property_provider_v3_info_source& info, track_property_callback_v2& callback, abort_callback& abort) override
 		{
-			enumerate_properties_helper(items, info, callback, abort);
+			enumerate_properties_helper(handles, info, callback, abort);
 		}
 	};
 

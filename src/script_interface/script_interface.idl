@@ -375,7 +375,7 @@ library foo_jscript_panel
 		HRESULT ClearPlaylistSelection(UINT playlistIndex);
 		HRESULT CreateAutoPlaylist(UINT playlistIndex, BSTR name, BSTR query, [defaultvalue("")] BSTR sort, [defaultvalue(0)] UINT flags, [out, retval] int* p);
 		HRESULT CreatePlaylist(UINT playlistIndex, BSTR name, [out, retval] UINT* p);
-		HRESULT DuplicatePlaylist(UINT from, BSTR name, [out, retval] UINT* p);
+		HRESULT DuplicatePlaylist(UINT playlistIndex, BSTR name, [out, retval] UINT* p);
 		HRESULT EnsurePlaylistItemVisible(UINT playlistIndex, UINT playlistItemIndex);
 		HRESULT ExecutePlaylistDefaultAction(UINT playlistIndex, UINT playlistItemIndex, [out, retval] VARIANT_BOOL* p);
 		HRESULT FindOrCreatePlaylist(BSTR name, VARIANT_BOOL unlocked, [out, retval] UINT* p);
