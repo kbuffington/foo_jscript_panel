@@ -120,9 +120,9 @@ STDMETHODIMP GdiBitmap::GetColourSchemeJSON(UINT count, BSTR* p)
 
 	for (size_t i = 0; i < colours_length; ++i)
 	{
-		BYTE r = (colours[i] >> 16) & UCHAR_MAX;
-		BYTE g = (colours[i] >> 8) & UCHAR_MAX;
-		BYTE b = (colours[i] & UCHAR_MAX);
+		uint8_t r = (colours[i] >> 16) & UCHAR_MAX;
+		uint8_t g = (colours[i] >> 8) & UCHAR_MAX;
+		uint8_t b = (colours[i] & UCHAR_MAX);
 
 		// We're reducing total colors from 2^24 to 2^15 by rounding each colour component value to multiples of 8.
 		// First we need to check if the byte will overflow, and if so pin to 0xff, otherwise add 4 and round down.
@@ -139,11 +139,11 @@ STDMETHODIMP GdiBitmap::GetColourSchemeJSON(UINT count, BSTR* p)
 	std::vector<KPoint> points;
 	for (const auto& elem : colour_counters)
 	{
-		const BYTE r = (elem.first >> 16) & UCHAR_MAX;
-		const BYTE g = (elem.first >> 8) & UCHAR_MAX;
-		const BYTE b = elem.first & UCHAR_MAX;
+		const uint8_t r = (elem.first >> 16) & UCHAR_MAX;
+		const uint8_t g = (elem.first >> 8) & UCHAR_MAX;
+		const uint8_t b = elem.first & UCHAR_MAX;
 
-		std::vector<size_t> values = { r, g, b };
+		std::vector<uint32_t> values = { r, g, b };
 		KPoint pt(id, values, elem.second);
 		points.emplace_back(pt);
 		id++;

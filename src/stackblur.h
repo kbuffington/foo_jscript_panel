@@ -10,7 +10,7 @@ by Victor Laskin (victor.laskin@gmail.com)
 More details: http://vitiy.info/stackblur-algorithm-multi-threaded-blur-for-cpp
 */
 
-static unsigned short const stackblur_mul[255] =
+static uint16_t const stackblur_mul[255] =
 {
 	512,512,456,512,328,456,335,512,405,328,271,456,388,335,292,512,
 	454,405,364,328,298,271,496,456,420,388,360,335,312,292,273,512,
@@ -30,7 +30,7 @@ static unsigned short const stackblur_mul[255] =
 	289,287,285,282,280,278,275,273,271,269,267,265,263,261,259
 };
 
-static BYTE const stackblur_shr[255] =
+static uint8_t const stackblur_shr[255] =
 {
 	9, 11, 12, 13, 13, 14, 14, 15, 15, 15, 15, 16, 16, 16, 16, 17,
 	17, 17, 17, 17, 17, 17, 18, 18, 18, 18, 18, 18, 18, 18, 18, 19,
@@ -51,48 +51,49 @@ static BYTE const stackblur_shr[255] =
 };
 
 /// Stackblur algorithm body
-void stackblurJob(BYTE* src, ///< input image data
-	size_t w, ///< image width
-	size_t h, ///< image height
-	size_t radius, ///< blur intensity (should be in 2..254 range)
-	size_t cores, ///< total number of working threads
-	size_t core, ///< current thread number
-	size_t step, ///< step of processing (1,2)
-	BYTE* stack ///< stack buffer
+void stackblurJob(uint8_t* src, ///< input image data
+	uint32_t w, ///< image width
+	uint32_t h, ///< image height
+	uint8_t radius, ///< blur intensity (should be in 2..254 range)
+	uint32_t cores, ///< total number of working threads
+	uint32_t core, ///< current thread number
+	uint32_t step, ///< step of processing (1,2)
+	uint8_t* stack ///< stack buffer
 )
 {
-	size_t x, y, xp, yp, i;
-	size_t sp;
-	size_t stack_start;
-	BYTE* stack_ptr;
+	uint8_t i;
+	uint32_t x, y, xp, yp;
+	uint32_t sp;
+	uint32_t stack_start;
+	uint8_t* stack_ptr;
 
-	BYTE* src_ptr;
-	BYTE* dst_ptr;
+	uint8_t* src_ptr;
+	uint8_t* dst_ptr;
 
-	unsigned long sum_r;
-	unsigned long sum_g;
-	unsigned long sum_b;
-	unsigned long sum_a;
-	unsigned long sum_in_r;
-	unsigned long sum_in_g;
-	unsigned long sum_in_b;
-	unsigned long sum_in_a;
-	unsigned long sum_out_r;
-	unsigned long sum_out_g;
-	unsigned long sum_out_b;
-	unsigned long sum_out_a;
+	uint32_t sum_r;
+	uint32_t sum_g;
+	uint32_t sum_b;
+	uint32_t sum_a;
+	uint32_t sum_in_r;
+	uint32_t sum_in_g;
+	uint32_t sum_in_b;
+	uint32_t sum_in_a;
+	uint32_t sum_out_r;
+	uint32_t sum_out_g;
+	uint32_t sum_out_b;
+	uint32_t sum_out_a;
 
-	size_t wm = w - 1;
-	size_t hm = h - 1;
-	size_t w4 = w * 4;
-	size_t div = (radius * 2) + 1;
-	size_t mul_sum = stackblur_mul[radius];
-	BYTE shr_sum = stackblur_shr[radius];
+	uint32_t wm = w - 1;
+	uint32_t hm = h - 1;
+	uint32_t w4 = w * 4;
+	uint32_t div = (radius * 2) + 1;
+	uint32_t mul_sum = stackblur_mul[radius];
+	uint8_t shr_sum = stackblur_shr[radius];
 
 	if (step == 1)
 	{
-		size_t minY = core * h / cores;
-		size_t maxY = (core + 1) * h / cores;
+		uint32_t minY = core * h / cores;
+		uint32_t maxY = (core + 1) * h / cores;
 
 		for (y = minY; y < maxY; ++y)
 		{
@@ -144,10 +145,10 @@ void stackblurJob(BYTE* src, ///< input image data
 			dst_ptr = src + y * w4; // img.pix_ptr(0, y);
 			for (x = 0; x < w; ++x)
 			{
-				dst_ptr[0] = static_cast<BYTE>((sum_r * mul_sum) >> shr_sum);
-				dst_ptr[1] = static_cast<BYTE>((sum_g * mul_sum) >> shr_sum);
-				dst_ptr[2] = static_cast<BYTE>((sum_b * mul_sum) >> shr_sum);
-				dst_ptr[3] = static_cast<BYTE>((sum_a * mul_sum) >> shr_sum);
+				dst_ptr[0] = static_cast<uint8_t>((sum_r * mul_sum) >> shr_sum);
+				dst_ptr[1] = static_cast<uint8_t>((sum_g * mul_sum) >> shr_sum);
+				dst_ptr[2] = static_cast<uint8_t>((sum_b * mul_sum) >> shr_sum);
+				dst_ptr[3] = static_cast<uint8_t>((sum_a * mul_sum) >> shr_sum);
 				dst_ptr += 4;
 
 				sum_r -= sum_out_r;
@@ -203,8 +204,8 @@ void stackblurJob(BYTE* src, ///< input image data
 	// step 2
 	if (step == 2)
 	{
-		size_t minX = core * w / cores;
-		size_t maxX = (core + 1) * w / cores;
+		uint32_t minX = core * w / cores;
+		uint32_t maxX = (core + 1) * w / cores;
 
 		for (x = minX; x < maxX; ++x)
 		{
@@ -255,10 +256,10 @@ void stackblurJob(BYTE* src, ///< input image data
 			dst_ptr = src + 4 * x; // img.pix_ptr(x, 0);
 			for (y = 0; y < h; ++y)
 			{
-				dst_ptr[0] = static_cast<BYTE>((sum_r * mul_sum) >> shr_sum);
-				dst_ptr[1] = static_cast<BYTE>((sum_g * mul_sum) >> shr_sum);
-				dst_ptr[2] = static_cast<BYTE>((sum_b * mul_sum) >> shr_sum);
-				dst_ptr[3] = static_cast<BYTE>((sum_a * mul_sum) >> shr_sum);
+				dst_ptr[0] = static_cast<uint8_t>((sum_r * mul_sum) >> shr_sum);
+				dst_ptr[1] = static_cast<uint8_t>((sum_g * mul_sum) >> shr_sum);
+				dst_ptr[2] = static_cast<uint8_t>((sum_b * mul_sum) >> shr_sum);
+				dst_ptr[3] = static_cast<uint8_t>((sum_a * mul_sum) >> shr_sum);
 				dst_ptr += w4;
 
 				sum_r -= sum_out_r;
@@ -315,16 +316,16 @@ void stackblurJob(BYTE* src, ///< input image data
 class stack_blur_task : public pfc::thread
 {
 public:
-	BYTE* src;
-	size_t w;
-	size_t h;
-	size_t radius;
-	size_t cores;
-	size_t core;
-	size_t step;
-	BYTE* stack;
+	uint8_t* src;
+	uint32_t w;
+	uint32_t h;
+	uint8_t radius;
+	uint32_t cores;
+	uint32_t core;
+	uint32_t step;
+	uint8_t* stack;
 
-	inline stack_blur_task(BYTE* src, size_t w, size_t h, size_t radius, size_t cores, size_t core, size_t step, BYTE* stack)
+	inline stack_blur_task(uint8_t* src, uint32_t w, uint32_t h, uint8_t radius, uint32_t cores, uint32_t core, uint32_t step, uint8_t* stack)
 	{
 		this->src = src;
 		this->w = w;
@@ -342,15 +343,15 @@ public:
 	}
 };
 
-void stackblur(BYTE* src, ///< input image data
-	size_t w, ///< image width
-	size_t h, ///< image height
-	size_t radius ///< blur intensity (should be in 2..254 range)
+void stackblur(uint8_t* src, ///< input image data
+	uint32_t w, ///< image width
+	uint32_t h, ///< image height
+	uint8_t radius ///< blur intensity (should be in 2..254 range)
 )
 {
-	size_t cores = std::max(1U, pfc::getOptimalWorkerThreadCount());
-	size_t div = (radius * 2) + 1;
-	BYTE* stack = new BYTE[div * 4 * cores];
+	uint32_t cores = std::max(1U, pfc::getOptimalWorkerThreadCount());
+	uint32_t div = (radius * 2) + 1;
+	uint8_t* stack = new uint8_t[div * 4 * cores];
 
 	if (cores == 1)
 	{
@@ -360,7 +361,7 @@ void stackblur(BYTE* src, ///< input image data
 	}
 	else
 	{
-		size_t i;
+		uint32_t i;
 		stack_blur_task** workers = new stack_blur_task*[cores];
 		for (i = 0; i < cores; ++i)
 		{
@@ -391,19 +392,19 @@ void stackblur(BYTE* src, ///< input image data
 	delete[] stack;
 }
 
-void stack_blur_filter(Gdiplus::Bitmap& img, BYTE radius) throw()
+void stack_blur_filter(Gdiplus::Bitmap& img, uint8_t radius) throw()
 {
 	if (radius < 2) radius = 2;
 	if (radius > 254) radius = 254;
-	size_t width = img.GetWidth();
-	size_t height = img.GetHeight();
+	uint32_t width = img.GetWidth();
+	uint32_t height = img.GetHeight();
 
 	Gdiplus::Rect rect(0, 0, width, height);
 	Gdiplus::BitmapData bmpdata;
 
 	if (img.LockBits(&rect, Gdiplus::ImageLockModeRead | Gdiplus::ImageLockModeWrite, PixelFormat32bppPARGB, &bmpdata) == Gdiplus::Ok)
 	{
-		stackblur(static_cast<BYTE*>(bmpdata.Scan0), width, height, radius);
+		stackblur(static_cast<uint8_t*>(bmpdata.Scan0), width, height, radius);
 		img.UnlockBits(&bmpdata);
 	}
 }
