@@ -554,22 +554,20 @@ namespace helpers
 				}
 			}
 
+			const int fallbackTextLength = std::max(textLength, 1);
+
+			while (textLength > 0 && !is_wrap_char(text[textLength - 1], text[textLength]))
 			{
-				const int fallbackTextLength = std::max(textLength, 1);
-
-				while (textLength > 0 && !is_wrap_char(text[textLength - 1], text[textLength]))
-				{
-					--textLength;
-				}
-
-				if (textLength == 0)
-				{
-					textLength = fallbackTextLength;
-				}
-
-				wrapped_item item = { SysAllocStringLen(text, textLength), get_text_width(hdc, text, textLength) };
-				out.emplace_back(item);
+				--textLength;
 			}
+
+			if (textLength == 0)
+			{
+				textLength = fallbackTextLength;
+			}
+
+			wrapped_item item = { SysAllocStringLen(text, textLength), get_text_width(hdc, text, textLength) };
+			out.emplace_back(item);
 
 			if (textLength < len)
 			{
