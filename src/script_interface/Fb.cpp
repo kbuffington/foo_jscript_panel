@@ -178,7 +178,7 @@ STDMETHODIMP Fb::GetDSPPresets(BSTR* p)
 				{ "name", name.get_ptr() }
 			});
 	}
-	*p = TO_BSTR((j.dump()).c_str());
+	*p = TO_BSTR(j.dump().c_str());
 	return S_OK;
 }
 
@@ -233,7 +233,7 @@ STDMETHODIMP Fb::GetOutputDevices(BSTR* p)
 					{ "active", config.m_output == output_id && config.m_device == device_id }
 				});
 		});
-	*p = TO_BSTR((j.dump()).c_str());
+	*p = TO_BSTR(j.dump().c_str());
 	return S_OK;
 }
 
