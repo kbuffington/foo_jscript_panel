@@ -372,7 +372,7 @@
     <ClCompile Include="ui\ui_input_box.cpp">
       <Filter>Source Files\ui</Filter>
     </ClCompile>
-    <ClCompile Include="ui\ui_pref.cpp">
+    <ClCompile Include="ui\ui_preferences.cpp">
       <Filter>Source Files\ui</Filter>
     </ClCompile>
     <ClCompile Include="ui\ui_property.cpp">

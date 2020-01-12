@@ -15,7 +15,7 @@ namespace
 			COMMAND_HANDLER_EX(IDC_BTN_PRESETS, BN_CLICKED, OnPresetsBnClicked)
 		END_MSG_MAP()
 
-		enum { IDD = IDD_DIALOG_PREF };
+		enum { IDD = IDD_PREFERENCES };
 
 		BOOL OnInitDialog(CWindow, LPARAM)
 		{
