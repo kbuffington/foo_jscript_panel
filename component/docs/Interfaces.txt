@@ -1147,7 +1147,7 @@ interface IUtils {
 		*/
 
 		utils.GetFileSize(filename) (int64)
-		// Retrieve file size in bytes. Requires Chakra script engine to work properly.
+		// Retrieve file size in bytes.
 
 		utils.GetSysColour(index) (uint)
 		/*
@@ -1891,7 +1891,6 @@ interface IMetadbHandle {
 		SubSong (uint) (read)
 
 		FileSize (int64) (read)
-		// Requires Chakra script engine to work properly.
 
 		Length (double) (read)
 
@@ -2083,10 +2082,7 @@ interface IMetadbHandleList {
 		// Returns total in seconds. For display purposes, consider using utils.FormatDuration() on the result.
 
 		CalcTotalSize() (int64)
-		/*
-		Requires Chakra script engine to work properly.
-		Returns total in bytes. For display purposes, consider using utils.FormatFileSize() on the result.
-		*/
+		// Returns total in bytes. For display purposes, consider using utils.FormatFileSize() on the result.
 
 		Clone() (IMetadbHandleList)
 		/*
