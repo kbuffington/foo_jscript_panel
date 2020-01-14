@@ -370,12 +370,6 @@ namespace helpers
 		return currentAlphaNum == 0 || iswalnum(next) == 0;
 	}
 
-	bool supports_chakra()
-	{
-		HKEY hKey;
-		return RegOpenKeyExW(HKEY_CLASSES_ROOT, L"CLSID\\{16d51579-a30b-4c8b-a276-0ff4dc41e755}", 0, KEY_READ, &hKey) == ERROR_SUCCESS;
-	}
-
 	bool write_file(pfc::stringp path, pfc::stringp content)
 	{
 		std::ofstream f(fs::u8path(path.get_ptr()), std::ios::binary);

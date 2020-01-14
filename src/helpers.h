@@ -41,7 +41,6 @@ namespace helpers
 	bool execute_mainmenu_command_recur(pfc::stringp command, pfc::string_base& path, mainmenu_node::ptr node);
 	bool get_encoder_clsid(const wchar_t* format, CLSID* pClsid);
 	bool is_wrap_char(wchar_t current, wchar_t next);
-	bool supports_chakra();
 	bool write_file(pfc::stringp path, pfc::stringp content);
 	int get_text_height(HDC hdc, const wchar_t* text, int len);
 	int get_text_width(HDC hdc, const wchar_t* text, int len);

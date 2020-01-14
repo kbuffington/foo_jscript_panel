@@ -7,8 +7,6 @@ static const CDialogResizeHelper::Param resize_data[] =
 {
 	{ IDC_EDIT, 0, 0, 1, 1 },
 	{ IDC_BTN_RESET, 0, 1, 0, 1 },
-	{ IDC_LABEL_ENGINE, 0, 1, 0, 1 },
-	{ IDC_COMBO_ENGINE, 0, 1, 0, 1 },
 	{ IDC_LABEL_EDGE, 0, 1, 0, 1 },
 	{ IDC_COMBO_EDGE, 0, 1, 0, 1 },
 	{ IDC_CHECK_PSEUDO_TRANSPARENT, 0, 1, 0, 1 },
@@ -28,7 +26,6 @@ BOOL CDialogConf::OnInitDialog(CWindow, LPARAM)
 {
 	// Init
 	m_edge_combo = GetDlgItem(IDC_COMBO_EDGE);
-	m_engine_combo = GetDlgItem(IDC_COMBO_ENGINE);
 	m_transparent_check = GetDlgItem(IDC_CHECK_PSEUDO_TRANSPARENT);
 
 	BuildMenu();
@@ -45,20 +42,6 @@ BOOL CDialogConf::OnInitDialog(CWindow, LPARAM)
 	else
 	{
 		SetWindowPlacement(&g_config.m_conf_wndpl);
-	}
-
-	// Script Engine
-	m_engine_combo.AddString(L"Chakra");
-	m_engine_combo.AddString(L"JScript");
-
-	if (helpers::supports_chakra())
-	{
-		m_engine_combo.SetCurSel(m_parent->m_panel_config.engine.equals("Chakra") ? 0 : 1);
-	}
-	else
-	{
-		m_engine_combo.SetCurSel(1);
-		m_engine_combo.EnableWindow(false);
 	}
 
 	// Edge Style
@@ -127,7 +110,6 @@ pfc::string8_fast CDialogConf::GetText()
 void CDialogConf::Apply()
 {
 	// Save panel settings
-	uGetWindowText(m_engine_combo, m_parent->m_panel_config.engine);
 	m_parent->m_panel_config.style = static_cast<panel_config::edge_style>(m_edge_combo.GetCurSel());
 	m_parent->m_panel_config.transparent = m_transparent_check.IsChecked();
 
@@ -260,7 +242,6 @@ void CDialogConf::OnLinks(UINT, int nID, CWindow)
 
 void CDialogConf::OnReset(UINT, int, CWindow)
 {
-	m_engine_combo.SetCurSel(helpers::supports_chakra() ? 0 : 1);
 	m_edge_combo.SetCurSel(0);
 	m_transparent_check.SetCheck(false);
 	m_editorctrl.SetContent(helpers::get_resource_text(IDR_SCRIPT));

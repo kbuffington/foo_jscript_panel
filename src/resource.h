@@ -23,35 +23,33 @@
 #define IDD_DIALOG_PROPERTY             114
 #define IDD_DIALOG_FIND_REPLACE         115
 
-// ui_conf
-#define IDC_EDIT                        120
-#define IDC_BTN_RESET                   121
-#define IDC_LABEL_ENGINE                122
-#define IDC_COMBO_ENGINE                123
-#define IDC_LABEL_EDGE                  124
-#define IDC_COMBO_EDGE                  125
-#define IDC_CHECK_PSEUDO_TRANSPARENT    126
-
-// ui_goto
-#define IDC_EDIT_LINENUMBER             130
-
-// ui_input_box
-#define IDC_LABEL_PROMPT                140
-#define IDC_EDIT_VALUE                  141
-
-// ui_pref
-#define IDC_LIST_PREFERENCES            150
-#define IDC_BTN_PRESETS                 151
-
-// ui_property
-#define IDC_LIST_PROPERTIES             160
-#define IDC_BTN_CLEAR                   161
+// preferences
+#define IDC_LIST_PREFERENCES            120
+#define IDC_BTN_PRESETS                 121
 
 // property_ctrl
-#define ID_SELECTALL                    170
-#define ID_SELECTNONE                   171
-#define ID_INVERTSEL                    172
-#define ID_REMOVE                       173
+#define ID_SELECTALL                    130
+#define ID_SELECTNONE                   131
+#define ID_INVERTSEL                    132
+#define ID_REMOVE                       133
+
+// ui_conf
+#define IDC_EDIT                        140
+#define IDC_BTN_RESET                   141
+#define IDC_LABEL_EDGE                  142
+#define IDC_COMBO_EDGE                  143
+#define IDC_CHECK_PSEUDO_TRANSPARENT    144
+
+// ui_goto
+#define IDC_EDIT_LINENUMBER             150
+
+// ui_input_box
+#define IDC_LABEL_PROMPT                160
+#define IDC_EDIT_VALUE                  161
+
+// ui_property
+#define IDC_LIST_PROPERTIES             170
+#define IDC_BTN_CLEAR                   171
 
 // ui_find_replace
 #define IDC_EDIT_FIND                   180

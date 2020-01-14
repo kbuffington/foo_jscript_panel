@@ -155,7 +155,7 @@ namespace
 	public:
 		GUID get_guid() override
 		{
-			return jsp::guids::ui_pref;
+			return jsp::guids::preferences;
 		}
 
 		GUID get_parent_guid() override

@@ -29,6 +29,7 @@ struct panel_config
 			size_t ver = 0;
 			try
 			{
+				pfc::string8_fast tmp;
 				reader->read_object_t(ver, abort);
 				reader->skip_object(sizeof(bool), abort); // HACK: skip over "delay load"
 				reader->skip_object(sizeof(GUID), abort); // HACK: skip over "GUID"
@@ -37,7 +38,7 @@ struct panel_config
 				reader->skip_object(sizeof(bool), abort); // HACK: skip over "disable before"
 				reader->skip_object(sizeof(bool), abort); // HACK: skip over "grab focus"
 				reader->skip_object(sizeof(WINDOWPLACEMENT), abort); // HACK: skip over window placement
-				reader->read_string(engine, abort);
+				reader->read_string(tmp, abort); // HACK: skip over "engine"
 				reader->read_string(code, abort);
 				reader->read_object_t(transparent, abort);
 			}
@@ -52,7 +53,6 @@ struct panel_config
 	void reset()
 	{
 		code = helpers::get_resource_text(IDR_SCRIPT);
-		engine = helpers::supports_chakra() ? "Chakra" : "JScript";
 		style = edge_style::none;
 		transparent = false;
 	}
@@ -70,7 +70,7 @@ struct panel_config
 			writer->write_object_t(false, abort); // HACK: write this in place of "disable before"
 			writer->write_object_t(true, abort); // HACK: write this in place of "grab focus"
 			writer->write_object(&wndpl, sizeof(WINDOWPLACEMENT), abort); // HACK: write this in place of window placement
-			writer->write_string(engine, abort);
+			writer->write_string("Chakra", abort); // HACK: write this in place of engine
 			writer->write_string(code, abort);
 			writer->write_object_t(transparent, abort);
 		}
@@ -81,5 +81,4 @@ struct panel_config
 	edge_style style = edge_style::none;
 	panel_properties properties;
 	pfc::string8_fast code;
-	pfc::string8_fast engine;
 };

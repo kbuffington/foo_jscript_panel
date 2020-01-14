@@ -88,31 +88,24 @@ HRESULT script_host::InitCallbackMap()
 
 HRESULT script_host::InitScriptEngine()
 {
-	HRESULT hr = E_FAIL;
 	static constexpr DWORD classContext = CLSCTX_INPROC_SERVER | CLSCTX_INPROC_HANDLER;
-
-	if (helpers::supports_chakra() && m_host->m_panel_config.engine.equals("Chakra"))
-	{
-		static constexpr CLSID jscript9clsid = { 0x16d51579, 0xa30b, 0x4c8b,{ 0xa2, 0x76, 0x0f, 0xf4, 0xdc, 0x41, 0xe7, 0x55 } };
-		hr = m_script_engine.CreateInstance(jscript9clsid, nullptr, classContext);
-	}
+	static constexpr CLSID jscript9clsid = { 0x16d51579, 0xa30b, 0x4c8b,{ 0xa2, 0x76, 0x0f, 0xf4, 0xdc, 0x41, 0xe7, 0x55 } };
+	HRESULT hr = m_script_engine.CreateInstance(jscript9clsid, nullptr, classContext);
 
 	if (FAILED(hr))
 	{
-		hr = m_script_engine.CreateInstance("jscript", nullptr, classContext);
+		FB2K_console_formatter() << jsp::component_name << ": This component requires a system with IE9 or later.";
+		return hr;
 	}
 
-	if (SUCCEEDED(hr))
-	{
-		IActiveScriptProperty* pActScriProp = nullptr;
-		m_script_engine->QueryInterface(IID_IActiveScriptProperty, reinterpret_cast<void**>(&pActScriProp));
-		VARIANT scriptLangVersion;
-		scriptLangVersion.vt = VT_I4;
-		scriptLangVersion.lVal = SCRIPTLANGUAGEVERSION_5_8 + 1;
-		pActScriProp->SetProperty(SCRIPTPROP_INVOKEVERSIONING, nullptr, &scriptLangVersion);
-		pActScriProp->Release();
-	}
-	return hr;
+	IActiveScriptProperty* pActScriProp = nullptr;
+	m_script_engine->QueryInterface(IID_IActiveScriptProperty, reinterpret_cast<void**>(&pActScriProp));
+	VARIANT scriptLangVersion;
+	scriptLangVersion.vt = VT_I4;
+	scriptLangVersion.lVal = SCRIPTLANGUAGEVERSION_5_8 + 1;
+	pActScriProp->SetProperty(SCRIPTPROP_INVOKEVERSIONING, nullptr, &scriptLangVersion);
+	pActScriProp->Release();
+	return S_OK;
 }
 
 HRESULT script_host::ProcessScripts(IActiveScriptParsePtr& parser)

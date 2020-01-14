@@ -41,7 +41,6 @@ public:
 private:
 	CCheckBox m_transparent_check;
 	CComboBox m_edge_combo;
-	CComboBox m_engine_combo;
 	CDialogResizeHelper m_resizer;
 	CMenu m_menu;
 	CScriptEditorCtrl m_editorctrl;
