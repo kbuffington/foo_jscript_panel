@@ -33,17 +33,7 @@ struct panel_config
 
 				if (ver < 2400)
 				{
-					pfc::string8_fast tmp;
-					reader->skip_object(sizeof(bool), abort); // HACK: skip over "delay load"
-					reader->skip_object(sizeof(GUID), abort); // HACK: skip over "GUID"
-					reader->read_object(&style, sizeof(char), abort);
-					properties.set(reader, abort);
-					reader->skip_object(sizeof(bool), abort); // HACK: skip over "disable before"
-					reader->skip_object(sizeof(bool), abort); // HACK: skip over "grab focus"
-					reader->skip_object(sizeof(WINDOWPLACEMENT), abort); // HACK: skip over window placement
-					reader->read_string(tmp, abort); // HACK: skip over "engine"
-					reader->read_string(code, abort);
-					reader->read_object_t(transparent, abort);
+					set_legacy(reader, abort);
 				}
 				else
 				{
@@ -59,6 +49,21 @@ struct panel_config
 				FB2K_console_formatter() << jsp::component_name << ": Configuration has been corrupted. All settings have been reset.";
 			}
 		}
+	}
+
+	void set_legacy(stream_reader* reader, abort_callback& abort)
+	{
+		pfc::string8_fast tmp;
+		reader->skip_object(sizeof(bool), abort); // HACK: skip over "delay load"
+		reader->skip_object(sizeof(GUID), abort); // HACK: skip over "GUID"
+		reader->read_object(&style, sizeof(char), abort);
+		properties.set(reader, abort);
+		reader->skip_object(sizeof(bool), abort); // HACK: skip over "disable before"
+		reader->skip_object(sizeof(bool), abort); // HACK: skip over "grab focus"
+		reader->skip_object(sizeof(WINDOWPLACEMENT), abort); // HACK: skip over window placement
+		reader->read_string(tmp, abort); // HACK: skip over "engine"
+		reader->read_string(code, abort);
+		reader->read_object_t(transparent, abort);
 	}
 
 	void reset()
