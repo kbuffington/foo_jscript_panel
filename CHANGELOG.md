@@ -1,6 +1,6 @@
 ## v2.4.0 (unreleased)
 - Drop support for `Windows XP`/`Windows Vista`. `Windows 7` with `IE9` or later is now required.
-- The internal configuration format has changed meaninng downgrading to versions earlier than `v2.4.0` won't be possible without losing settings. If you think you might need to downgrade at a later time, either backup your full `theme.fth` / `foo_ui_columns.dll.cfg` files or export your themes. To be really safe, backing up your whole `%appdata%\foobar200` or portable folder isn't a bad idea!
+- The internal configuration format has changed meaninng downgrading to versions earlier than `v2.4.0` won't be possible without losing settings. If you think you might need to downgrade at a later time, either backup your full `theme.fth` / `foo_ui_columns.dll.cfg` files or export your themes. To be really safe, backing up your whole `%appdata%\foobar2000` or portable folder isn't a bad idea!
 
 ## v2.3.5
 - Add `plman.GetPlaylistLockFilterMask`. It's recommended that you replace any usage of `plman.IsPlaylistLocked` with this as you can now determine the type of locks in place.
