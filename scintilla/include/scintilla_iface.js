@@ -121,7 +121,7 @@ const create_body = (lines) =>
 				}
 			}
 
-			if (cast) main+= ')'
+			if (cast) main += ')'
 			main += '); }'
 
 			tmp.push(main)
