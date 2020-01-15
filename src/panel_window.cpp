@@ -595,7 +595,7 @@ void panel_window::on_paint()
 			CLIP_DEFAULT_PRECIS,
 			DEFAULT_QUALITY,
 			DEFAULT_PITCH | FF_DONTCARE,
-			L"Tahoma");
+			L"Segoe UI");
 
 		LOGBRUSH lbBack = { BS_SOLID, RGB(225, 60, 45), 0 };
 		CBrush hBack = CreateBrushIndirect(&lbBack);
