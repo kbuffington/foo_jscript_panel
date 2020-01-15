@@ -570,6 +570,7 @@ public:
 	void SetHotspotActiveFore(bool useSetting, Colour fore) { Call(SCI_SETHOTSPOTACTIVEFORE, useSetting, fore); }
 	void SetHotspotActiveUnderline(bool underline) { Call(SCI_SETHOTSPOTACTIVEUNDERLINE, underline); }
 	void SetHotspotSingleLine(bool singleLine) { Call(SCI_SETHOTSPOTSINGLELINE, singleLine); }
+	void SetILexer(void* ilexer) { Call(SCI_SETILEXER, 0, reinterpret_cast<intptr_t>(ilexer)); }
 	void SetIMEInteraction(int imeInteraction) { Call(SCI_SETIMEINTERACTION, imeInteraction); }
 	void SetIdentifier(int identifier) { Call(SCI_SETIDENTIFIER, identifier); }
 	void SetIdentifiers(int style, const char* identifiers) { Call(SCI_SETIDENTIFIERS, style, reinterpret_cast<intptr_t>(identifiers)); }
