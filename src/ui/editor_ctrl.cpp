@@ -75,19 +75,6 @@ CScriptEditorCtrl::CScriptEditorCtrl() : apis(panel_manager::instance().get_apis
 	};
 }
 
-BOOL CScriptEditorCtrl::SubclassWindow(CWindow hwnd)
-{
-	const BOOL bRet = CScintillaImpl::SubclassWindow(hwnd);
-
-	if (bRet)
-	{
-		SetFnPtr();
-		Init();
-	}
-
-	return bRet;
-}
-
 CScriptEditorCtrl::Colour CScriptEditorCtrl::ParseHex(const std::string& hex)
 {
 	const auto int_from_hex_digit = [](int ch)
@@ -841,7 +828,7 @@ void CScriptEditorCtrl::FillFunctionDefinition(Position pos)
 
 void CScriptEditorCtrl::Init()
 {
-	StyleResetDefault();
+	SetFnPtr();
 
 	SetCodePage(SC_CP_UTF8);
 	SetEOLMode(SC_EOL_CRLF);
@@ -892,6 +879,11 @@ void CScriptEditorCtrl::Init()
 	{
 		SetProperty(key, value);
 	}
+
+	RestoreDefaultStyle();
+	SetLexer(SCLEX_CPP);
+	SetKeyWords(0, js_keywords);
+	SetAllStylesFromTable();
 }
 
 void CScriptEditorCtrl::OpenFindDialog()
@@ -1025,14 +1017,6 @@ void CScriptEditorCtrl::SetContent(pfc::stringp text)
 	ConvertEOLs(SC_EOL_CRLF);
 	GrabFocus();
 	TrackWidth();
-}
-
-void CScriptEditorCtrl::SetJScript()
-{
-	RestoreDefaultStyle();
-	SetLexer(SCLEX_CPP);
-	SetKeyWords(0, js_keywords);
-	SetAllStylesFromTable();
 }
 
 void CScriptEditorCtrl::SetIndentation(Line line, int indent)

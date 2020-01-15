@@ -17,13 +17,12 @@ public:
 		REFLECTED_COMMAND_CODE_HANDLER_EX(SCEN_CHANGE, OnChange)
 	END_MSG_MAP()
 
-	BOOL SubclassWindow(CWindow hwnd);
 	bool FindNext();
 	bool FindPrevious();
+	void Init();
 	void Replace();
 	void ReplaceAll();
 	void SetContent(pfc::stringp text);
-	void SetJScript();
 
 	std::map<int, int> FlagMap;
 
@@ -87,7 +86,6 @@ private:
 	void AutomaticIndentation(int ch);
 	void ContinueCallTip();
 	void FillFunctionDefinition(Position pos);
-	void Init();
 	void OpenFindDialog();
 	void OpenGotoDialog();
 	void OpenReplaceDialog();

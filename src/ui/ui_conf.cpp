@@ -72,7 +72,7 @@ BOOL CDialogConf::OnInitDialog(CWindow, LPARAM)
 
 	// Edit Control
 	m_editorctrl.SubclassWindow(GetDlgItem(IDC_EDIT));
-	m_editorctrl.SetJScript();
+	m_editorctrl.Init();
 	m_editorctrl.SetContent(m_parent->m_panel_config.code);
 	m_editorctrl.EmptyUndoBuffer();
 	m_editorctrl.SetSavePoint();
