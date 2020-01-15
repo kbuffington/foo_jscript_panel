@@ -54,10 +54,11 @@ private:
 
 	struct StyleAndWords
 	{
-		int styleNumber;
-		std::string words;
 		bool IsEmpty() const { return words.length() == 0; }
 		bool IsSingleChar() const { return words.length() == 1; }
+
+		int styleNumber = 0;
+		std::string words;
 	};
 
 	Colour ParseHex(const std::string& hex);
@@ -89,8 +90,6 @@ private:
 	void OpenFindDialog();
 	void OpenGotoDialog();
 	void OpenReplaceDialog();
-	void RestoreDefaultStyle();
-	void SetAllStylesFromTable();
 	void SetIndentation(Line line, int indent);
 	void StartAutoComplete();
 	void StartCallTip();

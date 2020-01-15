@@ -880,10 +880,71 @@ void CScriptEditorCtrl::Init()
 		SetProperty(key, value);
 	}
 
-	RestoreDefaultStyle();
+	// Lang
 	SetLexer(SCLEX_CPP);
 	SetKeyWords(0, js_keywords);
-	SetAllStylesFromTable();
+
+	// Clear and reset all styles
+	ClearDocumentStyle();
+	StyleResetDefault();
+
+	// Enable line numbering
+	SetMarginWidthN(1, 0);
+	SetMarginWidthN(2, 0);
+	SetMarginWidthN(3, 0);
+	SetMarginWidthN(4, 0);
+	SetMarginTypeN(0, SC_MARGIN_NUMBER);
+
+	// Style
+	SetCaretLineBackAlpha(GetPropertyInt("style.caret.line.back.alpha", SC_ALPHA_NOALPHA));
+	SetCaretLineVisible(false);
+	SetCaretWidth(GetPropertyInt("style.caret.width", 1));
+	SetSelAlpha(GetPropertyInt("style.selection.alpha", SC_ALPHA_NOALPHA));
+	SetSelFore(false, 0);
+
+	std::string colour;
+
+	if (GetPropertyEx("style.selection.fore", colour))
+	{
+		SetSelFore(true, ParseHex(colour));
+		SetSelBack(true, RGB(0xc0, 0xc0, 0xc0));
+	}
+
+	if (GetPropertyEx("style.selection.back", colour))
+	{
+		SetSelBack(true, ParseHex(colour));
+	}
+
+	if (GetPropertyEx("style.caret.fore", colour))
+	{
+		SetCaretFore(ParseHex(colour));
+	}
+
+	if (GetPropertyEx("style.caret.line.back", colour))
+	{
+		SetCaretLineVisible(true);
+		SetCaretLineBack(ParseHex(colour));
+	}
+
+	for (const auto& [style_num, key] : js_style_table)
+	{
+		std::string tmp;
+		if (GetPropertyEx(key, tmp))
+		{
+			EditorStyle style;
+			if (!ParseStyle(tmp, style)) continue;
+
+			if (style.flags & ESF_FONT) StyleSetFont(style_num, style.font.c_str());
+			if (style.flags & ESF_SIZE) StyleSetSize(style_num, style.size);
+			if (style.flags & ESF_FORE) StyleSetFore(style_num, style.fore);
+			if (style.flags & ESF_BACK) StyleSetBack(style_num, style.back);
+			if (style.flags & ESF_ITALICS) StyleSetItalic(style_num, style.italics);
+			if (style.flags & ESF_BOLD) StyleSetBold(style_num, style.bold);
+			if (style.flags & ESF_UNDERLINED) StyleSetUnderline(style_num, style.underlined);
+			if (style.flags & ESF_CASEFORCE) StyleSetCase(style_num, style.case_force);
+		}
+		if (style_num == STYLE_DEFAULT) StyleClearAll();
+	}
 }
 
 void CScriptEditorCtrl::OpenFindDialog()
@@ -942,73 +1003,6 @@ void CScriptEditorCtrl::ReplaceAll()
 	}
 
 	EndUndoAction();
-}
-
-void CScriptEditorCtrl::RestoreDefaultStyle()
-{
-	// Clear and reset all styles
-	ClearDocumentStyle();
-	StyleResetDefault();
-
-	// Enable line numbering
-	SetMarginWidthN(1, 0);
-	SetMarginWidthN(2, 0);
-	SetMarginWidthN(3, 0);
-	SetMarginWidthN(4, 0);
-	SetMarginTypeN(0, SC_MARGIN_NUMBER);
-
-	SetCaretLineBackAlpha(GetPropertyInt("style.caret.line.back.alpha", SC_ALPHA_NOALPHA));
-	SetCaretLineVisible(false);
-	SetCaretWidth(GetPropertyInt("style.caret.width", 1));
-	SetSelAlpha(GetPropertyInt("style.selection.alpha", SC_ALPHA_NOALPHA));
-	SetSelFore(false, 0);
-
-	std::string colour;
-
-	if (GetPropertyEx("style.selection.fore", colour))
-	{
-		SetSelFore(true, ParseHex(colour));
-		SetSelBack(true, RGB(0xc0, 0xc0, 0xc0));
-	}
-
-	if (GetPropertyEx("style.selection.back", colour))
-	{
-		SetSelBack(true, ParseHex(colour));
-	}
-
-	if (GetPropertyEx("style.caret.fore", colour))
-	{
-		SetCaretFore(ParseHex(colour));
-	}
-
-	if (GetPropertyEx("style.caret.line.back", colour))
-	{
-		SetCaretLineVisible(true);
-		SetCaretLineBack(ParseHex(colour));
-	}
-}
-
-void CScriptEditorCtrl::SetAllStylesFromTable()
-{
-	for (const auto& [style_num, key] : js_style_table)
-	{
-		std::string tmp;
-		if (GetPropertyEx(key, tmp))
-		{
-			EditorStyle style;
-			if (!ParseStyle(tmp, style)) continue;
-
-			if (style.flags & ESF_FONT) StyleSetFont(style_num, style.font.c_str());
-			if (style.flags & ESF_SIZE) StyleSetSize(style_num, style.size);
-			if (style.flags & ESF_FORE) StyleSetFore(style_num, style.fore);
-			if (style.flags & ESF_BACK) StyleSetBack(style_num, style.back);
-			if (style.flags & ESF_ITALICS) StyleSetItalic(style_num, style.italics);
-			if (style.flags & ESF_BOLD) StyleSetBold(style_num, style.bold);
-			if (style.flags & ESF_UNDERLINED) StyleSetUnderline(style_num, style.underlined);
-			if (style.flags & ESF_CASEFORCE) StyleSetCase(style_num, style.case_force);
-		}
-		if (style_num == STYLE_DEFAULT) StyleClearAll();
-	}
 }
 
 void CScriptEditorCtrl::SetContent(pfc::stringp text)
