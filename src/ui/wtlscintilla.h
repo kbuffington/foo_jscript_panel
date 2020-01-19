@@ -1,4 +1,8 @@
 #pragma once
+#include <ILexer.h>
+#include <Lexilla.h>
+#include <Scintilla.h>
+#include <SciLexer.h>
 
 template <class T>
 class CScintillaImpl : public CWindowImpl<T, CWindow, CControlWinTraits>

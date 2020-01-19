@@ -56,6 +56,10 @@ const get_type = (type) => {
 const create_header = () => {
 	let tmp = []
 	tmp.push('#pragma once')
+	tmp.push('#include <ILexer.h>')
+	tmp.push('#include <Lexilla.h>')
+	tmp.push('#include <Scintilla.h>')
+	tmp.push('#include <SciLexer.h>')
 	tmp.push('')
 	tmp.push('template <class T>')
 	tmp.push('class CScintillaImpl : public CWindowImpl<T, CWindow, CControlWinTraits>')
