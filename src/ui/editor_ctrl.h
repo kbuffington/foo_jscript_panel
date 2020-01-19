@@ -37,12 +37,10 @@ private:
 
 	struct EditorStyle
 	{
-		EditorStyle() : back(0), fore(0), case_force(0), flags(0), size(0), bold(false), italics(false), underlined(false) {}
-
-		Colour back, fore;
-		bool bold, italics, underlined;
-		int case_force;
-		size_t flags, size;
+		Colour back = 0, fore = 0;
+		bool bold = false, italics = false, underlined = false;
+		int case_force = 0;
+		size_t flags = 0, size = 0;
 		std::string font;
 	};
 

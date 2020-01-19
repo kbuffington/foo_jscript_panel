@@ -6,7 +6,7 @@
 
 // Large portions taken from SciTE
 // Copyright 1998-2005 by Neil Hodgson <neilh@scintilla.org>
-// https://github.com/marc2k3/foo_jscript_panel/tree/master/foo_jscript_panel/licenses
+// https://github.com/marc2k3/foo_jscript_panel/tree/master/component/licenses
 
 enum
 {
@@ -79,7 +79,7 @@ CScriptEditorCtrl::Colour CScriptEditorCtrl::ParseHex(const std::string& hex)
 {
 	const auto int_from_hex_digit = [](int ch)
 	{
-		if ((ch >= '0') && (ch <= '9'))
+		if (ch >= '0' && ch <= '9')
 		{
 			return ch - '0';
 		}
@@ -528,19 +528,14 @@ bool CScriptEditorCtrl::ParseStyle(const std::string& definition, EditorStyle& s
 
 bool CScriptEditorCtrl::RangeIsAllWhitespace(Position start, Position end)
 {
-	if (start < 0)
-		start = 0;
-
+	if (start < 0) start = 0;
 	end = std::min(end, GetLength());
 
 	for (auto i = start; i < end; ++i)
 	{
 		const auto c = GetCharAt(i);
-
-		if ((c != ' ') && (c != '\t'))
-			return false;
+		if (c != ' ' && c != '\t') return false;
 	}
-
 	return true;
 }
 
@@ -558,7 +553,7 @@ int CScriptEditorCtrl::IndentOfBlock(Line line)
 	if (lineLimit < 0)
 		lineLimit = 0;
 
-	while ((backLine >= lineLimit) && (indentState == IndentationStatus::isNone))
+	while (backLine >= lineLimit && indentState == IndentationStatus::isNone)
 	{
 		indentState = GetIndentState(backLine);
 
@@ -577,7 +572,7 @@ int CScriptEditorCtrl::IndentOfBlock(Line line)
 					indentBlock = 0;
 			}
 
-			if ((indentState == IndentationStatus::isKeyWordStart) && (backLine == line))
+			if (indentState == IndentationStatus::isKeyWordStart && backLine == line)
 				indentBlock += indentSize;
 		}
 
@@ -836,11 +831,11 @@ void CScriptEditorCtrl::Init()
 	UsePopUp(true);
 
 	// Disable Ctrl + some char
-	const int ctrlcode[22] = { 'Q', 'W', 'E', 'R', 'I', 'O', 'P', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'B', 'N', 'M', 186, 187, 226 };
+	static constexpr std::array<const int, 21> ctrlcodes = { 'Q', 'W', 'E', 'R', 'I', 'O', 'P', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'B', 'N', 'M', 186, 187, 226 };
 
-	for (auto i = 0; i < _countof(ctrlcode); ++i)
+	for (const auto ctrlcode : ctrlcodes)
 	{
-		ClearCmdKey(MAKELONG(ctrlcode[i], SCMOD_CTRL));
+		ClearCmdKey(MAKELONG(ctrlcode, SCMOD_CTRL));
 	}
 
 	// Disable Ctrl+Shift+some char
@@ -881,7 +876,7 @@ void CScriptEditorCtrl::Init()
 	}
 
 	// Lang
-	SetLexer(SCLEX_CPP);
+	SetILexer(CreateLexer("cpp"));
 	SetKeyWords(0, js_keywords);
 
 	// Clear and reset all styles

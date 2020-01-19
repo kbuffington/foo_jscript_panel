@@ -56,7 +56,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\foobar2000-SDK;..\foobar2000-SDK\wtl;..\scintilla\include;..\src;..\src\script_interface;..\src\ui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\foobar2000-SDK;..\foobar2000-SDK\wtl;..\scintilla\include;..\scintilla\lexilla\src;..\src;..\src\script_interface;..\src\ui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -70,7 +70,7 @@
       <DiagnosticsFormat>Caret</DiagnosticsFormat>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>$(SolutionDir)..\foobar2000-SDK\foobar2000\shared\shared.lib;GdiPlus.lib;shlwapi.lib;WinMM.lib;Imm32.lib;uxtheme.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(SolutionDir)..\foobar2000-SDK\foobar2000\shared\shared.lib;$(SolutionDir)..\scintilla\bin\liblexilla.lib;GdiPlus.lib;shlwapi.lib;WinMM.lib;Imm32.lib;uxtheme.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <DelayLoadDLLs>%(DelayLoadDLLs)</DelayLoadDLLs>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -88,11 +88,15 @@ copy /Y "$(TargetDir)$(TargetName).pdb" "%component_path%\"</Command>
       <HeaderFileName>%(Filename)_h.h</HeaderFileName>
       <OutputDirectory>$(SolutionDir)script_interface</OutputDirectory>
     </Midl>
+    <PreBuildEvent>
+      <Command>cd $(SolutionDir)..\scintilla\lexilla\src
+nmake DEBUG=1 -f lexilla.mak</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
-      <AdditionalIncludeDirectories>..\foobar2000-SDK;..\foobar2000-SDK\wtl;..\scintilla\include;..\src;..\src\script_interface;..\src\ui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\foobar2000-SDK;..\foobar2000-SDK\wtl;..\scintilla\include;..\scintilla\lexilla\src;..\src;..\src\script_interface;..\src\ui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -112,7 +116,7 @@ copy /Y "$(TargetDir)$(TargetName).pdb" "%component_path%\"</Command>
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>$(SolutionDir)..\foobar2000-SDK\foobar2000\shared\shared.lib;GdiPlus.lib;shlwapi.lib;WinMM.lib;Imm32.lib;uxtheme.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(SolutionDir)..\foobar2000-SDK\foobar2000\shared\shared.lib;$(SolutionDir)..\scintilla\bin\liblexilla.lib;GdiPlus.lib;shlwapi.lib;WinMM.lib;Imm32.lib;uxtheme.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <DelayLoadDLLs>%(DelayLoadDLLs)</DelayLoadDLLs>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -131,6 +135,10 @@ copy /Y "$(TargetDir)$(TargetName).pdb" "%component_path%\"</Command>
       <HeaderFileName>%(Filename)_h.h</HeaderFileName>
       <OutputDirectory>$(SolutionDir)script_interface</OutputDirectory>
     </Midl>
+    <PreBuildEvent>
+      <Command>cd $(SolutionDir)..\scintilla\lexilla\src
+nmake -f lexilla.mak</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ProjectReference Include="..\foobar2000-SDK\columns_ui-sdk\columns_ui-sdk.vcxproj">
