@@ -3,6 +3,8 @@
 #include "helpers.h"
 #include "ui_input_box.h"
 
+#include <foobar2000/helpers/filetimetools.h>
+
 Utils::Utils() : m_colours(16, 0) {}
 Utils::~Utils() {}
 

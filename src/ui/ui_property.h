@@ -2,6 +2,8 @@
 #include "panel_window.h"
 #include "property_ctrl.h"
 
+#include <libPPUI/CDialogResizeHelper.h>
+
 class CDialogProperty : public CDialogImpl<CDialogProperty>
 {
 public:

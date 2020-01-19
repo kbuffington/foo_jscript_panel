@@ -4,6 +4,7 @@
 #define WINVER _WIN32_WINNT_WIN7
 
 #include <algorithm>
+#include <array>
 #include <atomic>
 #include <filesystem>
 #include <fstream>
@@ -11,13 +12,9 @@
 #include <map>
 #include <memory>
 #include <mutex>
+#include <numeric>
+#include <set>
 #include <vector>
-
-#include <nlohmann/json.hpp>
-using json = nlohmann::json;
-
-#include <Scintilla.h>
-#include <SciLexer.h>
 
 #define NOMINMAX
 namespace Gdiplus
@@ -30,14 +27,10 @@ namespace Gdiplus
 #include <columns_ui-sdk/ui_extension.h>
 #include <foobar2000/helpers/foobar2000+atl.h>
 #include <foobar2000/helpers/atl-misc.h>
-#include <foobar2000/helpers/filetimetools.h>
-#include <libPPUI/CDialogResizeHelper.h>
-#include <libPPUI/CListControlOwnerData.h>
-#include <libPPUI/CListControlComplete.h>
-#include <libPPUI/CListControl-Cells.h>
 
 #include <ActivScp.h>
 #include <ComDef.h>
+#include <GdiPlus.h>
 #include <ShlObj.h>
 
 #include "foo_jscript_panel.h"

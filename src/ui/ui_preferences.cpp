@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "config.h"
 
+#include <libPPUI/CListControlOwnerData.h>
+
 namespace
 {
 	class CDialogPref : public CDialogImpl<CDialogPref>, public preferences_page_instance, private IListControlOwnerDataSource

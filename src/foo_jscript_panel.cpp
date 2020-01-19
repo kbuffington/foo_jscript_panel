@@ -1,5 +1,8 @@
 #include "stdafx.h"
 
+#include <Scintilla.h>
+#include <libPPUI/gdiplus_helpers.h>
+
 // Script TypeLib
 ITypeLibPtr g_typelib;
 

@@ -1,4 +1,6 @@
 #pragma once
+#include <libPPUI/CListControlComplete.h>
+#include <libPPUI/CListControl-Cells.h>
 
 class MyCList : public CListControlComplete
 {

@@ -2,6 +2,9 @@
 #include "script_interface.h"
 #include "thread_pool.h"
 
+#include <nlohmann/json.hpp>
+using json = nlohmann::json;
+
 namespace helpers
 {
 	struct custom_sort_data
