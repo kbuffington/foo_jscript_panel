@@ -9,7 +9,7 @@ protected:
 
 	void FinalRelease() override;
 
-	CWindow m_wnd_parent = nullptr;
+	CWindow m_wnd_parent;
 	HMENU m_hMenu = nullptr;
 	bool m_has_detached = false;
 

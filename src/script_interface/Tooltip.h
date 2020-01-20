@@ -22,8 +22,8 @@ protected:
 	void FinalRelease() override;
 
 	BSTR m_tip_buffer;
-	CWindow m_wndparent = nullptr;
-	CWindow m_wndtooltip = nullptr;
+	CWindow m_wndparent;
+	CWindow m_wndtooltip;
 	TOOLINFO m_ti;
 	panel_tooltip_param_ptr m_panel_tooltip_param_ptr;
 

@@ -198,7 +198,7 @@ namespace helpers
 		}
 
 	private:
-		CWindow m_hwnd = nullptr;
+		CWindow m_hwnd;
 		bool m_need_stub = true;
 		bool m_no_load = false;
 		bool m_only_embed = false;
@@ -219,7 +219,7 @@ namespace helpers
 		}
 
 	private:
-		CWindow m_hwnd = nullptr;
+		CWindow m_hwnd;
 		_bstr_t m_path;
 	};
 

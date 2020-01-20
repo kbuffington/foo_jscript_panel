@@ -17,6 +17,14 @@ static const CDialogResizeHelper::Param resize_data[] =
 
 static const CRect resize_min_max(620, 381, 0, 0);
 
+static constexpr std::array<const wchar_t*, 4> links =
+{
+	L"https://marc2k3.github.io/foo_jscript_panel.html",
+	L"https://github.com/marc2k3/foo_jscript_panel/blob/master/CHANGELOG.md",
+	L"https://github.com/marc2k3/foo_jscript_panel/releases",
+	L"https://github.com/marc2k3/foo_jscript_panel/issues"
+};
+
 CDialogConf::CDialogConf(panel_window* parent) : m_parent(parent), m_resizer(resize_data, resize_min_max)
 {
 	m_caption << jsp::component_name << " Configuration (id:" << m_parent->m_script_host->m_info.id << ")";
@@ -230,13 +238,6 @@ void CDialogConf::OnFileExport(UINT, int, CWindow)
 
 void CDialogConf::OnLinks(UINT, int nID, CWindow)
 {
-	static constexpr std::array<const wchar_t*, 4> links =
-	{
-		L"https://marc2k3.github.io/foo_jscript_panel.html",
-		L"https://github.com/marc2k3/foo_jscript_panel/blob/master/CHANGELOG.md",
-		L"https://github.com/marc2k3/foo_jscript_panel/releases",
-		L"https://github.com/marc2k3/foo_jscript_panel/issues"
-	};
 	ShellExecute(nullptr, L"open", links[nID - ID_LINKS_BEGIN], nullptr, nullptr, SW_SHOW);
 }
 

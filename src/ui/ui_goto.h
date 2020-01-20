@@ -18,6 +18,6 @@ public:
 
 private:
 	CEdit m_edit;
-	CWindow m_parent = nullptr;
+	CWindow m_parent;
 	pfc::string8_fast m_text;
 };

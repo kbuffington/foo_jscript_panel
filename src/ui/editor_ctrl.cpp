@@ -36,13 +36,15 @@ struct StringComparePartialNC
 	size_t m_len;
 };
 
-const char js_keywords[] = "abstract boolean break byte case catch char class const continue"
+static constexpr const char* js_keywords = "abstract boolean break byte case catch char class const continue"
 	" debugger default delete do double else enum export extends false final"
 	" finally float for function goto if implements import in instanceof int"
 	" interface long native new null package private protected public return"
 	" short static super switch synchronized this throw throws transient true"
 	" try typeof var void while with enum byvalue cast future generic inner"
 	" operator outer rest Array Math RegExp window fb gdi utils plman console";
+
+static constexpr std::array<const int, 21> ctrlcodes = { 'Q', 'W', 'E', 'R', 'I', 'O', 'P', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'B', 'N', 'M', 186, 187, 226 };
 
 static const std::vector<std::pair<int, const char*>> js_style_table =
 {
@@ -233,7 +235,7 @@ LRESULT CScriptEditorCtrl::OnKeyDown(UINT, WPARAM wParam, LPARAM, BOOL& bHandled
 			break;
 
 		case 'S':
-			::PostMessage(GetParent(), WM_COMMAND, MAKEWPARAM(IDC_BTN_APPLY, BN_CLICKED), reinterpret_cast<LPARAM>(m_hWnd));
+			GetParent().PostMessage(WM_COMMAND, MAKEWPARAM(IDC_BTN_APPLY, BN_CLICKED), reinterpret_cast<LPARAM>(m_hWnd));
 			break;
 		}
 	}
@@ -830,15 +832,11 @@ void CScriptEditorCtrl::Init()
 	SetModEventMask(SC_MOD_INSERTTEXT | SC_MOD_DELETETEXT | SC_PERFORMED_UNDO | SC_PERFORMED_REDO);
 	UsePopUp(true);
 
-	// Disable Ctrl + some char
-	static constexpr std::array<const int, 21> ctrlcodes = { 'Q', 'W', 'E', 'R', 'I', 'O', 'P', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'B', 'N', 'M', 186, 187, 226 };
-
 	for (const auto ctrlcode : ctrlcodes)
 	{
 		ClearCmdKey(MAKELONG(ctrlcode, SCMOD_CTRL));
 	}
 
-	// Disable Ctrl+Shift+some char
 	for (auto i = 48; i < 122; ++i)
 	{
 		ClearCmdKey(MAKELONG(i, SCMOD_CTRL | SCMOD_SHIFT));

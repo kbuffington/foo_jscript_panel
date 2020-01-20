@@ -16,7 +16,7 @@ public:
 	void get_data_raw(stream_writer* writer, abort_callback& abort) override;
 	void import(pfc::stringp content);
 	void init_data();
-	void load_preset(size_t idx);
+	void load_preset(int idx);
 	void merge_data(const simple_map& data_map);
 	void set_data_raw(stream_reader* reader, size_t sizehint, abort_callback& abort) override;
 

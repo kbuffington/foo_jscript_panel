@@ -36,7 +36,7 @@ public:
 	void unload_script();
 	void update_script();
 
-	CWindow m_hwnd = nullptr;
+	CWindow m_hwnd;
 	bool m_dragdrop = false;
 	bool m_grabfocus = false;
 	bool m_supports_transparency = false;

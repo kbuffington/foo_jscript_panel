@@ -66,6 +66,6 @@ public:
 	}
 
 protected:
-	CWindow m_hwnd = nullptr;
+	CWindow m_hwnd;
 	IDropTargetHelperPtr m_drop_target_helper;
 };

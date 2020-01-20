@@ -66,7 +66,7 @@ void config::init_data()
 	m_data = init_table;
 }
 
-void config::load_preset(size_t idx)
+void config::load_preset(int idx)
 {
 	import(helpers::get_resource_text(idx));
 }

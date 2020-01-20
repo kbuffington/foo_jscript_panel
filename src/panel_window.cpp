@@ -657,7 +657,7 @@ void panel_window::refresh_background()
 {
 	CWindow wnd_parent = GetAncestor(m_hwnd, GA_PARENT);
 
-	if (!wnd_parent || IsIconic(core_api::get_main_window()) || !IsWindowVisible(m_hwnd))
+	if (!wnd_parent || IsIconic(core_api::get_main_window()) || !m_hwnd.IsWindowVisible())
 		return;
 
 	CPoint pt(0, 0);
