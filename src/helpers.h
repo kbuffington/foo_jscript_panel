@@ -84,7 +84,7 @@ namespace helpers
 			remove_all
 		};
 
-		embed(actions action, album_art_data_ptr data, metadb_handle_list_cref handles, size_t art_id) : m_action(action), m_data(data), m_handles(handles), m_art_id(art_id) {}
+		embed(actions action, metadb_handle_list_cref handles, size_t art_id = 0, album_art_data_ptr data = album_art_data_ptr()) : m_action(action), m_handles(handles), m_art_id(art_id), m_data(data) {}
 
 		void run(threaded_process_status& status, abort_callback& abort) override
 		{
@@ -100,9 +100,9 @@ namespace helpers
 				album_art_editor::ptr ptr;
 				if (album_art_editor::g_get_interface(ptr, path))
 				{
-					auto lock = api->acquire_write(path, abort);
 					try
 					{
+						auto lock = api->acquire_write(path, abort);
 						album_art_editor_instance_ptr aaep = ptr->open(nullptr, path, abort);
 						switch (m_action)
 						{
