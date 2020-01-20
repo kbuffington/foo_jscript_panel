@@ -1,5 +1,5 @@
 #pragma once
-#include "script_interface.h"
+#include "callback_data.h"
 #include "thread_pool.h"
 
 #include <nlohmann/json.hpp>
@@ -168,29 +168,6 @@ namespace helpers
 	public:
 		album_art_async(CWindow hwnd, const metadb_handle_ptr& handle, size_t art_id, bool need_stub, bool only_embed, bool no_load) : m_hwnd(hwnd), m_handle(handle), m_art_id(art_id), m_need_stub(need_stub), m_only_embed(only_embed), m_no_load(no_load) {}
 
-		struct t_param
-		{
-			t_param(IMetadbHandle* handle, size_t art_id, IGdiBitmap* bitmap, BSTR path) : m_handle(handle), m_art_id(art_id), m_bitmap(bitmap), m_path(path) {}
-
-			~t_param()
-			{
-				if (m_handle)
-				{
-					m_handle->Release();
-				}
-
-				if (m_bitmap)
-				{
-					m_bitmap->Release();
-				}
-			}
-
-			IGdiBitmap* m_bitmap;
-			IMetadbHandle* m_handle;
-			_bstr_t m_path;
-			size_t m_art_id;
-		};
-
 		void run() override
 		{
 			IGdiBitmap* bitmap = nullptr;
@@ -216,8 +193,8 @@ namespace helpers
 				handle = new com_object_impl_t<MetadbHandle>(m_handle);
 			}
 
-			t_param param(handle, m_art_id, bitmap, TO_BSTR(image_path));
-			m_hwnd.SendMessage(TO_UINT(callback_id::on_get_album_art_done), reinterpret_cast<WPARAM>(&param), 0);
+			async_art_data data(handle, m_art_id, bitmap, TO_BSTR(image_path));
+			m_hwnd.SendMessage(TO_UINT(callback_id::on_get_album_art_done), reinterpret_cast<WPARAM>(&data), 0);
 		}
 
 	private:
@@ -234,28 +211,11 @@ namespace helpers
 	public:
 		load_image_async(CWindow hwnd, BSTR path) : m_hwnd(hwnd), m_path(path) {}
 
-		struct t_param
-		{
-			t_param(size_t cookie, IGdiBitmap* bitmap, BSTR path) : m_cookie(cookie), m_bitmap(bitmap), m_path(path) {}
-
-			~t_param()
-			{
-				if (m_bitmap)
-				{
-					m_bitmap->Release();
-				}
-			}
-
-			IGdiBitmap* m_bitmap;
-			_bstr_t m_path;
-			size_t m_cookie;
-		};
-
 		void run() override
 		{
 			IGdiBitmap* bitmap = load_image(m_path);
-			t_param param(reinterpret_cast<UINT_PTR>(this), bitmap, m_path);
-			m_hwnd.SendMessage(TO_UINT(callback_id::on_load_image_done), reinterpret_cast<WPARAM>(&param), 0);
+			async_image_data data(reinterpret_cast<UINT_PTR>(this), bitmap, m_path);
+			m_hwnd.SendMessage(TO_UINT(callback_id::on_load_image_done), reinterpret_cast<WPARAM>(&data), 0);
 		}
 
 	private:

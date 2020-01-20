@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "callback_data.h"
 #include "panel_manager.h"
 #include "thread_pool.h"
 

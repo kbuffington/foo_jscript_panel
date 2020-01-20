@@ -1,5 +1,4 @@
 #pragma once
-#include "callback_data.h"
 
 class panel_manager
 {
