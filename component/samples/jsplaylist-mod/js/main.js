@@ -2457,8 +2457,6 @@ function on_colours_changed() {
 };
 
 function get_font() {
-	var font_error = false;
-
 	if (g_instancetype == 0) {
 		g_font = window.GetFontCUI(FontTypeCUI.items);
 		g_font_headers = window.GetFontCUI(FontTypeCUI.labels);
@@ -2467,18 +2465,16 @@ function get_font() {
 		g_font_headers = window.GetFontDUI(FontTypeDUI.tabs);
 	};
 
-	// tweak to fix a problem with WSH Panel Mod 1.5.6 and lower version on Font object Name property
-	try {
+	if (g_font) {
 		g_fname = g_font.Name;
 		g_fsize = g_font.Size;
 		g_fstyle = g_font.Style;
-	} catch (e) {
-		console.log("WSH report: Unable to use your default font. Using Segoe UI instead.");
-		g_fname = "segoe ui";
+	} else {
+		console.log(window.Name, ": Unable to use your default font. Using Segoe UI instead.");
+		g_fname = "Segoe UI";
 		g_fsize = 12;
 		g_fstyle = 0;
-		font_error = true;
-	};
+	}
 
 	g_dpi_percent = Math.floor(g_fsize / 12 * 100);
 	g_forced_percent = window.GetProperty("SYSTEM.dpi (0 = Default)", 0);
@@ -2495,10 +2491,8 @@ function get_font() {
 
 	if (g_forced_percent) {
 		g_fsize = Math.ceil(zoom(g_fsize, g_forced_percent));
-		g_font = gdi_font(g_fname, g_fsize, g_fstyle);
-	} else if (font_error) {
-		g_font = gdi_font(g_fname, g_fsize, g_fstyle);
-	};
+	}
+	g_font = gdi_font(g_fname, g_fsize, g_fstyle);
 
 	g_font_playicon = gdi_font("wingdings 3", Math.floor(zoom(17, g_dpi)), 0);
 	g_font_pauseicon = gdi_font("wingdings", Math.floor(zoom(17, g_dpi)), 0);
