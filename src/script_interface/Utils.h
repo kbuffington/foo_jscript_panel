@@ -12,7 +12,7 @@ public:
 	STDMETHODIMP CheckComponent(BSTR name, VARIANT_BOOL* p) override;
 	STDMETHODIMP CheckFont(BSTR name, VARIANT_BOOL* p) override;
 	STDMETHODIMP ColourPicker(UINT window_id, int default_colour, int* p) override;
-	STDMETHODIMP DateStringToTimestamp(BSTR str, UINT* p) override;
+	STDMETHODIMP DateStringToTimestamp(BSTR str, __int64* p) override;
 	STDMETHODIMP FormatDuration(double seconds, BSTR* p) override;
 	STDMETHODIMP FormatFileSize(__int64 bytes, BSTR* p) override;
 	STDMETHODIMP GetAlbumArtAsync(UINT window_id, IMetadbHandle* handle, UINT art_id, VARIANT_BOOL need_stub, VARIANT_BOOL only_embed, VARIANT_BOOL no_load) override;

@@ -1067,15 +1067,13 @@ interface IUtils {
 		See Helpers.txt for RGB function.
 		*/
 
-		utils.DateStringToTimestamp(str) (uint)
+		utils.DateStringToTimestamp(str) (int64)
 		/*
 		str: string
 
 		The supplied date string must be in full YYYY-MM-DD HH:MM:SS format.
-		The return value is seconds since 00:00:00 Thursday, 1 January 1970 UTC,
-		not milliseconds like standard JavaScript timestamps. This is to maintain
-		compatibility with the JScript script engine which does not support
-		the passing of 64bit integers between the script and built-in functions.
+		The return value is the number of seconds since 00:00:00 Thursday, 1 January 1970 UTC,
+		not milliseconds like standard JavaScript timestamps.
 
 		It is expected date strings are timezone adjusted but timestamps are UTC (not adjusted).
 

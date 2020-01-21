@@ -435,7 +435,7 @@ library foo_jscript_panel
 		HRESULT CheckComponent(BSTR name, [out, retval] VARIANT_BOOL* p);
 		HRESULT CheckFont(BSTR name, [out, retval] VARIANT_BOOL* p);
 		HRESULT ColourPicker(UINT window_id, int default_colour, [out, retval] int* p);
-		HRESULT DateStringToTimestamp(BSTR str, [out, retval] UINT* p);
+		HRESULT DateStringToTimestamp(BSTR str, [out, retval] __int64* p);
 		HRESULT FormatDuration(double seconds, [out, retval] BSTR* p);
 		HRESULT FormatFileSize(__int64 bytes, [out, retval] BSTR* p);
 		HRESULT GetAlbumArtAsync(UINT window_id, IMetadbHandle* handle, [defaultvalue(0)] UINT art_id, [defaultvalue(-1)] VARIANT_BOOL need_stub, [defaultvalue(0)] VARIANT_BOOL only_embed, [defaultvalue(0)] VARIANT_BOOL no_load);

@@ -74,11 +74,11 @@ STDMETHODIMP Utils::ColourPicker(UINT window_id, int default_colour, int* p)
 	return S_OK;
 }
 
-STDMETHODIMP Utils::DateStringToTimestamp(BSTR str, UINT* p)
+STDMETHODIMP Utils::DateStringToTimestamp(BSTR str, __int64* p)
 {
 	if (!p) return E_POINTER;
 
-	*p = TO_UINT(pfc::fileTimeWtoU(filetimestamp_from_string(string_utf8_from_wide(str).get_ptr())));
+	*p = pfc::fileTimeWtoU(filetimestamp_from_string(string_utf8_from_wide(str).get_ptr()));
 	return S_OK;
 }
 
