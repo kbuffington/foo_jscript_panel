@@ -6,26 +6,6 @@ namespace
 	class panel_window_cui : public panel_window, public uie::container_ui_extension, public cui::fonts::common_callback, public cui::colours::common_callback
 	{
 	public:
-		panel_window_cui()
-		{
-			try
-			{
-				static_api_ptr_t<cui::fonts::manager>()->register_common_callback(this);
-				static_api_ptr_t<cui::colours::manager>()->register_common_callback(this);
-			}
-			catch (...) {}
-		}
-
-		~panel_window_cui()
-		{
-			try
-			{
-				static_api_ptr_t<cui::fonts::manager>()->deregister_common_callback(this);
-				static_api_ptr_t<cui::colours::manager>()->deregister_common_callback(this);
-			}
-			catch (...) {}
-		}
-
 		COLORREF get_colour_ui(size_t type) override
 		{
 			const auto t = static_cast<cui::colours::colour_identifier_t>(type);
@@ -95,6 +75,22 @@ namespace
 		{
 			switch (msg)
 			{
+			case WM_CREATE:
+				try
+				{
+					static_api_ptr_t<cui::fonts::manager>()->register_common_callback(this);
+					static_api_ptr_t<cui::colours::manager>()->register_common_callback(this);
+				}
+				catch (...) {}
+				break;
+			case WM_DESTROY:
+				try
+				{
+					static_api_ptr_t<cui::fonts::manager>()->deregister_common_callback(this);
+					static_api_ptr_t<cui::colours::manager>()->deregister_common_callback(this);
+				}
+				catch (...) {}
+				break;
 			case WM_SETCURSOR:
 				return 1;
 			case WM_ERASEBKGND:
