@@ -83,7 +83,7 @@ library foo_jscript_panel
 	[object,dual,pointer_default(unique),custom(8AFCDA7F-33B7-3120-86A8-754D2C0C0578,"library_block"),uuid(6fa87441-9f53-4a3f-999a-19509e3c92d7)]
 	interface IGdiFont : IGdiObj
 	{
-		HRESULT get__HFont([out, retval] UINT* p);
+		HRESULT get__HFont([out, retval] HFONT* p);
 		[propget] HRESULT Height([out, retval] UINT* p);
 		[propget] HRESULT Name([out, retval] BSTR* p);
 		[propget] HRESULT Size([out, retval] float* p);

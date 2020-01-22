@@ -48,7 +48,7 @@ STDMETHODIMP GdiGraphics::CalcTextHeight(BSTR str, IGdiFont* font, UINT* p)
 	if (!m_ptr || !p) return E_POINTER;
 
 	HFONT hFont = nullptr;
-	font->get__HFont(reinterpret_cast<UINT*>(&hFont));
+	font->get__HFont(&hFont);
 	HDC dc = m_ptr->GetHDC();
 
 	{
@@ -65,7 +65,7 @@ STDMETHODIMP GdiGraphics::CalcTextWidth(BSTR str, IGdiFont* font, UINT* p)
 	if (!m_ptr || !p) return E_POINTER;
 
 	HFONT hFont = nullptr;
-	font->get__HFont(reinterpret_cast<UINT*>(&hFont));
+	font->get__HFont(&hFont);
 	HDC dc = m_ptr->GetHDC();
 
 	{
@@ -197,7 +197,7 @@ STDMETHODIMP GdiGraphics::EstimateLineWrap(BSTR str, IGdiFont* font, int max_wid
 	helpers::wrapped_item_vec result;
 
 	HFONT hFont = nullptr;
-	font->get__HFont(reinterpret_cast<UINT*>(&hFont));
+	font->get__HFont(&hFont);
 	HDC dc = m_ptr->GetHDC();
 
 	{
@@ -325,7 +325,7 @@ STDMETHODIMP GdiGraphics::GdiDrawText(BSTR str, IGdiFont* font, __int64 colour, 
 	if (format & DT_MODIFYSTRING) return E_INVALIDARG;
 
 	HFONT hFont = nullptr;
-	font->get__HFont(reinterpret_cast<UINT*>(&hFont));
+	font->get__HFont(&hFont);
 	HDC dc = m_ptr->GetHDC();
 
 	{

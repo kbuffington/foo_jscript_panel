@@ -12,14 +12,14 @@ void GdiFont::FinalRelease()
 		m_hFont = nullptr;
 	}
 
-	GdiObj<IGdiFont, Gdiplus::Font>::FinalRelease();
+	__super::FinalRelease();
 }
 
-STDMETHODIMP GdiFont::get__HFont(UINT* p)
+STDMETHODIMP GdiFont::get__HFont(HFONT* p)
 {
 	if (!m_ptr || !p) return E_POINTER;
 
-	*p = reinterpret_cast<UINT>(m_hFont);
+	*p = m_hFont;
 	return S_OK;
 }
 

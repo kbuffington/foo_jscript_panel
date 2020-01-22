@@ -13,7 +13,7 @@ protected:
 	bool m_managed = true;
 
 public:
-	STDMETHODIMP get__HFont(UINT* p) override;
+	STDMETHODIMP get__HFont(HFONT* p) override;
 	STDMETHODIMP get_Height(UINT* p) override;
 	STDMETHODIMP get_Name(BSTR* p) override;
 	STDMETHODIMP get_Size(float* p) override;
