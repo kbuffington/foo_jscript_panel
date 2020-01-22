@@ -171,7 +171,7 @@ library foo_jscript_panel
 		HRESULT SetLoved(UINT loved);
 		HRESULT SetPlaycount(UINT playcount);
 		HRESULT SetRating(UINT rating);
-		[propget] HRESULT FileSize([out, retval] __int64* p);
+		[propget] HRESULT FileSize([out, retval] UINT64* p);
 		[propget] HRESULT Length([out, retval] double* p);
 		[propget] HRESULT Path([out, retval] BSTR* p);
 		[propget] HRESULT RawPath([out, retval] BSTR* p);
@@ -187,7 +187,7 @@ library foo_jscript_panel
 		HRESULT AttachImage(BSTR path, [defaultvalue(0)] UINT art_id);
 		HRESULT BSearch(IMetadbHandle* handle, [out, retval] int* p);
 		HRESULT CalcTotalDuration([out, retval] double* p);
-		HRESULT CalcTotalSize([out, retval] __int64* p);
+		HRESULT CalcTotalSize([out, retval] UINT64* p);
 		HRESULT Clone([out, retval] IMetadbHandleList** pp);
 		HRESULT Convert([out, retval] VARIANT* p);
 		HRESULT Find(IMetadbHandle* handle, [out, retval] int* p);
@@ -435,13 +435,13 @@ library foo_jscript_panel
 		HRESULT CheckComponent(BSTR name, [out, retval] VARIANT_BOOL* p);
 		HRESULT CheckFont(BSTR name, [out, retval] VARIANT_BOOL* p);
 		HRESULT ColourPicker(UINT window_id, int default_colour, [out, retval] int* p);
-		HRESULT DateStringToTimestamp(BSTR str, [out, retval] __int64* p);
+		HRESULT DateStringToTimestamp(BSTR str, [out, retval] UINT64* p);
 		HRESULT FormatDuration(double seconds, [out, retval] BSTR* p);
-		HRESULT FormatFileSize(__int64 bytes, [out, retval] BSTR* p);
+		HRESULT FormatFileSize(UINT64 bytes, [out, retval] BSTR* p);
 		HRESULT GetAlbumArtAsync(UINT window_id, IMetadbHandle* handle, [defaultvalue(0)] UINT art_id, [defaultvalue(-1)] VARIANT_BOOL need_stub, [defaultvalue(0)] VARIANT_BOOL only_embed, [defaultvalue(0)] VARIANT_BOOL no_load);
 		HRESULT GetAlbumArtEmbedded(BSTR rawpath, [defaultvalue(0)] UINT art_id, [out, retval] IGdiBitmap** pp);
 		HRESULT GetAlbumArtV2(IMetadbHandle* handle, [defaultvalue(0)] UINT art_id, [defaultvalue(-1)] VARIANT_BOOL need_stub, [out, retval] IGdiBitmap** pp);
-		HRESULT GetFileSize(BSTR filename, [out, retval] __int64* p);
+		HRESULT GetFileSize(BSTR filename, [out, retval] UINT64* p);
 		HRESULT GetSysColour(UINT index, [out, retval] int* p);
 		HRESULT GetSystemMetrics(UINT index, [out, retval] int* p);
 		HRESULT Glob(BSTR pattern, [defaultvalue(0x00000010)] UINT exc_mask, [defaultvalue(0xffffffff)] UINT inc_mask, [out, retval] VARIANT* p);
@@ -456,7 +456,7 @@ library foo_jscript_panel
 		HRESULT ReadINI(BSTR filename, BSTR section, BSTR key, [optional] VARIANT defaultval, [out, retval] BSTR* p);
 		HRESULT ReadTextFile(BSTR filename, [defaultvalue(0)] UINT codepage, [out, retval] BSTR* p);
 		HRESULT ReadUTF8(BSTR filename, [out, retval] BSTR* p);
-		HRESULT TimestampToDateString(UINT ts, [out, retval] BSTR* p);
+		HRESULT TimestampToDateString(UINT64 ts, [out, retval] BSTR* p);
 		HRESULT WriteINI(BSTR filename, BSTR section, BSTR key, VARIANT val, [out, retval] VARIANT_BOOL* p);
 		HRESULT WriteTextFile(BSTR filename, BSTR content, [out, retval] VARIANT_BOOL* p);
 		[propget] HRESULT Version([out, retval] UINT* p);

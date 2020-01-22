@@ -18,7 +18,7 @@ public:
 	STDMETHODIMP AttachImage(BSTR path, UINT art_id) override;
 	STDMETHODIMP BSearch(IMetadbHandle* handle, int* p) override;
 	STDMETHODIMP CalcTotalDuration(double* p) override;
-	STDMETHODIMP CalcTotalSize(__int64* p) override;
+	STDMETHODIMP CalcTotalSize(UINT64* p) override;
 	STDMETHODIMP Clone(IMetadbHandleList** pp) override;
 	STDMETHODIMP Convert(VARIANT* p) override;
 	STDMETHODIMP Find(IMetadbHandle* handle, int* p) override;

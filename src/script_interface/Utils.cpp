@@ -74,7 +74,7 @@ STDMETHODIMP Utils::ColourPicker(UINT window_id, int default_colour, int* p)
 	return S_OK;
 }
 
-STDMETHODIMP Utils::DateStringToTimestamp(BSTR str, __int64* p)
+STDMETHODIMP Utils::DateStringToTimestamp(BSTR str, UINT64* p)
 {
 	if (!p) return E_POINTER;
 
@@ -91,7 +91,7 @@ STDMETHODIMP Utils::FormatDuration(double seconds, BSTR* p)
 	return S_OK;
 }
 
-STDMETHODIMP Utils::FormatFileSize(__int64 bytes, BSTR* p)
+STDMETHODIMP Utils::FormatFileSize(UINT64 bytes, BSTR* p)
 {
 	if (!p) return E_POINTER;
 
@@ -130,7 +130,7 @@ STDMETHODIMP Utils::GetAlbumArtV2(IMetadbHandle* handle, UINT art_id, VARIANT_BO
 	return S_OK;
 }
 
-STDMETHODIMP Utils::GetFileSize(BSTR path, __int64* p)
+STDMETHODIMP Utils::GetFileSize(BSTR path, UINT64* p)
 {
 	if (!p) return E_POINTER;
 
@@ -369,7 +369,7 @@ STDMETHODIMP Utils::ReadUTF8(BSTR filename, BSTR* p)
 	return S_OK;
 }
 
-STDMETHODIMP Utils::TimestampToDateString(UINT ts, BSTR* p)
+STDMETHODIMP Utils::TimestampToDateString(UINT64 ts, BSTR* p)
 {
 	if (!p) return E_POINTER;
 

@@ -1067,7 +1067,7 @@ interface IUtils {
 		See Helpers.txt for RGB function.
 		*/
 
-		utils.DateStringToTimestamp(str) (int64)
+		utils.DateStringToTimestamp(str) (uint64)
 		/*
 		str: string
 
@@ -1144,7 +1144,7 @@ interface IUtils {
 		See samples\basic\GetAlbumArtV2.txt
 		*/
 
-		utils.GetFileSize(filename) (int64)
+		utils.GetFileSize(filename) (uint64)
 		// Retrieve file size in bytes.
 
 		utils.GetSysColour(index) (uint)
@@ -1888,7 +1888,7 @@ interface IMetadbHandle {
 
 		SubSong (uint) (read)
 
-		FileSize (int64) (read)
+		FileSize (uint64) (read)
 
 		Length (double) (read)
 
@@ -2079,7 +2079,7 @@ interface IMetadbHandleList {
 		CalcTotalDuration() (double)
 		// Returns total in seconds. For display purposes, consider using utils.FormatDuration() on the result.
 
-		CalcTotalSize() (int64)
+		CalcTotalSize() (uint64)
 		// Returns total in bytes. For display purposes, consider using utils.FormatFileSize() on the result.
 
 		Clone() (IMetadbHandleList)

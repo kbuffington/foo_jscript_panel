@@ -12,13 +12,13 @@ public:
 	STDMETHODIMP CheckComponent(BSTR name, VARIANT_BOOL* p) override;
 	STDMETHODIMP CheckFont(BSTR name, VARIANT_BOOL* p) override;
 	STDMETHODIMP ColourPicker(UINT window_id, int default_colour, int* p) override;
-	STDMETHODIMP DateStringToTimestamp(BSTR str, __int64* p) override;
+	STDMETHODIMP DateStringToTimestamp(BSTR str, UINT64* p) override;
 	STDMETHODIMP FormatDuration(double seconds, BSTR* p) override;
-	STDMETHODIMP FormatFileSize(__int64 bytes, BSTR* p) override;
+	STDMETHODIMP FormatFileSize(UINT64 bytes, BSTR* p) override;
 	STDMETHODIMP GetAlbumArtAsync(UINT window_id, IMetadbHandle* handle, UINT art_id, VARIANT_BOOL need_stub, VARIANT_BOOL only_embed, VARIANT_BOOL no_load) override;
 	STDMETHODIMP GetAlbumArtEmbedded(BSTR rawpath, UINT art_id, IGdiBitmap** pp) override;
 	STDMETHODIMP GetAlbumArtV2(IMetadbHandle* handle, UINT art_id, VARIANT_BOOL need_stub, IGdiBitmap** pp) override;
-	STDMETHODIMP GetFileSize(BSTR filename, __int64* p) override;
+	STDMETHODIMP GetFileSize(BSTR filename, UINT64* p) override;
 	STDMETHODIMP GetSysColour(UINT index, int* p) override;
 	STDMETHODIMP GetSystemMetrics(UINT index, int* p) override;
 	STDMETHODIMP Glob(BSTR pattern, UINT exc_mask, UINT inc_mask, VARIANT* p) override;
@@ -33,7 +33,7 @@ public:
 	STDMETHODIMP ReadINI(BSTR filename, BSTR section, BSTR key, VARIANT defaultval, BSTR* p) override;
 	STDMETHODIMP ReadTextFile(BSTR filename, UINT codepage, BSTR* p) override;
 	STDMETHODIMP ReadUTF8(BSTR filename, BSTR* p) override;
-	STDMETHODIMP TimestampToDateString(UINT ts, BSTR* p) override;
+	STDMETHODIMP TimestampToDateString(UINT64 ts, BSTR* p) override;
 	STDMETHODIMP WriteINI(BSTR filename, BSTR section, BSTR key, VARIANT val, VARIANT_BOOL* p) override;
 	STDMETHODIMP WriteTextFile(BSTR filename, BSTR content, VARIANT_BOOL* p) override;
 	STDMETHODIMP get_Version(UINT* p) override;

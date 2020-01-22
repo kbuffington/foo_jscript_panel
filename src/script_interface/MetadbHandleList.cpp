@@ -87,7 +87,7 @@ STDMETHODIMP MetadbHandleList::CalcTotalDuration(double* p)
 	return S_OK;
 }
 
-STDMETHODIMP MetadbHandleList::CalcTotalSize(__int64* p)
+STDMETHODIMP MetadbHandleList::CalcTotalSize(UINT64* p)
 {
 	if (!p) return E_POINTER;
 

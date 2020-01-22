@@ -174,7 +174,7 @@ STDMETHODIMP MetadbHandle::SetRating(UINT rating)
 	return S_OK;
 }
 
-STDMETHODIMP MetadbHandle::get_FileSize(__int64* p)
+STDMETHODIMP MetadbHandle::get_FileSize(UINT64* p)
 {
 	if (m_handle.is_empty() || !p) return E_POINTER;
 
