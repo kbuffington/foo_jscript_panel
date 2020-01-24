@@ -84,6 +84,25 @@ namespace helpers
 		return *jsp::guids::art[art_id];
 	}
 
+	HFONT create_font(const wchar_t* name, float pxSize, int style)
+	{
+		return CreateFont(
+			-static_cast<int>(pxSize),
+			0,
+			0,
+			0,
+			(style & Gdiplus::FontStyleBold) ? FW_BOLD : FW_NORMAL,
+			(style & Gdiplus::FontStyleItalic) ? TRUE : FALSE,
+			(style & Gdiplus::FontStyleUnderline) ? TRUE : FALSE,
+			(style & Gdiplus::FontStyleStrikeout) ? TRUE : FALSE,
+			DEFAULT_CHARSET,
+			OUT_DEFAULT_PRECIS,
+			CLIP_DEFAULT_PRECIS,
+			DEFAULT_QUALITY,
+			DEFAULT_PITCH | FF_DONTCARE,
+			name);
+	}
+
 	IGdiBitmap* get_album_art(const metadb_handle_ptr& handle, size_t art_id, bool need_stub, bool no_load, pfc::string_base& image_path)
 	{
 		IGdiBitmap* ret = nullptr;

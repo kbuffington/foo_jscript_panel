@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "helpers.h"
 #include "Tooltip.h"
 
 Tooltip::Tooltip(CWindow wndparent, const panel_tooltip_param_ptr& param_ptr) : m_wndparent(wndparent), m_panel_tooltip_param_ptr(param_ptr), m_tip_buffer(TO_BSTR(jsp::component_name))
@@ -26,21 +27,7 @@ Tooltip::Tooltip(CWindow wndparent, const panel_tooltip_param_ptr& param_ptr) : 
 	m_ti.uId = reinterpret_cast<UINT_PTR>(m_wndparent.m_hWnd);
 	m_ti.lpszText = m_tip_buffer;
 
-	const HFONT hFont = CreateFont(
-		-static_cast<int>(m_panel_tooltip_param_ptr->font_size),
-		0,
-		0,
-		0,
-		(m_panel_tooltip_param_ptr->font_style & Gdiplus::FontStyleBold) ? FW_BOLD : FW_NORMAL,
-		(m_panel_tooltip_param_ptr->font_style & Gdiplus::FontStyleItalic) ? TRUE : FALSE,
-		(m_panel_tooltip_param_ptr->font_style & Gdiplus::FontStyleUnderline) ? TRUE : FALSE,
-		(m_panel_tooltip_param_ptr->font_style & Gdiplus::FontStyleStrikeout) ? TRUE : FALSE,
-		DEFAULT_CHARSET,
-		OUT_DEFAULT_PRECIS,
-		CLIP_DEFAULT_PRECIS,
-		DEFAULT_QUALITY,
-		DEFAULT_PITCH | FF_DONTCARE,
-		m_panel_tooltip_param_ptr->font_name);
+	const HFONT hFont = helpers::create_font(m_panel_tooltip_param_ptr->font_name, m_panel_tooltip_param_ptr->font_size, m_panel_tooltip_param_ptr->font_style);
 
 	m_wndtooltip.SendMessage(TTM_ADDTOOL, 0, reinterpret_cast<LPARAM>(&m_ti));
 	m_wndtooltip.SendMessage(TTM_ACTIVATE, FALSE, 0);

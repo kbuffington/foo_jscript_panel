@@ -32,21 +32,7 @@ STDMETHODIMP Gdi::Font(BSTR name, float pxSize, int style, IGdiFont** pp)
 	auto font = new Gdiplus::Font(name, pxSize, style, Gdiplus::UnitPixel);
 	if (helpers::ensure_gdiplus_object(font))
 	{
-		const HFONT hFont = CreateFont(
-			-static_cast<int>(pxSize),
-			0,
-			0,
-			0,
-			(style & Gdiplus::FontStyleBold) ? FW_BOLD : FW_NORMAL,
-			(style & Gdiplus::FontStyleItalic) ? TRUE : FALSE,
-			(style & Gdiplus::FontStyleUnderline) ? TRUE : FALSE,
-			(style & Gdiplus::FontStyleStrikeout) ? TRUE : FALSE,
-			DEFAULT_CHARSET,
-			OUT_DEFAULT_PRECIS,
-			CLIP_DEFAULT_PRECIS,
-			DEFAULT_QUALITY,
-			DEFAULT_PITCH | FF_DONTCARE,
-			name);
+		const HFONT hFont = helpers::create_font(name, pxSize, style);
 		*pp = new com_object_impl_t<GdiFont>(font, hFont);
 	}
 	else

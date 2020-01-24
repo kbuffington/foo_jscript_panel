@@ -35,6 +35,7 @@ namespace helpers
 	COLORREF convert_argb_to_colorref(DWORD argb);
 	DWORD convert_colorref_to_argb(COLORREF colour);
 	GUID convert_artid_to_guid(size_t art_id);
+	HFONT create_font(const wchar_t* name, float pxSize, int style);
 	IGdiBitmap* get_album_art(const metadb_handle_ptr& handle, size_t art_id, bool need_stub, bool no_load, pfc::string_base& image_path);
 	IGdiBitmap* get_album_art_embedded(pfc::stringp path, size_t art_id);
 	IGdiBitmap* load_image(BSTR path);
