@@ -105,7 +105,7 @@ STDMETHODIMP Utils::GetAlbumArtAsync(UINT window_id, IMetadbHandle* handle, UINT
 	metadb_handle* ptr = nullptr;
 	GET_PTR(handle, ptr);
 
-	auto task = new helpers::album_art_async(reinterpret_cast<HWND>(window_id), ptr, art_id, need_stub != VARIANT_FALSE, only_embed != VARIANT_FALSE, no_load != VARIANT_FALSE);
+	auto task = new helpers::async_art_task(reinterpret_cast<HWND>(window_id), ptr, art_id, need_stub != VARIANT_FALSE, only_embed != VARIANT_FALSE, no_load != VARIANT_FALSE);
 	simple_thread_pool::instance().enqueue(task);
 	return S_OK;
 }

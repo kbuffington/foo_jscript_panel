@@ -380,7 +380,7 @@ STDMETHODIMP MetadbHandleList::UpdateFileInfoFromJSON(BSTR str)
 
 				info[i].meta_remove_field(name.c_str());
 
-				for (const auto& v : helpers::js_file_info_filter::g_get_values(value))
+				for (const auto& v : helpers::jsp_file_info_filter::g_get_values(value))
 				{
 					info[i].meta_add(name.c_str(), v.c_str());
 				}
@@ -398,21 +398,21 @@ STDMETHODIMP MetadbHandleList::UpdateFileInfoFromJSON(BSTR str)
 	}
 	else if (j.is_object() && j.size() > 0)
 	{
-		std::vector<helpers::js_file_info_filter::tag> tags;
+		std::vector<helpers::jsp_file_info_filter::tag> tags;
 
 		for (auto& [name, value] : j.items())
 		{
 			if (name.empty()) return E_INVALIDARG;
 
-			helpers::js_file_info_filter::tag t;
+			helpers::jsp_file_info_filter::tag t;
 			t.first = name;
-			t.second = helpers::js_file_info_filter::g_get_values(value);
+			t.second = helpers::jsp_file_info_filter::g_get_values(value);
 			tags.emplace_back(t);
 		}
 
 		metadb_io_v2::get()->update_info_async(
 			m_handles,
-			fb2k::service_new<helpers::js_file_info_filter>(tags),
+			fb2k::service_new<helpers::jsp_file_info_filter>(tags),
 			core_api::get_main_window(),
 			metadb_io_v2::op_flag_delay_ui,
 			nullptr

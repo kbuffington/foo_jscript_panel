@@ -31,7 +31,7 @@ STDMETHODIMP Plman::AddLocations(UINT playlistIndex, VARIANT locations, VARIANT_
 			nullptr,
 			nullptr,
 			nullptr,
-			fb2k::service_new<helpers::js_process_locations>(playlistIndex, api->playlist_get_item_count(playlistIndex), select != VARIANT_FALSE));
+			fb2k::service_new<helpers::jsp_process_locations_notify>(playlistIndex, api->playlist_get_item_count(playlistIndex), select != VARIANT_FALSE));
 
 		return S_OK;
 	}

@@ -30,12 +30,7 @@ void simple_thread_worker::threadProc()
 		if (pfc::getTickCount() - last_tick >= 10000)
 		{
 			insync(simple_thread_pool::instance().cs);
-
-			if (simple_thread_pool::instance().is_queue_empty())
-			{
-				simple_thread_pool::instance().remove_worker(this);
-				return;
-			}
+			if (simple_thread_pool::instance().is_queue_empty()) break;
 		}
 	}
 
@@ -79,8 +74,9 @@ bool simple_thread_pool::enqueue(simple_thread_task* task)
 	if (num_workers < max_count)
 	{
 		auto worker = new simple_thread_worker;
-		add_worker(worker);
 		worker->start();
+		++num_workers;
+		ResetEvent(empty_worker);
 	}
 
 	return true;
@@ -107,13 +103,6 @@ simple_thread_task* simple_thread_pool::acquire_task()
 		ResetEvent(have_task);
 
 	return iter.is_valid() ? *iter : nullptr;
-}
-
-void simple_thread_pool::add_worker(simple_thread_worker* worker)
-{
-	insync(cs);
-	++num_workers;
-	ResetEvent(empty_worker);
 }
 
 void simple_thread_pool::exit()

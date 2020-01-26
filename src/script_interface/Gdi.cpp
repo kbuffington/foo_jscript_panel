@@ -56,7 +56,7 @@ STDMETHODIMP Gdi::LoadImageAsync(UINT window_id, BSTR path, UINT* p)
 {
 	if (!p) return E_POINTER;
 
-	auto task = new helpers::load_image_async(reinterpret_cast<HWND>(window_id), path);
+	auto task = new helpers::async_image_task(reinterpret_cast<HWND>(window_id), path);
 	simple_thread_pool::instance().enqueue(task);
 
 	*p = reinterpret_cast<UINT_PTR>(task);

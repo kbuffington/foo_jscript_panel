@@ -152,7 +152,7 @@ namespace
 		preferences_page_callback::ptr m_callback;
 	};
 
-	class my_preferences_page_impl : public preferences_page_impl<CDialogPref>
+	class jsp_preferences_page_impl : public preferences_page_impl<CDialogPref>
 	{
 	public:
 		GUID get_guid() override
@@ -177,5 +177,5 @@ namespace
 		}
 	};
 
-	FB2K_SERVICE_FACTORY(my_preferences_page_impl);
+	FB2K_SERVICE_FACTORY(jsp_preferences_page_impl);
 }

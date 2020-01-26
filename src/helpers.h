@@ -38,7 +38,7 @@ namespace helpers
 	HFONT create_font(const wchar_t* name, float pxSize, int style);
 	IGdiBitmap* get_album_art(const metadb_handle_ptr& handle, size_t art_id, bool need_stub, bool no_load, pfc::string_base& image_path);
 	IGdiBitmap* get_album_art_embedded(pfc::stringp path, size_t art_id);
-	IGdiBitmap* load_image(BSTR path);
+	IGdiBitmap* load_image(const wchar_t* path);
 	IGdiBitmap* read_album_art_into_bitmap(const album_art_data_ptr& data);
 	bool execute_context_command_recur(pfc::stringp command, pfc::stringp cpath, contextmenu_node* parent);
 	bool execute_mainmenu_command_by_name(pfc::stringp command);
@@ -164,10 +164,10 @@ namespace helpers
 		metadb_handle_list m_handles;
 	};
 
-	class album_art_async : public simple_thread_task
+	class async_art_task : public simple_thread_task
 	{
 	public:
-		album_art_async(CWindow hwnd, const metadb_handle_ptr& handle, size_t art_id, bool need_stub, bool only_embed, bool no_load) : m_hwnd(hwnd), m_handle(handle), m_art_id(art_id), m_need_stub(need_stub), m_only_embed(only_embed), m_no_load(no_load) {}
+		async_art_task(CWindow hwnd, const metadb_handle_ptr& handle, size_t art_id, bool need_stub, bool only_embed, bool no_load) : m_hwnd(hwnd), m_handle(handle), m_art_id(art_id), m_need_stub(need_stub), m_only_embed(only_embed), m_no_load(no_load) {}
 
 		void run() override
 		{
@@ -207,10 +207,10 @@ namespace helpers
 		size_t m_art_id = 0;
 	};
 
-	class load_image_async : public simple_thread_task
+	class async_image_task : public simple_thread_task
 	{
 	public:
-		load_image_async(CWindow hwnd, BSTR path) : m_hwnd(hwnd), m_path(path) {}
+		async_image_task(CWindow hwnd, BSTR path) : m_hwnd(hwnd), m_path(path) {}
 
 		void run() override
 		{
@@ -224,10 +224,10 @@ namespace helpers
 		_bstr_t m_path;
 	};
 
-	class js_process_locations : public process_locations_notify
+	class jsp_process_locations_notify : public process_locations_notify
 	{
 	public:
-		js_process_locations(size_t playlist, size_t base, bool to_select) : m_playlist(playlist), m_base(base), m_to_select(to_select) {}
+		jsp_process_locations_notify(size_t playlist, size_t base, bool to_select) : m_playlist(playlist), m_base(base), m_to_select(to_select) {}
 
 		void on_aborted() override {}
 
@@ -254,12 +254,12 @@ namespace helpers
 		size_t m_playlist = 0;
 	};
 
-	class js_file_info_filter : public file_info_filter
+	class jsp_file_info_filter : public file_info_filter
 	{
 	public:
 		using tag = std::pair<std::string, str_vec>;
 
-		js_file_info_filter(const std::vector<tag>& tags) : m_tags(tags) {}
+		jsp_file_info_filter(const std::vector<tag>& tags) : m_tags(tags) {}
 
 		bool apply_filter(metadb_handle_ptr location, t_filestats stats, file_info& info) override
 		{

@@ -3,7 +3,7 @@
 
 namespace
 {
-	class my_mainmenu_commands : public mainmenu_commands
+	class jsp_mainmenu_commands : public mainmenu_commands
 	{
 	public:
 		GUID get_command(size_t index) override
@@ -45,6 +45,6 @@ namespace
 		}
 	};
 
-	static mainmenu_group_popup_factory g_my_mainmenu_group(jsp::guids::mainmenu_group_id, mainmenu_groups::file, mainmenu_commands::sort_priority_base, jsp::component_name);
-	FB2K_SERVICE_FACTORY(my_mainmenu_commands);
+	static mainmenu_group_popup_factory g_jsp_mainmenu_group(jsp::guids::mainmenu_group_id, mainmenu_groups::file, mainmenu_commands::sort_priority_base, jsp::component_name);
+	FB2K_SERVICE_FACTORY(jsp_mainmenu_commands);
 }

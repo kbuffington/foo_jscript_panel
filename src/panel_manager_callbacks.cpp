@@ -13,7 +13,7 @@ namespace
 		{ &standard_config_objects::bool_ui_always_on_top, callback_id::on_always_on_top_changed }
 	};
 
-	class my_config_object_notify : public config_object_notify
+	class jsp_config_object_notify : public config_object_notify
 	{
 	public:
 		GUID get_watched_object(size_t index) override
@@ -39,7 +39,7 @@ namespace
 		}
 	};
 
-	class my_dsp_config_callback : public dsp_config_callback
+	class jsp_dsp_config_callback : public dsp_config_callback
 	{
 	public:
 		void on_core_settings_change(const dsp_chain_config&) override
@@ -48,7 +48,7 @@ namespace
 		}
 	};
 
-	class my_initquit : public initquit, public ui_selection_callback, public replaygain_core_settings_notify, public output_config_change_callback
+	class jsp_initquit : public initquit, public ui_selection_callback, public replaygain_core_settings_notify, public output_config_change_callback
 	{
 	public:
 		void on_changed(const t_replaygain_config& cfg) override
@@ -83,7 +83,7 @@ namespace
 		}
 	};
 
-	class my_library_callback : public library_callback
+	class jsp_library_callback : public library_callback
 	{
 	public:
 		void on_items_added(metadb_handle_list_cref handles) override
@@ -105,7 +105,7 @@ namespace
 		}
 	};
 
-	class my_metadb_io_callback : public metadb_io_callback
+	class jsp_metadb_io_callback : public metadb_io_callback
 	{
 	public:
 		void on_changed_sorted(metadb_handle_list_cref handles, bool fromhook) override
@@ -115,7 +115,7 @@ namespace
 		}
 	};
 
-	class my_play_callback_static : public play_callback_static
+	class jsp_play_callback_static : public play_callback_static
 	{
 	public:
 		uint32_t get_flags() override
@@ -179,7 +179,7 @@ namespace
 		}
 	};
 
-	class my_playback_queue_callback : public playback_queue_callback
+	class jsp_playback_queue_callback : public playback_queue_callback
 	{
 	public:
 		void on_changed(t_change_origin origin) override
@@ -188,7 +188,7 @@ namespace
 		}
 	};
 
-	class my_playback_statistics_collector : public playback_statistics_collector
+	class jsp_playback_statistics_collector : public playback_statistics_collector
 	{
 	public:
 		void on_item_played(metadb_handle_ptr handle) override
@@ -198,7 +198,7 @@ namespace
 		}
 	};
 
-	class my_playlist_callback_static : public playlist_callback_static
+	class jsp_playlist_callback_static : public playlist_callback_static
 	{
 	public:
 		void on_default_format_changed() override {}
@@ -285,13 +285,13 @@ namespace
 		}
 	};
 
-	FB2K_SERVICE_FACTORY(my_config_object_notify);
-	FB2K_SERVICE_FACTORY(my_dsp_config_callback);
-	FB2K_SERVICE_FACTORY(my_initquit);
-	FB2K_SERVICE_FACTORY(my_library_callback);
-	FB2K_SERVICE_FACTORY(my_metadb_io_callback);
-	FB2K_SERVICE_FACTORY(my_play_callback_static);
-	FB2K_SERVICE_FACTORY(my_playback_queue_callback);
-	FB2K_SERVICE_FACTORY(my_playback_statistics_collector);
-	FB2K_SERVICE_FACTORY(my_playlist_callback_static);
+	FB2K_SERVICE_FACTORY(jsp_config_object_notify);
+	FB2K_SERVICE_FACTORY(jsp_dsp_config_callback);
+	FB2K_SERVICE_FACTORY(jsp_initquit);
+	FB2K_SERVICE_FACTORY(jsp_library_callback);
+	FB2K_SERVICE_FACTORY(jsp_metadb_io_callback);
+	FB2K_SERVICE_FACTORY(jsp_play_callback_static);
+	FB2K_SERVICE_FACTORY(jsp_playback_queue_callback);
+	FB2K_SERVICE_FACTORY(jsp_playback_statistics_collector);
+	FB2K_SERVICE_FACTORY(jsp_playlist_callback_static);
 }

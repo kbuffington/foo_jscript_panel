@@ -166,7 +166,7 @@ namespace helpers
 		return ret;
 	}
 
-	IGdiBitmap* load_image(BSTR path)
+	IGdiBitmap* load_image(const wchar_t* path)
 	{
 		IGdiBitmap* ret = nullptr;
 		CComPtr<IStream> stream;

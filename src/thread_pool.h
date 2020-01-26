@@ -29,7 +29,6 @@ public:
 	bool enqueue(simple_thread_task* task);
 	bool is_queue_empty();
 	simple_thread_task* acquire_task();
-	void add_worker(simple_thread_worker* worker);
 	void exit();
 	void remove_worker(simple_thread_worker* worker);
 	void track(simple_thread_task* task);
@@ -45,7 +44,7 @@ private:
 	HANDLE exiting;
 	HANDLE have_task;
 	critical_section cs;
-	pfc::refcounter num_workers = 0;
+	pfc::counter num_workers = 0;
 	t_task_list task_list;
 
 	friend class simple_thread_worker;

@@ -174,7 +174,7 @@ namespace
 		ui_element_instance_callback::ptr m_callback;
 	};
 
-	class my_ui_element_impl : public ui_element_impl<panel_window_dui> {};
+	class jsp_ui_element_impl : public ui_element_impl<panel_window_dui> {};
 
-	FB2K_SERVICE_FACTORY(my_ui_element_impl);
+	FB2K_SERVICE_FACTORY(jsp_ui_element_impl);
 }

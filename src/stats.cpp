@@ -14,7 +14,7 @@ namespace stats
 
 	metadb_index_manager::ptr g_cachedAPI;
 
-	class my_metadb_index_client : public metadb_index_client
+	class jsp_metadb_index_client : public metadb_index_client
 	{
 	public:
 		metadb_index_hash transform(const file_info& info, const playable_location& location) override
@@ -26,9 +26,9 @@ namespace stats
 			return hasher_md5::get()->process_single_string(str).xorHalve();
 		}
 	};
-	static auto g_client = new service_impl_single_t<my_metadb_index_client>;
+	static auto g_client = new service_impl_single_t<jsp_metadb_index_client>;
 
-	class my_init_stage_callback : public init_stage_callback
+	class jsp_init_stage_callback : public init_stage_callback
 	{
 	public:
 		void on_init_stage(size_t stage) override
@@ -52,7 +52,7 @@ namespace stats
 		}
 	};
 
-	class my_initquit : public initquit
+	class jsp_initquit : public initquit
 	{
 	public:
 		void on_quit() override
@@ -61,7 +61,7 @@ namespace stats
 		}
 	};
 
-	class my_metadb_display_field_provider : public metadb_display_field_provider
+	class jsp_metadb_display_field_provider : public metadb_display_field_provider
 	{
 	public:
 		bool process_field(size_t index, metadb_handle* handle, titleformat_text_out* out) override
@@ -107,7 +107,7 @@ namespace stats
 		}
 	};
 
-	class my_track_property_provider_v4 : public track_property_provider_v4
+	class jsp_track_property_provider_v4 : public track_property_provider_v4
 	{
 	public:
 		bool is_our_tech_info(const char* name) override
@@ -157,10 +157,10 @@ namespace stats
 		}
 	};
 
-	FB2K_SERVICE_FACTORY(my_init_stage_callback);
-	FB2K_SERVICE_FACTORY(my_initquit);
-	FB2K_SERVICE_FACTORY(my_metadb_display_field_provider);
-	FB2K_SERVICE_FACTORY(my_track_property_provider_v4);
+	FB2K_SERVICE_FACTORY(jsp_init_stage_callback);
+	FB2K_SERVICE_FACTORY(jsp_initquit);
+	FB2K_SERVICE_FACTORY(jsp_metadb_display_field_provider);
+	FB2K_SERVICE_FACTORY(jsp_track_property_provider_v4);
 
 	bool hashHandle(const metadb_handle_ptr& handle, metadb_index_hash& hash)
 	{
