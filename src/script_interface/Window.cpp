@@ -113,6 +113,7 @@ STDMETHODIMP Window::GetProperty(BSTR name, VARIANT defaultval, VARIANT* p)
 	}
 	else
 	{
+		if (defaultval.vt == VT_ERROR || defaultval.vt == VT_EMPTY) defaultval.vt = VT_NULL;
 		m_host->m_panel_config.properties.set_property(uname, defaultval);
 		hr = VariantCopy(p, &defaultval);
 	}
