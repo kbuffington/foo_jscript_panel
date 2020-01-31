@@ -38,39 +38,14 @@ HRESULT script_host::Initialise()
 	if (SUCCEEDED(hr)) hr = m_script_engine->GetScriptDispatch(nullptr, &m_script_root);
 	if (SUCCEEDED(hr)) hr = ProcessScripts(parser);
 	if (SUCCEEDED(hr)) hr = InitCallbackMap();
-	if (SUCCEEDED(hr))
-	{
-		m_engine_inited = true;
-		m_has_error = false;
-	}
-	else
-	{
-		m_engine_inited = false;
-		m_has_error = true;
-	}
+	
+	m_engine_inited = SUCCEEDED(hr);
+	m_has_error = FAILED(hr);
 	return hr;
 }
 
 HRESULT script_host::InitCallbackMap()
 {
-	const auto check_features = [&](callback_id id)
-	{
-		switch (id)
-		{
-		case callback_id::on_char:
-		case callback_id::on_key_down:
-		case callback_id::on_key_up:
-			m_host->m_grabfocus = true;
-			break;
-		case callback_id::on_drag_drop:
-		case callback_id::on_drag_enter:
-		case callback_id::on_drag_leave:
-		case callback_id::on_drag_over:
-			m_host->m_dragdrop = true;
-			break;
-		}
-	};
-
 	m_callback_map.clear();
 	if (!m_script_root) return E_POINTER;
 	for (const auto& [id, name] : callback_id_names)
@@ -80,7 +55,21 @@ HRESULT script_host::InitCallbackMap()
 		if (SUCCEEDED(m_script_root->GetIDsOfNames(IID_NULL, &cname, 1, LOCALE_USER_DEFAULT, &dispId)))
 		{
 			m_callback_map[id] = dispId;
-			check_features(id);
+
+			switch (id)
+			{
+			case callback_id::on_char:
+			case callback_id::on_key_down:
+			case callback_id::on_key_up:
+				m_host->m_grabfocus = true;
+				break;
+			case callback_id::on_drag_drop:
+			case callback_id::on_drag_enter:
+			case callback_id::on_drag_leave:
+			case callback_id::on_drag_over:
+				m_host->m_dragdrop = true;
+				break;
+			}
 		}
 	}
 	return S_OK;
@@ -88,8 +77,8 @@ HRESULT script_host::InitCallbackMap()
 
 HRESULT script_host::InitScriptEngine()
 {
-	static constexpr DWORD classContext = CLSCTX_INPROC_SERVER | CLSCTX_INPROC_HANDLER;
 	static constexpr CLSID jscript9clsid = { 0x16d51579, 0xa30b, 0x4c8b,{ 0xa2, 0x76, 0x0f, 0xf4, 0xdc, 0x41, 0xe7, 0x55 } };
+	static constexpr DWORD classContext = CLSCTX_INPROC_SERVER | CLSCTX_INPROC_HANDLER;
 	HRESULT hr = m_script_engine.CreateInstance(jscript9clsid, nullptr, classContext);
 
 	if (FAILED(hr))
