@@ -30,11 +30,11 @@ public:
 	STDMETHODIMP ListFolders(BSTR folder, VARIANT* p) override;
 	STDMETHODIMP MapString(BSTR str, UINT lcid, UINT flags, BSTR* p) override;
 	STDMETHODIMP PathWildcardMatch(BSTR pattern, BSTR str, VARIANT_BOOL* p) override;
-	STDMETHODIMP ReadINI(BSTR filename, BSTR section, BSTR key, VARIANT defaultval, BSTR* p) override;
+	STDMETHODIMP ReadINI(BSTR filename, BSTR section, BSTR key, BSTR defaultval, BSTR* p) override;
 	STDMETHODIMP ReadTextFile(BSTR filename, UINT codepage, BSTR* p) override;
 	STDMETHODIMP ReadUTF8(BSTR filename, BSTR* p) override;
 	STDMETHODIMP TimestampToDateString(UINT64 ts, BSTR* p) override;
-	STDMETHODIMP WriteINI(BSTR filename, BSTR section, BSTR key, VARIANT val, VARIANT_BOOL* p) override;
+	STDMETHODIMP WriteINI(BSTR filename, BSTR section, BSTR key, BSTR val, VARIANT_BOOL* p) override;
 	STDMETHODIMP WriteTextFile(BSTR filename, BSTR content, VARIANT_BOOL* p) override;
 	STDMETHODIMP get_Version(UINT* p) override;
 

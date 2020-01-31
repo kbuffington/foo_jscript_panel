@@ -326,30 +326,13 @@ STDMETHODIMP Utils::PathWildcardMatch(BSTR pattern, BSTR str, VARIANT_BOOL* p)
 	return S_OK;
 }
 
-STDMETHODIMP Utils::ReadINI(BSTR filename, BSTR section, BSTR key, VARIANT defaultval, BSTR* p)
+STDMETHODIMP Utils::ReadINI(BSTR filename, BSTR section, BSTR key, BSTR defaultval, BSTR* p)
 {
 	if (!p) return E_POINTER;
 
-	enum
-	{
-		BUFFER_LEN = 255
-	};
-	TCHAR buff[BUFFER_LEN] = { 0 };
-
-	GetPrivateProfileString(section, key, nullptr, buff, BUFFER_LEN, filename);
-
-	if (!buff[0])
-	{
-		_variant_t var;
-
-		if (SUCCEEDED(VariantChangeType(&var, &defaultval, 0, VT_BSTR)))
-		{
-			*p = SysAllocString(var.bstrVal);
-			return S_OK;
-		}
-	}
-
-	*p = SysAllocString(buff);
+	wchar_t buf[UCHAR_MAX] = { 0 };
+	GetPrivateProfileString(section, key, defaultval, buf, UCHAR_MAX, filename);
+	*p = SysAllocString(buf);
 	return S_OK;
 }
 
@@ -377,13 +360,11 @@ STDMETHODIMP Utils::TimestampToDateString(UINT64 ts, BSTR* p)
 	return S_OK;
 }
 
-STDMETHODIMP Utils::WriteINI(BSTR filename, BSTR section, BSTR key, VARIANT val, VARIANT_BOOL* p)
+STDMETHODIMP Utils::WriteINI(BSTR filename, BSTR section, BSTR key, BSTR val, VARIANT_BOOL* p)
 {
 	if (!p) return E_POINTER;
 
-	_variant_t var;
-	if (FAILED(VariantChangeType(&var, &val, 0, VT_BSTR))) return E_INVALIDARG;
-	*p = TO_VARIANT_BOOL(WritePrivateProfileString(section, key, var.bstrVal, filename));
+	*p = TO_VARIANT_BOOL(WritePrivateProfileString(section, key, val, filename));
 	return S_OK;
 }
 
