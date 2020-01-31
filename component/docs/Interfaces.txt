@@ -1526,7 +1526,8 @@ interface IWindow {
 		/*
 		name: string
 		defaultval: string, number, boolean
-		Get value of name from properties. If no value is present, defaultval will be stored and returned
+		Get value of name from properties. If no value is present, defaultval will be stored and returned or
+		if defaultval is omitted, the return value will be null.
 		*/
 
 		window.NotifyOthers(name, info) (void)
