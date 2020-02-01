@@ -13,6 +13,7 @@ public:
 	STDMETHODIMP CreateRawBitmap(IGdiRawBitmap** pp) override;
 	STDMETHODIMP GetColourSchemeJSON(UINT count, BSTR* p) override;
 	STDMETHODIMP GetGraphics(IGdiGraphics** pp) override;
+	STDMETHODIMP InvertColors(IGdiBitmap** pp) override;
 	STDMETHODIMP ReleaseGraphics(IGdiGraphics* p) override;
 	STDMETHODIMP Resize(UINT w, UINT h, int interpolationMode, IGdiBitmap** pp) override;
 	STDMETHODIMP RotateFlip(UINT mode) override;

@@ -188,6 +188,28 @@ STDMETHODIMP GdiBitmap::GetGraphics(IGdiGraphics** pp)
 	return S_OK;
 }
 
+STDMETHODIMP GdiBitmap::InvertColors(IGdiBitmap** pp)
+{
+	if (!m_ptr || !pp) return E_POINTER;
+
+	const auto width = m_ptr->GetWidth();
+	const auto height = m_ptr->GetHeight();
+	auto out = new Gdiplus::Bitmap(width, height, PixelFormat32bppPARGB);
+	Gdiplus::Graphics g(out);
+	const Gdiplus::Rect rect(0, 0, width, height);
+
+	Gdiplus::ImageAttributes ia;
+	Gdiplus::ColorMatrix cm = { 0.f };
+	cm.m[0][0] = cm.m[1][1] = cm.m[2][2] = -1.f;
+	cm.m[3][3] = cm.m[4][0] = cm.m[4][1] = cm.m[4][2] = cm.m[4][4] = 1.f;
+	ia.SetColorMatrix(&cm);
+
+	g.DrawImage(m_ptr, rect, 0, 0, width, height, Gdiplus::UnitPixel, &ia);
+
+	*pp = new com_object_impl_t<GdiBitmap>(out);
+	return S_OK;
+}
+
 STDMETHODIMP GdiBitmap::ReleaseGraphics(IGdiGraphics* p)
 {
 	if (p)
