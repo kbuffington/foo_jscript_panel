@@ -78,3 +78,6 @@
 
 #define ID_LINKS_BEGIN                  500
 #define ID_LINKS_END                    599
+
+#define ID_TEST_BEGIN                   600
+#define ID_TEST_END                     699

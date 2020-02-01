@@ -140,11 +140,28 @@ void CDialogConf::BuildMenu()
 
 	m_menu = GetMenu();
 
+	size_t i, j, count;
+
+	auto test_folder = append_folder("test");
+	if (filesystem::g_exists(test_folder, fb2k::noAbort))
+	{
+		CMenu test = CreateMenu();
+		pfc::string_list_impl test_files;
+		helpers::list_files(test_folder, false, test_files);
+
+		count = test_files.get_count();
+		for (i = 0; i < count; ++i)
+		{
+			m_test.add_item(test_files[i]);
+			pfc::string8_fast display = pfc::string_filename(test_files[i]);
+			uAppendMenu(test, MF_STRING, ID_TEST_BEGIN + m_test.get_count() - 1, display);
+		}
+		uAppendMenu(m_menu, MF_STRING | MF_POPUP, reinterpret_cast<UINT_PTR>(test.m_hMenu), "Test");
+	}
+
 	CMenu samples = CreateMenu();
 	pfc::string_list_impl folders;
 	helpers::list_folders(append_folder("samples\\"), folders);
-
-	size_t i, j, count;
 
 	count = folders.get_count();
 
@@ -251,4 +268,9 @@ void CDialogConf::OnReset(UINT, int, CWindow)
 void CDialogConf::OnSamples(UINT, int nID, CWindow)
 {
 	m_editorctrl.SetContent(helpers::read_file(file_path_display(m_samples[nID - ID_SAMPLES_BEGIN]).get_ptr()));
+}
+
+void CDialogConf::OnTest(UINT, int nID, CWindow)
+{
+	m_editorctrl.SetContent(helpers::read_file(file_path_display(m_test[nID - ID_TEST_BEGIN]).get_ptr()));
 }

@@ -19,6 +19,7 @@ public:
 		COMMAND_ID_HANDLER_EX(IDC_BTN_RESET, OnReset)
 		COMMAND_ID_HANDLER_EX(IDC_BTN_APPLY, OnCloseCmd)
 		COMMAND_RANGE_HANDLER_EX(IDOK, IDCANCEL, OnCloseCmd)
+		COMMAND_RANGE_HANDLER_EX(ID_TEST_BEGIN, ID_TEST_END, OnTest)
 		COMMAND_RANGE_HANDLER_EX(ID_SAMPLES_BEGIN, ID_SAMPLES_END, OnSamples)
 		COMMAND_RANGE_HANDLER_EX(ID_DOCS_BEGIN, ID_DOCS_END, OnDocs)
 		COMMAND_RANGE_HANDLER_EX(ID_LINKS_BEGIN, ID_LINKS_END, OnLinks)
@@ -39,6 +40,7 @@ public:
 	void OnLinks(UINT, int nID, CWindow);
 	void OnReset(UINT, int, CWindow);
 	void OnSamples(UINT, int nID, CWindow);
+	void OnTest(UINT, int nID, CWindow);
 
 private:
 	CCheckBox m_transparent_check;
@@ -50,4 +52,5 @@ private:
 	pfc::string8_fast m_caption;
 	pfc::string_list_impl m_docs;
 	pfc::string_list_impl m_samples;
+	pfc::string_list_impl m_test;
 };
