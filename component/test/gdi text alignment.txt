@@ -1,0 +1,21 @@
+// ==PREPROCESSOR==
+// @import "%fb2k_component_path%docs\flags.txt"
+// @import "%fb2k_component_path%docs\helpers.txt"
+// ==/PREPROCESSOR==
+
+var font = gdi.Font("Segoe UI", 12);
+var colour =  RGB(0, 0, 0);
+
+function on_paint(gr) {
+	gr.GdiDrawText("Top left", font, colour, 0, 0, window.Width, window.Height, DT_CALCRECT | DT_LEFT | DT_TOP);
+	gr.GdiDrawText("Top middle", font, colour, 0, 0, window.Width, window.Height, DT_CALCRECT | DT_CENTER | DT_TOP);
+	gr.GdiDrawText("Top right", font, colour, 0, 0, window.Width, window.Height, DT_CALCRECT | DT_RIGHT | DT_TOP);
+
+	gr.GdiDrawText("Middle left", font, colour, 0, 0, window.Width, window.Height, DT_CALCRECT | DT_LEFT | DT_VCENTER);
+	gr.GdiDrawText("Middle middle", font, colour, 0, 0, window.Width, window.Height, DT_CALCRECT | DT_CENTER | DT_VCENTER);
+	gr.GdiDrawText("Middle right", font, colour, 0, 0, window.Width, window.Height, DT_CALCRECT | DT_RIGHT | DT_VCENTER);
+
+	gr.GdiDrawText("Bottom left", font, colour, 0, 0, window.Width, window.Height, DT_CALCRECT | DT_LEFT | DT_BOTTOM);
+	gr.GdiDrawText("Bottom middle", font, colour, 0, 0, window.Width, window.Height, DT_CALCRECT | DT_CENTER | DT_BOTTOM);
+	gr.GdiDrawText("Bottom right", font, colour, 0, 0, window.Width, window.Height, DT_CALCRECT | DT_RIGHT | DT_BOTTOM);
+}

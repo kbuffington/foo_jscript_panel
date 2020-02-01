@@ -3,26 +3,35 @@
 
 namespace stats
 {
+	static constexpr std::array<const char*, 5> field_names =
+	{
+		"jsp_playcount",
+		"jsp_loved",
+		"jsp_first_played",
+		"jsp_last_played",
+		"jsp_rating"
+	};
+
 	metadb_index_manager::ptr g_cachedAPI;
 
-	class my_metadb_index_client : public metadb_index_client
+	class jsp_metadb_index_client : public metadb_index_client
 	{
 	public:
 		metadb_index_hash transform(const file_info& info, const playable_location& location) override
 		{
 			titleformat_object::ptr obj;
 			titleformat_compiler::get()->compile_force(obj, "$lower(%artist% - %title%)");
-			pfc::string_formatter str;
+			pfc::string8_fast str;
 			obj->run_simple(location, &info, str);
 			return hasher_md5::get()->process_single_string(str).xorHalve();
 		}
 	};
-	static my_metadb_index_client* g_client = new service_impl_single_t<my_metadb_index_client>;
+	static auto g_client = new service_impl_single_t<jsp_metadb_index_client>;
 
-	class my_init_stage_callback : public init_stage_callback
+	class jsp_init_stage_callback : public init_stage_callback
 	{
 	public:
-		void on_init_stage(t_size stage) override
+		void on_init_stage(size_t stage) override
 		{
 			if (stage == init_stages::before_config_read)
 			{
@@ -30,12 +39,12 @@ namespace stats
 				g_cachedAPI = api;
 				try
 				{
-					api->add(g_client, jsp_guids::metadb_index, system_time_periods::week * 4);
+					api->add(g_client, jsp::guids::metadb_index, system_time_periods::week * 4);
 				}
-				catch (std::exception const& e)
+				catch (const std::exception& e)
 				{
-					api->remove(jsp_guids::metadb_index);
-					FB2K_console_formatter() << JSP_NAME " stats: Critical initialisation failure: " << e;
+					api->remove(jsp::guids::metadb_index);
+					FB2K_console_formatter() << jsp::component_name << " stats: Critical initialisation failure: " << e;
 					return;
 				}
 				api->dispatch_global_refresh();
@@ -43,7 +52,7 @@ namespace stats
 		}
 	};
 
-	class my_initquit : public initquit
+	class jsp_initquit : public initquit
 	{
 	public:
 		void on_quit() override
@@ -52,14 +61,14 @@ namespace stats
 		}
 	};
 
-	class my_metadb_display_field_provider : public metadb_display_field_provider
+	class jsp_metadb_display_field_provider : public metadb_display_field_provider
 	{
 	public:
-		bool process_field(t_size index, metadb_handle* handle, titleformat_text_out* out) override
+		bool process_field(size_t index, metadb_handle* handle, titleformat_text_out* out) override
 		{
 			metadb_index_hash hash;
 			if (!hashHandle(handle, hash)) return false;
-			fields tmp = get(hash);
+			const fields tmp = get(hash);
 
 			switch (index)
 			{
@@ -87,97 +96,71 @@ namespace stats
 			return false;
 		}
 
-		t_size get_field_count() override
+		size_t get_field_count() override
 		{
-			return 5;
+			return field_names.size();
 		}
 
-		void get_field_name(t_size index, pfc::string_base& out) override
+		void get_field_name(size_t index, pfc::string_base& out) override
 		{
-			switch (index)
-			{
-			case 0:
-				out = "jsp_playcount";
-				break;
-			case 1:
-				out = "jsp_loved";
-				break;
-			case 2:
-				out = "jsp_first_played";
-				break;
-			case 3:
-				out = "jsp_last_played";
-				break;
-			case 4:
-				out = "jsp_rating";
-				break;
-			}
+			out.set_string(field_names[index]);
 		}
 	};
 
-	class my_track_property_provider_v2 : public track_property_provider_v2
+	class jsp_track_property_provider_v4 : public track_property_provider_v4
 	{
 	public:
-		bool is_our_tech_info(const char* p_name) override
+		bool is_our_tech_info(const char* name) override
 		{
 			return false;
 		}
 
-		void enumerate_properties(metadb_handle_list_cref p_tracks, track_property_callback& p_out) override
+		void enumerate_properties_helper(metadb_handle_list_cref handles, track_property_provider_v3_info_source& info, track_property_callback_v2& callback, abort_callback& abort)
 		{
-			const t_size count = p_tracks.get_count();
-			if (count == 1)
+			if (callback.is_group_wanted(jsp::component_name))
 			{
-				metadb_index_hash hash;
-				if (hashHandle(p_tracks[0], hash))
-				{
-					fields tmp = get(hash);
-					p_out.set_property(JSP_NAME, 0, "Playcount", pfc::format_uint(tmp.playcount));
-					p_out.set_property(JSP_NAME, 1, "Loved", pfc::format_uint(tmp.loved));
-					p_out.set_property(JSP_NAME, 2, "First Played", tmp.first_played);
-					p_out.set_property(JSP_NAME, 3, "Last Played", tmp.last_played);
-					p_out.set_property(JSP_NAME, 4, "Rating", pfc::format_uint(tmp.rating));
-				}
-			}
-			else
-			{
-				pfc::avltree_t<metadb_index_hash> hashes;
-
-				for (t_size i = 0; i < count; ++i)
+				const size_t count = handles.get_count();
+				if (count == 1)
 				{
 					metadb_index_hash hash;
-					if (hashHandle(p_tracks[i], hash))
+					if (hashHandle(handles[0], hash))
 					{
-						hashes += hash;
+						const fields tmp = get(hash);
+						callback.set_property(jsp::component_name, 0, "Playcount", std::to_string(tmp.playcount).c_str());
+						callback.set_property(jsp::component_name, 1, "Loved", std::to_string(tmp.loved).c_str());
+						callback.set_property(jsp::component_name, 2, "First Played", tmp.first_played);
+						callback.set_property(jsp::component_name, 3, "Last Played", tmp.last_played);
+						callback.set_property(jsp::component_name, 4, "Rating", std::to_string(tmp.rating).c_str());
 					}
 				}
-
-				t_size total = 0;
-				for (auto it = hashes.first(); it.is_valid(); ++it)
+				else
 				{
-					total += get(*it).playcount;
-				}
+					hash_set hashes;
+					get_hashes(handles, hashes);
 
-				if (total > 0)
-				{
-					p_out.set_property(JSP_NAME, 0, "Playcount", pfc::format_uint(total));
+					size_t total = std::accumulate(hashes.begin(), hashes.end(), 0U, [](size_t t, const metadb_index_hash hash)
+						{
+							return t + get(hash).playcount;
+						});
+
+					if (total > 0)
+					{
+						callback.set_property(jsp::component_name, 0, "Playcount", std::to_string(total).c_str());
+					}
 				}
 			}
 		}
 
-		void enumerate_properties_v2(metadb_handle_list_cref p_tracks, track_property_callback_v2& p_out) override
+		void enumerate_properties_v4(metadb_handle_list_cref handles, track_property_provider_v3_info_source& info, track_property_callback_v2& callback, abort_callback& abort) override
 		{
-			if (p_out.is_group_wanted(JSP_NAME))
-			{
-				enumerate_properties(p_tracks, p_out);
-			}
+			enumerate_properties_helper(handles, info, callback, abort);
 		}
 	};
 
-	static service_factory_single_t<my_init_stage_callback> g_my_init_stage_callback;
-	static service_factory_single_t<my_initquit> g_my_initquit;
-	static service_factory_single_t<my_metadb_display_field_provider> g_my_metadb_display_field_provider;
-	static service_factory_single_t<my_track_property_provider_v2> g_my_track_property_provider_v2;
+	FB2K_SERVICE_FACTORY(jsp_init_stage_callback);
+	FB2K_SERVICE_FACTORY(jsp_initquit);
+	FB2K_SERVICE_FACTORY(jsp_metadb_display_field_provider);
+	FB2K_SERVICE_FACTORY(jsp_track_property_provider_v4);
 
 	bool hashHandle(const metadb_handle_ptr& handle, metadb_index_hash& hash)
 	{
@@ -187,7 +170,7 @@ namespace stats
 	fields get(metadb_index_hash hash)
 	{
 		mem_block_container_impl temp;
-		theAPI()->get_user_data(jsp_guids::metadb_index, hash, temp);
+		theAPI()->get_user_data(jsp::guids::metadb_index, hash, temp);
 		if (temp.get_size() > 0)
 		{
 			try
@@ -213,6 +196,19 @@ namespace stats
 		return ret;
 	}
 
+	void get_hashes(metadb_handle_list_cref handles, hash_set& hashes)
+	{
+		const auto count = handles.get_count();
+		for (size_t i = 0; i < count; ++i)
+		{
+			metadb_index_hash hash;
+			if (hashHandle(handles[i], hash))
+			{
+				hashes.emplace(hash);
+			}
+		}
+	}
+
 	void set(metadb_index_hash hash, fields f)
 	{
 		stream_writer_formatter_simple<false> writer;
@@ -221,6 +217,6 @@ namespace stats
 		writer << f.first_played;
 		writer << f.last_played;
 		writer << f.rating;
-		theAPI()->set_user_data(jsp_guids::metadb_index, hash, writer.m_buffer.get_ptr(), writer.m_buffer.get_size());
+		theAPI()->set_user_data(jsp::guids::metadb_index, hash, writer.m_buffer.get_ptr(), writer.m_buffer.get_size());
 	}
 }

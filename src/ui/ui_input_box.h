@@ -3,24 +3,23 @@
 class CInputBox : public CDialogImpl<CInputBox>
 {
 public:
-	CInputBox(const char* p_prompt, const char* p_caption, const char* p_value);
+	CInputBox(pfc::stringp prompt, pfc::stringp caption, pfc::stringp value);
 
-	BEGIN_MSG_MAP(CInputBox)
+	BEGIN_MSG_MAP_EX(CInputBox)
 		MSG_WM_INITDIALOG(OnInitDialog)
 		COMMAND_RANGE_HANDLER_EX(IDOK, IDCANCEL, OnCloseCmd)
 	END_MSG_MAP()
 
-	enum
-	{
-		IDD = IDD_DIALOG_INPUT
-	};
+	enum { IDD = IDD_DIALOG_INPUT };
 
-	BOOL OnInitDialog(HWND hwndFocus, LPARAM lParam);
-	void GetValue(pfc::string_base& p_value);
-	void OnCloseCmd(UINT uNotifyCode, int nID, HWND wndCtl);
+	BOOL OnInitDialog(CWindow, LPARAM);
+	void OnCloseCmd(UINT, int nID, CWindow);
+
+	pfc::string8_fast m_value;
 
 private:
+	CEdit m_edit;
+	CWindow m_label;
 	pfc::string8_fast m_prompt;
 	pfc::string8_fast m_caption;
-	pfc::string8_fast m_value;
 };

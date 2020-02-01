@@ -1,40 +1,177 @@
 #include "stdafx.h"
+#include "config.h"
 #include "panel_window.h"
 #include "ui_conf.h"
-#include "ui_find.h"
-#include "ui_goto.h"
-#include "ui_replace.h"
 
-CDialogConf::CDialogConf(panel_window* p_parent) : m_parent(p_parent), m_dlgfind(nullptr), m_dlgreplace(nullptr), m_lastFlags(0)
+static const CDialogResizeHelper::Param resize_data[] =
 {
-	m_caption << JSP_NAME " Configuration (id:" << m_parent->m_script_info.id << ")";
+	{ IDC_EDIT, 0, 0, 1, 1 },
+	{ IDC_BTN_RESET, 0, 1, 0, 1 },
+	{ IDC_LABEL_EDGE, 0, 1, 0, 1 },
+	{ IDC_COMBO_EDGE, 0, 1, 0, 1 },
+	{ IDC_CHECK_PSEUDO_TRANSPARENT, 0, 1, 0, 1 },
+	{ IDOK, 1, 1, 1, 1 },
+	{ IDCANCEL, 1, 1, 1, 1 },
+	{ IDC_BTN_APPLY, 1, 1, 1, 1 },
+};
+
+static const CRect resize_min_max(620, 381, 0, 0);
+
+static constexpr std::array<const wchar_t*, 4> links =
+{
+	L"https://marc2k3.github.io/foo_jscript_panel.html",
+	L"https://github.com/marc2k3/foo_jscript_panel/blob/master/CHANGELOG.md",
+	L"https://github.com/marc2k3/foo_jscript_panel/releases",
+	L"https://github.com/marc2k3/foo_jscript_panel/issues"
+};
+
+CDialogConf::CDialogConf(panel_window* parent) : m_parent(parent), m_resizer(resize_data, resize_min_max)
+{
+	m_caption << jsp::component_name << " Configuration (id:" << m_parent->m_script_host->m_info.id << ")";
 }
 
-CDialogConf::~CDialogConf() {}
-
-BOOL CDialogConf::OnInitDialog(HWND hwndFocus, LPARAM lParam)
+BOOL CDialogConf::OnInitDialog(CWindow, LPARAM)
 {
+	// Init
+	m_edge_combo = GetDlgItem(IDC_COMBO_EDGE);
+	m_transparent_check = GetDlgItem(IDC_CHECK_PSEUDO_TRANSPARENT);
+
+	BuildMenu();
+
+	// Set caption text
+	uSetWindowText(m_hWnd, m_caption);
+
+	// Apply window placement
+	if (g_config.m_conf_wndpl.length == 0)
+	{
+		g_config.m_conf_wndpl.length = sizeof(WINDOWPLACEMENT);
+		memset(&g_config.m_conf_wndpl, 0, sizeof(WINDOWPLACEMENT));
+	}
+	else
+	{
+		SetWindowPlacement(&g_config.m_conf_wndpl);
+	}
+
+	// Edge Style
+	m_edge_combo.AddString(L"None");
+	m_edge_combo.AddString(L"Sunken");
+	m_edge_combo.AddString(L"Grey");
+
+	if (m_parent->is_dui())
+	{
+		m_edge_combo.SetCurSel(0);
+		m_edge_combo.EnableWindow(false);
+	}
+	else
+	{
+		m_edge_combo.SetCurSel(static_cast<int>(m_parent->m_panel_config.style));
+	}
+
+	// Pseudo Transparent
+	if (m_parent->m_supports_transparency)
+	{
+		m_transparent_check.SetCheck(m_parent->m_panel_config.transparent);
+	}
+	else
+	{
+		m_transparent_check.SetCheck(false);
+		m_transparent_check.EnableWindow(false);
+	}
+
+	// Edit Control
+	m_editorctrl.SubclassWindow(GetDlgItem(IDC_EDIT));
+	m_editorctrl.Init();
+	m_editorctrl.SetContent(m_parent->m_panel_config.code);
+	m_editorctrl.EmptyUndoBuffer();
+	m_editorctrl.SetSavePoint();
+
+	return FALSE;
+}
+
+LRESULT CDialogConf::OnNotify(int, LPNMHDR pnmh)
+{
+	pfc::string8_fast caption = m_caption;
+
+	switch (pnmh->code)
+	{
+	case SCN_SAVEPOINTLEFT:
+		caption.add_string(" *");
+		uSetWindowText(m_hWnd, caption);
+		break;
+	case SCN_SAVEPOINTREACHED:
+		uSetWindowText(m_hWnd, caption);
+		break;
+	}
+
+	SetMsgHandled(FALSE);
+	return 0;
+}
+
+pfc::string8_fast CDialogConf::GetText()
+{
+	const int len = m_editorctrl.GetTextLength();
+	std::string value(len + 1, '\0');
+	m_editorctrl.GetText(value.length(), value.data());
+	return value.c_str();
+}
+
+void CDialogConf::Apply()
+{
+	// Save panel settings
+	m_parent->m_panel_config.style = static_cast<panel_config::edge_style>(m_edge_combo.GetCurSel());
+	m_parent->m_panel_config.transparent = m_transparent_check.IsChecked();
+
+	// Get script text
+	m_parent->m_panel_config.code = GetText();
+	m_parent->update_script();
+
+	// Save point
+	m_editorctrl.SetSavePoint();
+}
+
+void CDialogConf::BuildMenu()
+{
+	auto append_folder = [](pfc::stringp sub)
+	{
+		pfc::string8_fast folder = helpers::get_fb2k_component_path();
+		folder.add_string(sub);
+		return folder;
+	};
+
 	m_menu = GetMenu();
 
-	pfc::string8_fast base = helpers::get_fb2k_component_path();
+	size_t i, j, count;
 
-	// Generate samples menu
-	HMENU samples = CreateMenu();
+	auto test_folder = append_folder("test");
+	if (filesystem::g_exists(test_folder, fb2k::noAbort))
+	{
+		CMenu test = CreateMenu();
+		pfc::string_list_impl test_files;
+		helpers::list_files(test_folder, false, test_files);
 
+		count = test_files.get_count();
+		for (i = 0; i < count; ++i)
+		{
+			m_test.add_item(test_files[i]);
+			pfc::string8_fast display = pfc::string_filename(test_files[i]);
+			uAppendMenu(test, MF_STRING, ID_TEST_BEGIN + m_test.get_count() - 1, display);
+		}
+		uAppendMenu(m_menu, MF_STRING | MF_POPUP, reinterpret_cast<UINT_PTR>(test.m_hMenu), "Test");
+	}
+
+	CMenu samples = CreateMenu();
 	pfc::string_list_impl folders;
-	helpers::list(base + "samples\\", false, false, folders);
-
-	t_size i, j, count;
+	helpers::list_folders(append_folder("samples\\"), folders);
 
 	count = folders.get_count();
 
 	for (i = 0; i < count; ++i)
 	{
-		HMENU sub = CreatePopupMenu();
+		CMenu sub = CreatePopupMenu();
 		pfc::string8_fast folder = folders[i];
 
 		pfc::string_list_impl sub_files;
-		helpers::list(folder, true, false, sub_files);
+		helpers::list_files(folder, false, sub_files);
 
 		for (j = 0; j < sub_files.get_count(); ++j)
 		{
@@ -43,17 +180,14 @@ BOOL CDialogConf::OnInitDialog(HWND hwndFocus, LPARAM lParam)
 			uAppendMenu(sub, MF_STRING, ID_SAMPLES_BEGIN + m_samples.get_count() - 1, display);
 		}
 
-		pfc::string_list_impl path_split;
-		pfc::splitStringSimple_toList(path_split, "\\", folder);
-		uAppendMenu(samples, MF_STRING | MF_POPUP, (UINT_PTR)sub, path_split[path_split.get_count() - 1]);
+		str_vec path_split = helpers::split_string(folder.get_ptr(), "\\");
+		uAppendMenu(samples, MF_STRING | MF_POPUP, reinterpret_cast<UINT_PTR>(sub.m_hMenu), path_split[path_split.size() - 1].c_str());
 	}
 
-	m_menu.AppendMenu(MF_STRING | MF_POPUP, (UINT_PTR)samples, L"Samples");
+	uAppendMenu(m_menu, MF_STRING | MF_POPUP, reinterpret_cast<UINT_PTR>(samples.m_hMenu), "Samples");
 
-	// Generate docs menu
-	HMENU docs = CreateMenu();
-
-	helpers::list(base + "docs\\", true, false, m_docs);
+	CMenu docs = CreateMenu();
+	helpers::list_files(append_folder("docs\\"), false, m_docs);
 	count = m_docs.get_count();
 
 	for (i = 0; i < count; ++i)
@@ -63,281 +197,45 @@ BOOL CDialogConf::OnInitDialog(HWND hwndFocus, LPARAM lParam)
 		uAppendMenu(docs, MF_STRING, ID_DOCS_BEGIN + i, display);
 	}
 
-	m_menu.AppendMenu(MF_STRING | MF_POPUP, (UINT_PTR)docs, L"Docs");
+	uAppendMenu(m_menu, MF_STRING | MF_POPUP, reinterpret_cast<UINT_PTR>(docs.m_hMenu), "Docs");
 
-	// Generate links menu
-	HMENU links = CreateMenu();
-	uAppendMenu(links, MF_STRING, ID_LINKS_BEGIN, "Wiki");
-	uAppendMenu(links, MF_STRING, ID_LINKS_BEGIN + 1, "Releases");
-	uAppendMenu(links, MF_STRING, ID_LINKS_BEGIN + 2, "Report an issue");
-	m_menu.AppendMenu(MF_STRING | MF_POPUP, (UINT_PTR)links , L"Links");
-
-	// Set caption text
-	uSetWindowText(m_hWnd, m_caption);
-
-	// Init resize
-	DlgResize_Init();
-
-	// Apply window placement
-	if (m_parent->m_wndpl.length == 0)
-	{
-		m_parent->m_wndpl.length = sizeof(WINDOWPLACEMENT);
-		memset(&m_parent->m_wndpl, 0, sizeof(WINDOWPLACEMENT));
-	}
-	else
-	{
-		SetWindowPlacement(&m_parent->m_wndpl);
-	}
-
-	// Edit Control
-	m_editorctrl.SubclassWindow(GetDlgItem(IDC_EDIT));
-	m_editorctrl.SetJScript();
-	m_editorctrl.ReadAPI();
-	m_editorctrl.SetContent(m_parent->m_script_code, true);
-	m_editorctrl.SetSavePoint();
-
-	// Script Engine
-	HWND combo_engine = GetDlgItem(IDC_COMBO_ENGINE);
-	ComboBox_AddString(combo_engine, L"Chakra");
-	ComboBox_AddString(combo_engine, L"JScript");
-
-	if (helpers::supports_chakra())
-	{
-		uComboBox_SelectString(combo_engine, m_parent->m_script_engine_str);
-	}
-	else
-	{
-		uComboBox_SelectString(combo_engine, "JScript");
-		GetDlgItem(IDC_COMBO_ENGINE).EnableWindow(false);
-	}
-
-	// Edge Style
-	HWND combo_edge = GetDlgItem(IDC_COMBO_EDGE);
-	ComboBox_AddString(combo_edge, L"None");
-	ComboBox_AddString(combo_edge, L"Sunken");
-	ComboBox_AddString(combo_edge, L"Grey");
-
-	if (core_version_info_v2::get()->test_version(1, 4, 0, 0) && m_parent->get_instance_type() == host_comm::KInstanceTypeDUI)
-	{
-		// Disable in default UI fb2k v1.4 and above
-		ComboBox_SetCurSel(combo_edge, 0);
-		GetDlgItem(IDC_COMBO_EDGE).EnableWindow(false);
-	}
-	else
-	{
-		ComboBox_SetCurSel(combo_edge, m_parent->m_edge_style);
-	}
-
-	// Pseudo Transparent
-	if (m_parent->get_instance_type() == host_comm::KInstanceTypeCUI)
-	{
-		uButton_SetCheck(m_hWnd, IDC_CHECK_PSEUDO_TRANSPARENT, m_parent->m_pseudo_transparent);
-	}
-	else
-	{
-		uButton_SetCheck(m_hWnd, IDC_CHECK_PSEUDO_TRANSPARENT, false);
-		GetDlgItem(IDC_CHECK_PSEUDO_TRANSPARENT).EnableWindow(false);
-	}
-
-	// Grab Focus
-	uButton_SetCheck(m_hWnd, IDC_CHECK_GRABFOCUS, m_parent->m_grab_focus);
-
-	return FALSE;
+	CMenu links = CreateMenu();
+	uAppendMenu(links, MF_STRING, ID_LINKS_BEGIN, "Home page");
+	uAppendMenu(links, MF_STRING, ID_LINKS_BEGIN + 1, "Changelog");
+	uAppendMenu(links, MF_STRING, ID_LINKS_BEGIN + 2, "Releases");
+	uAppendMenu(links, MF_STRING, ID_LINKS_BEGIN + 3, "Report an issue");
+	uAppendMenu(m_menu, MF_STRING | MF_POPUP, reinterpret_cast<UINT_PTR>(links.m_hMenu), "Links");
 }
 
-LRESULT CDialogConf::OnNotify(int idCtrl, LPNMHDR pnmh)
+void CDialogConf::OnCloseCmd(UINT, int nID, CWindow)
 {
-	pfc::string8_fast caption = m_caption;
+	GetWindowPlacement(&g_config.m_conf_wndpl);
 
-	switch (pnmh->code)
-	{
-	case SCN_SAVEPOINTLEFT: // dirty
-		caption += " *";
-		uSetWindowText(m_hWnd, caption);
-		break;
-	case SCN_SAVEPOINTREACHED: // not dirty
-		uSetWindowText(m_hWnd, caption);
-		break;
-	}
-
-	SetMsgHandled(FALSE);
-	return 0;
-}
-
-LRESULT CDialogConf::OnUwmFindTextChanged(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
-{
-	m_lastFlags = wParam;
-	m_lastSearchText = reinterpret_cast<const char*>(lParam);
-	return 0;
-}
-
-LRESULT CDialogConf::OnUwmKeyDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
-{
-	int modifiers = (IsKeyPressed(VK_SHIFT) ? SCMOD_SHIFT : 0) | (IsKeyPressed(VK_CONTROL) ? SCMOD_CTRL : 0) | (IsKeyPressed(VK_MENU) ? SCMOD_ALT : 0);
-
-	if (modifiers == SCMOD_CTRL)
-	{
-		switch (wParam)
-		{
-		case 'F':
-			OpenFindDialog();
-			break;
-
-		case 'H':
-			if (!m_dlgreplace)
-			{
-				m_dlgreplace = new CDialogReplace(GetDlgItem(IDC_EDIT));
-
-				if (!m_dlgreplace || !m_dlgreplace->Create(m_hWnd))
-				{
-					break;
-				}
-			}
-
-			m_dlgreplace->ShowWindow(SW_SHOW);
-			m_dlgreplace->SetFocus();
-			break;
-
-		case 'G':
-			{
-				modal_dialog_scope scope(m_hWnd);
-				CDialogGoto dlg(GetDlgItem(IDC_EDIT));
-				dlg.DoModal(m_hWnd);
-			}
-			break;
-
-		case 'S':
-			Apply();
-			break;
-		}
-	}
-	else if (modifiers == 0)
-	{
-		if (wParam == VK_F3)
-		{
-			// Find next one
-			if (m_lastSearchText.get_length())
-			{
-				FindNext(m_hWnd, m_editorctrl.m_hWnd, m_lastFlags, m_lastSearchText);
-			}
-			else
-			{
-				OpenFindDialog();
-			}
-		}
-	}
-	else if (modifiers == SCMOD_SHIFT)
-	{
-		if (wParam == VK_F3)
-		{
-			// Find previous one
-			if (m_lastSearchText.get_length())
-			{
-				FindPrevious(m_hWnd, m_editorctrl.m_hWnd, m_lastFlags, m_lastSearchText);
-			}
-			else
-			{
-				OpenFindDialog();
-			}
-		}
-	}
-	return 0;
-}
-
-bool CDialogConf::FindNext(HWND hWnd, HWND hWndEdit, t_size flags, const char* which)
-{
-	SendMessage(::GetAncestor(hWndEdit, GA_PARENT), UWM_FIND_TEXT_CHANGED, flags, reinterpret_cast<LPARAM>(which));
-	SendMessage(hWndEdit, SCI_CHARRIGHT, 0, 0);
-	SendMessage(hWndEdit, SCI_SEARCHANCHOR, 0, 0);
-	int pos = SendMessage(hWndEdit, SCI_SEARCHNEXT, flags, reinterpret_cast<LPARAM>(which));
-	return FindResult(hWnd, hWndEdit, pos, which);
-}
-
-bool CDialogConf::FindPrevious(HWND hWnd, HWND hWndEdit, t_size flags, const char* which)
-{
-	SendMessage(::GetAncestor(hWndEdit, GA_PARENT), UWM_FIND_TEXT_CHANGED, flags, reinterpret_cast<LPARAM>(which));
-	SendMessage(hWndEdit, SCI_SEARCHANCHOR, 0, 0);
-	int pos = SendMessage(hWndEdit, SCI_SEARCHPREV, flags, reinterpret_cast<LPARAM>(which));
-	return FindResult(hWnd, hWndEdit, pos, which);
-}
-
-bool CDialogConf::FindResult(HWND hWnd, HWND hWndEdit, int pos, const char* which)
-{
-	if (pos != -1)
-	{
-		// Scroll to view
-		SendMessage(hWndEdit, SCI_SCROLLCARET, 0, 0);
-		return true;
-	}
-
-	pfc::string8_fast msg;
-	msg << "Cannot find \"" << which << "\"";
-	uMessageBox(hWnd, msg, JSP_NAME, MB_ICONINFORMATION | MB_SETFOREGROUND);
-	return false;
-}
-
-void CDialogConf::Apply()
-{
-	// Save panel settings
-	uGetWindowText(GetDlgItem(IDC_COMBO_ENGINE), m_parent->m_script_engine_str);
-	m_parent->m_edge_style = static_cast<host_comm::t_edge_style>(ComboBox_GetCurSel(GetDlgItem(IDC_COMBO_EDGE)));
-	m_parent->m_grab_focus = uButton_GetCheck(m_hWnd, IDC_CHECK_GRABFOCUS);
-	m_parent->m_pseudo_transparent = uButton_GetCheck(m_hWnd, IDC_CHECK_PSEUDO_TRANSPARENT);
-
-	// Get script text
-	pfc::array_t<char> code;
-	int len = m_editorctrl.GetTextLength() + 1;
-	code.set_size(len);
-	m_editorctrl.GetText(code.get_ptr(), len);
-	m_parent->m_script_code = code.get_ptr();
-	m_parent->update_script();
-
-	// Window position
-	GetWindowPlacement(&m_parent->m_wndpl);
-
-	// Save point
-	m_editorctrl.SetSavePoint();
-}
-
-void CDialogConf::OnCloseCmd(UINT uNotifyCode, int nID, HWND wndCtl)
-{
 	switch (nID)
 	{
 	case IDOK:
 		Apply();
 		break;
-	case IDC_APPLY:
+	case IDC_BTN_APPLY:
 		Apply();
 		return;
 	case IDCANCEL:
-		if (m_editorctrl.GetModify())
+		if (m_editorctrl.GetModify() && uMessageBox(m_hWnd, "Unsaved changes will be lost. Are you sure?", jsp::component_name, MB_ICONWARNING | MB_SETFOREGROUND | MB_YESNO) != IDYES)
 		{
-			int ret = uMessageBox(m_hWnd, "Unsaved changes will be lost. Are you sure?", JSP_NAME, MB_ICONWARNING | MB_SETFOREGROUND | MB_YESNO);
-			switch (ret)
-			{
-			case IDYES:
-				break;
-			default:
-				return;
-			}
+			return;
 		}
 	}
 	EndDialog(nID);
 }
 
-void CDialogConf::OnDocs(UINT uNotifyCode, int nID, HWND wndCtl)
+void CDialogConf::OnDocs(UINT, int nID, CWindow)
 {
 	pfc::string8_fast tmp = file_path_display(m_docs[nID - ID_DOCS_BEGIN]).get_ptr();
 	string_wide_from_utf8_fast path(tmp);
 	ShellExecute(nullptr, L"open", path, nullptr, nullptr, SW_SHOW);
 }
 
-void CDialogConf::OnFileSave(UINT uNotifyCode, int nID, HWND wndCtl)
-{
-	Apply();
-}
-
-void CDialogConf::OnFileImport(UINT uNotifyCode, int nID, HWND wndCtl)
+void CDialogConf::OnFileImport(UINT, int, CWindow)
 {
 	pfc::string8_fast filename;
 	if (uGetOpenFileName(m_hWnd, "Text files|*.txt|JScript files|*.js|All files|*.*", 0, "txt", "Import from", nullptr, filename, FALSE))
@@ -346,54 +244,33 @@ void CDialogConf::OnFileImport(UINT uNotifyCode, int nID, HWND wndCtl)
 	}
 }
 
-void CDialogConf::OnFileExport(UINT uNotifyCode, int nID, HWND wndCtl)
+void CDialogConf::OnFileExport(UINT, int, CWindow)
 {
 	pfc::string8_fast filename;
 	if (uGetOpenFileName(m_hWnd, "Text files|*.txt|All files|*.*", 0, "txt", "Save as", nullptr, filename, TRUE))
 	{
-		int len = m_editorctrl.GetTextLength();
-		pfc::string8_fast text;
-
-		m_editorctrl.GetText(text.lock_buffer(len), len + 1);
-		text.unlock_buffer();
-
-		helpers::write_file(filename, text);
+		helpers::write_file(filename, GetText());
 	}
 }
 
-void CDialogConf::OnLinks(UINT uNotifyCode, int nID, HWND wndCtl)
+void CDialogConf::OnLinks(UINT, int nID, CWindow)
 {
-	const wchar_t* links[] = {
-		L"https://github.com/marc2k3/foo_jscript_panel/wiki",
-		L"https://github.com/marc2k3/foo_jscript_panel/releases",
-		L"https://github.com/marc2k3/foo_jscript_panel/issues"
-	};
-
 	ShellExecute(nullptr, L"open", links[nID - ID_LINKS_BEGIN], nullptr, nullptr, SW_SHOW);
 }
 
-void CDialogConf::OnReset(UINT uNotifyCode, int nID, HWND wndCtl)
+void CDialogConf::OnReset(UINT, int, CWindow)
 {
-	uComboBox_SelectString(GetDlgItem(IDC_COMBO_ENGINE), host_comm::get_default_script_engine_str());
-	ComboBox_SetCurSel(GetDlgItem(IDC_COMBO_EDGE), 0);
-	uButton_SetCheck(m_hWnd, IDC_CHECK_PSEUDO_TRANSPARENT, false);
-	uButton_SetCheck(m_hWnd, IDC_CHECK_GRABFOCUS, true);
-	m_editorctrl.SetContent(host_comm::get_default_script_code());
+	m_edge_combo.SetCurSel(0);
+	m_transparent_check.SetCheck(false);
+	m_editorctrl.SetContent(helpers::get_resource_text(IDR_SCRIPT));
 }
 
-void CDialogConf::OnSamples(UINT uNotifyCode, int nID, HWND wndCtl)
+void CDialogConf::OnSamples(UINT, int nID, CWindow)
 {
-	m_editorctrl.SetContent(helpers::read_file(file_path_display(m_samples[nID - ID_SAMPLES_BEGIN])));
+	m_editorctrl.SetContent(helpers::read_file(file_path_display(m_samples[nID - ID_SAMPLES_BEGIN]).get_ptr()));
 }
 
-void CDialogConf::OpenFindDialog()
+void CDialogConf::OnTest(UINT, int nID, CWindow)
 {
-	if (!m_dlgfind)
-	{
-		m_dlgfind = new CDialogFind(GetDlgItem(IDC_EDIT));
-		m_dlgfind->Create(m_hWnd);
-	}
-
-	m_dlgfind->ShowWindow(SW_SHOW);
-	m_dlgfind->SetFocus();
+	m_editorctrl.SetContent(helpers::read_file(file_path_display(m_test[nID - ID_TEST_BEGIN]).get_ptr()));
 }

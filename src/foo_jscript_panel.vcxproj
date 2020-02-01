@@ -48,32 +48,30 @@
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)$(Configuration)\$(ProjectName)\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)$(Configuration)\$(ProjectName)\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
-    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\src;..\src\script_interface;..\src\ui;..\includes;..\includes\PropertyList;..\includes\wtl;..\scintilla\include;$(IncludePath)</IncludePath>
-    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\src;..\src\script_interface;..\src\ui;..\includes;..\includes\PropertyList;..\includes\wtl;..\scintilla\include;$(IncludePath)</IncludePath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectName)</TargetName>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectName)</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <PreBuildEvent>
-      <Command>
-      </Command>
-    </PreBuildEvent>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\foobar2000-SDK;..\foobar2000-SDK\wtl;..\scintilla\include;..\scintilla\lexilla\src;..\src;..\src\script_interface;..\src\ui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-      <AdditionalOptions>/Zc:threadSafeInit- %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/Zc:__cplusplus %(AdditionalOptions)</AdditionalOptions>
       <ConformanceMode>true</ConformanceMode>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <DiagnosticsFormat>Caret</DiagnosticsFormat>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>GdiPlus.lib;shared.lib;shlwapi.lib;WinMM.lib;Imm32.lib;uxtheme.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>../foobar2000/shared;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>$(SolutionDir)..\foobar2000-SDK\foobar2000\shared\shared.lib;$(SolutionDir)..\scintilla\bin\liblexilla.lib;GdiPlus.lib;shlwapi.lib;WinMM.lib;Imm32.lib;uxtheme.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <DelayLoadDLLs>%(DelayLoadDLLs)</DelayLoadDLLs>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
@@ -81,7 +79,7 @@
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
     <PostBuildEvent>
-      <Command>set component_path=$(SolutionDir)..\foo_jscript_panel
+      <Command>set component_path=$(SolutionDir)..\component
 copy /Y "$(TargetPath)" "%component_path%\"
 copy /Y "$(TargetDir)$(TargetName).pdb" "%component_path%\"</Command>
     </PostBuildEvent>
@@ -90,34 +88,38 @@ copy /Y "$(TargetDir)$(TargetName).pdb" "%component_path%\"</Command>
       <HeaderFileName>%(Filename)_h.h</HeaderFileName>
       <OutputDirectory>$(SolutionDir)script_interface</OutputDirectory>
     </Midl>
+    <PreBuildEvent>
+      <Command>cd $(SolutionDir)..\scintilla
+if not exist bin mkdir bin
+cd lexilla\src
+nmake DEBUG=1 -f lexilla.mak</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <PreBuildEvent>
-      <Command>
-      </Command>
-    </PreBuildEvent>
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_WARNINGS;_CRT_NON_CONFORMING_SWPRINTFS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\foobar2000-SDK;..\foobar2000-SDK\wtl;..\scintilla\include;..\scintilla\lexilla\src;..\src;..\src\script_interface;..\src\ui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <FloatingPointModel>Fast</FloatingPointModel>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <WarningLevel>Level4</WarningLevel>
+      <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalOptions>/Zc:threadSafeInit- %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/Zc:__cplusplus %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <DiagnosticsFormat>Caret</DiagnosticsFormat>
     </ClCompile>
     <ResourceCompile>
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>GdiPlus.lib;shared.lib;shlwapi.lib;WinMM.lib;Imm32.lib;uxtheme.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>../foobar2000/shared;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>$(SolutionDir)..\foobar2000-SDK\foobar2000\shared\shared.lib;$(SolutionDir)..\scintilla\bin\liblexilla.lib;GdiPlus.lib;shlwapi.lib;WinMM.lib;Imm32.lib;uxtheme.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <DelayLoadDLLs>%(DelayLoadDLLs)</DelayLoadDLLs>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
@@ -126,31 +128,40 @@ copy /Y "$(TargetDir)$(TargetName).pdb" "%component_path%\"</Command>
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>set component_path=$(SolutionDir)..\foo_jscript_panel
+      <Command>set component_path=$(SolutionDir)..\component
 copy /Y "$(TargetPath)" "%component_path%\"
 copy /Y "$(TargetDir)$(TargetName).pdb" "%component_path%\"</Command>
     </PostBuildEvent>
     <Midl>
-      <OutputDirectory>$(SolutionDir)script_interface</OutputDirectory>
       <TypeLibraryName>$(SolutionDir)resource\$(ProjectName).tlb</TypeLibraryName>
       <HeaderFileName>%(Filename)_h.h</HeaderFileName>
+      <OutputDirectory>$(SolutionDir)script_interface</OutputDirectory>
     </Midl>
+    <PreBuildEvent>
+      <Command>cd $(SolutionDir)..\scintilla
+if not exist bin mkdir bin
+cd lexilla\src
+nmake -f lexilla.mak</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ProjectReference Include="..\columns_ui-sdk\columns_ui-sdk.vcxproj">
+    <ProjectReference Include="..\foobar2000-SDK\columns_ui-sdk\columns_ui-sdk.vcxproj">
       <Project>{93ec0ede-01cd-4fb0-b8e8-4f2a027e026e}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\pfc\pfc.vcxproj">
+    <ProjectReference Include="..\foobar2000-SDK\foobar2000\helpers\foobar2000_sdk_helpers.vcxproj">
+      <Project>{ee47764e-a202-4f85-a767-abdab4aff35f}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\foobar2000-SDK\libPPUI\libPPUI.vcxproj">
+      <Project>{7729eb82-4069-4414-964b-ad399091a03f}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\foobar2000-SDK\pfc\pfc.vcxproj">
       <Project>{ebfffb4e-261d-44d3-b89c-957b31a0bf9c}</Project>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
-    <ProjectReference Include="..\foobar2000\foobar2000_component_client\foobar2000_component_client.vcxproj">
+    <ProjectReference Include="..\foobar2000-SDK\foobar2000\foobar2000_component_client\foobar2000_component_client.vcxproj">
       <Project>{71ad2674-065b-48f5-b8b0-e1f9d3892081}</Project>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
-    <ProjectReference Include="..\foobar2000\SDK\foobar2000_SDK.vcxproj">
+    <ProjectReference Include="..\foobar2000-SDK\foobar2000\SDK\foobar2000_SDK.vcxproj">
       <Project>{e8091321-d79d-4575-86ef-064ea1a4a20d}</Project>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
     <ProjectReference Include="..\scintilla\win32\SciLexer.vcxproj">
       <Project>{fbe04237-9c7b-4973-9c60-505975998b39}</Project>
@@ -162,82 +173,122 @@ copy /Y "$(TargetDir)$(TargetName).pdb" "%component_path%\"</Command>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="component_defines.h" />
+    <ClInclude Include="callback_data.h" />
+    <ClInclude Include="callback_id.h" />
+    <ClInclude Include="drop_source_impl.h" />
+    <ClInclude Include="drop_target_impl.h" />
+    <ClInclude Include="foo_jscript_panel.h" />
+    <ClInclude Include="guids.h" />
     <ClInclude Include="helpers.h" />
-    <ClInclude Include="host_comm.h" />
     <ClInclude Include="host_drop_target.h" />
     <ClInclude Include="host_timer_dispatcher.h" />
-    <ClInclude Include="panel_window.h" />
+    <ClInclude Include="kmeans.h" />
+    <ClInclude Include="panel_config.h" />
     <ClInclude Include="panel_manager.h" />
+    <ClInclude Include="panel_properties.h" />
+    <ClInclude Include="panel_window.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="script_host.h" />
+    <ClInclude Include="script_info.h" />
     <ClInclude Include="script_interface\com_tools.h" />
-    <ClInclude Include="script_interface\console.h" />
-    <ClInclude Include="script_interface\fb.h" />
-    <ClInclude Include="script_interface\gdi.h" />
-    <ClInclude Include="script_interface\plman.h" />
+    <ClInclude Include="script_interface\Console.h" />
+    <ClInclude Include="script_interface\ContextMenuManager.h" />
+    <ClInclude Include="script_interface\DropSourceAction.h" />
+    <ClInclude Include="script_interface\Fb.h" />
+    <ClInclude Include="script_interface\FileInfo.h" />
+    <ClInclude Include="script_interface\Gdi.h" />
+    <ClInclude Include="script_interface\GdiBitmap.h" />
+    <ClInclude Include="script_interface\GdiFont.h" />
+    <ClInclude Include="script_interface\GdiGraphics.h" />
+    <ClInclude Include="script_interface\GdiRawBitmap.h" />
+    <ClInclude Include="script_interface\MainMenuManager.h" />
+    <ClInclude Include="script_interface\MeasureStringInfo.h" />
+    <ClInclude Include="script_interface\MenuObj.h" />
+    <ClInclude Include="script_interface\MetadbHandle.h" />
+    <ClInclude Include="script_interface\MetadbHandleList.h" />
+    <ClInclude Include="script_interface\PlaybackQueueItem.h" />
+    <ClInclude Include="script_interface\PlayingItemLocation.h" />
+    <ClInclude Include="script_interface\Plman.h" />
+    <ClInclude Include="script_interface\Profiler.h" />
     <ClInclude Include="script_interface\script_interface.h" />
-    <ClInclude Include="script_interface\utils.h" />
-    <ClInclude Include="script_interface\window.h" />
+    <ClInclude Include="script_interface\script_interface_h.h" />
+    <ClInclude Include="script_interface\ThemeManager.h" />
+    <ClInclude Include="script_interface\TitleFormat.h" />
+    <ClInclude Include="script_interface\Tooltip.h" />
+    <ClInclude Include="script_interface\UiSelectionHolder.h" />
+    <ClInclude Include="script_interface\Utils.h" />
+    <ClInclude Include="script_interface\Window.h" />
+    <ClInclude Include="stackblur.h" />
     <ClInclude Include="stats.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="thread_pool.h" />
-    <ClInclude Include="ui\editorctrl.h" />
-    <ClInclude Include="ui\properties.h" />
-    <ClInclude Include="ui\scintilla_prop_sets.h" />
+    <ClInclude Include="ui\config.h" />
+    <ClInclude Include="ui\editor_ctrl.h" />
+    <ClInclude Include="ui\property_ctrl.h" />
     <ClInclude Include="ui\ui_conf.h" />
-    <ClInclude Include="ui\ui_find.h" />
+    <ClInclude Include="ui\ui_find_replace.h" />
     <ClInclude Include="ui\ui_goto.h" />
     <ClInclude Include="ui\ui_input_box.h" />
-    <ClInclude Include="ui\ui_name_value_edit.h" />
-    <ClInclude Include="ui\ui_pref.h" />
     <ClInclude Include="ui\ui_property.h" />
-    <ClInclude Include="ui\ui_replace.h" />
+    <ClInclude Include="ui\wtlscintilla.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="foo_jscript_panel.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="helpers.cpp" />
-    <ClCompile Include="host_comm.cpp" />
     <ClCompile Include="host_drop_target.cpp" />
     <ClCompile Include="host_timer_dispatcher.cpp" />
+    <ClCompile Include="mainmenu.cpp" />
+    <ClCompile Include="panel_manager.cpp" />
     <ClCompile Include="panel_manager_callbacks.cpp" />
+    <ClCompile Include="panel_properties.cpp" />
     <ClCompile Include="panel_window.cpp" />
     <ClCompile Include="panel_window_cui.cpp" />
     <ClCompile Include="panel_window_dui.cpp" />
-    <ClCompile Include="mainmenu.cpp" />
-    <ClCompile Include="panel_manager.cpp" />
     <ClCompile Include="script_host.cpp" />
-    <ClCompile Include="script_interface\console.cpp" />
-    <ClCompile Include="script_interface\fb.cpp" />
-    <ClCompile Include="script_interface\gdi.cpp" />
-    <ClCompile Include="script_interface\plman.cpp" />
-    <ClCompile Include="script_interface\script_interface.cpp" />
-    <ClCompile Include="script_interface\utils.cpp" />
-    <ClCompile Include="script_interface\window.cpp" />
+    <ClCompile Include="script_interface\Console.cpp" />
+    <ClCompile Include="script_interface\ContextMenuManager.cpp" />
+    <ClCompile Include="script_interface\DropSourceAction.cpp" />
+    <ClCompile Include="script_interface\Fb.cpp" />
+    <ClCompile Include="script_interface\FileInfo.cpp" />
+    <ClCompile Include="script_interface\Gdi.cpp" />
+    <ClCompile Include="script_interface\GdiBitmap.cpp" />
+    <ClCompile Include="script_interface\GdiFont.cpp" />
+    <ClCompile Include="script_interface\GdiGraphics.cpp" />
+    <ClCompile Include="script_interface\GdiRawBitmap.cpp" />
+    <ClCompile Include="script_interface\MainMenuManager.cpp" />
+    <ClCompile Include="script_interface\MeasureStringInfo.cpp" />
+    <ClCompile Include="script_interface\MenuObj.cpp" />
+    <ClCompile Include="script_interface\MetadbHandle.cpp" />
+    <ClCompile Include="script_interface\MetadbHandleList.cpp" />
+    <ClCompile Include="script_interface\PlaybackQueueItem.cpp" />
+    <ClCompile Include="script_interface\PlayingItemLocation.cpp" />
+    <ClCompile Include="script_interface\Plman.cpp" />
+    <ClCompile Include="script_interface\Profiler.cpp" />
+    <ClCompile Include="script_interface\ThemeManager.cpp" />
+    <ClCompile Include="script_interface\TitleFormat.cpp" />
+    <ClCompile Include="script_interface\Tooltip.cpp" />
+    <ClCompile Include="script_interface\UiSelectionHolder.cpp" />
+    <ClCompile Include="script_interface\Utils.cpp" />
+    <ClCompile Include="script_interface\Window.cpp" />
     <ClCompile Include="stats.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="thread_pool.cpp" />
-    <ClCompile Include="ui\editorctrl.cpp" />
-    <ClCompile Include="ui\properties.cpp" />
-    <ClCompile Include="ui\scintilla_prop_sets.cpp" />
+    <ClCompile Include="ui\config.cpp" />
+    <ClCompile Include="ui\editor_ctrl.cpp" />
     <ClCompile Include="ui\ui_conf.cpp" />
-    <ClCompile Include="ui\ui_find.cpp" />
+    <ClCompile Include="ui\ui_find_replace.cpp" />
     <ClCompile Include="ui\ui_goto.cpp" />
     <ClCompile Include="ui\ui_input_box.cpp" />
-    <ClCompile Include="ui\ui_name_value_edit.cpp" />
-    <ClCompile Include="ui\ui_pref.cpp" />
+    <ClCompile Include="ui\ui_preferences.cpp" />
     <ClCompile Include="ui\ui_property.cpp" />
-    <ClCompile Include="ui\ui_replace.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <Midl Include="script_interface\script_interface.idl" />
-  </ItemGroup>
-  <ItemGroup>
+    <None Include="cpp.hint" />
     <None Include="resource\cfgBright.cfg" />
     <None Include="resource\cfgDark.cfg" />
     <None Include="resource\cfgRubyBlue.cfg" />
@@ -246,7 +297,13 @@ copy /Y "$(TargetDir)$(TargetName).pdb" "%component_path%\"</Command>
     <None Include="resource\foo_jscript_panel.tlb" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="resource\foo_jscript_panel.rc" />
+    <ResourceCompile Include="resource\foo_jscript_panel.rc">
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\foobar2000-SDK;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\foobar2000-SDK;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Midl Include="script_interface\script_interface.idl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

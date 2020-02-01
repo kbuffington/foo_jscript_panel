@@ -1,23 +1,18 @@
 #include "stdafx.h"
 
+#include <Scintilla.h>
+#include <libPPUI/gdiplus_helpers.h>
+
 // Script TypeLib
 ITypeLibPtr g_typelib;
 
-namespace
+namespace jsp
 {
-	DECLARE_COMPONENT_VERSION(
-		JSP_NAME,
-		JSP_VERSION,
-		JSP_NAME_VERSION " by marc2003\n"
-		"Based on WSH Panel Mod by T.P. Wang\n"
-		"Thanks for the contributions by TheQwertiest and kbuffington\n\n"
-		"Build: " __TIME__ ", " __DATE__ "\n"
-		"Columns UI SDK Version: " UI_EXTENSION_VERSION
-	);
-
-	VALIDATE_COMPONENT_FILENAME(JSP_DLL_NAME);
+	DECLARE_COMPONENT_VERSION(component_name, component_version, component_info);
+	VALIDATE_COMPONENT_FILENAME(component_dll_name);
 
 	CAppModule _Module;
+	GdiplusScope scope;
 
 	extern "C" BOOL WINAPI DllMain(HINSTANCE ins, DWORD reason, LPVOID lp)
 	{
@@ -34,33 +29,10 @@ namespace
 			}
 			break;
 		case DLL_PROCESS_DETACH:
-			{
-				_Module.Term();
-				Scintilla_ReleaseResources();
-			}
+			_Module.Term();
+			Scintilla_ReleaseResources();
 			break;
 		}
 		return TRUE;
 	}
-
-	class gdiplus_init
-	{
-	public:
-		gdiplus_init()
-		{
-			Gdiplus::GdiplusStartupInput gdip_input;
-			Gdiplus::GdiplusStartup(&m_gdip_token, &gdip_input, nullptr);
-		}
-
-		~gdiplus_init()
-		{
-			Gdiplus::GdiplusShutdown(m_gdip_token);
-		}
-
-	private:
-		ULONG_PTR m_gdip_token;
-
-		PFC_CLASS_NOT_COPYABLE_EX(gdiplus_init);
-	};
-	gdiplus_init blah;
 }

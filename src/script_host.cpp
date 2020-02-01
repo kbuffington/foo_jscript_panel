@@ -1,105 +1,19 @@
 #include "stdafx.h"
-#include "helpers.h"
-#include "host_comm.h"
+#include "panel_window.h"
 #include "script_host.h"
-#include "console.h"
-#include "fb.h"
-#include "gdi.h"
-#include "plman.h"
-#include "utils.h"
-#include "window.h"
 
-#define DEFINE_ID_NAME_ENTRY(x) { callback_id::##x, PFC_WIDESTRING(#x) }
-
-struct id_name_entry
-{
-	t_size id;
-	const wchar_t* name;
-};
-
-static const id_name_entry id_names[] =
-{
-	DEFINE_ID_NAME_ENTRY(on_always_on_top_changed),
-	DEFINE_ID_NAME_ENTRY(on_char),
-	DEFINE_ID_NAME_ENTRY(on_colours_changed),
-	DEFINE_ID_NAME_ENTRY(on_cursor_follow_playback_changed),
-	DEFINE_ID_NAME_ENTRY(on_drag_drop),
-	DEFINE_ID_NAME_ENTRY(on_drag_enter),
-	DEFINE_ID_NAME_ENTRY(on_drag_leave),
-	DEFINE_ID_NAME_ENTRY(on_drag_over),
-	DEFINE_ID_NAME_ENTRY(on_dsp_preset_changed),
-	DEFINE_ID_NAME_ENTRY(on_focus),
-	DEFINE_ID_NAME_ENTRY(on_font_changed),
-	DEFINE_ID_NAME_ENTRY(on_get_album_art_done),
-	DEFINE_ID_NAME_ENTRY(on_item_focus_change),
-	DEFINE_ID_NAME_ENTRY(on_item_played),
-	DEFINE_ID_NAME_ENTRY(on_key_down),
-	DEFINE_ID_NAME_ENTRY(on_key_up),
-	DEFINE_ID_NAME_ENTRY(on_library_items_added),
-	DEFINE_ID_NAME_ENTRY(on_library_items_changed),
-	DEFINE_ID_NAME_ENTRY(on_library_items_removed),
-	DEFINE_ID_NAME_ENTRY(on_load_image_done),
-	DEFINE_ID_NAME_ENTRY(on_main_menu),
-	DEFINE_ID_NAME_ENTRY(on_metadb_changed),
-	DEFINE_ID_NAME_ENTRY(on_mouse_lbtn_dblclk),
-	DEFINE_ID_NAME_ENTRY(on_mouse_lbtn_down),
-	DEFINE_ID_NAME_ENTRY(on_mouse_lbtn_up),
-	DEFINE_ID_NAME_ENTRY(on_mouse_leave),
-	DEFINE_ID_NAME_ENTRY(on_mouse_mbtn_dblclk),
-	DEFINE_ID_NAME_ENTRY(on_mouse_mbtn_down),
-	DEFINE_ID_NAME_ENTRY(on_mouse_mbtn_up),
-	DEFINE_ID_NAME_ENTRY(on_mouse_move),
-	DEFINE_ID_NAME_ENTRY(on_mouse_rbtn_dblclk),
-	DEFINE_ID_NAME_ENTRY(on_mouse_rbtn_down),
-	DEFINE_ID_NAME_ENTRY(on_mouse_rbtn_up),
-	DEFINE_ID_NAME_ENTRY(on_mouse_wheel),
-	DEFINE_ID_NAME_ENTRY(on_mouse_wheel_h),
-	DEFINE_ID_NAME_ENTRY(on_notify_data),
-	DEFINE_ID_NAME_ENTRY(on_output_device_changed),
-	DEFINE_ID_NAME_ENTRY(on_paint),
-	DEFINE_ID_NAME_ENTRY(on_playback_dynamic_info),
-	DEFINE_ID_NAME_ENTRY(on_playback_dynamic_info_track),
-	DEFINE_ID_NAME_ENTRY(on_playback_edited),
-	DEFINE_ID_NAME_ENTRY(on_playback_follow_cursor_changed),
-	DEFINE_ID_NAME_ENTRY(on_playback_new_track),
-	DEFINE_ID_NAME_ENTRY(on_playback_order_changed),
-	DEFINE_ID_NAME_ENTRY(on_playback_pause),
-	DEFINE_ID_NAME_ENTRY(on_playback_queue_changed),
-	DEFINE_ID_NAME_ENTRY(on_playback_seek),
-	DEFINE_ID_NAME_ENTRY(on_playback_starting),
-	DEFINE_ID_NAME_ENTRY(on_playback_stop),
-	DEFINE_ID_NAME_ENTRY(on_playback_time),
-	DEFINE_ID_NAME_ENTRY(on_playlist_item_ensure_visible),
-	DEFINE_ID_NAME_ENTRY(on_playlist_items_added),
-	DEFINE_ID_NAME_ENTRY(on_playlist_items_removed),
-	DEFINE_ID_NAME_ENTRY(on_playlist_items_reordered),
-	DEFINE_ID_NAME_ENTRY(on_playlist_items_selection_change),
-	DEFINE_ID_NAME_ENTRY(on_playlist_stop_after_current_changed),
-	DEFINE_ID_NAME_ENTRY(on_playlist_switch),
-	DEFINE_ID_NAME_ENTRY(on_playlists_changed),
-	DEFINE_ID_NAME_ENTRY(on_replaygain_mode_changed),
-	DEFINE_ID_NAME_ENTRY(on_script_unload),
-	DEFINE_ID_NAME_ENTRY(on_selection_changed),
-	DEFINE_ID_NAME_ENTRY(on_size),
-	DEFINE_ID_NAME_ENTRY(on_volume_change)
-};
-
-script_host::script_host(host_comm* host)
+script_host::script_host(panel_window* host)
 	: m_host(host)
 	, m_window(new com_object_impl_t<Window, false>(host))
 	, m_gdi(com_object_singleton_t<Gdi>::instance())
 	, m_fb(com_object_singleton_t<Fb>::instance())
 	, m_utils(com_object_singleton_t<Utils>::instance())
 	, m_plman(com_object_singleton_t<Plman>::instance())
-	, m_console(com_object_singleton_t<Console>::instance())
-	, m_ref_count(1)
-	, m_engine_inited(false)
-	, m_has_error(false)
-	, m_last_source_context(0) {}
+	, m_console(com_object_singleton_t<Console>::instance()) {}
 
 script_host::~script_host() {}
 
-DWORD script_host::GenerateSourceContext(const pfc::string8_fast& path)
+DWORD script_host::GenerateSourceContext(pfc::stringp path)
 {
 	m_context_to_path_map[++m_last_source_context] = path;
 	return m_last_source_context;
@@ -108,7 +22,7 @@ DWORD script_host::GenerateSourceContext(const pfc::string8_fast& path)
 HRESULT script_host::Initialise()
 {
 	IActiveScriptParsePtr parser;
-	ProcessScriptInfo(m_host->m_script_info);
+	ProcessScriptInfo();
 
 	HRESULT hr = InitScriptEngine();
 	if (SUCCEEDED(hr)) hr = m_script_engine->SetScriptSite(this);
@@ -122,37 +36,40 @@ HRESULT script_host::Initialise()
 	if (SUCCEEDED(hr)) hr = m_script_engine->AddNamedItem(L"console", SCRIPTITEM_ISVISIBLE);
 	if (SUCCEEDED(hr)) hr = m_script_engine->SetScriptState(SCRIPTSTATE_CONNECTED);
 	if (SUCCEEDED(hr)) hr = m_script_engine->GetScriptDispatch(nullptr, &m_script_root);
-	if (SUCCEEDED(hr)) hr = ProcessImportedScripts(parser);
-	if (SUCCEEDED(hr))
-	{
-		DWORD source_context = GenerateSourceContext("<main>");
-		hr = parser->ParseScriptText(string_wide_from_utf8_fast(m_host->m_script_code), nullptr, nullptr, nullptr, source_context, 0, SCRIPTTEXT_HOSTMANAGESSOURCE | SCRIPTTEXT_ISVISIBLE, nullptr, nullptr);
-	}
+	if (SUCCEEDED(hr)) hr = ProcessScripts(parser);
 	if (SUCCEEDED(hr)) hr = InitCallbackMap();
-	if (SUCCEEDED(hr))
-	{
-		m_engine_inited = true;
-		m_has_error = false;
-	}
-	else
-	{
-		m_engine_inited = false;
-		m_has_error = true;
-	}
+	
+	m_engine_inited = SUCCEEDED(hr);
+	m_has_error = FAILED(hr);
 	return hr;
 }
 
 HRESULT script_host::InitCallbackMap()
 {
-	m_callback_map.remove_all();
+	m_callback_map.clear();
 	if (!m_script_root) return E_POINTER;
-	for (const auto& i : id_names)
+	for (const auto& [id, name] : callback_id_names)
 	{
-		LPOLESTR name = const_cast<LPOLESTR>(i.name);
+		auto cname = const_cast<LPOLESTR>(name);
 		DISPID dispId;
-		if (SUCCEEDED(m_script_root->GetIDsOfNames(IID_NULL, &name, 1, LOCALE_USER_DEFAULT, &dispId)))
+		if (SUCCEEDED(m_script_root->GetIDsOfNames(IID_NULL, &cname, 1, LOCALE_USER_DEFAULT, &dispId)))
 		{
-			m_callback_map[i.id] = dispId;
+			m_callback_map[id] = dispId;
+
+			switch (id)
+			{
+			case callback_id::on_char:
+			case callback_id::on_key_down:
+			case callback_id::on_key_up:
+				m_host->m_grabfocus = true;
+				break;
+			case callback_id::on_drag_drop:
+			case callback_id::on_drag_enter:
+			case callback_id::on_drag_leave:
+			case callback_id::on_drag_over:
+				m_host->m_dragdrop = true;
+				break;
+			}
 		}
 	}
 	return S_OK;
@@ -160,67 +77,60 @@ HRESULT script_host::InitCallbackMap()
 
 HRESULT script_host::InitScriptEngine()
 {
-	HRESULT hr = E_FAIL;
-	const DWORD classContext = CLSCTX_INPROC_SERVER | CLSCTX_INPROC_HANDLER;
-
-	if (helpers::supports_chakra() && _stricmp(m_host->m_script_engine_str, "Chakra") == 0)
-	{
-		static const CLSID jscript9clsid = { 0x16d51579, 0xa30b, 0x4c8b,{ 0xa2, 0x76, 0x0f, 0xf4, 0xdc, 0x41, 0xe7, 0x55 } };
-		hr = m_script_engine.CreateInstance(jscript9clsid, nullptr, classContext);
-	}
+	static constexpr CLSID jscript9clsid = { 0x16d51579, 0xa30b, 0x4c8b,{ 0xa2, 0x76, 0x0f, 0xf4, 0xdc, 0x41, 0xe7, 0x55 } };
+	static constexpr DWORD classContext = CLSCTX_INPROC_SERVER | CLSCTX_INPROC_HANDLER;
+	HRESULT hr = m_script_engine.CreateInstance(jscript9clsid, nullptr, classContext);
 
 	if (FAILED(hr))
 	{
-		hr = m_script_engine.CreateInstance("jscript", nullptr, classContext);
+		FB2K_console_formatter() << jsp::component_name << ": This component requires a system with IE9 or later.";
+		return hr;
 	}
 
-	if (SUCCEEDED(hr))
+	IActiveScriptProperty* pActScriProp = nullptr;
+	m_script_engine->QueryInterface(IID_IActiveScriptProperty, reinterpret_cast<void**>(&pActScriProp));
+	VARIANT scriptLangVersion;
+	scriptLangVersion.vt = VT_I4;
+	scriptLangVersion.lVal = SCRIPTLANGUAGEVERSION_5_8 + 1;
+	pActScriProp->SetProperty(SCRIPTPROP_INVOKEVERSIONING, nullptr, &scriptLangVersion);
+	pActScriProp->Release();
+	return S_OK;
+}
+
+HRESULT script_host::ProcessScripts(IActiveScriptParsePtr& parser)
+{
+	HRESULT hr = S_OK;
+	pfc::string8_fast path, code;
+	const size_t count = m_info.imports.size();
+	size_t import_errors = 0;
+
+	for (size_t i = 0; i <= count; ++i)
 	{
-		IActiveScriptProperty* pActScriProp = nullptr;
-		m_script_engine->QueryInterface(IID_IActiveScriptProperty, (void**)&pActScriProp);
-		VARIANT scriptLangVersion;
-		scriptLangVersion.vt = VT_I4;
-		scriptLangVersion.lVal = SCRIPTLANGUAGEVERSION_5_8 + 1;
-		pActScriProp->SetProperty(SCRIPTPROP_INVOKEVERSIONING, nullptr, &scriptLangVersion);
-		pActScriProp->Release();
+		if (i < count) // import
+		{
+			path = m_info.expand_import(i).c_str();
+			code = helpers::read_file(path);
+			if (code.is_empty())
+			{
+				if (import_errors == 0)
+				{
+					FB2K_console_formatter() << m_info.build_info_string();
+					import_errors++;
+				}
+				FB2K_console_formatter() << "Error: Failed to load " << path;
+			}
+		}
+		else // main
+		{
+			path = "<main>";
+			code = m_host->m_panel_config.code;
+		}
+
+		const DWORD source_context = GenerateSourceContext(path);
+		hr = parser->ParseScriptText(string_wide_from_utf8_fast(code), nullptr, nullptr, nullptr, source_context, 0, SCRIPTTEXT_HOSTMANAGESSOURCE | SCRIPTTEXT_ISVISIBLE, nullptr, nullptr);
+		if (FAILED(hr)) break;
 	}
 	return hr;
-}
-
-HRESULT script_host::InvokeCallback(t_size callbackId, VARIANTARG* argv, t_size argc, VARIANT* ret)
-{
-	if (!m_script_root) return E_POINTER;
-	if (HasError() || !Ready()) return E_FAIL;
-	if (!m_callback_map.have_item(callbackId)) return DISP_E_MEMBERNOTFOUND;
-	DISPPARAMS param = { argv, nullptr, argc, 0 };
-	return m_script_root->Invoke(m_callback_map[callbackId], IID_NULL, LOCALE_USER_DEFAULT, DISPATCH_METHOD, &param, ret, nullptr, nullptr);
-}
-
-HRESULT script_host::ProcessImportedScripts(IActiveScriptParsePtr& parser)
-{
-	pfc::string_formatter error_text;
-	const t_size count = m_host->m_script_info.imports.get_count();
-	for (t_size i = 0; i < count; ++i)
-	{
-		pfc::string8_fast path = m_host->m_script_info.expand_import(i);
-		pfc::string8_fast code = helpers::read_file(path);
-		if (code.get_length())
-		{
-			DWORD source_context = GenerateSourceContext(path);
-			HRESULT hr = parser->ParseScriptText(string_wide_from_utf8_fast(code), nullptr, nullptr, nullptr, source_context, 0, SCRIPTTEXT_HOSTMANAGESSOURCE | SCRIPTTEXT_ISVISIBLE, nullptr, nullptr);
-			if (FAILED(hr)) return hr;
-		}
-		else
-		{
-			error_text << "\nError: Failed to load " << path;
-		}
-	}
-
-	if (error_text.get_length())
-	{
-		FB2K_console_formatter() << m_host->m_script_info.build_info_string() << error_text;
-	}
-	return S_OK;
 }
 
 STDMETHODIMP script_host::EnableModeless(BOOL fEnable)
@@ -289,7 +199,7 @@ STDMETHODIMP script_host::GetLCID(LCID* plcid)
 
 STDMETHODIMP script_host::GetWindow(HWND* phwnd)
 {
-	*phwnd = m_host->get_hwnd();
+	*phwnd = m_host->m_hwnd;
 	return S_OK;
 }
 
@@ -307,8 +217,8 @@ STDMETHODIMP script_host::OnScriptError(IActiveScriptError* err)
 {
 	if (!err) return E_POINTER;
 
-	m_has_error = true;
 	m_engine_inited = false;
+	m_has_error = true;
 
 	DWORD ctx = 0;
 	EXCEPINFO excep = { 0 };
@@ -317,7 +227,7 @@ STDMETHODIMP script_host::OnScriptError(IActiveScriptError* err)
 	_bstr_t sourceline;
 	pfc::string_formatter formatter;
 
-	formatter << m_host->m_script_info.build_info_string() << "\n";
+	formatter << m_info.build_info_string() << "\n";
 
 	if (SUCCEEDED(err->GetExceptionInfo(&excep)))
 	{
@@ -340,16 +250,16 @@ STDMETHODIMP script_host::OnScriptError(IActiveScriptError* err)
 			}
 			else
 			{
-				formatter << "Unknown error code: 0x" << pfc::format_hex_lowercase((t_size)excep.scode);
+				formatter << "Unknown error code: 0x" << pfc::format_hex_lowercase(TO_UINT(excep.scode));
 			}
 		}
 	}
 
 	if (SUCCEEDED(err->GetSourcePosition(&ctx, &line, &charpos)))
 	{
-		if (m_context_to_path_map.have_item(ctx))
+		if (m_context_to_path_map.count(ctx))
 		{
-			formatter << "File: " << m_context_to_path_map[ctx] << "\n";
+			formatter << "File: " << m_context_to_path_map.at(ctx) << "\n";
 		}
 		formatter << "Line: " << (line + 1) << ", Col: " << (charpos + 1) << "\n";
 	}
@@ -360,7 +270,11 @@ STDMETHODIMP script_host::OnScriptError(IActiveScriptError* err)
 	}
 
 	FB2K_console_formatter() << formatter;
-	main_thread_callback_add(fb2k::service_new<helpers::popup_msg>(formatter, JSP_NAME_VERSION));
+
+	fb2k::inMainThread([=]()
+		{
+			popup_message::g_show(formatter, PFC_string_formatter() << jsp::component_name << " v" << jsp::component_version);
+		});
 
 	if (excep.bstrSource) SysFreeString(excep.bstrSource);
 	if (excep.bstrDescription) SysFreeString(excep.bstrDescription);
@@ -368,7 +282,13 @@ STDMETHODIMP script_host::OnScriptError(IActiveScriptError* err)
 	if (m_script_engine) m_script_engine->SetScriptState(SCRIPTSTATE_DISCONNECTED);
 
 	MessageBeep(MB_ICONASTERISK);
-	SendMessage(m_host->get_hwnd(), UWM_SCRIPT_ERROR, 0, 0);
+
+	const auto& tooltip_param = m_host->panel_tooltip();
+	if (tooltip_param && tooltip_param->tooltip_hwnd)
+		tooltip_param->tooltip_hwnd.SendMessage(TTM_ACTIVATE, FALSE, 0);
+
+	m_host->repaint();
+	m_host->unload_script();
 	return S_OK;
 }
 
@@ -384,12 +304,12 @@ STDMETHODIMP script_host::OnStateChange(SCRIPTSTATE state)
 
 ULONG STDMETHODCALLTYPE script_host::AddRef()
 {
-	return InterlockedIncrement(&m_ref_count);
+	return ++m_counter;
 }
 
 ULONG STDMETHODCALLTYPE script_host::Release()
 {
-	ULONG n = InterlockedDecrement(&m_ref_count);
+	const auto n = --m_counter;
 	if (n == 0)
 	{
 		delete this;
@@ -404,17 +324,17 @@ bool script_host::HasError()
 
 bool script_host::Ready()
 {
-	return m_engine_inited && m_script_engine;
+	return m_script_root && m_engine_inited && m_script_engine;
 }
 
-pfc::string8_fast script_host::ExtractValue(const std::string& source)
+std::string script_host::ExtractValue(const std::string& source)
 {
-	char q = '"';
-	t_size first = source.find_first_of(q);
-	t_size last = source.find_last_of(q);
+	constexpr char q = '"';
+	const size_t first = source.find_first_of(q);
+	const size_t last = source.find_last_of(q);
 	if (first < last && last < source.length())
 	{
-		return source.substr(first + 1, last - first - 1).c_str();
+		return source.substr(first + 1, last - first - 1);
 	}
 	return "";
 }
@@ -426,7 +346,7 @@ void script_host::Finalise()
 	if (Ready())
 	{
 		IActiveScriptGarbageCollector* gc = nullptr;
-		if (SUCCEEDED(m_script_engine->QueryInterface(IID_IActiveScriptGarbageCollector, (void**)&gc)))
+		if (SUCCEEDED(m_script_engine->QueryInterface(IID_IActiveScriptGarbageCollector, reinterpret_cast<void**>(&gc))))
 		{
 			gc->CollectGarbage(SCRIPTGCTYPE_EXHAUSTIVE);
 			gc->Release();
@@ -438,8 +358,8 @@ void script_host::Finalise()
 		m_engine_inited = false;
 	}
 
-	m_context_to_path_map.remove_all();
-	m_callback_map.remove_all();
+	m_context_to_path_map.clear();
+	m_callback_map.clear();
 
 	if (m_script_engine)
 	{
@@ -452,15 +372,24 @@ void script_host::Finalise()
 	}
 }
 
-void script_host::ProcessScriptInfo(t_script_info& info)
+void script_host::InvokeCallback(callback_id id, VARIANTARG* argv, size_t argc, VARIANT* ret)
 {
-	info.clear();
-	info.id = (t_size)m_host->get_hwnd();
+	if (Ready() && m_callback_map.count(id))
+	{
+		DISPPARAMS param = { argv, nullptr, argc, 0 };
+		m_script_root->Invoke(m_callback_map.at(id), IID_NULL, LOCALE_USER_DEFAULT, DISPATCH_METHOD, &param, ret, nullptr, nullptr);
+	}
+}
 
-	std::string source(m_host->m_script_code);
-	t_size start = source.find("// ==PREPROCESSOR==");
-	t_size end = source.find("// ==/PREPROCESSOR==");
-	t_size argh = std::string::npos;
+void script_host::ProcessScriptInfo()
+{
+	m_info.clear();
+	m_info.id = reinterpret_cast<UINT_PTR>(m_host->m_hwnd.m_hWnd);
+
+	std::string source(m_host->m_panel_config.code);
+	const size_t start = source.find("// ==PREPROCESSOR==");
+	const size_t end = source.find("// ==/PREPROCESSOR==");
+	constexpr size_t argh = std::string::npos;
 
 	if (start == argh || end == argh || start > end)
 	{
@@ -468,32 +397,25 @@ void script_host::ProcessScriptInfo(t_script_info& info)
 	}
 
 	std::string pre = source.substr(start + 21, end - start - 21);
+	str_vec lines = helpers::split_string(pre, "\r\n");
 
-	pfc::string_list_impl lines;
-	pfc::splitStringByLines(lines, pre.c_str());
-
-	for (t_size i = 0; i < lines.get_count(); ++i)
+	for (const std::string& line : lines)
 	{
-		std::string line = lines[i];
 		if (line.find("@name") < argh)
 		{
-			info.name = ExtractValue(line);
+			m_info.name = ExtractValue(line);
 		}
 		else if (line.find("@author") < argh)
 		{
-			info.author = ExtractValue(line);
+			m_info.author = ExtractValue(line);
 		}
 		else if (line.find("@version") < argh)
 		{
-			info.version = ExtractValue(line);
-		}
-		else if (line.find("@feature") < argh && line.find("dragdrop") < argh)
-		{
-			info.dragdrop = true;
+			m_info.version = ExtractValue(line);
 		}
 		else if (line.find("@import") < argh)
 		{
-			info.imports.add_item(ExtractValue(line));
+			m_info.imports.emplace_back(ExtractValue(line));
 		}
 	}
 }
