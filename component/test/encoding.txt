@@ -1,0 +1,10 @@
+var files = utils.ListFiles(fb.ComponentPath + "test\\encoding\\").toArray();
+
+var arr = [];
+
+files.forEach(function (item) {
+	arr.push(item);
+	arr.push(utils.ReadTextFile(item));
+});
+
+fb.ShowPopupMessage(arr.join("\r\n"));
