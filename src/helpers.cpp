@@ -310,12 +310,12 @@ namespace helpers
 		return false;
 	}
 
-	bool execute_mainmenu_command_recur(pfc::stringp command, pfc::string_base& path, mainmenu_node::ptr node)
+	bool execute_mainmenu_command_recur(pfc::stringp command, pfc::stringp p, mainmenu_node::ptr node)
 	{
-		pfc::string8_fast text;
+		pfc::string8_fast path, text;
 		size_t flags;
 		node->get_display(text, flags);
-		path.add_string(text);
+		path << p << text;
 
 		switch (node->get_type())
 		{

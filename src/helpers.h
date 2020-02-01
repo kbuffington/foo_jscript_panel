@@ -42,7 +42,7 @@ namespace helpers
 	IGdiBitmap* read_album_art_into_bitmap(const album_art_data_ptr& data);
 	bool execute_context_command_recur(pfc::stringp command, pfc::stringp cpath, contextmenu_node* parent);
 	bool execute_mainmenu_command_by_name(pfc::stringp command);
-	bool execute_mainmenu_command_recur(pfc::stringp command, pfc::string_base& path, mainmenu_node::ptr node);
+	bool execute_mainmenu_command_recur(pfc::stringp command, pfc::stringp p, mainmenu_node::ptr node);
 	bool get_encoder_clsid(const wchar_t* format, CLSID* pClsid);
 	bool is_wrap_char(wchar_t current, wchar_t next);
 	bool write_file(pfc::stringp path, pfc::stringp content);
