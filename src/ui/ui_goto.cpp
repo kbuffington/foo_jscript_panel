@@ -1,26 +1,22 @@
 #include "stdafx.h"
 #include "ui_goto.h"
 
-CDialogGoto::CDialogGoto(HWND p_hedit) : m_hedit(p_hedit) {}
+CDialogGoto::CDialogGoto(CWindow parent, pfc::stringp text) : m_parent(parent), m_text(text) {}
 
-BOOL CDialogGoto::OnInitDialog(HWND hwndFocus, LPARAM lParam)
+BOOL CDialogGoto::OnInitDialog(CWindow, LPARAM)
 {
-	int cur_pos = SendMessage(m_hedit, SCI_GETCURRENTPOS, 0, 0);
-	int cur_line = SendMessage(m_hedit, SCI_LINEFROMPOSITION, cur_pos, 0) + 1;
-
-	uSetWindowText(GetDlgItem(IDC_EDIT_LINENUMBER), pfc::format_int(cur_line).get_ptr());
-
+	m_edit = GetDlgItem(IDC_EDIT_LINENUMBER);
+	uSetWindowText(m_edit, m_text);
 	return TRUE;
 }
 
-void CDialogGoto::OnCloseCmd(UINT uNotifyCode, int nID, HWND wndCtl)
+void CDialogGoto::OnCloseCmd(UINT, int nID, CWindow)
 {
 	if (nID == IDOK)
 	{
-		pfc::string8_fast text;
-		uGetWindowText(GetDlgItem(IDC_EDIT_LINENUMBER), text);
-		t_size i = pfc::atoui_ex(text.get_ptr(), text.length()) - 1;
-		SendMessage(m_hedit, SCI_GOTOLINE, i, 0);
+		uGetWindowText(m_edit, m_text);
+		const size_t i = pfc::atoui_ex(m_text.get_ptr(), m_text.get_length()) - 1;
+		SendMessage(m_parent, SCI_GOTOLINE, i, 0);
 	}
 	EndDialog(nID);
 }

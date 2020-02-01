@@ -1,0 +1,5 @@
+var path = fb.ComponentPath + "test\\bad\\bad.json";
+var code = utils.Chardet(path);
+var text = utils.ReadTextFile(path);
+
+fb.ShowPopupMessage(text, path + " - " + code);

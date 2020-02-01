@@ -1,0 +1,37 @@
+var img = null;
+var arr = [];
+on_item_focus_change();
+
+function on_item_focus_change() {
+	img && img.Dispose();
+	arr = [];
+	var metadb = fb.GetFocusItem();
+	if (metadb) {
+		img = utils.GetAlbumArtV2(metadb, 0);
+		if (img) {
+			arr = JSON.parse(img.GetColourSchemeJSON(10));
+		}
+	}
+	window.Repaint();
+}
+
+function on_paint(gr) {
+	if (img && arr.length) {
+		gr.DrawImage(img, 0, 0, 300, 300, 0, 0, img.Width, img.Height);
+		for (var i = 0; i < arr.length; i++) {
+			gr.FillSolidRect(300, i * 30, window.Width - 300, 30, arr[i].col);
+		}
+	}
+}
+
+function on_mouse_lbtn_dblclk() {
+	var arr = [];
+	var items = plman.GetPlaylistItems(plman.ActivePlaylist);
+	for (var i = 0; i < items.Count; i++) {
+		var img = utils.GetAlbumArtV2(items.Item(i), 0);
+		if (img) {
+			arr.push(JSON.parse(img.GetColourSchemeJSON(10)));
+		}
+	}
+	fb.ShowPopupMessage(JSON.stringify(arr, null, 4));
+}

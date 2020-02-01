@@ -1,0 +1,20 @@
+var handle = fb.GetFocusItem();
+
+var path = handle.Path;
+var size = handle.FileSize;
+var size2 = utils.GetFileSize(path);
+console.log("size == size2", size == size2);
+console.log("size * 2 == size2 + size2", size * 2 == size2 + size2);
+console.log(utils.FormatFileSize(size));
+
+var now = Math.round(Date.now() / 1000);
+
+var str = utils.TimestampToDateString(now);
+console.log(str);
+console.log("now == utils.DateStringToTimestamp(str)", now == utils.DateStringToTimestamp(str));
+
+var items = fb.CreateHandleList(handle);
+items.Add(handle);
+console.log("items.Count == 2", items.Count == 2);
+console.log("items.CalcTotalDuration() == handle.Length * 2", items.CalcTotalDuration() == handle.Length * 2);
+console.log("items.CalcTotalSize() == size", items.CalcTotalSize() == size);

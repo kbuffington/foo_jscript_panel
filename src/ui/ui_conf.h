@@ -1,81 +1,56 @@
 #pragma once
-#include "editorctrl.h"
+#include "editor_ctrl.h"
+
+#include <libPPUI/CDialogResizeHelper.h>
 
 class panel_window;
-class CDialogFind;
-class CDialogReplace;
 
-class CDialogConf : public CDialogImpl<CDialogConf>, public CDialogResize<CDialogConf>
+class CDialogConf : public CDialogImpl<CDialogConf>
 {
 public:
-	CDialogConf(panel_window* p_parent);
-	~CDialogConf();
+	CDialogConf(panel_window* parent);
 
-	BEGIN_DLGRESIZE_MAP(CDialogConf)
-		DLGRESIZE_CONTROL(IDC_EDIT, DLSZ_SIZE_X | DLSZ_SIZE_Y)
-		DLGRESIZE_CONTROL(IDC_RESET, DLSZ_MOVE_Y)
-		DLGRESIZE_CONTROL(IDC_STATIC_ENGINE, DLSZ_MOVE_Y)
-		DLGRESIZE_CONTROL(IDC_COMBO_ENGINE, DLSZ_MOVE_Y)
-		DLGRESIZE_CONTROL(IDC_STATIC_EDGE, DLSZ_MOVE_Y)
-		DLGRESIZE_CONTROL(IDC_COMBO_EDGE, DLSZ_MOVE_Y)
-		DLGRESIZE_CONTROL(IDC_CHECK_PSEUDO_TRANSPARENT, DLSZ_MOVE_Y)
-		DLGRESIZE_CONTROL(IDC_CHECK_GRABFOCUS, DLSZ_MOVE_Y)
-		DLGRESIZE_CONTROL(IDOK, DLSZ_MOVE_X | DLSZ_MOVE_Y)
-		DLGRESIZE_CONTROL(IDC_APPLY, DLSZ_MOVE_X | DLSZ_MOVE_Y)
-		DLGRESIZE_CONTROL(IDCANCEL, DLSZ_MOVE_X | DLSZ_MOVE_Y)
-	END_DLGRESIZE_MAP()
-
-	BEGIN_MSG_MAP(CDialogConf)
+	BEGIN_MSG_MAP_EX(CDialogConf)
+		CHAIN_MSG_MAP_MEMBER(m_resizer)
 		MSG_WM_INITDIALOG(OnInitDialog)
 		MSG_WM_NOTIFY(OnNotify)
-		MESSAGE_HANDLER(UWM_KEYDOWN, OnUwmKeyDown)
-		MESSAGE_HANDLER(UWM_FIND_TEXT_CHANGED, OnUwmFindTextChanged)
-		COMMAND_ID_HANDLER_EX(ID_FILE_APPLY, OnFileSave)
 		COMMAND_ID_HANDLER_EX(ID_FILE_IMPORT, OnFileImport)
 		COMMAND_ID_HANDLER_EX(ID_FILE_EXPORT, OnFileExport)
-		COMMAND_ID_HANDLER_EX(IDC_RESET, OnReset)
-		COMMAND_ID_HANDLER_EX(IDC_APPLY, OnCloseCmd)
+		COMMAND_ID_HANDLER_EX(IDC_BTN_RESET, OnReset)
+		COMMAND_ID_HANDLER_EX(IDC_BTN_APPLY, OnCloseCmd)
 		COMMAND_RANGE_HANDLER_EX(IDOK, IDCANCEL, OnCloseCmd)
+		COMMAND_RANGE_HANDLER_EX(ID_TEST_BEGIN, ID_TEST_END, OnTest)
 		COMMAND_RANGE_HANDLER_EX(ID_SAMPLES_BEGIN, ID_SAMPLES_END, OnSamples)
 		COMMAND_RANGE_HANDLER_EX(ID_DOCS_BEGIN, ID_DOCS_END, OnDocs)
 		COMMAND_RANGE_HANDLER_EX(ID_LINKS_BEGIN, ID_LINKS_END, OnLinks)
-		CHAIN_MSG_MAP(CDialogResize<CDialogConf>)
 		REFLECT_NOTIFICATIONS()
 	END_MSG_MAP()
 
-	enum
-	{
-		IDD = IDD_DIALOG_CONF
-	};
+	enum { IDD = IDD_DIALOG_CONF };
 
-	static bool FindNext(HWND hWnd, HWND hWndEdit, t_size flags, const char* which);
-	static bool FindPrevious(HWND hWnd, HWND hWndEdit, t_size flags, const char* which);
-	static bool FindResult(HWND hWnd, HWND hWndEdit, int pos, const char* which);
-
-	BOOL OnInitDialog(HWND hwndFocus, LPARAM lParam);
-	LRESULT OnNotify(int idCtrl, LPNMHDR pnmh);
-	LRESULT OnUwmFindTextChanged(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-	LRESULT OnUwmKeyDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+	BOOL OnInitDialog(CWindow, LPARAM);
+	LRESULT OnNotify(int, LPNMHDR pnmh);
+	pfc::string8_fast GetText();
 	void Apply();
-	void OnCloseCmd(UINT uNotifyCode, int nID, HWND wndCtl);
-	void OnDocs(UINT uNotifyCode, int nID, HWND wndCtl);
-	void OnFileSave(UINT uNotifyCode, int nID, HWND wndCtl);
-	void OnFileImport(UINT uNotifyCode, int nID, HWND wndCtl);
-	void OnFileExport(UINT uNotifyCode, int nID, HWND wndCtl);
-	void OnLinks(UINT uNotifyCode, int nID, HWND wndCtl);
-	void OnReset(UINT uNotifyCode, int nID, HWND wndCtl);
-	void OnSamples(UINT uNotifyCode, int nID, HWND wndCtl);
-	void OpenFindDialog();
+	void BuildMenu();
+	void OnCloseCmd(UINT, int nID, CWindow);
+	void OnDocs(UINT, int nID, CWindow);
+	void OnFileImport(UINT, int, CWindow);
+	void OnFileExport(UINT, int, CWindow);
+	void OnLinks(UINT, int nID, CWindow);
+	void OnReset(UINT, int, CWindow);
+	void OnSamples(UINT, int nID, CWindow);
+	void OnTest(UINT, int nID, CWindow);
 
 private:
-	CDialogFind* m_dlgfind;
-	CDialogReplace* m_dlgreplace;
+	CCheckBox m_transparent_check;
+	CComboBox m_edge_combo;
+	CDialogResizeHelper m_resizer;
 	CMenu m_menu;
 	CScriptEditorCtrl m_editorctrl;
 	panel_window* m_parent;
 	pfc::string8_fast m_caption;
-	pfc::string8_fast m_lastSearchText;
 	pfc::string_list_impl m_docs;
 	pfc::string_list_impl m_samples;
-	t_size m_lastFlags;
+	pfc::string_list_impl m_test;
 };

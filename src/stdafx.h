@@ -1,50 +1,41 @@
 #pragma once
-#pragma warning(disable:4100)
 
-#define _WIN32_WINNT _WIN32_WINNT_WINXP
-#define WINVER _WIN32_WINNT_WINXP
-#define _WIN32_IE _WIN32_IE_IE60
+#define _WIN32_WINNT _WIN32_WINNT_WIN7
+#define WINVER _WIN32_WINNT_WIN7
 
-#define TO_VARIANT_BOOL(v) ((v) ? (VARIANT_TRUE) : (VARIANT_FALSE))
+#include <algorithm>
+#include <array>
+#include <atomic>
+#include <filesystem>
+#include <fstream>
+#include <list>
+#include <map>
+#include <memory>
+#include <mutex>
+#include <numeric>
+#include <set>
+#include <vector>
 
-#include <WinSock2.h>
-#include <Windows.h>
+#define NOMINMAX
+namespace Gdiplus
+{
+	using std::min;
+	using std::max;
+};
 
-#pragma warning(push)
-#pragma warning(disable:4458)
-#include <GdiPlus.h>
-#pragma warning(pop)
+#include "resource.h"
+#include <columns_ui-sdk/ui_extension.h>
+#include <foobar2000/helpers/foobar2000+atl.h>
+#include <foobar2000/helpers/atl-misc.h>
 
 #include <ActivScp.h>
-#include <activdbg.h>
 #include <ComDef.h>
-#include <StrSafe.h>
+#include <GdiPlus.h>
+#include <ShlObj.h>
 
-#include <atlstr.h>
-#include <atlwin.h>
-
-#include <atlapp.h>
-#include <atlframe.h>
-#include <atldlgs.h>
-#include <atlctrls.h>
-#include <atlddx.h>
-#include <atlcrack.h>
-#include <atltheme.h>
-
-#include <Scintilla.h>
-#include <SciLexer.h>
-
-#pragma warning(push)
-#pragma warning(disable:4245)
-#include "../foobar2000/SDK/foobar2000.h"
-#include "../columns_ui-sdk/ui_extension.h"
-#pragma warning(pop)
-
-#ifdef _INC_WINDOWSX
-#undef SubclassWindow
-#endif
-
-#include "component_defines.h"
-#include "resource.h"
+#include "foo_jscript_panel.h"
+#include "callback_id.h"
+#include "guids.h"
 
 using namespace pfc::stringcvt;
+using str_vec = std::vector<std::string>;

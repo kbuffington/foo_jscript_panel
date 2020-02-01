@@ -1,0 +1,5 @@
+var files = utils.ListFiles(fb.ComponentPath + "test\\chardet\\utf-8\\").toArray();
+
+files.forEach(function (item) {
+	console.log(utils.ReadTextFile(item) === utils.ReadUTF8(item));
+});

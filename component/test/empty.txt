@@ -1,0 +1,6 @@
+var files = utils.ListFiles(fb.ComponentPath + "test\\empty\\").toArray();
+
+files.forEach(function (item) {
+	var text = utils.ReadTextFile(item);
+	fb.ShowPopupMessage(text, item + " " + typeof text + " " + text.length);
+});

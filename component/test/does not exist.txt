@@ -1,0 +1,7 @@
+var a = "does not exist";
+
+var text = utils.ReadTextFile(a);
+var utf8 = utils.ReadUTF8(a);
+
+fb.ShowPopupMessage(text, "text " + typeof text + " " + text.length);
+fb.ShowPopupMessage(utf8, "utf8 " + typeof utf8 + " " + utf8.length);

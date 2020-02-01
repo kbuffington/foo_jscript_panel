@@ -1,0 +1,12 @@
+// ==PREPROCESSOR==
+// @import "%fb2k_component_path%docs\flags.txt"
+// @import "%fb2k_component_path%docs\helpers.txt"
+// ==/PREPROCESSOR==
+
+function on_paint(gr) {
+	for (var i = 0; i < 255; i++) {
+		gr.FillSolidRect(5 * i, 0, 5, 100, RGBA(255, 0, 0, i));
+		gr.FillSolidRect(5 * i, 100, 5, 100, RGBA(0, 255, 0, i));
+		gr.FillSolidRect(5 * i, 200, 5, 100, RGBA(0, 0, 255, i));
+	}
+}

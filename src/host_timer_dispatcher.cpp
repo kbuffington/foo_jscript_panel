@@ -1,18 +1,7 @@
 #include "stdafx.h"
 #include "host_timer_dispatcher.h"
 
-host_timer::host_timer(HWND hwnd, t_size id, t_size delay, bool isRepeated)
-{
-	m_hTimer = 0;
-
-	m_hwnd = hwnd;
-	m_delay = delay;
-	m_is_repeated = isRepeated;
-	m_id = id;
-
-	m_is_stop_requested = false;
-	m_is_stopped = false;
-}
+host_timer::host_timer(HWND hwnd, size_t id, size_t delay, bool is_repeated) : m_hwnd(hwnd), m_id(id), m_delay(delay), m_is_repeated(is_repeated) {}
 
 host_timer::~host_timer() {}
 
@@ -23,7 +12,7 @@ HWND host_timer::get_hwnd() const
 
 VOID CALLBACK host_timer::timerProc(PVOID lpParameter, BOOLEAN TimerOrWaitFired)
 {
-	host_timer* timer = (host_timer*)lpParameter;
+	auto timer = static_cast<host_timer*>(lpParameter);
 
 	if (timer->m_is_stopped)
 	{
@@ -41,13 +30,13 @@ VOID CALLBACK host_timer::timerProc(PVOID lpParameter, BOOLEAN TimerOrWaitFired)
 	if (!timer->m_is_repeated)
 	{
 		timer->m_is_stopped = true;
-		SendMessage(timer->m_hwnd, UWM_TIMER, timer->m_id, 0);
+		SendMessage(timer->m_hwnd, jsp::uwm_timer, timer->m_id, 0);
 		host_timer_dispatcher::instance().on_timer_stop_request(timer->m_hwnd, timer->m_hTimer, timer->m_id);
 
 		return;
 	}
 
-	SendMessage(timer->m_hwnd, UWM_TIMER, timer->m_id, 0);
+	SendMessage(timer->m_hwnd, jsp::uwm_timer, timer->m_id, 0);
 }
 
 bool host_timer::start(HANDLE hTimerQueue)
@@ -67,12 +56,8 @@ void host_timer::stop()
 	m_is_stop_requested = true;
 }
 
-host_timer_task::host_timer_task(IDispatch* pDisp, t_size timerId)
+host_timer_task::host_timer_task(IDispatch* pDisp, size_t timerId) : m_pDisp(pDisp), m_timerId(timerId)
 {
-	m_pDisp = pDisp;
-	m_timerId = timerId;
-
-	m_refCount = 0;
 	m_pDisp->AddRef();
 }
 
@@ -115,7 +100,6 @@ void host_timer_task::release()
 
 host_timer_dispatcher::host_timer_dispatcher()
 {
-	m_cur_timer_id = 1;
 	m_timer_queue = CreateTimerQueue();
 }
 
@@ -132,7 +116,7 @@ host_timer_dispatcher& host_timer_dispatcher::instance()
 	return timerDispatcher;
 }
 
-t_size host_timer_dispatcher::create_timer(HWND hwnd, t_size delay, bool isRepeated, IDispatch* pDisp)
+size_t host_timer_dispatcher::create_timer(HWND hwnd, size_t delay, bool isRepeated, IDispatch* pDisp)
 {
 	if (!pDisp)
 	{
@@ -141,15 +125,15 @@ t_size host_timer_dispatcher::create_timer(HWND hwnd, t_size delay, bool isRepea
 
 	std::lock_guard<std::mutex> lock(m_timer_mutex);
 
-	t_size id = m_cur_timer_id++;
-	while (m_task_map.end() != m_task_map.find(id) && m_timer_map.end() != m_timer_map.find(id))
+	size_t id = m_cur_timer_id++;
+	while (m_task_map.count(id) && m_timer_map.count(id))
 	{
 		id = m_cur_timer_id++;
 	}
 
 	m_timer_map.emplace(id, new host_timer(hwnd, id, delay, isRepeated));
 
-	auto curTask = m_task_map.emplace(id, new host_timer_task(pDisp, id));
+	const auto curTask = m_task_map.emplace(id, new host_timer_task(pDisp, id));
 	curTask.first->second->acquire();
 
 	if (!m_timer_map[id]->start(m_timer_queue))
@@ -162,12 +146,12 @@ t_size host_timer_dispatcher::create_timer(HWND hwnd, t_size delay, bool isRepea
 	return id;
 }
 
-t_size host_timer_dispatcher::set_interval(HWND hwnd, t_size delay, IDispatch* pDisp)
+size_t host_timer_dispatcher::set_interval(HWND hwnd, size_t delay, IDispatch* pDisp)
 {
 	return create_timer(hwnd, delay, true, pDisp);
 }
 
-t_size host_timer_dispatcher::set_timeout(HWND hwnd, t_size delay, IDispatch* pDisp)
+size_t host_timer_dispatcher::set_timeout(HWND hwnd, size_t delay, IDispatch* pDisp)
 {
 	return create_timer(hwnd, delay, false, pDisp);
 }
@@ -177,44 +161,42 @@ void host_timer_dispatcher::create_thread()
 	m_thread = new std::thread(&host_timer_dispatcher::thread_main, this);
 }
 
-void host_timer_dispatcher::invoke_message(t_size timerId)
+void host_timer_dispatcher::invoke_message(size_t timerId)
 {
-	if (m_task_map.end() != m_task_map.find(timerId))
+	if (m_task_map.count(timerId))
 	{
-		m_task_map[timerId]->invoke();
+		m_task_map.at(timerId)->invoke();
 	}
 }
 
-void host_timer_dispatcher::kill_timer(t_size timerId)
+void host_timer_dispatcher::kill_timer(size_t timerId)
 {
 	{
 		std::lock_guard<std::mutex> lock(m_timer_mutex);
 
-		auto timerIter = m_timer_map.find(timerId);
-		if (m_timer_map.end() != timerIter)
+		if (m_timer_map.count(timerId))
 		{
-			timerIter->second->stop();
+			m_timer_map.at(timerId)->stop();
 		}
 	}
 
-	auto taskIter = m_task_map.find(timerId);
-	if (m_task_map.end() != taskIter)
+	if (m_task_map.count(timerId))
 	{
-		taskIter->second->release();
+		m_task_map.at(timerId)->release();
 	}
 }
 
 void host_timer_dispatcher::kill_timers(HWND hwnd)
 {
-	std::list<t_size> timersToDelete;
+	std::list<size_t> timersToDelete;
 
 	{
 		std::lock_guard<std::mutex> lock(m_timer_mutex);
-		for (const auto& elem : m_timer_map)
+		for (const auto& [id, timer] : m_timer_map)
 		{
-			if (elem.second->get_hwnd() == hwnd)
+			if (timer->get_hwnd() == hwnd)
 			{
-				timersToDelete.push_back(elem.first);
+				timersToDelete.emplace_back(id);
 			}
 		}
 	}
@@ -225,22 +207,12 @@ void host_timer_dispatcher::kill_timers(HWND hwnd)
 	}
 }
 
-void host_timer_dispatcher::on_task_complete(t_size timerId)
+void host_timer_dispatcher::on_task_complete(size_t timerId)
 {
-	if (m_task_map.end() != m_task_map.find(timerId))
-	{
-		m_task_map.erase(timerId);
-	}
+	m_task_map.erase(timerId);
 }
 
-void host_timer_dispatcher::on_timer_expire(t_size timerId)
-{
-	std::unique_lock<std::mutex> lock(m_timer_mutex);
-
-	m_timer_map.erase(timerId);
-}
-
-void host_timer_dispatcher::on_timer_stop_request(HWND hwnd, HANDLE hTimer, t_size timerId)
+void host_timer_dispatcher::on_timer_stop_request(HWND hwnd, HANDLE hTimer, size_t timerId)
 {
 	std::unique_lock<std::mutex> lock(m_thread_task_mutex);
 
@@ -284,6 +256,7 @@ void host_timer_dispatcher::thread_main()
 	while (true)
 	{
 		thread_task threadTask;
+
 		{
 			std::unique_lock<std::mutex> lock(m_thread_task_mutex);
 
@@ -305,7 +278,12 @@ void host_timer_dispatcher::thread_main()
 		{
 		case killTimerTask:
 			DeleteTimerQueueTimer(m_timer_queue, threadTask.hTimer, INVALID_HANDLE_VALUE);
-			on_timer_expire(threadTask.timerId);
+
+			{
+				std::unique_lock<std::mutex> lock(m_timer_mutex);
+				m_timer_map.erase(threadTask.timerId);
+			}
+
 			break;
 		case shutdownTask:
 			DeleteTimerQueueEx(m_timer_queue, INVALID_HANDLE_VALUE);

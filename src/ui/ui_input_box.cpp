@@ -1,32 +1,22 @@
 #include "stdafx.h"
 #include "ui_input_box.h"
 
-CInputBox::CInputBox(const char* p_prompt, const char* p_caption, const char* p_value) : m_prompt(p_prompt), m_caption(p_caption), m_value(p_value) {}
+CInputBox::CInputBox(pfc::stringp prompt, pfc::stringp caption, pfc::stringp value) : m_prompt(prompt), m_caption(caption), m_value(value) {}
 
-BOOL CInputBox::OnInitDialog(HWND hwndFocus, LPARAM lParam)
+BOOL CInputBox::OnInitDialog(CWindow, LPARAM)
 {
+	m_edit = GetDlgItem(IDC_EDIT_VALUE);
+	m_label = GetDlgItem(IDC_LABEL_PROMPT);
+
 	uSetWindowText(m_hWnd, m_caption);
-	uSendDlgItemMessageText(m_hWnd, IDC_INPUT_PROMPT, WM_SETTEXT, 0, m_prompt);
-	uSendDlgItemMessageText(m_hWnd, IDC_INPUT_VALUE, WM_SETTEXT, 0, m_value);
-
-	SendDlgItemMessage(IDC_INPUT_VALUE, EM_SETSEL, 0, -1);
-	::SetFocus(GetDlgItem(IDC_INPUT_VALUE));
-
+	uSetWindowText(m_label, m_prompt);
+	uSetWindowText(m_edit, m_value);
 	CenterWindow();
-
 	return FALSE;
 }
 
-void CInputBox::GetValue(pfc::string_base& p_value)
+void CInputBox::OnCloseCmd(UINT, int nID, CWindow)
 {
-	p_value = m_value;
-}
-
-void CInputBox::OnCloseCmd(UINT uNotifyCode, int nID, HWND wndCtl)
-{
-	if (nID == IDOK)
-	{
-		uGetDlgItemText(m_hWnd, IDC_INPUT_VALUE, m_value);
-	}
+	uGetWindowText(m_edit, m_value);
 	EndDialog(nID);
 }

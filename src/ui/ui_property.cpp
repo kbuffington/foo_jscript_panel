@@ -1,76 +1,115 @@
 #include "stdafx.h"
+#include "config.h"
 #include "ui_property.h"
 
-CDialogProperty::CDialogProperty(panel_window* p_parent) : m_parent(p_parent)
+static const CDialogResizeHelper::Param resize_data[] =
 {
-	m_caption << JSP_NAME " Properties (id:" << m_parent->m_script_info.id << ")";
+	{ IDC_LIST_PROPERTIES, 0, 0, 1, 1 },
+	{ IDC_BTN_IMPORT, 0, 1, 0, 1 },
+	{ IDC_BTN_EXPORT, 0, 1, 0, 1 },
+	{ IDC_BTN_CLEAR, 0, 1, 0, 1 },
+	{ IDOK, 1, 1, 1, 1 },
+	{ IDCANCEL, 1, 1, 1, 1 },
+	{ IDC_BTN_APPLY, 1, 1, 1, 1 },
+};
+
+static const CRect resize_min_max(620, 381, 0, 0);
+
+CDialogProperty::CDialogProperty(panel_window* parent) : m_parent(parent), m_resizer(resize_data, resize_min_max)
+{
+	m_caption << jsp::component_name << " Properties (id:" << m_parent->m_script_host->m_info.id << ")";
 }
 
-CDialogProperty::~CDialogProperty() {}
-
-BOOL CDialogProperty::OnInitDialog(HWND hwndFocus, LPARAM lParam)
+BOOL CDialogProperty::OnInitDialog(CWindow, LPARAM)
 {
 	// Set caption text
 	uSetWindowText(m_hWnd, m_caption);
 
-	DlgResize_Init();
-
-	m_properties.SubclassWindow(GetDlgItem(IDC_LIST_PROPERTIES));
-	m_properties.ModifyStyle(0, LBS_SORT | LBS_HASSTRINGS);
-	m_properties.SetExtendedListStyle(PLS_EX_SORTED | PLS_EX_XPLOOK);
-
-	LoadProperties();
-
-	return FALSE;
-}
-
-LRESULT CDialogProperty::OnPinItemChanged(LPNMHDR pnmh)
-{
-	LPNMPROPERTYITEM pnpi = (LPNMPROPERTYITEM)pnmh;
-
-	string_utf8_from_wide uname = pnpi->prop->GetName();
-
-	if (m_dup_prop_map.have_item(uname))
+	// Apply window placement
+	if (g_config.m_property_wndpl.length == 0)
 	{
-		_variant_t& val = m_dup_prop_map[uname];
-		_variant_t var;
-
-		if (pnpi->prop->GetValue(&var))
-		{
-			val.ChangeType(val.vt, &var);
-		}
+		g_config.m_property_wndpl.length = sizeof(WINDOWPLACEMENT);
+		memset(&g_config.m_property_wndpl, 0, sizeof(WINDOWPLACEMENT));
+	}
+	else
+	{
+		SetWindowPlacement(&g_config.m_property_wndpl);
 	}
 
-	return 0;
+	m_clear_btn = GetDlgItem(IDC_BTN_CLEAR);
+	m_export_btn = GetDlgItem(IDC_BTN_EXPORT);
+
+	m_properties.CreateInDialog(*this, IDC_LIST_PROPERTIES);
+	LoadProperties();
+	return TRUE;
 }
 
 void CDialogProperty::Apply()
 {
-	m_parent->m_config_prop.m_map = m_dup_prop_map;
+	m_dup_prop_map.clear();
+
+	for (const MyCList::data_t& d : m_properties.m_data)
+	{
+		variant_t source, dest;
+
+		if (d.is_bool)
+		{
+			source.vt = VT_BOOL;
+			source.boolVal = TO_VARIANT_BOOL(d.bool_value);
+			m_dup_prop_map.emplace(d.key, source);
+		}
+		else
+		{
+			source.vt = VT_BSTR;
+			source.bstrVal = TO_BSTR(d.value);
+
+			if (d.is_string)
+			{
+				m_dup_prop_map.emplace(d.key, source);
+			}
+			else
+			{
+				if (SUCCEEDED(VariantChangeType(&dest, &source, 0, VT_R8)))
+				{
+					m_dup_prop_map.emplace(d.key, dest);
+				}
+				else
+				{
+					m_dup_prop_map.emplace(d.key, source);
+				}
+			}
+		}
+	}
+
+	m_parent->m_panel_config.properties.m_map = m_dup_prop_map;
 	m_parent->update_script();
 	LoadProperties();
 }
 
 void CDialogProperty::LoadProperties(bool reload)
 {
-	m_properties.ResetContent();
+	m_properties.m_data.clear();
 
 	if (reload)
 	{
-		m_dup_prop_map = m_parent->m_config_prop.m_map;
+		m_dup_prop_map = m_parent->m_panel_config.properties.m_map;
 	}
 
-	for (properties::t_map::const_iterator iter = m_dup_prop_map.first(); iter.is_valid(); ++iter)
+	for (const auto& [key, value] : m_dup_prop_map)
 	{
-		string_wide_from_utf8_fast wname(iter->m_key);
-		HPROPERTY hProp = nullptr;
-		const _variant_t& v = iter->m_value;
+		MyCList::data_t d;
+		d.key = key;
+		d.is_bool = false;
+		d.is_string = false;
+
+		const _variant_t& v = value;
 		_variant_t var;
 
 		switch (v.vt)
 		{
 		case VT_BOOL:
-			hProp = PropCreateSimple(wname, v.boolVal ? true : false);
+			d.is_bool = true;
+			d.bool_value = !!v.boolVal;
 			break;
 
 		case VT_I1:
@@ -82,86 +121,80 @@ void CDialogProperty::LoadProperties(bool reload)
 		case VT_I8:
 		case VT_UI8:
 			var.ChangeType(VT_I4, &v);
-			hProp = PropCreateSimple(wname, var.lVal);
+			d.value = std::to_string(var.lVal).c_str();
 			break;
 
 		case VT_BSTR:
+			d.is_string = true;
+			var.ChangeType(VT_BSTR, &v);
+			d.value = string_utf8_from_wide(var.bstrVal);
+			break;
+
 		default:
 			var.ChangeType(VT_BSTR, &v);
-			hProp = PropCreateSimple(wname, var.bstrVal);
+			d.value = string_utf8_from_wide(var.bstrVal);
 			break;
 		}
 
-		m_properties.AddItem(hProp);
+		m_properties.m_data.emplace_back(d);
 	}
+
+	m_properties.ReloadData();
+
+	m_clear_btn.EnableWindow(m_properties.m_data.size());
+	m_export_btn.EnableWindow(m_properties.m_data.size());
 }
 
-void CDialogProperty::OnClearBnClicked(UINT uNotifyCode, int nID, HWND wndCtl)
+void CDialogProperty::OnClearBnClicked(UINT, int, CWindow)
 {
-	m_dup_prop_map.remove_all();
-	m_properties.ResetContent();
+	m_properties.SelectAll();
+	m_properties.RequestRemoveSelection();
 }
 
-void CDialogProperty::OnCloseCmd(UINT uNotifyCode, int nID, HWND wndCtl)
+void CDialogProperty::OnCloseCmd(UINT, int nID, CWindow)
 {
+	GetWindowPlacement(&g_config.m_property_wndpl);
+
 	switch (nID)
 	{
 	case IDOK:
 		Apply();
 		break;
 
-	case IDC_APPLY:
+	case IDC_BTN_APPLY:
 		Apply();
 		return;
 	}
 	EndDialog(nID);
 }
 
-void CDialogProperty::OnDelBnClicked(UINT uNotifyCode, int nID, HWND wndCtl)
-{
-	int idx = m_properties.GetCurSel();
-
-	if (idx >= 0)
-	{
-		HPROPERTY hproperty = m_properties.GetProperty(idx);
-		string_utf8_from_wide uname = hproperty->GetName();
-
-		m_properties.DeleteItem(hproperty);
-		m_dup_prop_map.remove(uname);
-	}
-}
-
-void CDialogProperty::OnExportBnClicked(UINT uNotifyCode, int nID, HWND wndCtl)
+void CDialogProperty::OnExportBnClicked(UINT, int, CWindow)
 {
 	pfc::string8_fast path;
 
 	if (uGetOpenFileName(m_hWnd, "Property files|*.wsp", 0, "wsp", "Save as", nullptr, path, TRUE))
 	{
-		file_ptr io;
-		abort_callback_dummy abort;
-
 		try
 		{
-			filesystem::g_open_write_new(io, path, abort);
-			properties::g_save(m_dup_prop_map, io.get_ptr(), abort);
+			file_ptr io;
+			filesystem::g_open_write_new(io, path, fb2k::noAbort);
+			panel_properties::g_get(m_dup_prop_map, io.get_ptr(), fb2k::noAbort);
 		}
 		catch (...) {}
 	}
 }
 
-void CDialogProperty::OnImportBnClicked(UINT uNotifyCode, int nID, HWND wndCtl)
+void CDialogProperty::OnImportBnClicked(UINT, int, CWindow)
 {
 	pfc::string8_fast path;
 
 	if (uGetOpenFileName(m_hWnd, "Property files|*.wsp|All files|*.*", 0, "wsp", "Import from", nullptr, path, FALSE))
 	{
-		file_ptr io;
-		abort_callback_dummy abort;
-
 		try
 		{
-			filesystem::g_open_read(io, path, abort);
-			properties::g_load(m_dup_prop_map, io.get_ptr(), abort);
+			file_ptr io;
+			filesystem::g_open_read(io, path, fb2k::noAbort);
+			panel_properties::g_set(m_dup_prop_map, io.get_ptr(), fb2k::noAbort);
 			LoadProperties(false);
 		}
 		catch (...) {}

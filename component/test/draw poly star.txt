@@ -1,0 +1,72 @@
+// ==PREPROCESSOR==
+// @name "DrawPolyStar Example"
+// @author "ExtremeHunter"
+// ==/PREPROCESSOR==
+
+function RGBA(r, g, b, a) {
+	return ((a << 24) | (r << 16) | (g << 8) | (b));
+}
+
+function RGB(r, g, b) {
+	return (0xff000000 | (r << 16) | (g << 8) | (b));
+}
+
+// ================= //
+
+var fill_color = RGB(255,255,0);
+var line_color = RGB(100,100,100);
+
+function on_paint(gr) {
+
+DrawPolyStar(gr, 20, 20, 120, 1.5, 10, 1, line_color, fill_color, 0, 105);
+DrawPolyStar(gr, 150, 20, 120, 1.5, 50, 1, RGB(255,200,0), fill_color);
+DrawPolyStar(gr, 280, 20, 120, 2.62, 10, 1, line_color, fill_color);
+DrawPolyStar(gr, 20, 150, 120, 1, 10, 5, RGB(0,200,255), fill_color);
+DrawPolyStar(gr, 150, 150, 120, 1, 4, 1, line_color, fill_color);
+DrawPolyStar(gr, 280, 150, 120, 0.99, 3, 10, RGB(255,0,0), fill_color, -30);
+DrawPolyStar(gr, 20, 280, 120, 0.99, 5, 1, line_color, RGB(0,255,0));
+DrawPolyStar(gr, 150, 280, 120, 1.62, 5, 0, line_color, RGB(0,0,255), -54);
+DrawPolyStar(gr, 280, 280, 120, 4, 50, 0.1, RGB(255,200,0), fill_color, -54);
+
+}
+
+// ================= //
+
+function DrawPolyStar(gr, x, y, out_radius, in_radius, points, line_thickness, line_color, fill_color, angle, opacity){
+
+	if(!opacity && opacity != 0) opacity = 255;
+
+	//---> Create points
+
+	var point_arr = [];
+
+	for (var i = 0; i != points; i++) {
+
+		i % 2 ? r = Math.round((out_radius-line_thickness*4)/2) / in_radius : r = Math.round((out_radius-line_thickness*4)/2);
+
+		var x_point = Math.floor(r * Math.cos(Math.PI * i / points * 2 - Math.PI / 2));
+		var y_point = Math.ceil(r * Math.sin(Math.PI * i / points * 2 - Math.PI / 2));
+
+		point_arr.push(x_point + out_radius/2);
+		point_arr.push(y_point + out_radius/2);
+
+	}
+
+	//---> Crate poligon image
+
+	var img = gdi.CreateImage(out_radius, out_radius);
+	var _gr = img.GetGraphics();
+
+	_gr.SetSmoothingMode(2);
+
+	_gr.FillPolygon(fill_color, 1, point_arr);
+
+	if(line_thickness > 0)
+	_gr.DrawPolygon(line_color, line_thickness, point_arr); 
+
+	img.ReleaseGraphics(_gr);
+
+	//---> Draw image
+
+	gr.DrawImage(img, x, y, out_radius, out_radius, 0, 0, out_radius, out_radius, angle, opacity);
+}
