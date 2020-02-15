@@ -17,7 +17,7 @@ function on_drag_drop(action, x, y, mask) {}
 function on_drag_enter(action, x, y, mask) {}
 function on_drag_leave() {}
 function on_drag_over(action, x, y, mask) {}
-// See https://marc2k3.github.io/foo_jscript_panel/Drag-and-Drop.html
+// See https://kbuffington.github.io/foo_jscript_panel/foo_jscript_panel/Drag-and-Drop.html
 
 function on_dsp_preset_changed() {}
 // Called when DSP preset changes.

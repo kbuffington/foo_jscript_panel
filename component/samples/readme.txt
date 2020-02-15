@@ -1,1 +1,1 @@
-See https://marc2k3.github.io/foo_jscript_panel/Samples.html
+See https://kbuffington.github.io/foo_jscript_panel/foo_jscript_panel/Samples.html

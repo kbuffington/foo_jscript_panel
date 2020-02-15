@@ -247,7 +247,7 @@ void CDialogConf::OnLinks(UINT, int nID, CWindow)
 {
 	static constexpr std::array<const wchar_t*, 4> links =
 	{
-		L"https://marc2k3.github.io/foo_jscript_panel.html",
+		L"https://kbuffington.github.io/foo_jscript_panel/foo_jscript_panel.html",
 		L"https://github.com/marc2k3/foo_jscript_panel/blob/master/CHANGELOG.md",
 		L"https://github.com/marc2k3/foo_jscript_panel/releases",
 		L"https://github.com/marc2k3/foo_jscript_panel/issues"

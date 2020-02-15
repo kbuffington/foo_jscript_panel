@@ -77,7 +77,7 @@ utils.IsFile(filename)
 utils.IsFolder(folder)
 ```
 
-- The `Grab focus` checkbox in the [Configuration Window](https://marc2k3.github.io/foo_jscript_panel/Configuration-Window.html) and the `dragdrop` `PREPROCESSOR` have both been removed. Both features are disabled by default but are automatically enabled if relevant callbacks like `on_drag_drop` or `on_key_up` are present in the script.
+- The `Grab focus` checkbox in the [Configuration Window](https://kbuffington.github.io/foo_jscript_panel/foo_jscript_panel/Configuration-Window.html) and the `dragdrop` `PREPROCESSOR` have both been removed. Both features are disabled by default but are automatically enabled if relevant callbacks like `on_drag_drop` or `on_key_up` are present in the script.
 
 ## v2.2.2.4
 - Fix bug introduced in `v2.2.2.1` which prevented images loaded with `gdi.Image` / `gdi.LoadImageAsync` being deleted/overwritten after `Dispose()` had been called.
@@ -97,7 +97,7 @@ utils.IsFolder(folder)
 - Fix broken colour handling in `IGdiBitmap` `GetColourSchemeJSON`. The original code by MordredKLB was good but I broke it so apologies for that.
 - `IGdiBitmap` `GetColourScheme` has been removed. See this page for how to use the better `JSON` method mentioned above.
 
-https://marc2k3.github.io/foo_jscript_panel/Breaking-Changes.html
+https://kbuffington.github.io/foo_jscript_panel/foo_jscript_panel/Breaking-Changes.html
 
 ## v2.2.1.1
 - Restore access to the Configuration Window via the `Columns UI` Preferences layout tab. Although buggy, access needs to remain to recover from installing bad scripts.
@@ -108,7 +108,7 @@ https://marc2k3.github.io/foo_jscript_panel/Breaking-Changes.html
 
 ## v2.2.0.3
 - Fix potential freeze on shutdown caused by timer threads. Thanks to [TheQwertiest](https://github.com/TheQwertiest).
-- Access to the [Configuration Window](https://marc2k3.github.io/foo_jscript_panel/Configuration-Window.html) via the `Layout` tab in the `Columns UI` Preferences has been blocked. The `Configure Panel...` button will now be grayed out. Always use the context menu on the panel itself.
+- Access to the [Configuration Window](https://kbuffington.github.io/foo_jscript_panel/foo_jscript_panel/Configuration-Window.html) via the `Layout` tab in the `Columns UI` Preferences has been blocked. The `Configure Panel...` button will now be grayed out. Always use the context menu on the panel itself.
 - Some minor sample bugs have been fixed.
 
 ## v2.2.0.2
@@ -118,18 +118,18 @@ https://marc2k3.github.io/foo_jscript_panel/Breaking-Changes.html
 - Fix issue introduced in `v2.2.0` where some colours with certain levels of alpha transparency were not handled properly.
 
 ## v2.2.0
-- Remove `window.DlgCode`. The docs were wrong, behaviour was inconsistent between `Default UI` and `Columns UI` and it's just not needed. Support for all keys will be enabled if you check `Grab focus` in the [Configuration Window](https://marc2k3.github.io/foo_jscript_panel/Configuration-Window.html). All instances will need removing from scripts. If you want to support this and older components with the same script, do something like:
+- Remove `window.DlgCode`. The docs were wrong, behaviour was inconsistent between `Default UI` and `Columns UI` and it's just not needed. Support for all keys will be enabled if you check `Grab focus` in the [Configuration Window](https://kbuffington.github.io/foo_jscript_panel/foo_jscript_panel/Configuration-Window.html). All instances will need removing from scripts. If you want to support this and older components with the same script, do something like:
 
 ```js
 if ('DlgCode' in window) { window.DlgCode = 4; }
 ```
 
 - `fb.RunMainMenuCommand`, `fb.RunContextCommand`, `fb.RunContextCommandWithMetadb` have all been rewritten and must be supplied with the full path to their commands. Case is not important. You should use forward slashes with no spaces. eg: `fb.RunMainMenuCommand("Library/Search")`.
-- All files imported to the [Configuration Window](https://marc2k3.github.io/foo_jscript_panel/Configuration-Window.html), Preferences>Tools or included in a script via the `import` `PREPROCESSOR` directive must be `UTF8` encoded (with or without `BOM`). `utils.ReadTextFile` is unaffected although it should have better `UTF8` detection than before.
+- All files imported to the [Configuration Window](https://kbuffington.github.io/foo_jscript_panel/foo_jscript_panel/Configuration-Window.html), Preferences>Tools or included in a script via the `import` `PREPROCESSOR` directive must be `UTF8` encoded (with or without `BOM`). `utils.ReadTextFile` is unaffected although it should have better `UTF8` detection than before.
 - The default `write_bom` argument for `utils.WriteTextFile` when omitted is now `false`.
 - The code that parses the `PREPROCESSOR` section has been rewritten from scratch. The only difference is that double quotes in the name/author no longer need to be escaped so they will be duplicated if you did this previously.
 - `window.GetColourCUI` and `window.GetFontCUI` no longer accept the previously optional `client_guid` argument.
-- Add menu toolbar to [Configuration Window](https://marc2k3.github.io/foo_jscript_panel/Configuration-Window.html) which provides quick access to all included samples and docs. You can now Import/Export scripts via the `File` menu. The `Reset` option now properly resets all settings.
+- Add menu toolbar to [Configuration Window](https://kbuffington.github.io/foo_jscript_panel/foo_jscript_panel/Configuration-Window.html) which provides quick access to all included samples and docs. You can now Import/Export scripts via the `File` menu. The `Reset` option now properly resets all settings.
 - The preset colour schemes previously bundled inside the `Colour Schemes` folder can now be loaded directly from the main preferences under `Tools>JScript Panel`.
 - Add `utils.ListFiles` and `utils.ListFolders`.
 - Update `fb.CreateHandleList` to take an optional handle argument to create a list containing a single item.
@@ -204,9 +204,9 @@ if ('DlgCode' in window) { window.DlgCode = 4; }
 - Add `on_replaygain_mode_changed` callback.
 - The behaviour of `plman.AddLocations` with the `select` argument set to `true` has been slightly modified.
 
-https://marc2k3.github.io/foo_jscript_panel/Drag-and-Drop.html
+https://kbuffington.github.io/foo_jscript_panel/foo_jscript_panel/Drag-and-Drop.html
 
-https://marc2k3.github.io/foo_jscript_panel/Breaking-Changes.html
+https://kbuffington.github.io/foo_jscript_panel/foo_jscript_panel/Breaking-Changes.html
 
 ## v2.0.6
 - Add `fb.CopyHandleListToClipboard` method. Contents can then be pasted in other components or as files in `Windows Explorer`.
@@ -227,7 +227,7 @@ https://marc2k3.github.io/foo_jscript_panel/Breaking-Changes.html
 
 ## v2.0.3
 - `utils.WriteTextFile` now takes an optional `write_bom` argument. It defaults to `true` if omitted. If `false`, then the resulting file should be `UTF8` without `BOM`.
-- Tidy up docs and `IMenuObj` interface. See the [Breaking Changes](https://marc2k3.github.io/foo_jscript_panel/Breaking-Changes.html) page for details.
+- Tidy up docs and `IMenuObj` interface. See the [Breaking Changes](https://kbuffington.github.io/foo_jscript_panel/foo_jscript_panel/Breaking-Changes.html) page for details.
 
 ## v2.0.2
 - Fix random component crash caused by `utils.WriteTextFile`.
@@ -266,18 +266,18 @@ IGdiBitmap GetColorScheme -> GetColourScheme
 - The `IGdiBitmap` `BoxBlur` method has been removed. Use `StackBlur` instead.
 - `IContextMenuManager` `InitContext` only accepts a handle list as an argument.
 - Anyone who has a `js_settings` folder in their `foobar2000` profile folder from using my previous samples should move the contents in to the `js_data` folder. Typically, this would be `autoplaylists.json`, `thumbs.ini`, `listenbrainz.ini`.
-- Enable `Windows XP` support. Also, support for `Windows Vista`, `Windows 7` and `WINE` with `IE7`/`IE8` has been restored. `ES5` features are still supported for those with `IE9` or later. If your scripts crash after upgrading and making the changes outlined above, make sure to check the `Script Engine` setting in the [Configuration Window](https://marc2k3.github.io/foo_jscript_panel/Configuration-Window.html).
+- Enable `Windows XP` support. Also, support for `Windows Vista`, `Windows 7` and `WINE` with `IE7`/`IE8` has been restored. `ES5` features are still supported for those with `IE9` or later. If your scripts crash after upgrading and making the changes outlined above, make sure to check the `Script Engine` setting in the [Configuration Window](https://kbuffington.github.io/foo_jscript_panel/foo_jscript_panel/Configuration-Window.html).
 - Add `utils.WriteTextFile`. Always creates a `UTF8-BOM` file.
 - Add `window.Name` property.
 - Add a custom `Playback Stats` backend and `handle` methods for writing values.
 
-https://marc2k3.github.io/foo_jscript_panel/Breaking-Changes.html
+https://kbuffington.github.io/foo_jscript_panel/foo_jscript_panel/Breaking-Changes.html
 
-https://marc2k3.github.io/foo_jscript_panel/Configuration-Window.html
+https://kbuffington.github.io/foo_jscript_panel/foo_jscript_panel/Configuration-Window.html
 
-https://marc2k3.github.io/foo_jscript_panel/WINE.html
+https://kbuffington.github.io/foo_jscript_panel/foo_jscript_panel/WINE.html
 
-https://marc2k3.github.io/foo_jscript_panel/Playback-Stats.html
+https://kbuffington.github.io/foo_jscript_panel/foo_jscript_panel/Playback-Stats.html
 
 https://github.com/marc2k3/foo_jscript_panel/tree/master/foo_jscript_panel/samples
 
@@ -358,9 +358,9 @@ RestoreById
 
 ## v1.2.0
 - If your computer has `IE9` or later installed, newer `ECMAScript5` features are now available. Many thanks to [TheQwertiest](https://github.com/TheQwertiest) for discovering how to do this.
-- The `Script engine` option has been removed from the [Configuration Window](https://marc2k3.github.io/foo_jscript_panel/Configuration-Window.html). The newer `Chakra` engine is always used if available but will fall back to `JScript` if not.
+- The `Script engine` option has been removed from the [Configuration Window](https://kbuffington.github.io/foo_jscript_panel/foo_jscript_panel/Configuration-Window.html). The newer `Chakra` engine is always used if available but will fall back to `JScript` if not.
 - Add `utils.Version` which reports the component version.
-- Minor tweaks to [Configuration Window](https://marc2k3.github.io/foo_jscript_panel/Configuration-Window.html).
+- Minor tweaks to [Configuration Window](https://kbuffington.github.io/foo_jscript_panel/foo_jscript_panel/Configuration-Window.html).
 - Update `JSPlaylist` so it works with `Chakra` engine. Thanks to zeremy for reporting
 - A previous `window.RepaintRect` bug reported by Wilb has now been fixed.
 - Zap a few more compiler warnings.
@@ -369,7 +369,7 @@ RestoreById
 - Remove trailing space in `Console` when using `fb.Trace`.
 - `Text Reader` sample fix. Ensure `Open containing folder` works when specifiying a folder rather than a full path to a file.
 - `Thumbs` sample fix. Addresses an issue where using `%profile%` in the `Custom folder` setting would fail if the profile path contained special title formatting characters like `%()[]'`.
-- Remove `Delay load` from [Configuration Window](https://marc2k3.github.io/foo_jscript_panel/Configuration-Window.html).
+- Remove `Delay load` from [Configuration Window](https://kbuffington.github.io/foo_jscript_panel/foo_jscript_panel/Configuration-Window.html).
 
 ## v1.1.6.2
 - Fix bug with `plman.AddLocations` where the original order of the supplied `array` wasn't maintained. Also, the progress dialog should be hidden for short operations.

@@ -252,7 +252,7 @@ interface IFb {
 				*/
 
 		fb.DoDragDrop(handle_list, effect) (uint);
-		// See https://marc2k3.github.io/foo_jscript_panel/Drag-and-Drop.html
+		// See https://kbuffington.github.io/foo_jscript_panel/foo_jscript_panel/Drag-and-Drop.html
 
 		fb.Exit() (void)
 
@@ -1906,7 +1906,7 @@ interface IMetadbHandle {
 		SetRating(rating) (void)
 		ClearStats() (void)
 		RefreshStats() (void)
-		// See https://marc2k3.github.io/foo_jscript_panel/Playback-Stats.html
+		// See https://kbuffington.github.io/foo_jscript_panel/foo_jscript_panel/Playback-Stats.html
 
 		Compare(handle) (boolean)
 		/*
@@ -2220,7 +2220,7 @@ interface IMetadbHandleList {
 		// This method should only be used on a handle list containing items that are monitored as part of the Media Library.
 
 		RefreshStats() (void)
-		// See https://marc2k3.github.io/foo_jscript_panel/Playback-Stats.html
+		// See https://kbuffington.github.io/foo_jscript_panel/foo_jscript_panel/Playback-Stats.html
 
 		Remove(handle) (void)
 
@@ -2256,5 +2256,5 @@ interface IMetadbHandleList {
 		// Remove duplicates and optimise for other handle list operations.
 
 		UpdateFileInfoFromJSON(str) (void)
-		// See https://marc2k3.github.io/foo_jscript_panel/Breaking-Changes.html#v130
+		// See https://kbuffington.github.io/foo_jscript_panel/foo_jscript_panel/Breaking-Changes.html#v130
 }
