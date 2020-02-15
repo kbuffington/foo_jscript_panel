@@ -1,3 +1,7 @@
+## v2.3.6
+- A new `IGdiBitmap` `InvertColours` method has been added.
+- Minor sample fixes.
+
 ## v2.3.5
 - Add `plman.GetPlaylistLockFilterMask`. It's recommended that you replace any usage of `plman.IsPlaylistLocked` with this as you can now determine the type of locks in place.
 - Add `plman.GetPlaylistLockName`.
