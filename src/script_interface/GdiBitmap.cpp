@@ -188,7 +188,7 @@ STDMETHODIMP GdiBitmap::GetGraphics(IGdiGraphics** pp)
 	return S_OK;
 }
 
-STDMETHODIMP GdiBitmap::InvertColors(IGdiBitmap** pp)
+STDMETHODIMP GdiBitmap::InvertColours(IGdiBitmap** pp)
 {
 	if (!m_ptr || !pp) return E_POINTER;
 

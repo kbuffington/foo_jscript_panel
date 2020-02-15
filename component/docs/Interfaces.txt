@@ -1674,6 +1674,9 @@ interface IGdiBitmap {
 		GetGraphics() (IGdiGraphics)
 		// Don't forget to use ReleaseGraphics() after operations on IGdiGraphics interface is done.
 
+		InvertColours() (IGdiBitmap)
+		// Produces a negative image. Mostly useful when dealing with black & white images.
+
 		ReleaseGraphics(IGdiGraphics) (void)
 
 		Resize(w, h[, interpolation_mode]) (IGdiBitmap)

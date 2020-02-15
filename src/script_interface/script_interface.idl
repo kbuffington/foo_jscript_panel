@@ -71,7 +71,7 @@ library foo_jscript_panel
 		HRESULT CreateRawBitmap([out, retval] IGdiRawBitmap** pp);
 		HRESULT GetColourSchemeJSON(UINT count, [out, retval] BSTR* p);
 		HRESULT GetGraphics([out, retval] IGdiGraphics** pp);
-		HRESULT InvertColors([out, retval] IGdiBitmap** pp);
+		HRESULT InvertColours([out, retval] IGdiBitmap** pp);
 		HRESULT ReleaseGraphics(IGdiGraphics* p);
 		HRESULT Resize(UINT w, UINT h, [defaultvalue(0)] int interpolationMode, [out, retval] IGdiBitmap** pp);
 		HRESULT RotateFlip(UINT mode);
