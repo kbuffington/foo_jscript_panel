@@ -1,3 +1,5 @@
+# Note: This repo has been deleted, and this information is listed for archival purposes only
+
 ## ListenBrainz 2
 
 [![GitHub stars](https://img.shields.io/github/stars/marc2k3/foo_listenbrainz2?style=social)](https://github.com/marc2k3/foo_listenbrainz2)

@@ -1,10 +1,10 @@
 ## JScript Panel 
 
-[![GitHub stars](https://img.shields.io/github/stars/marc2k3/foo_jscript_panel?style=social)](https://github.com/marc2k3/foo_jscript_panel)
+[![GitHub stars](https://img.shields.io/github/stars/kbuffington/foo_jscript_panel?style=social)](https://github.com/kbuffington/foo_jscript_panel)
 
 ### Download
 
-[https://github.com/marc2k3/foo_jscript_panel/releases](https://github.com/marc2k3/foo_jscript_panel/releases)
+[https://github.com/kbuffington/foo_jscript_panel/releases](https://github.com/kbuffington/foo_jscript_panel/releases)
 
 ### Minimum requirements
 
