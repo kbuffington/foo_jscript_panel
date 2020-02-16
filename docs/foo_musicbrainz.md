@@ -1,12 +1,10 @@
-# Note: This repo has been deleted, and this information is listed for archival purposes only
-
 ## MusicBrainz Tagger
 
-[![GitHub stars](https://img.shields.io/github/stars/marc2k3/foo_musicbrainz?style=social)](https://github.com/marc2k3/foo_musicbrainz)
+[![GitHub stars](https://img.shields.io/github/stars/kbuffington/foo_musicbrainz?style=social)](https://github.com/kbuffington/foo_musicbrainz)
 
 ### Download
 
-[https://github.com/marc2k3/foo_musicbrainz/releases](https://github.com/marc2k3/foo_musicbrainz/releases)
+[https://github.com/kbuffington/foo_musicbrainz/releases](https://github.com/kbuffington/foo_musicbrainz/releases)
 
 ### Minimum requirements
 
