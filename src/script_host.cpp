@@ -58,6 +58,7 @@ HRESULT script_host::InitCallbackMap()
 		switch (id)
 		{
 		case callback_id::on_char:
+		case callback_id::on_focus:
 		case callback_id::on_key_down:
 		case callback_id::on_key_up:
 			m_host->m_grabfocus = true;
