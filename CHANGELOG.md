@@ -1,3 +1,6 @@
+## v2.3.6.1
+- on_focus callback was not always being triggered
+
 ## v2.3.6
 - A new `IGdiBitmap` `InvertColours` method has been added.
 - Minor sample fixes.
